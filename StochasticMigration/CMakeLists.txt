@@ -127,7 +127,7 @@ endmacro(setup_unit_test_target)
 #set(ASTRODYNAMICSDIR "/Astrodynamics")
 set(BASICSDIR "/Basics")
 set(DATABASEDIR "/Database")
-#set(INPUTOUTPUTDIR "/InputOutput")
+set(INPUTOUTPUTDIR "/InputOutput")
 
 # Include the top-level directories.
 include_directories(AFTER
@@ -224,8 +224,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # Set sub-directories.
-set(SUBDIRS ${DATABASEDIR})
-#${ASTRODYNAMICSDIR} ${BASICSDIR} ${DATABASEDIR} ${INPUTOUTPUTDIR})
+set(SUBDIRS ${BASICSDIR} ${DATABASEDIR} ${INPUTOUTPUTDIR})
+#${ASTRODYNAMICSDIR}  ${DATABASEDIR} )
 
 # Add sub-directories to CMake process.
 foreach(CURRENT_SUBDIR ${SUBDIRS})

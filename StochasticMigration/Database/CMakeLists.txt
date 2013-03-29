@@ -36,7 +36,7 @@
 
 # Set source files.
 set(DATABASE_SOURCES
-#  "${SRCROOT}${DATABASEDIR}/databaseHelpFunctions.cpp"
+  "${SRCROOT}${DATABASEDIR}/databaseHelpFunctions.cpp"
 #  "${SRCROOT}${DATABASEDIR}/databaseReadFunctions.cpp"
 #  "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.cpp"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkMonteCarloRun.cpp"
@@ -48,7 +48,7 @@ set(DATABASE_SOURCES
 
 # Set header files.
 set(DATABASE_HEADERS
-#  "${SRCROOT}${DATABASEDIR}/databaseHelpFunctions.h"
+  "${SRCROOT}${DATABASEDIR}/databaseHelpFunctions.h"
 #  "${SRCROOT}${DATABASEDIR}/databaseReadFunctions.h"
 #  "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.h"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkMonteCarloRun.h"
