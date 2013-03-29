@@ -25,7 +25,7 @@
  #    Changelog
  #      YYMMDD    Author            Comment
  #      110820    S.M. Persson      File created.
- #	120214    K. Kumar 	    Adapted to work with Tudat and Tudat Core.
+ #      120214    K. Kumar          Adapted to work with Tudat and Tudat Core.
  #      130211    K. Kumar          Added GeneralTools library.
  #      130217    K. Kumar          Renamed project StochasticMigration.
  #
@@ -35,7 +35,7 @@
  #
 
 # Specify minimum CMake version required.
-cmake_minimum_required( VERSION 2.6 )
+cmake_minimum_required(VERSION 2.6)
 
 # Specify project name.
 project( StochasticMigration )
@@ -126,7 +126,7 @@ endmacro(setup_unit_test_target)
 # Set the main sub-directories.
 #set(ASTRODYNAMICSDIR "/Astrodynamics")
 #set(BASICSDIR "/Basics")
-#set(DATABASEDIR "/Database")
+set(DATABASEDIR "/Database")
 #set(INPUTOUTPUTDIR "/InputOutput")
 
 # Include the top-level directories.
@@ -224,12 +224,13 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # Set sub-directories.
-#set(SUBDIRS ${ASTRODYNAMICSDIR} ${BASICSDIR} ${DATABASEDIR} ${INPUTOUTPUTDIR})
+set(SUBDIRS ${DATABASEDIR})
+#${ASTRODYNAMICSDIR} ${BASICSDIR} ${DATABASEDIR} ${INPUTOUTPUTDIR})
 
-## Add sub-directories to CMake process.
-#foreach(CURRENT_SUBDIR ${SUBDIRS})
-#add_subdirectory("${SRCROOT}${CURRENT_SUBDIR}")
-#endforeach(CURRENT_SUBDIR)
+# Add sub-directories to CMake process.
+foreach(CURRENT_SUBDIR ${SUBDIRS})
+add_subdirectory("${SRCROOT}${CURRENT_SUBDIR}")
+endforeach(CURRENT_SUBDIR)
 
 # Add sandbox.
 add_executable(sandbox "${SRCROOT}/Applications/sandbox.cpp")

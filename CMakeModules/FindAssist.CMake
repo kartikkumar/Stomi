@@ -85,7 +85,10 @@ else (ASSIST_INCLUDE_DIR)
 
   find_path(ASSIST_BASE_PATH NAMES assistVersion.h
       PATHS
+      ${PROJECT_SOURCE_DIR}/../assist
       ${PROJECT_SOURCE_DIR}/../../assist
+      ${PROJECT_SOURCE_DIR}/../../../assist
+      ${PROJECT_SOURCE_DIR}/../../../../assist
       PATH_SUFFIXES Assist 
     )
   set(ASSIST_INCLUDE_DIR ${ASSIST_BASE_PATH}/../)
