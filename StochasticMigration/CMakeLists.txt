@@ -125,7 +125,7 @@ endmacro(setup_unit_test_target)
 
 # Set the main sub-directories.
 #set(ASTRODYNAMICSDIR "/Astrodynamics")
-#set(BASICSDIR "/Basics")
+set(BASICSDIR "/Basics")
 set(DATABASEDIR "/Database")
 #set(INPUTOUTPUTDIR "/InputOutput")
 

@@ -29,6 +29,8 @@
  *                                  sanity checks to ensure that test particle kick is valid.
  *      130309    K. Kumar          Moved all existing operator overloads to non-member functions
  *                                  and added new ones, including for pointer comparisons.
+ *      130328    K. Kumar          Moved standard operator overload functions to Assist; used  
+ *                                  comparison functions in Assist for checks in constructor.
  *
  *    References
  *
@@ -40,7 +42,6 @@
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/unitConversions.h>
 
 #include <Assist/Astrodynamics/unitConversions.h>
-#include <Assist/Basics/basics.h>
 #include <Assist/Basics/comparisonFunctions.h>
 
 #include "StochasticMigration/Database/testParticleKick.h"
@@ -142,7 +143,6 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleKick& te
 {
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
     using namespace tudat::basic_astrodynamics::unit_conversions;
-    using namespace assist::basics;
     using namespace assist::astrodynamics;
 
     // Write contents of TestParticleKickPointer object to output stream.
