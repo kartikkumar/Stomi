@@ -40,7 +40,7 @@ set(DATABASE_SOURCES
 #  "${SRCROOT}${DATABASEDIR}/databaseReadFunctions.cpp"
 #  "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.cpp"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkMonteCarloRun.cpp"
-#  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.cpp"
+  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleInput.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleKick.cpp"
@@ -52,7 +52,7 @@ set(DATABASE_HEADERS
 #  "${SRCROOT}${DATABASEDIR}/databaseReadFunctions.h"
 #  "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.h"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkMonteCarloRun.h"
-#  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.h"
+  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.h"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.h"
   "${SRCROOT}${DATABASEDIR}/testParticleInput.h"
   "${SRCROOT}${DATABASEDIR}/testParticleKick.h"
@@ -63,6 +63,12 @@ add_library(stochastic_migration_database STATIC ${DATABASE_SOURCES} ${DATABASE_
 setup_library_target(stochastic_migration_database "${SRCROOT}${DATABASEDIR}")
 
 # Add unit tests.
+add_executable(test_RandomWalkPerturber 
+               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestRandomWalkPerturber.cpp")
+setup_unit_test_target(test_RandomWalkPerturber "${SRCROOT}${DATABASEDIR}")
+target_link_libraries(test_RandomWalkPerturber stochastic_migration_database assist_basics
+                      ${TUDAT_CORE_LIBRARIES} ${SQLITE3_LIBRARY} ${Boost_LIBRARIES})
+
 add_executable(test_TestParticleCase 
                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleCase.cpp")
 setup_unit_test_target(test_TestParticleCase "${SRCROOT}${DATABASEDIR}")
