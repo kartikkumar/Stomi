@@ -39,11 +39,12 @@
  *
  */
 
-#ifndef STOCHASTIC_MIGRATION_RANDOM_WALK_PERTURBER_H
-#define STOCHASTIC_MIGRATION_RANDOM_WALK_PERTURBER_H
+#ifndef STOCHSTIC_MIGRATION_RANDOM_WALK_MONTE_CARLO_RUN_H
+#define STOCHSTIC_MIGRATION_RANDOM_WALK_MONTE_CARLO_RUN_H
 
 #include <iostream>
 #include <set>
+#include <string>
 
 #include <boost/shared_ptr.hpp>
 
@@ -52,55 +53,75 @@ namespace stochastic_migration
 namespace database
 {
 
-//! Data struct that contains data for a perturber for a random walk Monte Carlo run.
+//! Data struct that contains data for a single random walk Monte Carlo run.
 /*!
- * This data struct contains all of the data for a perturber, used in a random walk Monte Carlo
- * run. The data stored is meta data for the random walk simulations conducted.
+ * This data struct contains all of the data for a single random walk Monte Carlo run, stored in an
+ * SQLite3 database. The data stored is metadata for the random walk simulations conducted.
  */
-struct RandomWalkPerturber
+struct RandomWalkMonteCarloRun
 {
 public:
 
-    //! Default constructor, initializing class members with speficied values.
-    RandomWalkPerturber( const int aMonteCarloRun,
-                         const int aTestParticleSimulationNumber,
-                         const double aMassRatio );
+    //! Default constructor, initializing class members with specified values.
+    RandomWalkMonteCarloRun( const int aMonteCarloRun,
+                             const int aPerturberPopulation,
+                             const std::string& aMassDistributionType,
+                             const double aMassDistributionParameter1,
+                             const double aMassDistributionParameter2,
+                             const double anObservationPeriod,
+                             const double anEpochWindowSize,
+                             const int aNumberOfEpochWindows );
 
     //! Monte Carlo run.
     const int monteCarloRun;
 
-    //! Test particle simulation number.
-    const int testParticleSimulationNumber;
+    //! Perturber population.
+    const int perturberPopulation;
 
-    //! Mass ratio between body receiving kick and body causing kick [-].
-    const double massRatio;
+    //! Mass distribution type used for random walk simulation (can be equal, uniform, linear, 
+    //! or power-law).
+    const std::string massDistributionType;
+
+    //! Mass distribution parameter 1.
+    const double massDistributionParameter1;
+
+    //! Mass distribution parameter 2.
+    const double massDistributionParameter2;
+
+    //! Observation period [s].
+    const double observationPeriod;
+
+    //! Epoch window size used to average observation data [s].
+    const double epochWindowSize;
+
+    //! Number of epoch windows within prescribed observation period.
+    const int numberOfEpochWindows;
 
 protected:
 private:
 };
 
-//! Typedef for shared-pointer to RandomWalkPerturber object.
-typedef boost::shared_ptr< RandomWalkPerturber > RandomWalkPerturberPointer;
+//! Typedef for shared-pointer to RandomWalkMonteCarloRun object.
+typedef boost::shared_ptr< RandomWalkMonteCarloRun > RandomWalkMonteCarloRunPointer;
 
-//! Typedef for table of perturbers (pointers) for a random walk Monte Carlo run.
-typedef std::set< RandomWalkPerturberPointer > RandomWalkPerturberTable;
+//! Typedef for table of random walk Monte Carlo runs (pointers).
+typedef std::set< RandomWalkMonteCarloRunPointer > RandomWalkMonteCarloRunTable;
 
 // Define all of the operator overloads as non-member functions (sbi, 2010).
 
 //! Overload == operator.
-bool operator==( const RandomWalkPerturber& randomWalkPerturber1,
-                 const RandomWalkPerturber& randomWalkPerturber2 );
+bool operator==( const RandomWalkMonteCarloRun& randomWalkMonteCarloRun1,
+                 const RandomWalkMonteCarloRun& randomWalkMonteCarloRun2 );
 
 //! Overload < operator.
-bool operator<( const RandomWalkPerturber& randomWalkPerturber1,
-                const RandomWalkPerturber& randomWalkPerturber2 );
+bool operator<( const RandomWalkMonteCarloRun& randomWalkMonteCarloRun1,
+                const RandomWalkMonteCarloRun& randomWalkMonteCarloRun2 );
 
 //! Overload << operator.
 std::ostream& operator<<( std::ostream& outputStream, 
-                          const RandomWalkPerturber& randomWalkPerturber );
-
+                          const RandomWalkMonteCarloRun& randomWalkMonteCarloRun );
 
 } // namespace database
-} // namespace mab_simulations
+} // namespace stochastic_migration
 
-#endif // STOCHASTIC_MIGRATION_RANDOM_WALK_PERTURBER_H
+#endif // STOCHSTIC_MIGRATION_RANDOM_WALK_MONTE_CARLO_RUN_H

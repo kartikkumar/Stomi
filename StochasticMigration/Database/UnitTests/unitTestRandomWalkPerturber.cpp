@@ -51,7 +51,7 @@ struct RandomWalkPerturberFixture
 {
 public:
 
-    //! ructor initializing valid parameters.
+    //! Constructor initializing valid parameters.
     RandomWalkPerturberFixture( )
         : monteCarloRun( 1 ),
           testParticleSimulationNumber( 1 ),

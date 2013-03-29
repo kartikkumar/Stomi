@@ -66,7 +66,7 @@ public:
     // Set Eigen macro to correctly align class with fixed-size vectorizable types.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    //! ructor initializing valid parameters.
+    //! Constructor initializing valid parameters.
     TestParticleCaseFixture( )
         : caseNumber( 1 ),
           randomWalkSimulationDuration( 1.2345e6 ),

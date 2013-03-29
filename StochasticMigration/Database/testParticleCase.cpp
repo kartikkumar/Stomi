@@ -132,7 +132,7 @@ TestParticleCase::TestParticleCase(
     if ( aNumericalIntegratorType.empty( ) )
     {
         std::stringstream errorMessage;
-        errorMessage << "Numerical integrator type string is empty";
+        errorMessage << "Numerical integrator type string is empty!";
         throw std::runtime_error( errorMessage.str( ) );
     }
 }
