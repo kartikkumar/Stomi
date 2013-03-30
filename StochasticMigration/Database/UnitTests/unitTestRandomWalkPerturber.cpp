@@ -25,6 +25,8 @@
  *    Changelog
  *      YYMMDD    Author            Comment
  *      130329    K. Kumar          File created.
+ *      130329    K. Kumar          Added test to check that test particle input table is sorted
+ *                                  correctly; added typedef check.
  *
  *    References
  *
@@ -35,6 +37,7 @@
 #define BOOST_TEST_MAIN
 
 #include <boost/make_shared.hpp>
+#include <boost/ptr_container/ptr_set.hpp>
 #include <boost/test/unit_test.hpp>
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
@@ -81,6 +84,13 @@ private:
 };    
 
 BOOST_FIXTURE_TEST_SUITE( test_random_walk_perturber, RandomWalkPerturberFixture )    
+
+//! Test definition of typedef for random walk perturber database struct.
+BOOST_AUTO_TEST_CASE( testRandomWalkPerturberTypedef )
+{
+    BOOST_CHECK( typeid( database::RandomWalkPerturberTable )
+                 == typeid( boost::ptr_set< database::RandomWalkPerturber > ) );
+}
 
 //! Test correct construction of random walk perturber.
 BOOST_AUTO_TEST_CASE( testRandomWalkPerturberStructContruction )
@@ -253,6 +263,34 @@ BOOST_AUTO_TEST_CASE( testRandomWalkPerturberGreaterThanOrEqualComparison )
 
     // Check that operator is overloaded correctly.
     BOOST_CHECK( *randomWalkPerturber2 >= *randomWalkPerturber );
+}
+
+//! Test sorting of RandomWalkPerturberTable.
+BOOST_AUTO_TEST_CASE( testRandomWalkPerturberTableSorting )
+{
+    // Add RandomWalkPerturber objects to table.
+    database::RandomWalkPerturberTable perturberTable;
+
+    // Insert random walk perturber struct.
+    perturberTable.insert( new database::RandomWalkPerturber( *getRandomWalkPerturber( ) ) );
+
+    // Insert random walk perturber struct with another Monte Carlo run.
+    monteCarloRun = 3;
+    perturberTable.insert( new database::RandomWalkPerturber( *getRandomWalkPerturber( ) ) );
+
+    // Insert random walk perturber struct with another Monte Carlo run.
+    monteCarloRun = 2;
+    perturberTable.insert( new database::RandomWalkPerturber( *getRandomWalkPerturber( ) ) );
+
+    // Check that the table is sorted according to Monte Carlo run.
+    database::RandomWalkPerturberTable::iterator iteratorPerturberTable = perturberTable.begin( );
+    BOOST_CHECK_EQUAL( iteratorPerturberTable->monteCarloRun, 1 );
+
+    iteratorPerturberTable++;
+    BOOST_CHECK_EQUAL( iteratorPerturberTable->monteCarloRun, 2 );
+
+    iteratorPerturberTable++;
+    BOOST_CHECK_EQUAL( iteratorPerturberTable->monteCarloRun, 3 );
 }
 
 BOOST_AUTO_TEST_SUITE_END( )

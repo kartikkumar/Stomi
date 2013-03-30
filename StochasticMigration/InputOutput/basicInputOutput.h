@@ -54,9 +54,9 @@ namespace input_output
 
 //! Write test particle kick table to file.
 /*!
- * Writes test particle kick table data stored in a STL set to file.
+ * Writes test particle kick table data stored in a Boost associative container to file.
  * \param testParticleKickTable Table of kicks, extracted from test particle simulations, stored as
- *          TestParticleKickPointer objects in a STL set.
+ *          TestParticleKickPointer objects in a Boost associative container set.
  * \param outputFilename Output filename.
  * \param outputDirectory Output directory, where output file is saved to (absolute path). Default
  *          value is an empty string, meaning the output file will be saved somewhere in the build
@@ -65,8 +65,8 @@ namespace input_output
  * \param outputPrecision Number of digits of precision of floating-point data written to output
  *          file (default=maximum number of significant digits for a double-precision number).
  */
-void writeTestParticleKickPointerTableToFile(
-       const database::TestParticleKickPointerTable& testParticleKickTable,
+void writeTestParticleKickTableToFile(
+       const database::TestParticleKickTable& testParticleKickTable,
        const std::string& outputFilename, const boost::filesystem::path& outputDirectory = "",
        const std::string& delimiter = ",",
        const int outputPrecision = std::numeric_limits< double >::digits10 );

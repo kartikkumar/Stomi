@@ -37,8 +37,8 @@
 
 # Set source files.
 set(INPUTOUTPUT_SOURCES
-  "${SRCROOT}${INPUTOUTPUTDIR}/dictionaries.cpp"
   "${SRCROOT}${INPUTOUTPUTDIR}/basicInputOutput.cpp"
+  "${SRCROOT}${INPUTOUTPUTDIR}/dictionaries.cpp"
 )
 
 # Set header files.

@@ -31,6 +31,8 @@
  *                                  TestParticleKick objects.
  *      130328    K. Kumar          Updated unit tests to use boiler plate operator overload 
  *                                  functions in Assist.
+ *      130329    K. Kumar          Added test to check that test particle kick table is sorted
+ *                                  correctly.
  *
  *    References
  *
@@ -40,10 +42,10 @@
 
 #define BOOST_TEST_MAIN
 
-#include <set>
 #include <typeinfo>
 
 #include <boost/make_shared.hpp>
+#include <boost/ptr_container/ptr_set.hpp>
 #include <boost/test/unit_test.hpp>
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
@@ -118,8 +120,8 @@ BOOST_FIXTURE_TEST_SUITE( test_test_particle_kick, TestParticleKickFixture )
 //! Test definition of typedef for test particle kick database struct.
 BOOST_AUTO_TEST_CASE( testTestParticleKickTypedef )
 {
-    BOOST_CHECK( typeid( database::TestParticleKickPointerTable )
-                 == typeid( std::set< database::TestParticleKickPointer > ) );
+    BOOST_CHECK( typeid( database::TestParticleKickTable )
+                 == typeid( boost::ptr_set< database::TestParticleKick > ) );
 }
 
 //! Test correct construction of test particle kick.
@@ -615,6 +617,34 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickGreaterThanOrEqualComparison )
 
     // Check that operator is overloaded correctly.
     BOOST_CHECK( *testParticleKick2 >= *testParticleKick );
+}
+
+//! Test sorting of TestParticleKickTable.
+BOOST_AUTO_TEST_CASE( testTestParticleKickTableSorting )
+{
+    // Add TestParticleKick objects to table.
+    database::TestParticleKickTable kickTable;
+
+    // Insert kick with conjunction epoch = 1.23e4.
+    kickTable.insert( new database::TestParticleKick( *getTestParticleKick( ) ) );
+
+    // Insert kick with later conjunction epoch.
+    conjunctionEpoch = 1.24e4;
+    kickTable.insert( new database::TestParticleKick( *getTestParticleKick( ) ) );
+
+    // Insert kick with earlier conjunction epoch.
+    conjunctionEpoch = 1.2e3;
+    kickTable.insert( new database::TestParticleKick( *getTestParticleKick( ) ) );
+
+    // Check that the table is sorted according to conjunction epoch.
+    database::TestParticleKickTable::iterator iteratorKickTable = kickTable.begin( );
+    BOOST_CHECK_EQUAL( iteratorKickTable->conjunctionEpoch, 1.2e3 );
+
+    iteratorKickTable++;
+    BOOST_CHECK_EQUAL( iteratorKickTable->conjunctionEpoch, 1.23e4 );
+
+    iteratorKickTable++;
+    BOOST_CHECK_EQUAL( iteratorKickTable->conjunctionEpoch, 1.24e4 );
 }
 
 BOOST_AUTO_TEST_SUITE_END( )

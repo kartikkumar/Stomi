@@ -34,6 +34,7 @@
  *                                  and added new ones, including for pointer comparisons; added
  *                                  shared-pointer definition.
  *      130328    K. Kumar          Moved standard operator overload functions to Assist.
+ *      130329    K. Kumar          Updated typedef for test particle kick table to boost ptr_set.
  *
  *    References
  *      sbi. C++ Operator Overloading, Stack Overflow,
@@ -51,6 +52,7 @@
 #include <limits>
 #include <set>
 
+#include <boost/ptr_container/ptr_set.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <Eigen/Core>
@@ -96,8 +98,8 @@ private:
 //! Typedef for shared-pointer to TestParticleInput object.
 typedef boost::shared_ptr< TestParticleInput > TestParticleInputPointer;
 
-//! Typedef for test particle input table.
-typedef std::set< TestParticleInputPointer > TestParticleInputTable;
+//! Typedef for input table (pointers) for test particle simulations.
+typedef boost::ptr_set< TestParticleInput > TestParticleInputTable;
 
 // Define all of the operator overloads as non-member functions (sbi, 2010).
 

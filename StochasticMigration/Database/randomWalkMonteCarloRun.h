@@ -43,9 +43,9 @@
 #define STOCHSTIC_MIGRATION_RANDOM_WALK_MONTE_CARLO_RUN_H
 
 #include <iostream>
-#include <set>
 #include <string>
 
+#include <boost/ptr_container/ptr_set.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace stochastic_migration
@@ -105,7 +105,7 @@ private:
 typedef boost::shared_ptr< RandomWalkMonteCarloRun > RandomWalkMonteCarloRunPointer;
 
 //! Typedef for table of random walk Monte Carlo runs (pointers).
-typedef std::set< RandomWalkMonteCarloRunPointer > RandomWalkMonteCarloRunTable;
+typedef boost::ptr_set< RandomWalkMonteCarloRun > RandomWalkMonteCarloRunTable;
 
 // Define all of the operator overloads as non-member functions (sbi, 2010).
 

@@ -29,6 +29,8 @@
  *                                  namespace.
  *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration";
  *                                  renamed file.
+ *      130329    K. Kumar          Moved standard operator overload functions to Assist;
+ *                                  updated typedef for test particle kick table to boost ptr_set.
  *
  *    References
  *      sbi. C++ Operator Overloading, Stack Overflow,
@@ -43,8 +45,8 @@
 #define STOCHASTIC_MIGRATION_RANDOM_WALK_PERTURBER_H
 
 #include <iostream>
-#include <set>
 
+#include <boost/ptr_container/ptr_set.hpp>
 #include <boost/shared_ptr.hpp>
 
 namespace stochastic_migration
@@ -83,7 +85,7 @@ private:
 typedef boost::shared_ptr< RandomWalkPerturber > RandomWalkPerturberPointer;
 
 //! Typedef for table of perturbers (pointers) for a random walk Monte Carlo run.
-typedef std::set< RandomWalkPerturberPointer > RandomWalkPerturberTable;
+typedef boost::ptr_set< RandomWalkPerturber > RandomWalkPerturberTable;
 
 // Define all of the operator overloads as non-member functions (sbi, 2010).
 

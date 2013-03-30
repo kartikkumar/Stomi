@@ -25,6 +25,8 @@
  *    Changelog
  *      YYMMDD    Author            Comment
  *      130329    K. Kumar          File created.
+ *      130329    K. Kumar          Added test to check that test particle input table is sorted
+ *                                  correctly; added typedef check.
  *
  *    References
  *
@@ -32,9 +34,10 @@
  *
  */
 
- #define BOOST_TEST_MAIN
+#define BOOST_TEST_MAIN
 
 #include <boost/make_shared.hpp>
+#include <boost/ptr_container/ptr_set.hpp>
 #include <boost/test/unit_test.hpp>
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
@@ -103,6 +106,13 @@ private:
 };        
 
 BOOST_FIXTURE_TEST_SUITE( test_random_walk_monte_carlo_run, RandomWalkMonteCarloRunFixture )    
+
+//! Test definition of typedef for random walk MonteCarlo run database struct.
+BOOST_AUTO_TEST_CASE( testRandomWalkMonteCarloRunTypedef )
+{
+    BOOST_CHECK( typeid( database::RandomWalkMonteCarloRunTable )
+                 == typeid( boost::ptr_set< database::RandomWalkMonteCarloRun > ) );
+}
 
 //! Test correct construction of random walk Monte Carlo run.
 BOOST_AUTO_TEST_CASE( testRandomWalkMonteCarloRunStructContruction )
@@ -358,6 +368,38 @@ BOOST_AUTO_TEST_CASE( testRandomWalkMonteCarloRunGreaterThanOrEqualComparison )
 
     // Check that operator is overloaded correctly.
     BOOST_CHECK( *randomWalkMonteCarloRun2 >= *randomWalkMonteCarloRun );
+}
+
+//! Test sorting of RandomWalkMonteCarloRun.
+BOOST_AUTO_TEST_CASE( testRandomWalkMonteCarloRunSorting )
+{
+    // Add RandomWalkMonteCarloRun objects to table.
+    database::RandomWalkMonteCarloRunTable monteCarloRunTable;
+
+    // Insert random walk Monte Carlo run struct.
+    monteCarloRunTable.insert( 
+        new database::RandomWalkMonteCarloRun( *getRandomWalkMonteCarloRun( ) ) );
+
+    // Insert random walk Monte Carlo run struct with another Monte Carlo run.
+    monteCarloRun = 3;
+    monteCarloRunTable.insert(
+        new database::RandomWalkMonteCarloRun( *getRandomWalkMonteCarloRun( ) ) );
+
+    // Insert random walk Monte Carlo run struct with another Monte Carlo run.
+    monteCarloRun = 2;
+    monteCarloRunTable.insert( 
+        new database::RandomWalkMonteCarloRun( *getRandomWalkMonteCarloRun( ) ) );
+
+    // Check that the table is sorted according to Monte Carlo run.
+    database::RandomWalkMonteCarloRunTable::iterator iteratorMonteCarloRunTable 
+        = monteCarloRunTable.begin( );
+    BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->monteCarloRun, 1 );
+
+    iteratorMonteCarloRunTable++;
+    BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->monteCarloRun, 2 );
+
+    iteratorMonteCarloRunTable++;
+    BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->monteCarloRun, 3 );
 }
 
 BOOST_AUTO_TEST_SUITE_END( )

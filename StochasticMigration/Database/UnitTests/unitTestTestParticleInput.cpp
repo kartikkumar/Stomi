@@ -27,6 +27,8 @@
  *      130310    K. Kumar          File created.
  *      130328    K. Kumar          Updated unit tests to use boiler plate operator overload 
  *                                  functions in Assist.
+ *      130329    K. Kumar          Added test to check that test particle input table is sorted
+ *                                  correctly.
  *
  *    References
  *
@@ -36,9 +38,10 @@
 
 #define BOOST_TEST_MAIN
 
-#include <set>
+#include <typeinfo>
 
 #include <boost/make_shared.hpp>
+#include <boost/ptr_container/ptr_set.hpp>
 #include <boost/test/unit_test.hpp>
 
 #include <Eigen/Core>
@@ -98,7 +101,7 @@ BOOST_FIXTURE_TEST_SUITE( test_test_particle_input, TestParticleInputFixture )
 BOOST_AUTO_TEST_CASE( testTestParticleInputPointerTypedef )
 {
     BOOST_CHECK( typeid( database::TestParticleInputTable )
-                 == typeid( std::set< database::TestParticleInputPointer > ) );
+                 == typeid( boost::ptr_set< database::TestParticleInput > ) );
 }
 
 //! Test correct construction of test particle input.
@@ -254,6 +257,21 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputLessThanComparison )
     BOOST_CHECK( *testParticleInput < *testParticleInput2 );
 }
 
+//! Test comparison of TestParticleInput pointers using overloaded < operator (pointers).
+BOOST_AUTO_TEST_CASE( testTestParticleInputLessThanComparisonPointers )
+{
+    using namespace assist::basics::operator_overload_functions;
+
+    // Create TestParticleInput pointers.
+    const database::TestParticleInputPointer testParticleInput = getTestParticleInput( );
+
+    simulationNumber = 2;
+    const database::TestParticleInputPointer testParticleInput2 = getTestParticleInput( );
+
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( testParticleInput < testParticleInput2 );
+}
+
 //! Test comparison of TestParticleInput pointers using overloaded > operator.
 BOOST_AUTO_TEST_CASE( testTestParticleInputGreaterThanComparison )
 {
@@ -297,6 +315,34 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputGreaterThanOrEqualComparison )
 
     // Check that operator is overloaded correctly.
     BOOST_CHECK( *testParticleInput2 >= *testParticleInput );
+}
+
+//! Test sorting of TestParticleInputTable.
+BOOST_AUTO_TEST_CASE( testTestParticleInputTableSorting )
+{
+    // Add TestParticleInput objects to table.
+    database::TestParticleInputTable inputTable;
+
+    // Insert input struct.
+    inputTable.insert( new database::TestParticleInput( *getTestParticleInput( ) ) );
+
+    // Insert input struct with another simulation number.
+    simulationNumber = 3;
+    inputTable.insert( new database::TestParticleInput( *getTestParticleInput( ) ) );
+
+    // Insert input struct with another simulation number.
+    simulationNumber = 2;
+    inputTable.insert( new database::TestParticleInput( *getTestParticleInput( ) ) );
+
+    // Check that the table is sorted according to simulation number.
+    database::TestParticleInputTable::iterator iteratorInputTable = inputTable.begin( );
+    BOOST_CHECK_EQUAL( iteratorInputTable->simulationNumber, 1 );
+
+    iteratorInputTable++;
+    BOOST_CHECK_EQUAL( iteratorInputTable->simulationNumber, 2 );
+
+    iteratorInputTable++;
+    BOOST_CHECK_EQUAL( iteratorInputTable->simulationNumber, 3 );
 }
 
 BOOST_AUTO_TEST_SUITE_END( )
