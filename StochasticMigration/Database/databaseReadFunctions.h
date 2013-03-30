@@ -48,7 +48,7 @@
 // #include "StochasticMigration/Database/randomWalkPerturber.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
-// #include "StochasticMigration/Database/testParticleKick.h"
+#include "StochasticMigration/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {
@@ -79,44 +79,44 @@ TestParticleCasePointer getTestParticleCase(
  *          is set to "test_particle_input").
  * \return Test particle input table, as a set of TestParticleInput pointers.
  */
-// TestParticleInputTable getTestParticleInputTable(
-//         const std::string& databaseAbsolutePath, bool isCompleted = false,
-//         const std::string& testParticleInputTableName = "test_particle_input" );
+TestParticleInputTable getTestParticleInputTable(
+        const std::string& databaseAbsolutePath, bool isCompleted = false,
+        const std::string& testParticleInputTableName = "test_particle_input" );
 
-// //! Get test particle input table.
-// /*!
-//  * Returns table of input data for test particle simulations, retrieved from simulation database.
-//  * A list of specific test particle simulation numbers can be requested to be retrieved from the
-//  * SQLite database.
-//  * \param databaseAbsolutePath Absolute path to simulation database.
-//  * \param testParticleSimulationNumbers List of test particle simulation numbers to select from
-//  *          database.
-//  * \param testParticleInputTableName String name of test particle input table in database (default
-//  *          is set to "test_particle_input").
-//  * \return Test particle input table, as a vector of TestParticleInput objects.
-//  */
-// TestParticleInputTable getTestParticleInputTable(
-//         const std::string& databaseAbsolutePath, const std::string& testParticleSimulationNumbers,
-//         const std::string& testParticleInputTableName = "test_particle_input" );
+//! Get test particle input table.
+/*!
+ * Returns table of input data for test particle simulations, retrieved from simulation database.
+ * A list of specific test particle simulation numbers can be requested to be retrieved from the
+ * SQLite database.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param testParticleSimulationNumbers List of test particle simulation numbers to select from
+ *          database.
+ * \param testParticleInputTableName String name of test particle input table in database (default
+ *          is set to "test_particle_input").
+ * \return Test particle input table, as a vector of TestParticleInput objects.
+ */
+TestParticleInputTable getTestParticleInputTable(
+        const std::string& databaseAbsolutePath, const std::string& testParticleSimulationNumbers,
+        const std::string& testParticleInputTableName = "test_particle_input" );
 
-// //! Get test particle kick table.
-// !
-//  * Returns table of test particle kick data, aggregated based on specified test particle simulation
-//  * numbers.
-//  * \param databaseAbsolutePath Absolute path to simulation database.
-//  * \param randomWalkDuration Duration of random walk [s].
-//  * \param testParticleSimulationNumbersAndMassFactors Map of specified test particle simulation
-//  *          numbers to include in kick table and mass factors associated with each.
-//  * \param testParticleKickTableName String name of test particle kick table in database (default
-//  *          is set to "test_particle_kicks").
-//  * \return Table of test particle kick data, aggregated from selected test particle simulation
-//  *          numbers, as a vector of TestParticleKick objects.
- 
-// TestParticleKickTable getTestParticleKickTable(
-//         const std::string& databaseAbsolutePath, const double randomWalkDuration,
-//         const TestParticleSimulationNumbersAndMassFactors&
-//         testParticleSimulationNumbersAndMassFactors,
-//         const std::string& testParticleKickTableName = "test_particle_kicks" );
+//! Get test particle kick table.
+/*!
+ * Returns table of test particle kick data, aggregated based on specified test particle simulation
+ * numbers.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param randomWalkDuration Duration of random walk [s].
+ * \param TestParticleSimulationNumbersAndMassRatios Map of specified test particle simulation
+ *          numbers to include in kick table and mass ratios associated with each.
+ * \param testParticleKickTableName String name of test particle kick table in database (default
+ *          is set to "test_particle_kicks").
+ * \return Table of test particle kick data, aggregated from selected test particle simulation
+ *          numbers.
+ */
+TestParticleKickTable getTestParticleKickTable(
+        const std::string& databaseAbsolutePath, const double randomWalkDuration,
+        const TestParticleSimulationNumbersAndMassRatios&
+        testParticleSimulationNumbersAndMassRatios,
+        const std::string& testParticleKickTableName = "test_particle_kicks" );
 
 // //! Get table of random walk Monte Carlo runs.
 // /*!

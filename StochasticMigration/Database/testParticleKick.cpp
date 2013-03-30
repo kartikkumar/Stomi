@@ -135,7 +135,12 @@ bool operator==( const TestParticleKick& testParticleKick1,
 bool operator<( const TestParticleKick& testParticleKick1,
                 const TestParticleKick& testParticleKick2 )
 {
-    return testParticleKick1.conjunctionEpoch < testParticleKick2.conjunctionEpoch;    
+    if ( testParticleKick1.simulationNumber == testParticleKick2.simulationNumber )
+    {
+        return testParticleKick1.conjunctionEpoch < testParticleKick2.conjunctionEpoch;    
+    }
+
+    return testParticleKick1.simulationNumber < testParticleKick2.simulationNumber;
 }
 
 //! Overload << operator.

@@ -67,6 +67,12 @@ bool operator==( const RandomWalkPerturber& randomWalkPerturber1,
 bool operator<( const RandomWalkPerturber& randomWalkPerturber1,
                 const RandomWalkPerturber& randomWalkPerturber2 )
 {
+    if ( randomWalkPerturber1.monteCarloRun == randomWalkPerturber2.monteCarloRun )
+    {
+        return randomWalkPerturber1.testParticleSimulationNumber 
+            < randomWalkPerturber2.testParticleSimulationNumber;
+    }
+
     return randomWalkPerturber1.monteCarloRun < randomWalkPerturber2.monteCarloRun;
 }
 

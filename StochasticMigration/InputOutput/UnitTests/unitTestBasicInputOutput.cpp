@@ -112,7 +112,8 @@ BOOST_AUTO_TEST_CASE( testWritingTestParticleKickTableToFile )
     // Check that the file read in from the output file corresponds with the initial input data.
     unsigned int i = 0;
 
-    for ( TestParticleKickTable::iterator iteratorKickTable = testParticleKickTable.begin( );
+    for ( database::TestParticleKickTable::iterator iteratorKickTable 
+          = testParticleKickTable.begin( );
           iteratorKickTable != testParticleKickTable.end( ); iteratorKickTable++ )
     {
         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionEpoch,

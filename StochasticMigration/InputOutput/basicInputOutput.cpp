@@ -80,8 +80,8 @@ void writeTestParticleKickTableToFile(
 
     // Loop over kick table.
     for ( database::TestParticleKickTable::iterator iteratorKickTable 
-         = testParticleKickTable.begin( ); 
-         iteratorKickTable != testParticleKickTable.end( ); iteratorKickTable++ )
+          = testParticleKickTable.begin( );
+          iteratorKickTable != testParticleKickTable.end( ); iteratorKickTable++ )
     {        
        // Print map key and value to output file.
        outputFile << iteratorKickTable->conjunctionEpoch << delimiter
