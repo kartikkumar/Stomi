@@ -41,7 +41,7 @@
  *
  */
 
-// #include <algorithm>
+#include <algorithm>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -55,8 +55,6 @@
 
 #include <sqlite3.h>
 
-// #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
-
 #include <Assist/Database/sqlite3DatabaseConnector.h>
 
 #include "StochasticMigration/Database/databaseHelpFunctions.h"
@@ -67,8 +65,6 @@ namespace stochastic_migration
 namespace database
 {
 
-// //! Using statements.
-// using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 using namespace assist::database;
 
 //! Get test particle case data.
@@ -451,53 +447,53 @@ RandomWalkMonteCarloRunTable getRandomWalkMonteCarloRunsTable(
     return randomWalkMonteCarloRunTable;
 }
 
-// //! Get table of selected perturbers for random walk Monte Carlo run.
-// RandomWalkPerturberTable getRandomWalkPerturberTable(
-//         const std::string& databaseAbsolutePath, const unsigned int monteCarloRun,
-//         const std::string& randomWalkPerturberTableName )
-// {
-//     // Initiate database connector.
-//     Sqlite3DatabaseConnectorPointer databaseConnector
-//             = initiateDatabaseConnector( databaseAbsolutePath );
+//! Get table of selected perturbers for random walk Monte Carlo run.
+RandomWalkPerturberTable getRandomWalkPerturberTable(
+        const std::string& databaseAbsolutePath, const unsigned int monteCarloRun,
+        const std::string& randomWalkPerturberTableName )
+{
+    // Initiate database connector.
+    Sqlite3DatabaseConnectorPointer databaseConnector
+            = initiateDatabaseConnector( databaseAbsolutePath );
 
-//     // Set stream with query.
-//     std::ostringstream randomWalkPerturberTableQuery;
-//     randomWalkPerturberTableQuery << "SELECT * FROM " << randomWalkPerturberTableName
-//                                   << " WHERE \"run\" = " << monteCarloRun << ";";
+    // Set stream with query.
+    std::ostringstream randomWalkPerturberTableQuery;
+    randomWalkPerturberTableQuery << "SELECT * FROM " << randomWalkPerturberTableName
+                                  << " WHERE \"run\" = " << monteCarloRun << ";";
 
-//     // Prepare database query.
-//     databaseConnector->prepare_v2( randomWalkPerturberTableQuery.str( ) );
+    // Prepare database query.
+    databaseConnector->prepare_v2( randomWalkPerturberTableQuery.str( ) );
 
-//     // Declare random walk perturber table.
-//     RandomWalkPerturberTable randomWalkPerturberTable;
+    // Declare random walk perturber table.
+    RandomWalkPerturberTable randomWalkPerturberTable;
 
-//     // Declare database handler status.
-//     unsigned int databaseStatus = 0;
+    // Declare database handler status.
+    unsigned int databaseStatus = 0;
 
-//     // Loop through the table retrieved from the database, step-by-step.
-//     while ( ( databaseStatus = databaseConnector->step( ) ) == SQLITE_ROW )
-//     {
-//         // Store fetched row in random walk perturber struct.
-//         randomWalkPerturberTable.push_back(
-//                     RandomWalkPerturber( databaseConnector->fetchInteger( 1 ),
-//                                          databaseConnector->fetchInteger( 2 ),
-//                                          databaseConnector->fetchDouble( 3 ) ) );
-//     }
+    // Loop through the table retrieved from the database, step-by-step.
+    while ( ( databaseStatus = databaseConnector->step( ) ) == SQLITE_ROW )
+    {
+        // Store fetched row in random walk perturber struct.
+        randomWalkPerturberTable.insert(
+            new RandomWalkPerturber( databaseConnector->fetchInteger( 1 ),
+                                     databaseConnector->fetchInteger( 2 ),
+                                     databaseConnector->fetchDouble( 3 ) ) );
+    }
 
-//     // Check if the end of the table has been reached, and whether any perturbers have been found.
-//     if ( databaseStatus != SQLITE_DONE
-//          || ( databaseStatus == SQLITE_DONE && randomWalkPerturberTable.size( ) == 0 ) )
-//     {
-//         // Throw run-time error.
-//         throwDatabaseError( databaseConnector, databaseStatus );
-//     }
+    // Check if the end of the table has been reached, and whether any perturbers have been found.
+    if ( databaseStatus != SQLITE_DONE
+         || ( databaseStatus == SQLITE_DONE && randomWalkPerturberTable.size( ) == 0 ) )
+    {
+        // Throw run-time error.
+        throwDatabaseError( databaseConnector, databaseStatus );
+    }
 
-//     // Terminate database connector cleanly.
-//     terminateDatabaseConnector( databaseConnector );
+    // Terminate database connector cleanly.
+    terminateDatabaseConnector( databaseConnector );
 
-//     // Return random walk perturber table for specified Monte Carlo run.
-//     return randomWalkPerturberTable;
-// }
+    // Return random walk perturber table for specified Monte Carlo run.
+    return randomWalkPerturberTable;
+}
 
 } // namespace database
 } // namespace stochastic_migration

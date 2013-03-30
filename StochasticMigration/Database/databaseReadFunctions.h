@@ -43,9 +43,8 @@
 
 #include <string>
 
-// #include "StochasticMigration/Database/databaseHelpFunctions.h"
 #include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
-// #include "StochasticMigration/Database/randomWalkPerturber.h"
+#include "StochasticMigration/Database/randomWalkPerturber.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
 #include "StochasticMigration/Database/testParticleKick.h"
@@ -132,21 +131,21 @@ RandomWalkMonteCarloRunTable getRandomWalkMonteCarloRunsTable(
         const std::string& databaseAbsolutePath, const std::vector< unsigned int >& monteCarloRuns,
         const std::string& randomWalkMonteCarloRunTableName = "random_walk_monte_carlo_runs" );
 
-// //! Get table of selected perturbers for random walk Monte Carlo run.
-// /*!
-//  * Returns table of selected perturbers retrieved from SQLite simulation database, aggregated from
-//  * the test particle simulation numbers and associated mass factors for the requested Monte Carlo
-//  * run.
-//  * \param databaseAbsolutePath Absolute path to simulation database.
-//  * \param monteCarloRun Monte Carlo run to retrieve list of selected perturbers for.
-//  * \param randomWalkPerturberTableName String name of random walk perturber table in database
-//  *          (default is set to "random_walk_perturber_selection").
-//  * \return Random walk perturber selection table, stored in a vector of RandomWalkPerturber
-//  *          objects.
-//  */
-// RandomWalkPerturberTable getRandomWalkPerturberTable(
-//         const std::string& databaseAbsolutePath, const unsigned int monteCarloRun,
-//         const std::string& randomWalkPerturberTableName = "random_walk_perturbers" );
+//! Get table of selected perturbers for random walk Monte Carlo run.
+/*!
+ * Returns table of selected perturbers retrieved from SQLite simulation database, aggregated from
+ * the test particle simulation numbers and associated mass factors for the requested Monte Carlo
+ * run.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param monteCarloRun Monte Carlo run to retrieve list of selected perturbers for.
+ * \param randomWalkPerturberTableName String name of random walk perturber table in database
+ *          (default is set to "random_walk_perturber_selection").
+ * \return Random walk perturber selection table, stored in a set of RandomWalkPerturber
+ *          objects.
+ */
+RandomWalkPerturberTable getRandomWalkPerturberTable(
+        const std::string& databaseAbsolutePath, const unsigned int monteCarloRun,
+        const std::string& randomWalkPerturberTableName = "random_walk_perturbers" );
 
 } // namespace database
 } // namespace stochastic_migration
