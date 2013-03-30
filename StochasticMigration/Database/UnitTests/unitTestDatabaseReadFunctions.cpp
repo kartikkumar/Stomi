@@ -47,6 +47,7 @@
 #include <vector>
 
 #include <boost/assign/list_of.hpp>
+#include <boost/assign/ptr_list_inserter.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/unit_test.hpp>
 
@@ -59,11 +60,10 @@
 #include "StochasticMigration/Basics/basics.h"
 
 #include "StochasticMigration/Database/databaseReadFunctions.h"
-// #include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
+#include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
 #include "StochasticMigration/Database/testParticleCase.h"
-// #include "StochasticMigration/Database/testParticleInput.h"
-// #include "StochasticMigration/Database/testParticleKick.h"
-
+#include "StochasticMigration/Database/testParticleInput.h"
+#include "StochasticMigration/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {
@@ -395,100 +395,110 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionSpecificSimulations )
     }
 }
 
-// //! Test expected run-time error thrown by function to get selected test particle kick data from
-// //! SQLite3 database.
-// BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionNonExistentSimulation )
-// {
-//     using boost::assign::map_list_of;
+//! Test expected run-time error thrown by function to get selected test particle kick data from
+//! SQLite3 database.
+BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionNonExistentSimulation )
+{
+    using boost::assign::map_list_of;
 
-//     using namespace basics;
-//     using namespace database;
+    using namespace basics;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleKickTable.db";
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseTestParticleKickTable.db";
 
-//     // Set random walk simulation duration [s].
-//     const double randomWalkSimulationDuration = 1577880000.0;
+    // Set random walk simulation duration [s].
+    const double randomWalkSimulationDuration = 1577880000.0;
 
-//     // Set vector of selected test particle simulation numbers.
-//     const TestParticleSimulationNumbersAndMassRatios testParticleSimulationNumbersAndMassRatios
-//             = map_list_of( 1, 0.5 )( 999999, 0.1 );
+    // Set vector of selected test particle simulation numbers.
+    const TestParticleSimulationNumbersAndMassRatios testParticleSimulationNumbersAndMassRatios
+            = map_list_of( 1, 0.5 )( 999999, 0.1 );
 
-//     // Try to retrieve table of test particle kick data, and catch expected error.
-//     bool isRunTimeErrorThrown = false;
+    // Try to retrieve table of test particle kick data, and catch expected error.
+    bool isRunTimeErrorThrown = false;
 
-//     try
-//     {
-//         // Retrieve kick data for test particle simulations.
-//         const TestParticleKickTable testParticleKickTable = getTestParticleKickTable(
-//                     absolutePathToTestDatabase, randomWalkSimulationDuration,
-//                     testParticleSimulationNumbersAndMassRatios );
-//     }
+    try
+    {
+        // Retrieve kick data for test particle simulations.
+        const TestParticleKickTable testParticleKickTable = getTestParticleKickTable(
+                    absolutePathToTestDatabase, randomWalkSimulationDuration,
+                    testParticleSimulationNumbersAndMassRatios );
+    }
 
-//     catch( std::runtime_error& )
-//     {
-//         isRunTimeErrorThrown = true;
-//     }
+    catch( std::runtime_error& )
+    {
+        isRunTimeErrorThrown = true;
+    }
 
-//     // Check that expected run-time error was thrown due to request for non-existent test particle
-//     // simulation number.
-//     BOOST_CHECK( isRunTimeErrorThrown );
-// }
+    // Check that expected run-time error was thrown due to request for non-existent test particle
+    // simulation number.
+    BOOST_CHECK( isRunTimeErrorThrown );
+}
 
-// //! Test implementation of function to get selected random walk Monte Carlo run data from SQLite3
-// //! database.
-// BOOST_AUTO_TEST_CASE( testGetRandomWalkMonteCarloRunTableFunctionSpecificRuns )
-// {
-//     using boost::assign::list_of;
+//! Test implementation of function to get selected random walk Monte Carlo run data from SQLite3
+//! database.
+BOOST_AUTO_TEST_CASE( testGetRandomWalkMonteCarloRunTableFunctionSpecificRuns )
+{
+    using boost::assign::list_of;
+    using boost::assign::ptr_insert;
 
-//     using namespace basics;
-//     using namespace database;
+    using namespace basics;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.db";
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.db";
 
-//     // Set vector of selected Monte Carlo runs.
-//     const std::vector< unsigned int > monteCarloRuns = list_of( 1 )( 5 )( 1001 )( 1005 );
+    // Set vector of selected Monte Carlo runs.
+    const std::vector< unsigned int > monteCarloRuns = list_of( 1 )( 5 )( 1001 )( 1005 );
 
-//     // Retrieve table of random walk Monte Carlo runs.
-//     const RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable
-//             = getRandomWalkMonteCarloRunsTable( absolutePathToTestDatabase, monteCarloRuns );
+    // Retrieve table of random walk Monte Carlo runs.
+    const RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable
+            = getRandomWalkMonteCarloRunsTable( absolutePathToTestDatabase, monteCarloRuns );
 
-//     // Set expected random walk Monte Carlo run table.
-//     const RandomWalkMonteCarloRunTable expectedRandomWalkMonteCarloRunTable
-//             = list_of(
-//                 RandomWalkMonteCarloRun( 1, 100, "EQUAL", 0.001, 0.0, 94672800.0, 7776000.0, 4 ) )(
-//                 RandomWalkMonteCarloRun( 5, 100, "EQUAL", 0.001, 0.0, 94672800.0, 7776000.0, 4 ) )(
-//                 RandomWalkMonteCarloRun( 1001, 1000, "EQUAL", 0.0001,
-//                                          0.0, 94672800.0, 7776000.0, 4 ) )(
-//                 RandomWalkMonteCarloRun( 1005, 1000, "EQUAL", 0.0001,
-//                                          0.0, 94672800.0, 7776000.0, 4 ) );
+    // Set expected random walk Monte Carlo run table.
+    RandomWalkMonteCarloRunTable expectedRandomWalkMonteCarloRunTable;
+    expectedRandomWalkMonteCarloRunTable.insert( 
+        new RandomWalkMonteCarloRun( 1, 100, "EQUAL", 0.001, 0.0, 94672800.0, 7776000.0, 4 ) );
+    expectedRandomWalkMonteCarloRunTable.insert( 
+        new RandomWalkMonteCarloRun( 5, 100, "EQUAL", 0.001, 0.0, 94672800.0, 7776000.0, 4 ) );
+    expectedRandomWalkMonteCarloRunTable.insert( 
+        new RandomWalkMonteCarloRun( 1001, 1000, "EQUAL", 0.0001, 0.0, 
+                                     94672800.0, 7776000.0, 4 ) );
+    expectedRandomWalkMonteCarloRunTable.insert( 
+        new RandomWalkMonteCarloRun( 1005, 1000, "EQUAL", 0.0001, 0.0, 
+                                     94672800.0, 7776000.0, 4 ) );
 
-//     // Check that the random walk Monte Carlo run table retrieved matches the test data.
-//     for ( unsigned int i = 0; i < expectedRandomWalkMonteCarloRunTable.size( ); i++ )
-//     {
-//         BOOST_CHECK_EQUAL( randomWalkMonteCarloRunTable.at( i ).monteCarloRun,
-//                            expectedRandomWalkMonteCarloRunTable.at( i ).monteCarloRun );
-//         BOOST_CHECK_EQUAL( randomWalkMonteCarloRunTable.at( i ).perturberPopulation,
-//                            expectedRandomWalkMonteCarloRunTable.at( i ).perturberPopulation );
-//         BOOST_CHECK_EQUAL( randomWalkMonteCarloRunTable.at( i ).massDistributionType,
-//                            expectedRandomWalkMonteCarloRunTable.at( i ).massDistributionType );
-//         BOOST_CHECK_EQUAL( randomWalkMonteCarloRunTable.at( i ).massDistributionParameter1,
-//                            expectedRandomWalkMonteCarloRunTable.at(
-//                                i ).massDistributionParameter1 );
-//         BOOST_CHECK_EQUAL( randomWalkMonteCarloRunTable.at( i ).massDistributionParameter2,
-//                            expectedRandomWalkMonteCarloRunTable.at(
-//                                i ).massDistributionParameter2 );
-//         BOOST_CHECK_EQUAL( randomWalkMonteCarloRunTable.at( i ).observationPeriod,
-//                            expectedRandomWalkMonteCarloRunTable.at( i ).observationPeriod );
-//         BOOST_CHECK_EQUAL( randomWalkMonteCarloRunTable.at( i ).epochWindowSize,
-//                            expectedRandomWalkMonteCarloRunTable.at( i ).epochWindowSize );
-//         BOOST_CHECK_EQUAL( randomWalkMonteCarloRunTable.at( i ).numberOfEpochWindows,
-//                            expectedRandomWalkMonteCarloRunTable.at( i ).numberOfEpochWindows );
-//     }
-// }
+    // Check that the random walk Monte Carlo run table retrieved matches the test data.
+    RandomWalkMonteCarloRunTable::iterator iteratorExpectedMonteCarloRunTable 
+        = expectedRandomWalkMonteCarloRunTable.begin( );
+
+    for ( RandomWalkMonteCarloRunTable::iterator iteratorMonteCarloRunTable 
+          = randomWalkMonteCarloRunTable.begin( );
+          iteratorMonteCarloRunTable != randomWalkMonteCarloRunTable.end( );
+          iteratorMonteCarloRunTable++ )
+    {
+        BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->monteCarloRun,
+                           iteratorExpectedMonteCarloRunTable->monteCarloRun );
+        BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->perturberPopulation,
+                           iteratorExpectedMonteCarloRunTable->perturberPopulation );
+        BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionType,
+                           iteratorExpectedMonteCarloRunTable->massDistributionType );
+        BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionParameter1,
+                           iteratorExpectedMonteCarloRunTable->massDistributionParameter1 );
+        BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionParameter2,
+                           iteratorExpectedMonteCarloRunTable->massDistributionParameter2 );
+        BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->observationPeriod,
+                           iteratorExpectedMonteCarloRunTable->observationPeriod );
+        BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->epochWindowSize,
+                           iteratorExpectedMonteCarloRunTable->epochWindowSize );
+        BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->numberOfEpochWindows,
+                           iteratorExpectedMonteCarloRunTable->numberOfEpochWindows );
+
+        iteratorExpectedMonteCarloRunTable++;
+    }
+}
 
 // //! Test expected run-time error thrown by function to get selected random walk Monte Carlo data
 // //! from SQLite3 database.

@@ -44,7 +44,7 @@
 #include <string>
 
 // #include "StochasticMigration/Database/databaseHelpFunctions.h"
-// #include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
+#include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
 // #include "StochasticMigration/Database/randomWalkPerturber.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
@@ -118,19 +118,19 @@ TestParticleKickTable getTestParticleKickTable(
         testParticleSimulationNumbersAndMassRatios,
         const std::string& testParticleKickTableName = "test_particle_kicks" );
 
-// //! Get table of random walk Monte Carlo runs.
-// /*!
-//  * Returns random_walk_runs table retrieved from SQLite simulation database, aggregated from the
-//  * Monte Carlo runs requested.
-//  * \param databaseAbsolutePath Absolute path to simulation database.
-//  * \param monteCarloRun Monte Carlo runs to retrieve data for.
-//  * \param randomWalkMonteCarloRunTableName String name of random walk Monte Carlo run table in
-//  *          database (default is set to "random_walk_monte_carlo_runs").
-//  * \return Monte Carlo run table, stored in a vector of RandomWalkMonteCarloRun objects.
-//  */
-// RandomWalkMonteCarloRunTable getRandomWalkMonteCarloRunsTable(
-//         const std::string& databaseAbsolutePath, const std::vector< unsigned int >& monteCarloRuns,
-//         const std::string& randomWalkMonteCarloRunTableName = "random_walk_monte_carlo_runs" );
+//! Get table of random walk Monte Carlo runs.
+/*!
+ * Returns random_walk_runs table retrieved from SQLite simulation database, aggregated from the
+ * Monte Carlo runs requested.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param monteCarloRun Monte Carlo runs to retrieve data for.
+ * \param randomWalkMonteCarloRunTableName String name of random walk Monte Carlo run table in
+ *          database (default is set to "random_walk_monte_carlo_runs").
+ * \return Monte Carlo run table, stored in a set of RandomWalkMonteCarloRun objects.
+ */
+RandomWalkMonteCarloRunTable getRandomWalkMonteCarloRunsTable(
+        const std::string& databaseAbsolutePath, const std::vector< unsigned int >& monteCarloRuns,
+        const std::string& randomWalkMonteCarloRunTableName = "random_walk_monte_carlo_runs" );
 
 // //! Get table of selected perturbers for random walk Monte Carlo run.
 // /*!

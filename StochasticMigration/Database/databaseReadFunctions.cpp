@@ -333,6 +333,7 @@ TestParticleKickTable getTestParticleKickTable(
     // Loop through the table retrieved from the database, step-by-step.
     while ( ( databaseStatus = databaseConnector->step( ) ) == SQLITE_ROW )
     {
+        // Store simulation number.
         int simulationNumber = databaseConnector->fetchInteger( 1 );
 
         // Store fetched row in test particle kick struct.
@@ -375,77 +376,80 @@ TestParticleKickTable getTestParticleKickTable(
     return testParticleKickTable;
 }
 
-// //! Get table of random walk Monte Carlo runs.
-// RandomWalkMonteCarloRunTable getRandomWalkMonteCarloRunsTable(
-//         const std::string& databaseAbsolutePath, const std::vector< unsigned int >& monteCarloRuns,
-//         const std::string& randomWalkMonteCarloRunTableName )
-// {
-//     // Initiate database connector.
-//     Sqlite3DatabaseConnectorPointer databaseConnector
-//             = initiateDatabaseConnector( databaseAbsolutePath );
+//! Get table of random walk Monte Carlo runs.
+RandomWalkMonteCarloRunTable getRandomWalkMonteCarloRunsTable(
+        const std::string& databaseAbsolutePath, const std::vector< unsigned int >& monteCarloRuns,
+        const std::string& randomWalkMonteCarloRunTableName )
+{
+    // Initiate database connector.
+    Sqlite3DatabaseConnectorPointer databaseConnector
+            = initiateDatabaseConnector( databaseAbsolutePath );
 
-//     // Set stream with query.
-//     std::ostringstream randomWalkMonteCarloRunQuery;
-//     randomWalkMonteCarloRunQuery << "SELECT * FROM " << randomWalkMonteCarloRunTableName
-//                                  << " WHERE \"run\" in (" << monteCarloRuns.at( 0 );
+    // Set stream with query.
+    std::ostringstream randomWalkMonteCarloRunQuery;
+    randomWalkMonteCarloRunQuery << "SELECT * FROM " << randomWalkMonteCarloRunTableName
+                                 << " WHERE \"run\" in (" << monteCarloRuns.at( 0 );
 
-//     for ( unsigned int i = 1; i < monteCarloRuns.size( ); i++ )
-//     {
-//         randomWalkMonteCarloRunQuery << ", " << monteCarloRuns.at( i );
-//     }
+    for ( unsigned int i = 1; i < monteCarloRuns.size( ); i++ )
+    {
+        randomWalkMonteCarloRunQuery << ", " << monteCarloRuns.at( i );
+    }
 
-//     randomWalkMonteCarloRunQuery << ");";
+    randomWalkMonteCarloRunQuery << ");";
 
-//     // Copy vector of Monte Carlo runs.
-//     std::vector< unsigned int > monteCarloRunsCopy = monteCarloRuns;
+    // Copy vector of Monte Carlo runs.
+    std::vector< unsigned int > monteCarloRunsCopy = monteCarloRuns;
 
-//     // Prepare database query.
-//     databaseConnector->prepare_v2( randomWalkMonteCarloRunQuery.str( ) );
+    // Prepare database query.
+    databaseConnector->prepare_v2( randomWalkMonteCarloRunQuery.str( ) );
 
-//     // Declare random walk Monte Carlo run table.
-//     RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable;
+    // Declare random walk Monte Carlo run table.
+    RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable;
 
-//     // Declare database handler status.
-//     unsigned int databaseStatus = 0;
+    // Declare database handler status.
+    unsigned int databaseStatus = 0;
 
-//     // Loop through the table retrieved from the database, step-by-step.
-//     while ( ( databaseStatus = databaseConnector->step( ) ) == SQLITE_ROW )
-//     {
-//         // Store fetched row in random walk Monte Carlo run struct.
-//         randomWalkMonteCarloRunTable.push_back(
-//                     RandomWalkMonteCarloRun(
-//                         databaseConnector->fetchInteger( 0 ), databaseConnector->fetchInteger( 1 ),
-//                         databaseConnector->fetchString( 2 ),  databaseConnector->fetchDouble( 3 ),
-//                         databaseConnector->fetchDouble( 4 ), databaseConnector->fetchDouble( 5 ),
-//                         databaseConnector->fetchDouble( 6 ),
-//                         databaseConnector->fetchInteger( 7 ) ) );
+    // Loop through the table retrieved from the database, step-by-step.
+    while ( ( databaseStatus = databaseConnector->step( ) ) == SQLITE_ROW )
+    {
+        // Store Monte Carlo run.
+        int monteCarloRun = databaseConnector->fetchInteger( 0 );
 
-//         // Delete the Monte Carlo run number if found in the STL vector.
-//         std::vector< unsigned int >::iterator iteratorMonteCarloRunNumber
-//                 = std::find( monteCarloRunsCopy.begin( ), monteCarloRunsCopy.end( ),
-//                              randomWalkMonteCarloRunTable.back( ).monteCarloRun );
+        // Store fetched row in random walk Monte Carlo run struct.
+        randomWalkMonteCarloRunTable.insert(
+            new RandomWalkMonteCarloRun(
+                monteCarloRun, databaseConnector->fetchInteger( 1 ),
+                databaseConnector->fetchString( 2 ),  databaseConnector->fetchDouble( 3 ),
+                databaseConnector->fetchDouble( 4 ), databaseConnector->fetchDouble( 5 ),
+                databaseConnector->fetchDouble( 6 ),
+                databaseConnector->fetchInteger( 7 ) ) );
 
-//         if ( iteratorMonteCarloRunNumber != monteCarloRunsCopy.end( ) )
-//         {
-//             monteCarloRunsCopy.erase( iteratorMonteCarloRunNumber );
-//         }
-//     }
+        // Delete the Monte Carlo run number if found in the STL vector.
+        std::vector< unsigned int >::iterator iteratorMonteCarloRunNumber
+                = std::find( monteCarloRunsCopy.begin( ), monteCarloRunsCopy.end( ),
+                             monteCarloRun );
 
-//     // Check if the end of the table has been reached, and whether all Monte Carlo runs have been
-//     // found.
-//     if ( databaseStatus != SQLITE_DONE
-//          || ( databaseStatus == SQLITE_DONE && monteCarloRunsCopy.size( ) > 0 ) )
-//     {
-//         // Throw run-time error.
-//         throwDatabaseError( databaseConnector, databaseStatus );
-//     }
+        if ( iteratorMonteCarloRunNumber != monteCarloRunsCopy.end( ) )
+        {
+            monteCarloRunsCopy.erase( iteratorMonteCarloRunNumber );
+        }
+    }
 
-//     // Terminate database connector cleanly.
-//     terminateDatabaseConnector( databaseConnector );
+    // Check if the end of the table has been reached, and whether all Monte Carlo runs have been
+    // found.
+    if ( databaseStatus != SQLITE_DONE
+         || ( databaseStatus == SQLITE_DONE && monteCarloRunsCopy.size( ) > 0 ) )
+    {
+        // Throw run-time error.
+        throwDatabaseError( databaseConnector, databaseStatus );
+    }
 
-//     // Return random walk Monte Carlo run table.
-//     return randomWalkMonteCarloRunTable;
-// }
+    // Terminate database connector cleanly.
+    terminateDatabaseConnector( databaseConnector );
+
+    // Return random walk Monte Carlo run table.
+    return randomWalkMonteCarloRunTable;
+}
 
 // //! Get table of selected perturbers for random walk Monte Carlo run.
 // RandomWalkPerturberTable getRandomWalkPerturberTable(
