@@ -250,6 +250,17 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem \"${SQLITE3_INCLUDE_DIR}\"")
 endif()
 
+# Find SQLiteCpp library on local system.
+find_package(SQLiteCpp 0.050 REQUIRED)
+
+# Include SQLiteCpp directories.
+# Set CMake flag to suppress SQLiteCpp warnings (platform-dependent solution).
+if(NOT APPLE)
+  include_directories(SYSTEM AFTER "${SQLITECPP_INCLUDE_DIR}")
+else( )
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem \"${SQLITECPP_INCLUDE_DIR}\"")
+endif( )
+
 # If documentation should be built, find Doxygen package and setup config file.
 if(BUILD_DOCUMENTATION)
   find_package(Doxygen)
@@ -260,7 +271,8 @@ if(BUILD_DOCUMENTATION)
   endif()
 
   # Configure the Template Doxyfile for our specific project.
-  configure_file(${CODEROOT}/Doxyfile.in ${PROJECT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)
+  configure_file(${CODEROOT}/Doxyfile.in 
+                 ${PROJECT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)
 
   # Add a custom target to run Doxygen when ever the project is built.
   # IF you do NOT want the documentation to be generated EVERY time you build the project

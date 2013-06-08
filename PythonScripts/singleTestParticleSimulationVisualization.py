@@ -36,7 +36,6 @@
 import numpy
 import sqlite3
 import matplotlib 
-matplotlib.use( 'WXAgg' )   # generate pdf output 
 import matplotlib.pyplot as pyplot
 import time
 import math
@@ -48,17 +47,20 @@ startTime = time.time( )
 Input deck
 '''
 
-# Set absolute path to SQLite database with simulation data.
-databasePath = "/Users/kartikkumar/Documents/University/PhD/Simulations/Tudat/Workspace/tudatApplications/mabSimulations/PlanetaryRings/MabSimulations/data/MabSimulationFinalResults/testParticleData/case1/case1-hipparchos.db.testParticle"
-
-# Set absolute path to directory with data files.
-dataPath = "/Users/kartikkumar/Documents/University/PhD/Simulations/Tudat/Workspace/tudatApplications/mabSimulations/PlanetaryRings/MabSimulations/data/MabSimulationFinalResults/testParticleData/case1/individualTestParticleSimulations/5699"
-
-# Set absolute path to output directory for plots.
-outputPath = "/Users/kartikkumar/Documents/University/PhD/Simulations/Tudat/Workspace/tudatApplications/mabSimulations/PlanetaryRings/MabSimulations/data/MabSimulationFinalResults/testParticleData/case1/individualTestParticleSimulations/5699/plots"
+# Set root path.
+rootPath = "/Users/kartikkumar/Desktop/data/case1/"
 
 # Set simulation number.
-simulationNumber = 5699
+simulationNumber = 3664
+
+# Set absolute path to SQLite database with simulation data.
+databasePath = rootPath + "/case1-hipparchos.db.testParticle"
+
+# Set absolute path to directory with data files.
+dataPath = rootPath + "/individualTestParticleSimulations/" + str( simulationNumber )
+
+# Set absolute path to output directory for plots.
+outputPath = dataPath + "/plots"
 
 # Show figures?
 isShowFigures = 0

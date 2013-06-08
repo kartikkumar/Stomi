@@ -104,7 +104,7 @@ TestParticleInputTable getTestParticleInputTable(
  * numbers.
  * \param databaseAbsolutePath Absolute path to simulation database.
  * \param randomWalkDuration Duration of random walk [s].
- * \param TestParticleSimulationNumbersAndMassRatios Map of specified test particle simulation
+ * \param testParticleSimulationNumbersAndMassRatios Map of specified test particle simulation
  *          numbers to include in kick table and mass ratios associated with each.
  * \param testParticleKickTableName String name of test particle kick table in database (default
  *          is set to "test_particle_kicks").
@@ -122,7 +122,7 @@ TestParticleKickTable getTestParticleKickTable(
  * Returns random_walk_runs table retrieved from SQLite simulation database, aggregated from the
  * Monte Carlo runs requested.
  * \param databaseAbsolutePath Absolute path to simulation database.
- * \param monteCarloRun Monte Carlo runs to retrieve data for.
+ * \param monteCarloRuns Monte Carlo runs to retrieve data for.
  * \param randomWalkMonteCarloRunTableName String name of random walk Monte Carlo run table in
  *          database (default is set to "random_walk_monte_carlo_runs").
  * \return Monte Carlo run table, stored in a set of RandomWalkMonteCarloRun objects.

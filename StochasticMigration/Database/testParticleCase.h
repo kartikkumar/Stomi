@@ -49,6 +49,8 @@
 
 #include <Eigen/Core>
 
+#include <SQLiteC++.h> 
+
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
 namespace stochastic_migration

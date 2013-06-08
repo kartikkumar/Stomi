@@ -7,7 +7,8 @@
           conditions and the following disclaimer.
         - Redistributions in binary form must reproduce the above copyright notice, this list of
           conditions and the following disclaimer in the documentation and/or other materials
-          provided with the distribution.
+          provided with the distribution.        "cmd": ["workon", "main"],
+
         - Neither the name of the Delft University of Technology nor the names of its contributors
           may be used to endorse or promote products derived from this software without specific
           prior written permission.
@@ -26,16 +27,10 @@
         YYMMDD    Author            Comment
         130307    K. Kumar          File created.
   
-      References
-  
-      Notes
-  
 '''
 
 # Import necessary packages.
 import math
-import numpy
-import matplotlib
 
 ###################################################################################################
 # Definition of constants
@@ -49,5 +44,3 @@ radiansInDegrees = 180.0 / math.pi
 
 # Set seconds-in-Julian-days
 secondsInJulianDays = 1.0 / ( 24.0 * 3600.0 )
-
-print secondsInJulianDays

@@ -1,48 +1,19 @@
-'''   Copyright (c) 2010-2013, Delft University of Technology
-      All rights reserved.
- 
-      Redistribution and use in source and binary forms, with or without modification, are
-      permitted provided that the following conditions are met:
-        - Redistributions of source code must retain the above copyright notice, this list of
-          conditions and the following disclaimer.
-        - Redistributions in binary form must reproduce the above copyright notice, this list of
-          conditions and the following disclaimer in the documentation and/or other materials
-          provided with the distribution.
-        - Neither the name of the Delft University of Technology nor the names of its contributors
-          may be used to endorse or promote products derived from this software without specific
-          prior written permission.
-  
-      THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
-      OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-      MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-      COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-      EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
-      GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
-      AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-      NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-      OF THE POSSIBILITY OF SUCH DAMAGE.
-  
-      Changelog
-        YYMMDD    Author            Comment
-        120815    K. Kumar          File created based on MATLAB code.
-  
-      References
-  
-      Notes
-  
+'''   
+Copyright (c) 2010-2013, Delft University of Technology      
+Distributed under the BSD 3-Clause License 
+(see COPYING or visit http://opensource.org/licenses/BSD-3-Clause )
 '''
 
-# Import necessary packages.
+# Import necessary external modules.
 import math
 import matplotlib
-# from enable.enable_traits import LineStyle
-# Set backend to use to generate PDF output.
-# matplotlib.use( 'WXAgg' )
 import matplotlib.pyplot as pyplot
 import numpy
+import pylab
 import sqlite3
 import time
 
+# Import user modules.
 import constants
 
 # Start timer.
@@ -52,11 +23,14 @@ startTime = time.time( )
 # Input deck
 ###################################################################################################
 
+# Set root path.
+rootPath = "/Users/kartikkumar/Desktop/data/case3/"
+
 # Set absolute path to SQLite database with simulation data.
-databasePath = "/Users/kartikkumar/Desktop/sirius_results/case1/case1-sirius.db.testParticle"
+databasePath = rootPath + "/case3-hipparchos.db.testParticle"
 
 # Set absolute path to output directory.
-outputPath = "/Users/kartikkumar/Desktop/"
+outputPath = rootPath + "/plots"
 
 # Set cut-off for big kicks included in plots.
 bigKicksCutOff = 5000
@@ -66,6 +40,9 @@ isShowFigures = 0
 
 # Set figure dpi.
 figureDPI = 600
+
+# Show input histograms?
+isShowInputHistograms = 0
 
 ################################################################################################### 
 # Database operations
@@ -80,10 +57,10 @@ with database:
     cursor.execute( "SELECT * FROM cases" )
     rawCaseData = cursor.fetchall( )
     caseDataColumnNameList = [ column_name[ 0 ] for column_name in cursor.description ]
-    cursor.execute("SELECT * FROM input_data")
+    cursor.execute( "SELECT * FROM input_data" )
     inputDataColumnNameList = [ column_name[ 0 ] for column_name in cursor.description ]
     inputData = cursor.fetchall( )
-    cursor.execute("SELECT * FROM output_data")
+    cursor.execute( "SELECT * FROM output_data" )
     outputDataColumnNameList = [ column_name[ 0 ] for column_name in cursor.description ]
     outputData = cursor.fetchall( )
     
@@ -214,380 +191,404 @@ horseshoeOrbitSimulationNumbers \
 outputPathAndCasePrefix = outputPath + "/case" + str( caseData[ 'case' ] ) + "_"
 
 '''
-Plot histograms of initial conditions.
+Plot histograms of initial conditions (if isShowInputHistograms = 1).
 '''
 
-pyplot.figure( )
-pyplot.hist( ( inputData[ 'semiMajorAxis' ] - caseData[ 'mabSemiMajorAxisAtT0' ] ) \
-            * constants.meterInKilometers, facecolor='w', edgecolor='k' )
-pyplot.xlabel( "Initial semi-major axis with respect to Mab [km]" )
-pyplot.ylabel( "Frequency [-]" )
-pyplot.savefig( outputPathAndCasePrefix +  "histogramInitialSemiMajorAxes.pdf", dpi = figureDPI )
+if ( isShowInputHistograms == 1 ):
+  pyplot.figure( )
+  pyplot.hist( ( inputData[ 'semiMajorAxis' ] - caseData[ 'mabSemiMajorAxisAtT0' ] ) \
+              * constants.meterInKilometers, facecolor='w', edgecolor='k' )
+  pyplot.xlabel( "Initial semi-major axis with respect to Mab [km]" )
+  pyplot.ylabel( "Frequency [-]" )
+  pyplot.savefig( outputPathAndCasePrefix +  "histogramInitialSemiMajorAxes.pdf", dpi = figureDPI )
+  pyplot.close( )
+
+  pyplot.figure( )
+  pyplot.hist( inputData[ 'eccentricity' ], facecolor='w', edgecolor='k' )
+  pyplot.xlabel( "Initial eccentricity [-]" )
+  pyplot.ylabel( "Frequency [-]" )
+  pyplot.savefig( outputPathAndCasePrefix + "histogramInitialEccentricities.pdf", dpi = figureDPI )
+  pyplot.close( )
+
+  pyplot.figure( )
+  pyplot.hist( inputData[ 'inclination' ] * constants.radiansInDegrees, \
+               facecolor='w', edgecolor='k' )
+  pyplot.xlabel( "Initial inclination [deg]" )
+  pyplot.ylabel( "Frequency [-]" )
+  pyplot.savefig( outputPathAndCasePrefix + "histogramInitialInclinations.pdf", dpi = figureDPI )
+  pyplot.close( )
+
+  pyplot.figure( )
+  pyplot.hist( inputData[ 'argumentOfPeriapsis' ] * constants.radiansInDegrees, 
+               facecolor='w', edgecolor='k' )
+  pyplot.xlabel( "Initial argument of periapsis [deg]" )
+  pyplot.ylabel( "Frequency [-]" )
+  pyplot.savefig( outputPathAndCasePrefix + "histogramInitialArgumentOfPeriapsis.pdf", \
+                 dpi = figureDPI )
+  pyplot.close( )
+
+  pyplot.figure( )
+  pyplot.hist( inputData[ 'longitudeOfAscendingNode' ] * constants.radiansInDegrees, \
+              facecolor='w', edgecolor='k' )
+  pyplot.xlabel( "Initial longitude of ascending node [deg]" )
+  pyplot.ylabel( "Frequency [-]" )
+  pyplot.savefig( outputPathAndCasePrefix + "histogramInitialLongitudesOfAscendingNode.pdf", \
+                 dpi = figureDPI )
+  pyplot.close( )
+
+  pyplot.figure( )
+  pyplot.hist( inputData[ 'trueAnomaly' ] * constants.radiansInDegrees, 
+               facecolor='w', edgecolor='k' )
+  pyplot.xlim( xmin = -180.0, xmax = 180.0 )
+  pyplot.xlabel( "Initial true anomaly [deg]" )
+  pyplot.ylabel( "Frequency [-]" )
+  pyplot.savefig( outputPathAndCasePrefix + "histogramInitialTrueAnomalies.pdf", dpi = figureDPI )
+  pyplot.close( )
+
+'''
+Plot eccentricity kicks vs. semi-major axis kicks.
+'''
+
+# Plot eccentricity vs. semi-major axis kicks (magnitude).
+pyplot.figure( )   
+pyplot.plot( plottingData[ 'semiMajorAxisKickMagnitude' ], \
+             plottingData[ 'eccentricityKickMagnitude' ], '.k', rasterized = True )
+pyplot.xscale( 'log' )
+pyplot.yscale( 'log' )
+pyplot.xlabel( "Semi-major axis kick [km]" )
+pyplot.ylabel( "Eccentricity kick [-]" )
+pyplot.savefig( outputPathAndCasePrefix + "eccentricityVsSemiMajorAxisKicks.pdf", \
+               dpi = figureDPI )
 pyplot.close( )
-# #
-# #pyplot.figure( )
-# #pyplot.hist( inputData[ 'eccentricity' ], facecolor='w', edgecolor='k' )
-# #pyplot.xlabel( "Initial eccentricity [-]" )
-# #pyplot.ylabel( "Frequency [-]" )
-# #pyplot.savefig( outputPathAndCasePrefix + "histogramInitialEccentricities.pdf", dpi = figureDPI )
-# #pyplot.close( )
-# #
-# #pyplot.figure( )
-# #pyplot.hist( inputData[ 'inclination' ] * radiansInDegrees, facecolor='w', edgecolor='k' )
-# #pyplot.xlabel( "Initial inclination [deg]" )
-# #pyplot.ylabel( "Frequency [-]" )
-# #pyplot.savefig( outputPathAndCasePrefix + "histogramInitialInclinations.pdf", dpi = figureDPI )
-# #pyplot.close( )
-# #
-# #pyplot.figure( )
-# #pyplot.hist( inputData[ 'argumentOfPeriapsis' ] * radiansInDegrees, facecolor='w', edgecolor='k' )
-# #pyplot.xlabel( "Initial argument of periapsis [deg]" )
-# #pyplot.ylabel( "Frequency [-]" )
-# #pyplot.savefig( outputPathAndCasePrefix + "histogramInitialArgumentOfPeriapsis.pdf", \
-# #                dpi = figureDPI )
-# #pyplot.close( )
-# #
-# #pyplot.figure( )
-# #pyplot.hist( inputData[ 'longitudeOfAscendingNode' ] * radiansInDegrees, \
-# #             facecolor='w', edgecolor='k' )
-# #pyplot.xlabel( "Initial longitude of ascending node [deg]" )
-# #pyplot.ylabel( "Frequency [-]" )
-# #pyplot.savefig( outputPathAndCasePrefix + "histogramInitialLongitudesOfAscendingNode.pdf", \
-# #                dpi = figureDPI )
-# #pyplot.close( )
-# #
-# #pyplot.figure( )
-# #pyplot.hist( inputData[ 'trueAnomaly' ] * radiansInDegrees, facecolor='w', edgecolor='k' )
-# #pyplot.xlim( xmin = -180.0, xmax = 180.0 )
-# #pyplot.xlabel( "Initial true anomaly [deg]" )
-# #pyplot.ylabel( "Frequency [-]" )
-# #pyplot.savefig( outputPathAndCasePrefix + "histogramInitialTrueAnomalies.pdf", dpi = figureDPI )
-# #pyplot.close( )
-# #
-# #'''
-# #Plot eccentricity kicks vs. semi-major axis kicks.
-# #'''
-# #
-# ## Plot eccentricity vs. semi-major axis kicks (magnitude).
-# #pyplot.figure( )   
-# #pyplot.plot( plottingData[ 'semiMajorAxisKickMagnitude' ], \
-# #             plottingData[ 'eccentricityKickMagnitude' ], '.k', rasterized = True )
-# #pyplot.xscale( 'log' )
-# #pyplot.yscale( 'log' )
-# #pyplot.xlabel( "Semi-major axis kick [km]" )
-# #pyplot.ylabel( "Eccentricity kick [-]" )
-# #pyplot.savefig( outputPathAndCasePrefix + "eccentricityVsSemiMajorAxisKicks.pdf", \
-# #                dpi = figureDPI )
-# #pyplot.close( )
-# #
-# ## Plot eccentricity vs. semi-major axis kicks (big kicks plot). 
-# #pyplot.figure( ) 
-# #figureAxes = pyplot.gca( )        
-# #pyplot.plot( semiMajorAxisKickSortedData[ 'semiMajorAxisKick' ][ :bigKicksCutOff ], \
-# #             semiMajorAxisKickSortedData[ 'eccentricityKick' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( eccentricitySortedData[ 'semiMajorAxisKick' ][ :bigKicksCutOff ], \
-# #             eccentricitySortedData[ 'eccentricityKick' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( inclinationSortedData[ 'semiMajorAxisKick' ][ :bigKicksCutOff ], \
-# #             inclinationSortedData[ 'eccentricityKick' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.xlabel( "Semi-major axis kick [km]" )
-# #pyplot.ylabel( "Eccentricity kick [-]" )
-# #pyplot.savefig( outputPathAndCasePrefix + "eccentricityVsSemiMajorAxisBigKicks.pdf", \
-# #                dpi = figureDPI )    
-# #pyplot.close( )
-# #
-# ## Plot eccentricity vs. semi-major axis kicks (magnitudes) (big kicks plot). 
-# #pyplot.figure( ) 
-# #figureAxes = pyplot.gca( )        
-# #pyplot.plot( semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             semiMajorAxisKickSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( eccentricitySortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             eccentricitySortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( inclinationSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             inclinationSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #figureAxes.yaxis.major.formatter.set_powerlimits( ( 0, 0 ) ) 
-# #pyplot.xlabel( "Magnitude of semi-major axis kick [km]" )
-# #pyplot.ylabel( "Magnitude of eccentricity kick [-]" )
-# #pyplot.xlim( xmin = 0.0 )
-# #pyplot.ylim( ymin = 0.0 )
-# #pyplot.savefig( outputPathAndCasePrefix + "eccentricityVsSemiMajorAxisBigKickMagnitudes.pdf", \
-# #                dpi = figureDPI )    
-# #pyplot.close( )
-# #
-# ## Plot eccentricity vs. semi-major axis kicks (magnitudes) (big kicks zoom plot).      
-# #pyplot.figure( ) 
-# #figureAxes = pyplot.gca( )   
-# #pyplot.plot( semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             semiMajorAxisKickSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( eccentricitySortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             eccentricitySortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( inclinationSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             inclinationSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( plottingData[ 'semiMajorAxisKickMagnitude' ][ horseshoeOrbitIndices ], \
-# #             plottingData[ 'eccentricityKickMagnitude' ][ horseshoeOrbitIndices ], \
-# #             marker = '.', color = '0.5', linestyle = 'None' )
-# #figureAxes.yaxis.major.formatter.set_powerlimits( ( 0, 0 ) ) 
-# #pyplot.xlabel( "Magnitude of semi-major axis kick [km]" )
-# #pyplot.ylabel( "Magnitude of eccentricity kick [-]" )
-# #pyplot.xlim( xmin = 20.0, xmax = 60.0 )
-# #pyplot.ylim( ymin = 0.0, ymax = 3.0e-4 )    
-# #pyplot.savefig( outputPathAndCasePrefix + "eccentricityVsSemiMajorAxisKickMagnitudesZoom.pdf", \
-# #                dpi = figureDPI )
-# #pyplot.close( )
-# #
-# ## Plot eccentricity vs. semi-major axis kicks (magnitudes) (big kicks interactive plot). 
-# #labels = ['{0}'.format( simulation ) for simulation in \
-# #           semiMajorAxisKickSortedData[ 'simulation' ][ :bigKicksCutOff ] ]  
-# #pyplot.figure( )  
-# #figureAxes = pyplot.gca( )        
-# #pyplot.plot( semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             semiMajorAxisKickSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( eccentricitySortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             eccentricitySortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( inclinationSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             inclinationSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #figureAxes.yaxis.major.formatter.set_powerlimits( ( 0, 0 ) ) 
-# #for label, semiMajorAxisKick, eccentricityKick in \
-# #    zip( labels, semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ], \
-# #         semiMajorAxisKickSortedData[ 'eccentricityKickMagnitude' ] ):
-# #    pyplot.annotate( label, xy = ( semiMajorAxisKick, eccentricityKick ), xytext = ( -5, 5 ), \
-# #                     textcoords = 'offset points', ha = 'right', va = 'bottom', size = 'small' )
-# #pyplot.xlabel( "Magnitude of semi-major axis kick [km]" )
-# #pyplot.ylabel( "Magnitude of eccentricity kick [-]" )
-# #pyplot.xlim( xmin = 0.0 )
-# #pyplot.ylim( ymin = 0.0 )
-# #if ( isShowFigures == 1 ):
-# #    pyplot.show( )
-# #pyplot.close( )
-# #
-# #'''
-# #Plot semi-major axis kicks vs. initial semi-major axes 
-# #'''
-# #
-# ## Plot semi-major axis kicks (magnitude) vs. initial semi-major axes with respect to Mab.
-# #figure = pyplot.figure( )  
-# #axis1 = figure.add_subplot( 111 )
-# #axis1.plot( plottingData[ 'initialSemiMajorAxis' ], plottingData[ 'semiMajorAxisKickMagnitude' ], \
-# #            '.k', rasterized = True )
-# #axis1.plot( plottingData[ 'initialSemiMajorAxis' ][ horseshoeOrbitIndices ], \
-# #            plottingData[ 'semiMajorAxisKickMagnitude' ][ horseshoeOrbitIndices ], \
-# #            marker = '.', color = '0.5', linestyle = 'None' )
-# #axis1.set_yscale('log')
-# #axis1.set_xlabel( "Initial semi-major axis relative to Mab [km]" )
-# #axis1.set_ylabel( "Semi-major axis kick magnitude [km]" )
-# #axis1.set_xlim( -1000.0, 1000.0 )
-# #axis1.set_ylim( ymin = 0.0 )
-# #axis2 = axis1.twiny( )
-# #axis2.set_xlim( -1000.0, 1000.0 )
-# #axis2.set_xticks( hillRadius * meterInKilometers * numpy.arange( -25.0, 30.0, 5.0 ) )
-# #axis2.set_xticklabels( numpy.arange( -25.0, 30.0, 5.0 ) )
-# #axis2.set_xlabel( "Initial semi-major axis relative to Mab [Hill radii]" )
-# #pyplot.savefig( outputPathAndCasePrefix + "semiMajorAxisKickMagnitudeVsInitialSemiMajorAxes.pdf", \
-# #                dpi = figureDPI )
-# #pyplot.close( )
-# #
-# ## Plot semi-major axis kicks (magnitude) vs. initial semi-major axes with respect to Mab 
-# ## (interactive).
-# #figure = pyplot.figure( )  
-# #axis1 = figure.add_subplot( 111 )
-# #axis1.plot( plottingData[ 'initialSemiMajorAxis' ], plottingData[ 'semiMajorAxisKickMagnitude' ], \
-# #            '.k', rasterized = True )
-# #axis1.set_yscale('log')
-# #axis1.set_xlabel( "Initial semi-major axis relative to Mab [km]" )
-# #axis1.set_ylabel( "Semi-major axis kick magnitude [km]" )
-# #axis1.set_xlim( -1000.0, 1000.0 )
-# #axis1.set_ylim( ymin = 0.0 )
-# #axis2 = axis1.twiny( )
-# #axis2.set_xlim( -1000.0, 1000.0 )
-# #axis2.set_xticks( hillRadius * meterInKilometers * numpy.arange( -25.0, 30.0, 5.0 ) )
-# #axis2.set_xticklabels( numpy.arange( -25.0, 30.0, 5.0 ) )
-# #axis2.set_xlabel( "Initial semi-major axis relative to Mab [Hill radii]" )
-# #if ( isShowFigures == 1 ):
-# #    pyplot.show( )
-# #pyplot.close( )
-# #
-# ## Plot semi-major axis kicks (magnitude) vs. initial semi-major axes with respect to Mab 
-# ## (big kicks interactive plot). 
-# #labels = ['{0}'.format( simulation ) for simulation in \
-# #          semiMajorAxisKickSortedData[ 'simulation' ][ :bigKicksCutOff ] ]  
-# #pyplot.figure( )  
-# #pyplot.plot( semiMajorAxisKickSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
-# #             semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( eccentricitySortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
-# #             eccentricitySortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( inclinationSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
-# #             inclinationSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], '.k' )
-# #for label, initialSemiMajorAxis, semiMajorAxisKickMagnitude in \
-# #    zip( labels, semiMajorAxisKickSortedData[ 'initialSemiMajorAxis' ], \
-# #         semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ] ):
-# #    pyplot.annotate( label, xy = ( initialSemiMajorAxis, semiMajorAxisKickMagnitude ), \
-# #                     xytext = ( -5, 5 ), textcoords = 'offset points', ha = 'right', \
-# #                     va = 'bottom', size = 'small' )
-# #pyplot.yscale('log')
-# #pyplot.xlabel( "Initial semi-major axis with respect to Mab [km]" )
-# #pyplot.ylabel( "Magnitude of semi-major axis kick [km]" )
-# #pyplot.xlim( -1000.0, 1000.0 )
-# #pyplot.ylim( ymin = 0.0 )
-# #if ( isShowFigures == 1 ):
-# #    pyplot.show( )
-# #pyplot.close( )
-# #
-# #''' 
-# #Plot semi-major axis kicks vs. pre-encounter semi-major axes.
-# #'''
-# #
-# ## Plot semi-major axis kicks (magnitude) vs. pre-encounter semi-major axes with respect to Mab.   
-# #figure = pyplot.figure( ) 
-# #axis1 = figure.add_subplot( 111 )
-# #pyplot.plot( plottingData[ 'preEncounterSemiMajorAxis' ], \
-# #             plottingData[ 'semiMajorAxisKickMagnitude' ], '.k', rasterized = True )
-# #axis1.plot( plottingData[ 'preEncounterSemiMajorAxis' ][ horseshoeOrbitIndices ], \
-# #            plottingData[ 'semiMajorAxisKickMagnitude' ][ horseshoeOrbitIndices ], \
-# #            marker = '.', color = '0.5', linestyle = 'None' )
-# #axis1.set_yscale('log')
-# #axis1.set_xlabel( "Pre-encounter semi-major axis relative to Mab [km]" )
-# #axis1.set_ylabel( "Semi-major axis kick magnitude [km]" )
-# #axis1.set_xlim( -1000.0, 1000.0 )
-# #axis1.set_ylim( ymin = 0.0 )
-# #axis2 = axis1.twiny( )
-# #axis2.set_xlim( -1000.0, 1000.0 )
-# #axis2.set_xticks( hillRadius * meterInKilometers * numpy.arange( -25.0, 30.0, 5.0 ) )
-# #axis2.set_xticklabels( numpy.arange( -25.0, 30.0, 5.0 ) )
-# #axis2.set_xlabel( "Pre-encounter semi-major axis relative to Mab [Hill radii]" )
-# #pyplot.savefig( outputPathAndCasePrefix + "semiMajorAxisKickVsPreEncounterSemiMajorAxes.pdf", \
-# #                dpi = figureDPI )
-# #pyplot.close( )
-# #
-# #'''
-# #Plot kick duration vs. semi-major axis kicks (magnitude) 
-# #'''
-# #
-# ## Plot kick duration vs. semi-major axis kicks (magnitude) (log-log plot).
-# #pyplot.figure( )
-# #pyplot.plot( plottingData[ 'semiMajorAxisKickMagnitude' ], plottingData[ 'encounterDuration' ], \
-# #             '.k', rasterized = True )
-# #pyplot.xscale( 'log' )
-# #pyplot.yscale( 'log' )
-# #pyplot.xlabel( "Magnitude of semi-major axis kick [km]" )
-# #pyplot.ylabel( "Relative kick duration [-]" )
-# #pyplot.xlim( xmin = 0.0 )
-# #pyplot.ylim( ymin = 0.0 )
-# #pyplot.savefig( outputPathAndCasePrefix + "kickDurationVsSemiMajorAxisKickMagnitudesLogLog.pdf", \
-# #                dpi = figureDPI )    
-# #pyplot.close( )
-# #
-# ## Plot kick duration vs. semi-major axis kicks (magnitude) (big kicks plot).
-# #pyplot.figure( )
-# #figureAxes = pyplot.gca( )   
-# #pyplot.plot( semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             semiMajorAxisKickSortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( eccentricitySortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             eccentricitySortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( inclinationSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
-# #             inclinationSortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( plottingData[ 'semiMajorAxisKickMagnitude' ][ horseshoeOrbitIndices ], \
-# #             plottingData[ 'encounterDuration' ][ horseshoeOrbitIndices ], \
-# #             marker = '.', color = '0.5', linestyle = 'None' )
-# #pyplot.xlabel( "Magnitude of semi-major axis kick [km]" )
-# #pyplot.ylabel( "Relative kick duration [-]" )
-# #pyplot.xlim( xmin = 0.0 )
-# #pyplot.ylim( ymin = 0.0 )
-# #pyplot.savefig( outputPathAndCasePrefix + "kickDurationVsSemiMajorAxisKickMagnitudeLogLogBigKicks.pdf", \
-# #                dpi = figureDPI )
-# #pyplot.close( )
-# #
-# #'''
-# #Plot kick duration vs. initial semi-major axis.
-# #'''
-# #
-# ## Plot kick duration vs. initial semi-major axis.
-# #pyplot.figure( )
-# #pyplot.plot( plottingData[ 'initialSemiMajorAxis' ], plottingData[ 'encounterDuration' ], \
-# #             '.k', rasterized = True )
-# #pyplot.yscale( 'log' )
-# #pyplot.xlabel( "Initial semi-major axis relative to Mab [km]" )
-# #pyplot.ylabel( "Relative kick duration [-]" )
-# #pyplot.ylim( ymin = 0.0 )
-# #pyplot.savefig( outputPathAndCasePrefix + "kickDurationVsInitialSemiMajorAxis.pdf", \
-# #                dpi = figureDPI )    
-# #pyplot.close( )
-# #
-# ## Plot kick duration vs. semi-major axis kicks (magnitude) (big kicks plot).
-# #pyplot.figure( )
-# #figureAxes = pyplot.gca( )   
-# #pyplot.plot( semiMajorAxisKickSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
-# #             semiMajorAxisKickSortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( eccentricitySortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
-# #             eccentricitySortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( inclinationSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
-# #             inclinationSortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( plottingData[ 'initialSemiMajorAxis' ][ horseshoeOrbitIndices ], \
-# #             plottingData[ 'encounterDuration' ][ horseshoeOrbitIndices ], \
-# #             marker = '.', color = '0.5', linestyle = 'None' )
-# #pyplot.xlabel( "Initial semi-major axis relative to Mab [km]" )
-# #pyplot.ylabel( "Relative kick duration [-]" )
-# #pyplot.ylim( ymin = 0.0 )
-# #pyplot.savefig( outputPathAndCasePrefix + "kickDurationVsInitialSemiMajorAxisBigKicks.pdf", \
-# #                dpi = figureDPI )
-# #pyplot.close( )
-# #
-# #'''
-# #Plot kick distance vs. initial semi-major axis.
-# #'''
-# #
-# ## Plot kick distance vs. initial semi-major axis.
-# #pyplot.figure( )
-# #pyplot.plot( plottingData[ 'initialSemiMajorAxis' ], plottingData[ 'encounterDistance' ], \
-# #             '.k', rasterized = True )
-# #pyplot.yscale( 'log' )
-# #pyplot.xlabel( "Initial semi-major axis relative to Mab [km]" )
-# #pyplot.ylabel( "Kick distance [km]" )
-# #pyplot.ylim( ymin = 0.0 )
-# #pyplot.savefig( outputPathAndCasePrefix + "kickDistanceVsInitialSemiMajorAxis.pdf", \
-# #                dpi = figureDPI )    
-# #pyplot.close( )
-# #
-# ## Plot kick distance vs. semi-major axis kicks (magnitude) (big kicks plot).
-# #pyplot.figure( )
-# #figureAxes = pyplot.gca( )   
-# #pyplot.plot( semiMajorAxisKickSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
-# #             semiMajorAxisKickSortedData[ 'encounterDistance' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( eccentricitySortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
-# #             eccentricitySortedData[ 'encounterDistance' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( inclinationSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
-# #             inclinationSortedData[ 'encounterDistance' ][ :bigKicksCutOff ], '.k' )
-# #pyplot.plot( plottingData[ 'initialSemiMajorAxis' ][ horseshoeOrbitIndices ], \
-# #             plottingData[ 'encounterDistance' ][ horseshoeOrbitIndices ], \
-# #             marker = '.', color = '0.5', linestyle = 'None' )
-# #pyplot.xlabel( "Initial semi-major axis relative to Mab [km]" )
-# #pyplot.ylabel( "Kick distance [km]" )
-# #pyplot.ylim( ymin = 0.0 )
-# #pyplot.savefig( outputPathAndCasePrefix + "kickDistanceVsInitialSemiMajorAxisBigKicks.pdf", \
-# #                dpi = figureDPI )
-# #pyplot.close( )
-# #
-# #'''
-# #Plot pre-encounter orbital velocity vs. pre-encounter semi-major axis
-# #'''
-# #
-# ##pyplot.figure( )
-# ##figureAxes = pyplot.gca( )  
-# ##pyplot.xlabel( "Pre-encounter semi-major axis relative to Mab [km]" )
-# ##pyplot.ylabel( "Orbital velocity [Hill velocity]" )
-# ##pyplot.ylim( ymin = 0.0 )
-# ##pyplot.savefig( outputPathAndCasePrefix + "kickDistanceVsInitialSemiMajorAxisBigKicks.pdf", \
-# ##                dpi = figureDPI )
-# ##pyplot.close( )
-# #
-# #
-# #
-# #''' 
-# #End of file
-# #'''
+
+# Plot eccentricity vs. semi-major axis kicks (big kicks plot). 
+pyplot.figure( ) 
+figureAxes = pyplot.gca( )        
+pyplot.plot( semiMajorAxisKickSortedData[ 'semiMajorAxisKick' ][ :bigKicksCutOff ], \
+            semiMajorAxisKickSortedData[ 'eccentricityKick' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( eccentricitySortedData[ 'semiMajorAxisKick' ][ :bigKicksCutOff ], \
+            eccentricitySortedData[ 'eccentricityKick' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( inclinationSortedData[ 'semiMajorAxisKick' ][ :bigKicksCutOff ], \
+            inclinationSortedData[ 'eccentricityKick' ][ :bigKicksCutOff ], '.k' )
+pyplot.xlabel( "Semi-major axis kick [km]" )
+pyplot.ylabel( "Eccentricity kick [-]" )
+pyplot.savefig( outputPathAndCasePrefix + "eccentricityVsSemiMajorAxisBigKicks.pdf", \
+               dpi = figureDPI )    
+pyplot.close( )
+
+# Plot eccentricity vs. semi-major axis kicks (magnitudes) (big kicks plot). 
+pyplot.figure( ) 
+figureAxes = pyplot.gca( )        
+pyplot.plot( semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            semiMajorAxisKickSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( eccentricitySortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            eccentricitySortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( inclinationSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            inclinationSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+figureAxes.yaxis.major.formatter.set_powerlimits( ( 0, 0 ) ) 
+pyplot.xlabel( "Magnitude of semi-major axis kick [km]" )
+pyplot.ylabel( "Magnitude of eccentricity kick [-]" )
+pyplot.xlim( xmin = 0.0 )
+pyplot.ylim( ymin = 0.0 )
+pyplot.savefig( outputPathAndCasePrefix + "eccentricityVsSemiMajorAxisBigKickMagnitudes.pdf", \
+               dpi = figureDPI )    
+pyplot.close( )
+
+# Plot eccentricity vs. semi-major axis kicks (magnitudes) (big kicks zoom plot).      
+pyplot.figure( ) 
+figureAxes = pyplot.gca( )   
+pyplot.plot( semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            semiMajorAxisKickSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( eccentricitySortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            eccentricitySortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( inclinationSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            inclinationSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( plottingData[ 'semiMajorAxisKickMagnitude' ][ horseshoeOrbitIndices ], \
+            plottingData[ 'eccentricityKickMagnitude' ][ horseshoeOrbitIndices ], \
+            marker = '.', color = '0.5', linestyle = 'None' )
+figureAxes.yaxis.major.formatter.set_powerlimits( ( 0, 0 ) ) 
+pyplot.xlabel( "Magnitude of semi-major axis kick [km]" )
+pyplot.ylabel( "Magnitude of eccentricity kick [-]" )
+pyplot.xlim( xmin = 20.0, xmax = 60.0 )
+pyplot.ylim( ymin = 0.0, ymax = 3.0e-4 )    
+pyplot.savefig( outputPathAndCasePrefix + "eccentricityVsSemiMajorAxisKickMagnitudesZoom.pdf", \
+               dpi = figureDPI )
+pyplot.close( )
+
+# Plot eccentricity vs. semi-major axis kicks (magnitudes) (big kicks interactive plot). 
+labels = ['{0}'.format( simulation ) for simulation in \
+          semiMajorAxisKickSortedData[ 'simulation' ][ :bigKicksCutOff ] ]  
+pyplot.figure( )  
+figureAxes = pyplot.gca( )        
+pyplot.plot( semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            semiMajorAxisKickSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( eccentricitySortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            eccentricitySortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( inclinationSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            inclinationSortedData[ 'eccentricityKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+figureAxes.yaxis.major.formatter.set_powerlimits( ( 0, 0 ) ) 
+for label, semiMajorAxisKick, eccentricityKick in \
+   zip( labels, semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ], \
+        semiMajorAxisKickSortedData[ 'eccentricityKickMagnitude' ] ):
+   pyplot.annotate( label, xy = ( semiMajorAxisKick, eccentricityKick ), xytext = ( -5, 5 ), \
+                    textcoords = 'offset points', ha = 'right', va = 'bottom', size = 'small' )
+pyplot.xlabel( "Magnitude of semi-major axis kick [km]" )
+pyplot.ylabel( "Magnitude of eccentricity kick [-]" )
+pyplot.xlim( xmin = 0.0 )
+pyplot.ylim( ymin = 0.0 )
+if ( isShowFigures == 1 ):
+   pyplot.show( )
+pyplot.close( )
+
+'''
+Plot semi-major axis kicks vs. initial semi-major axes 
+'''
+
+# Plot semi-major axis kicks (magnitude) vs. initial semi-major axes with respect to Mab.
+figure = pyplot.figure( )  
+axis1 = figure.add_subplot( 111 )
+axis1.plot( plottingData[ 'initialSemiMajorAxis' ], plottingData[ 'semiMajorAxisKickMagnitude' ], \
+            '.k', rasterized = True )
+axis1.plot( plottingData[ 'initialSemiMajorAxis' ][ horseshoeOrbitIndices ], \
+            plottingData[ 'semiMajorAxisKickMagnitude' ][ horseshoeOrbitIndices ], \
+            marker = '.', color = '0.5', linestyle = 'None' )
+axis1.set_yscale('log')
+axis1.set_xlabel( "Initial semi-major axis relative to Mab [km]" )
+axis1.set_ylabel( "Semi-major axis kick magnitude [km]" )
+axis1.set_xlim( -1000.0, 1000.0 )
+axis1.set_ylim( ymin = 0.0 )
+axis2 = axis1.twiny( )
+axis2.set_xlim( -1000.0, 1000.0 )
+axis2.set_xticks( hillRadius * constants.meterInKilometers * numpy.arange( -25.0, 30.0, 5.0 ) )
+axis2.set_xticklabels( numpy.arange( -25.0, 30.0, 5.0 ) )
+axis2.set_xlabel( "Initial semi-major axis relative to Mab [Hill radii]" )
+pyplot.savefig( outputPathAndCasePrefix + "semiMajorAxisKickMagnitudeVsInitialSemiMajorAxes.pdf", \
+               dpi = figureDPI )
+pyplot.close( )
+
+# Plot semi-major axis kicks (magnitude) vs. initial semi-major axes with respect to Mab 
+# (interactive).
+figure = pyplot.figure( )  
+axis1 = figure.add_subplot( 111 )
+axis1.plot( plottingData[ 'initialSemiMajorAxis' ], plottingData[ 'semiMajorAxisKickMagnitude' ], \
+           '.k', rasterized = True )
+axis1.set_yscale('log')
+axis1.set_xlabel( "Initial semi-major axis relative to Mab [km]" )
+axis1.set_ylabel( "Semi-major axis kick magnitude [km]" )
+axis1.set_xlim( -1000.0, 1000.0 )
+axis1.set_ylim( ymin = 0.0 )
+axis2 = axis1.twiny( )
+axis2.set_xlim( -1000.0, 1000.0 )
+axis2.set_xticks( hillRadius * constants.meterInKilometers * numpy.arange( -25.0, 30.0, 5.0 ) )
+axis2.set_xticklabels( numpy.arange( -25.0, 30.0, 5.0 ) )
+axis2.set_xlabel( "Initial semi-major axis relative to Mab [Hill radii]" )
+if ( isShowFigures == 1 ):
+   pyplot.show( )
+pyplot.close( )
+
+# Plot semi-major axis kicks (magnitude) vs. initial semi-major axes with respect to Mab 
+# (big kicks interactive plot). 
+labels = ['{0}'.format( simulation ) for simulation in \
+         semiMajorAxisKickSortedData[ 'simulation' ][ :bigKicksCutOff ] ]  
+pyplot.figure( )  
+pyplot.plot( semiMajorAxisKickSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
+            semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( eccentricitySortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
+            eccentricitySortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( inclinationSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
+            inclinationSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], '.k' )
+for label, initialSemiMajorAxis, semiMajorAxisKickMagnitude in \
+   zip( labels, semiMajorAxisKickSortedData[ 'initialSemiMajorAxis' ], \
+        semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ] ):
+   pyplot.annotate( label, xy = ( initialSemiMajorAxis, semiMajorAxisKickMagnitude ), \
+                    xytext = ( -5, 5 ), textcoords = 'offset points', ha = 'right', \
+                    va = 'bottom', size = 'small' )
+pyplot.yscale('log')
+pyplot.xlabel( "Initial semi-major axis with respect to Mab [km]" )
+pyplot.ylabel( "Magnitude of semi-major axis kick [km]" )
+pyplot.xlim( -1000.0, 1000.0 )
+pyplot.ylim( ymin = 0.0 )
+if ( isShowFigures == 1 ):
+   pyplot.show( )
+pyplot.close( )
+
+'''
+Plot eccentricity kicks vs. initial semi-major axes 
+'''
+
+# Plot eccentricity kicks (magnitude) vs. initial semi-major axes with respect to Mab.
+figure = pyplot.figure( )  
+axis1 = figure.add_subplot( 111 )
+axis1.plot( plottingData[ 'initialSemiMajorAxis' ], plottingData[ 'eccentricityKickMagnitude' ], \
+            '.k', rasterized = True )
+axis1.plot( plottingData[ 'initialSemiMajorAxis' ][ horseshoeOrbitIndices ], \
+            plottingData[ 'eccentricityKickMagnitude' ][ horseshoeOrbitIndices ], \
+            marker = '.', color = '0.5', linestyle = 'None' )
+axis1.set_yscale('log')
+axis1.set_xlabel( "Initial semi-major axis relative to Mab [km]" )
+axis1.set_ylabel( "Eccentricity kick magnitude [-]" )
+axis1.set_xlim( -1000.0, 1000.0 )
+axis1.set_ylim( ymin = 0.0 )
+axis2 = axis1.twiny( )
+axis2.set_xlim( -1000.0, 1000.0 )
+axis2.set_xticks( hillRadius * constants.meterInKilometers * numpy.arange( -25.0, 30.0, 5.0 ) )
+axis2.set_xticklabels( numpy.arange( -25.0, 30.0, 5.0 ) )
+axis2.set_xlabel( "Initial semi-major axis relative to Mab [Hill radii]" )
+pyplot.savefig( outputPathAndCasePrefix + "eccentricityKickMagnitudeVsInitialSemiMajorAxes.pdf", \
+               dpi = figureDPI )
+pyplot.close( )
+
+''' 
+Plot semi-major axis kicks vs. pre-encounter semi-major axes.
+'''
+
+# Plot semi-major axis kicks (magnitude) vs. pre-encounter semi-major axes with respect to Mab.   
+figure = pyplot.figure( ) 
+axis1 = figure.add_subplot( 111 )
+pyplot.plot( plottingData[ 'preEncounterSemiMajorAxis' ], \
+            plottingData[ 'semiMajorAxisKickMagnitude' ], '.k', rasterized = True )
+axis1.plot( plottingData[ 'preEncounterSemiMajorAxis' ][ horseshoeOrbitIndices ], \
+           plottingData[ 'semiMajorAxisKickMagnitude' ][ horseshoeOrbitIndices ], \
+           marker = '.', color = '0.5', linestyle = 'None' )
+axis1.set_yscale('log')
+axis1.set_xlabel( "Pre-encounter semi-major axis relative to Mab [km]" )
+axis1.set_ylabel( "Semi-major axis kick magnitude [km]" )
+axis1.set_xlim( -1000.0, 1000.0 )
+axis1.set_ylim( ymin = 0.0 )
+axis2 = axis1.twiny( )
+axis2.set_xlim( -1000.0, 1000.0 )
+axis2.set_xticks( hillRadius * constants.meterInKilometers * numpy.arange( -25.0, 30.0, 5.0 ) )
+axis2.set_xticklabels( numpy.arange( -25.0, 30.0, 5.0 ) )
+axis2.set_xlabel( "Pre-encounter semi-major axis relative to Mab [Hill radii]" )
+pyplot.savefig( outputPathAndCasePrefix + "semiMajorAxisKickVsPreEncounterSemiMajorAxes.pdf", \
+               dpi = figureDPI )
+pyplot.close( )
+
+'''
+Plot kick duration vs. semi-major axis kicks (magnitude) 
+'''
+
+# Plot kick duration vs. semi-major axis kicks (magnitude) (log-log plot).
+pyplot.figure( )
+pyplot.plot( plottingData[ 'semiMajorAxisKickMagnitude' ], plottingData[ 'encounterDuration' ], \
+            '.k', rasterized = True )
+pyplot.xscale( 'log' )
+pyplot.yscale( 'log' )
+pyplot.xlabel( "Magnitude of semi-major axis kick [km]" )
+pyplot.ylabel( "Relative kick duration [-]" )
+pyplot.xlim( xmin = 0.0 )
+pyplot.ylim( ymin = 0.0 )
+pyplot.savefig( outputPathAndCasePrefix + "kickDurationVsSemiMajorAxisKickMagnitudesLogLog.pdf", \
+               dpi = figureDPI )    
+pyplot.close( )
+
+# Plot kick duration vs. semi-major axis kicks (magnitude) (big kicks plot).
+pyplot.figure( )
+figureAxes = pyplot.gca( )   
+pyplot.plot( semiMajorAxisKickSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            semiMajorAxisKickSortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( eccentricitySortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            eccentricitySortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( inclinationSortedData[ 'semiMajorAxisKickMagnitude' ][ :bigKicksCutOff ], \
+            inclinationSortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( plottingData[ 'semiMajorAxisKickMagnitude' ][ horseshoeOrbitIndices ], \
+            plottingData[ 'encounterDuration' ][ horseshoeOrbitIndices ], \
+            marker = '.', color = '0.5', linestyle = 'None' )
+pyplot.xlabel( "Magnitude of semi-major axis kick [km]" )
+pyplot.ylabel( "Relative kick duration [-]" )
+pyplot.xlim( xmin = 0.0 )
+pyplot.ylim( ymin = 0.0 )
+pyplot.savefig( outputPathAndCasePrefix + "kickDurationVsSemiMajorAxisKickMagnitudeLogLogBigKicks.pdf", \
+               dpi = figureDPI )
+pyplot.close( )
+
+'''
+Plot kick duration vs. initial semi-major axis.
+'''
+
+# Plot kick duration vs. initial semi-major axis.
+pyplot.figure( )
+pyplot.plot( plottingData[ 'initialSemiMajorAxis' ], plottingData[ 'encounterDuration' ], \
+            '.k', rasterized = True )
+pyplot.yscale( 'log' )
+pyplot.xlabel( "Initial semi-major axis relative to Mab [km]" )
+pyplot.ylabel( "Relative kick duration [-]" )
+pyplot.ylim( ymin = 0.0 )
+pyplot.savefig( outputPathAndCasePrefix + "kickDurationVsInitialSemiMajorAxis.pdf", \
+               dpi = figureDPI )    
+pyplot.close( )
+
+# Plot kick duration vs. semi-major axis kicks (magnitude) (big kicks plot).
+pyplot.figure( )
+figureAxes = pyplot.gca( )   
+pyplot.plot( semiMajorAxisKickSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
+            semiMajorAxisKickSortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( eccentricitySortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
+            eccentricitySortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( inclinationSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
+            inclinationSortedData[ 'encounterDuration' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( plottingData[ 'initialSemiMajorAxis' ][ horseshoeOrbitIndices ], \
+            plottingData[ 'encounterDuration' ][ horseshoeOrbitIndices ], \
+            marker = '.', color = '0.5', linestyle = 'None' )
+pyplot.xlabel( "Initial semi-major axis relative to Mab [km]" )
+pyplot.ylabel( "Relative kick duration [-]" )
+pyplot.ylim( ymin = 0.0 )
+pyplot.savefig( outputPathAndCasePrefix + "kickDurationVsInitialSemiMajorAxisBigKicks.pdf", \
+               dpi = figureDPI )
+pyplot.close( )
+
+'''
+Plot kick distance vs. initial semi-major axis.
+'''
+
+# Plot kick distance vs. initial semi-major axis.
+pyplot.figure( )
+pyplot.plot( plottingData[ 'initialSemiMajorAxis' ], plottingData[ 'encounterDistance' ], \
+            '.k', rasterized = True )
+pyplot.yscale( 'log' )
+pyplot.xlabel( "Initial semi-major axis relative to Mab [km]" )
+pyplot.ylabel( "Kick distance [km]" )
+pyplot.ylim( ymin = 0.0 )
+pyplot.savefig( outputPathAndCasePrefix + "kickDistanceVsInitialSemiMajorAxis.pdf", \
+               dpi = figureDPI )    
+pyplot.close( )
+
+# Plot kick distance vs. semi-major axis kicks (magnitude) (big kicks plot).
+pyplot.figure( )
+figureAxes = pyplot.gca( )   
+pyplot.plot( semiMajorAxisKickSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
+            semiMajorAxisKickSortedData[ 'encounterDistance' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( eccentricitySortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
+            eccentricitySortedData[ 'encounterDistance' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( inclinationSortedData[ 'initialSemiMajorAxis' ][ :bigKicksCutOff ], \
+            inclinationSortedData[ 'encounterDistance' ][ :bigKicksCutOff ], '.k' )
+pyplot.plot( plottingData[ 'initialSemiMajorAxis' ][ horseshoeOrbitIndices ], \
+            plottingData[ 'encounterDistance' ][ horseshoeOrbitIndices ], \
+            marker = '.', color = '0.5', linestyle = 'None' )
+pyplot.xlabel( "Initial semi-major axis relative to Mab [km]" )
+pyplot.ylabel( "Kick distance [km]" )
+pyplot.ylim( ymin = 0.0 )
+pyplot.savefig( outputPathAndCasePrefix + "kickDistanceVsInitialSemiMajorAxisBigKicks.pdf", \
+               dpi = figureDPI )
+pyplot.close( )
+
+'''
+Plot pre-encounter orbital velocity vs. pre-encounter semi-major axis
+'''
+
+#pyplot.figure( )
+#figureAxes = pyplot.gca( )  
+#pyplot.xlabel( "Pre-encounter semi-major axis relative to Mab [km]" )
+#pyplot.ylabel( "Orbital velocity [Hill velocity]" )
+#pyplot.ylim( ymin = 0.0 )
+#pyplot.savefig( outputPathAndCasePrefix + "kickDistanceVsInitialSemiMajorAxisBigKicks.pdf", \
+#                dpi = figureDPI )
+#pyplot.close( )
+
+''' 
+End of file
+'''
 
 endTime = time.time( )
 print endTime - startTime
-
-## Call to main function.
-#if __name__ == "__main__":
-#    main()
     

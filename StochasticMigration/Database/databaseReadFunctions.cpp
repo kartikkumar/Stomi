@@ -55,6 +55,8 @@
 
 #include <sqlite3.h>
 
+#include <SQLiteC++.h> 
+
 #include <Assist/Database/sqlite3DatabaseConnector.h>
 
 #include "StochasticMigration/Database/databaseHelpFunctions.h"
@@ -71,60 +73,40 @@ using namespace assist::database;
 TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolutePath,
                                              const std::string& testParticleCaseTableName )
 {
-    // Initiate database connector.
-    Sqlite3DatabaseConnectorPointer databaseConnector
-            = initiateDatabaseConnector( databaseAbsolutePath );
 
     // Set stream with query.
     std::ostringstream testParticleCaseQuery;
     testParticleCaseQuery << "SELECT * FROM " <<  testParticleCaseTableName << ";";
 
-    // Prepare database query.
-    databaseConnector->prepare_v2( testParticleCaseQuery.str( ) );
+    // Open connection to database.
+    SQLite::Database database( databaseAbsolutePath.c_str( ) );
 
-    // Declare database handler status.
-    unsigned int databaseStatus = 0;
+    // Compile a SQL query.
+    SQLite::Statement query( database, testParticleCaseQuery.str( ).c_str( ) );
+    
+    // Get row of data.
+    query.executeStep( );
 
-    // Check if status indicates that there is a row of data to follow.
-    if ( ( databaseStatus = databaseConnector->step( ) ) != SQLITE_ROW )
+    const TestParticleCasePointer testParticleCase = boost::make_shared< TestParticleCase >(
+        TestParticleCase( query.getColumn( 0 ), query.getColumn( 1 ), query.getColumn( 2 ),  
+                          query.getColumn( 3 ), query.getColumn( 4 ), query.getColumn( 5 ),
+                          query.getColumn( 6 ), query.getColumn( 7 ), query.getColumn( 8 ), 
+                          query.getColumn( 9 ), query.getColumn( 10 ), query.getColumn( 11 ),
+                          query.getColumn( 12 ), query.getColumn( 13 ), query.getColumn( 14 ), 
+                          query.getColumn( 15 ), 
+                          ( Eigen::VectorXd( 6 ) << 
+                                query.getColumn( 16 ), query.getColumn( 17 ),
+                                query.getColumn( 18 ), query.getColumn( 19 ), 
+                                query.getColumn( 20 ), query.getColumn( 21 ) ).finished( ),
+                          query.getColumn( 22 ), query.getColumn( 23 ), query.getColumn( 24 ), 
+                          query.getColumn( 25 ) ) );
+
+    // Check that no more rows of data are present in the table.
+    if ( query.executeStep( ) )
     {
-        // Throw run-time error.
-        throwDatabaseError( databaseConnector, databaseStatus );
-    } 
-
-    // Store fetched row in test particle case struct.
-    const TestParticleCasePointer testParticleCase =
-        boost::make_shared< TestParticleCase >
-            ( TestParticleCase(
-                databaseConnector->fetchInteger( 0 ), databaseConnector->fetchDouble( 1 ),
-                databaseConnector->fetchDouble( 2 ),  databaseConnector->fetchDouble( 3 ),
-                databaseConnector->fetchDouble( 4 ), databaseConnector->fetchDouble( 5 ),
-                databaseConnector->fetchDouble( 6 ), databaseConnector->fetchDouble( 7 ),
-                databaseConnector->fetchDouble( 8 ), databaseConnector->fetchDouble( 9 ),
-                databaseConnector->fetchDouble( 10 ), databaseConnector->fetchDouble( 11 ),
-                databaseConnector->fetchDouble( 12 ), databaseConnector->fetchDouble( 13 ),
-                databaseConnector->fetchDouble( 14 ),  databaseConnector->fetchDouble( 15 ),
-                ( Eigen::VectorXd( 6 ) << databaseConnector->fetchDouble( 16 ),
-                  databaseConnector->fetchDouble( 17 ), databaseConnector->fetchDouble( 18 ),
-                  databaseConnector->fetchDouble( 19 ), databaseConnector->fetchDouble( 20 ),
-                  databaseConnector->fetchDouble( 21 ) ).finished( ),
-                databaseConnector->fetchString( 22 ), databaseConnector->fetchDouble( 23 ),
-                databaseConnector->fetchDouble( 24 ), databaseConnector->fetchDouble( 25 ) ) );
-
-    // Attempt to step through to next row.
-    databaseStatus = databaseConnector->step( );
-
-    // Throw an error if the end of the query table is not reached.
-    if ( databaseStatus != SQLITE_DONE )
-    {
-        // Throw run-time error.
-        throwDatabaseError( databaseConnector, databaseStatus );
+        throw std::runtime_error( "Multiple cases in table!" );
     }
 
-    // Terminate database connector cleanly.
-    terminateDatabaseConnector( databaseConnector );
-
-    // Return test particle case.
     return testParticleCase;
 }
 
@@ -133,51 +115,42 @@ TestParticleInputTable getTestParticleInputTable( const std::string& databaseAbs
                                                   bool isCompleted,
                                                   const std::string& testParticleInputTableName )
 {
-     // Initiate database connector.
-     Sqlite3DatabaseConnectorPointer databaseConnector
-             = initiateDatabaseConnector( databaseAbsolutePath );
+    // Set stream with query.
+    std::ostringstream testParticleInputQuery;
+    testParticleInputQuery << "SELECT * FROM " << testParticleInputTableName
+                           << " WHERE \"completed\" = " << isCompleted << ";";
 
-     // Set stream with query.
-     std::ostringstream testParticleInputQuery;
-     testParticleInputQuery << "SELECT * FROM " << testParticleInputTableName
-                            << " WHERE \"completed\" = " << isCompleted << ";";
+    // Open connection to database.
+    SQLite::Database database( databaseAbsolutePath.c_str( ) );
 
-    // Prepare database query.
-    databaseConnector->prepare_v2( testParticleInputQuery.str( ) );
-
-    // Declare database handler status.
-    unsigned int databaseStatus = 0;
+    // Compile a SQL query.
+    SQLite::Statement query( database, testParticleInputQuery.str( ).c_str( ) );
 
     // Declare test particle input table.
     TestParticleInputTable testParticleInputTable;
 
     // Loop through the table retrieved from the database, step-by-step.
-    while ( ( databaseStatus = databaseConnector->step( ) ) == SQLITE_ROW )
+    while ( query.executeStep( ) )
     {
         // Store fetched row in test particle input struct.
         testParticleInputTable.insert(
             new TestParticleInput(
-                            databaseConnector->fetchInteger( 0 ),
-                            boost::lexical_cast< bool >( databaseConnector->fetchString( 1 ) ),
-                            ( Eigen::VectorXd( 6 ) << databaseConnector->fetchDouble( 2 ),
-                                databaseConnector->fetchDouble( 3 ),
-                                databaseConnector->fetchDouble( 4 ),
-                                databaseConnector->fetchDouble( 5 ),
-                                databaseConnector->fetchDouble( 6 ),
-                                databaseConnector->fetchDouble( 7 ) ).finished( ) ) );
+                            query.getColumn( 0 ),
+                            boost::lexical_cast< bool >( query.getColumn( 1 ) ),
+                            ( Eigen::VectorXd( 6 ) << query.getColumn( 2 ),
+                                query.getColumn( 3 ),
+                                query.getColumn( 4 ),
+                                query.getColumn( 5 ),
+                                query.getColumn( 6 ),
+                                query.getColumn( 7 ) ).finished( ) ) );
     }
 
-    // Check if the end of the query table has been reached, and whether all simulations have been
-    // found.
-    if ( databaseStatus != SQLITE_DONE
-         || ( databaseStatus == SQLITE_DONE && testParticleInputTable.size( ) == 0 ) )
+    // Check if input table is empty.
+    if ( testParticleInputTable.size( ) == 0 )
     {
         // Throw run-time error.
-        throwDatabaseError( databaseConnector, databaseStatus );
+        throw std::runtime_error( "Test particle input table is empty!" );
     }
-
-    // Terminate database connector cleanly.
-    terminateDatabaseConnector( databaseConnector );
 
     // Return test particle input table.
     return testParticleInputTable;
