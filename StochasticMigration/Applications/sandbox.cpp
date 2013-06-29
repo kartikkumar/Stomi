@@ -32,7 +32,10 @@
  *
  */
 
+#include "SQLiteC++.h"
+
 int main( )
 {
+    SQLite::Database db("/Users/kartikkumar/Desktop/test.db", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
     return 0;
 }

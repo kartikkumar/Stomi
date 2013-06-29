@@ -87,6 +87,7 @@ else (TUDAT_INCLUDE_DIR)
       ${PROJECT_SOURCE_DIR}/../../../tudat/trunk
       ${PROJECT_SOURCE_DIR}/../../tudat/trunk
       ${PROJECT_SOURCE_DIR}/../../tudat
+      ${PROJECT_SOURCE_DIR}/../../../tudat
       ${PROJECT_SOURCE_DIR}/../../../../tudat/trunk
       ${PROJECT_SOURCE_DIR}/../../../../../tudat/trunk
       ${CMAKE_INSTALL_PREFIX}/include

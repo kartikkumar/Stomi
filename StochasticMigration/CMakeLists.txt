@@ -114,10 +114,10 @@ endif()
 
 # Set lib and bin directories where static libraries and unit tests are built.
 if(NOT LIB_ROOT)
-  set(LIB_ROOT "${CODEROOT}/lib")
+  set(LIB_ROOT "${PROJECT_BINARY_DIR}/../lib")
 endif()
 if(NOT BIN_ROOT)
-  set(BIN_ROOT "${CODEROOT}/bin")
+  set(BIN_ROOT "${PROJECT_BINARY_DIR}/../bin")
 endif()
 
 # Set the global macros for setting up targets.
@@ -245,7 +245,7 @@ find_package(sqlite3 REQUIRED)
 # Include SQLite3 directories.
 # Set CMake flag to suppress SQLite3 warnings (platform-dependent solution).
 if(NOT APPLE)
-  include_directories(SYSTEM AFTER "${SQLITE3_INCLUDE_DIRS}")
+  include_directories(SYSTEM AFTER "${SQLITE3_INCLUDE_DIR}")
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem \"${SQLITE3_INCLUDE_DIR}\"")
 endif()
@@ -310,18 +310,18 @@ endforeach(CURRENT_SUBDIR)
 # Add sandbox.
 add_executable(sandbox "${SRCROOT}/Applications/sandbox.cpp")
 setup_executable_target(sandbox "${SRCROOT}")
-target_link_libraries(sandbox tudat_gravitation ${SQLITE3_LIBRARY} 
+target_link_libraries(sandbox tudat_gravitation ${SQLITECPP_LIBRARY} ${SQLITE3_LIBRARY} 
                       ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Add SQLite database generator for stochastic migration simulations.
 #add_executable(stochasticMigrationDatabaseGenerator "${SRCROOT}/Applications/stochasticMigrationDatabaseGenerator.cpp")
 #setup_executable_target(stochasticMigrationDatabaseGenerator "${SRCROOT}")
-#target_link_libraries(stochasticMigrationDatabaseGenerator stochastic_migration_input_output stochastic_migration_database general_tools_input_output general_tools_database general_tools_basics tudat_gravitation tudat_input_output tudat_basic_astrodynamics ${SQLITE3_LIBRARY} ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
+#target_link_libraries(stochasticMigrationDatabaseGenerator stochastic_migration_input_output stochastic_migration_database assist_input_output assist_database assist_basics tudat_gravitation tudat_input_output tudat_basic_astrodynamics ${SQLITE3_LIBRARY} ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Add test particle simulator (uses OpenMP).
 #add_executable(testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
 #setup_executable_target(testParticleSimulator "${SRCROOT}")
-#target_link_libraries(testParticleSimulator stochastic_migration_database stochastic_migration_input_output general_tools_astrodynamics general_tools_input_output tudat_state_derivative_models tudat_basic_mathematics tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators tudat_input_output ${SQLITE3_LIBRARY} ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
+#target_link_libraries(testParticleSimulator stochastic_migration_database stochastic_migration_input_output assist_astrodynamics assist_input_output tudat_state_derivative_models tudat_basic_mathematics tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators tudat_input_output ${SQLITE3_LIBRARY} ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
 
 ## Add Mab random walk application (uses openmp).
 #add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
