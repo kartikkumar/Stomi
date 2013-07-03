@@ -53,7 +53,6 @@ getStochasticMigrationDatabaseGeneratorDictionary( )
 {
     DictionaryPointer dictionary = make_shared< Dictionary >( );
 
-    addEntry( dictionary, "DEBUGMODE",                             0, 0, list_of( "DEBUG" ) );
     addEntry( dictionary, "CASE",                                  1, 0 );
     addEntry( dictionary, "DATABASE",                              1, 0, list_of( "DB" ) );
     addEntry( dictionary, "NUMBEROFSIMULATIONS",                   1, 0, list_of( "POPULATION" ) );

@@ -36,25 +36,34 @@
  *      130217    K. Kumar          Renamed file, updated code to work with refactored code for
  *                                  StochasticMigration project.
  *      130218    K. Kumar          Updated "encounter" to "conjunction".
+ *      130702    K. Kumar          Updated code to use SQLiteCpp library; added output messages.
+ *      130702    K. Kumar          Completed update of code.
  *
  *    References
  *      Kumar, K., de Pater, I., Showalter, M.R. In prep, 2013.
  *
  *    Notes
+ *      TODO:
+ *          - encapsulate code in try-catch blocks to capture exceptions.
+ *          - execute verification of existing case data against input parameters provided to
+ *            ensure consistency of inputs and possibly warn user.
+ *          - expand code to enable interactive interface for user to provide inputs and select
+ *            options (capture command line user input).          
  *
  */
 
-// #include <cmath>
-// #include <iostream>
-// #include <sstream>
+#include <iostream>
+#include <sstream>
+#include <stdexcept>
 #include <string>
 
 #include <boost/algorithm/string/predicate.hpp>
-// #include <boost/random/normal_distribution.hpp>
-// #include <boost/random/uniform_real_distribution.hpp>
-// #include <boost/random/variate_generator.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/random/normal_distribution.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
-// #include <Eigen/Core>
+#include <Eigen/Core>
 
 #include <sqlite3.h>
 
@@ -64,26 +73,20 @@
 #include <Assist/Basics/basics.h>
 #include <Assist/InputOutput/basicInputOutput.h>
 
-// #include <TudatCore/Astrodynamics/BasicAstrodynamics/astrodynamicsFunctions.h>
+#include <TudatCore/Astrodynamics/BasicAstrodynamics/astrodynamicsFunctions.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/physicalConstants.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/unitConversions.h>
-// #include <TudatCore/Mathematics/BasicMathematics/basicMathematicsFunctions.h>
+#include <TudatCore/Mathematics/BasicMathematics/basicMathematicsFunctions.h>
 #include <TudatCore/Mathematics/BasicMathematics/mathematicalConstants.h>
 
-// #include <Tudat/Astrodynamics/BasicAstrodynamics/convertMeanAnomalyToEccentricAnomaly.h>
-// #include <Tudat/Astrodynamics/Gravitation/centralGravityField.h>
+#include <Tudat/Astrodynamics/BasicAstrodynamics/convertMeanAnomalyToEccentricAnomaly.h>
 #include <Tudat/InputOutput/dictionaryTools.h>
 #include <Tudat/InputOutput/fieldType.h>
 #include <Tudat/InputOutput/separatedParser.h>
 #include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-
-
-// #include <GeneralTools/Database/sqlite3DatabaseConnector.h>
-
-// #include "StochasticMigration/Database/databaseHelpFunctions.h"
 #include "StochasticMigration/InputOutput/dictionaries.h"
 
 //! Execute stochastic migration database generator.
@@ -91,14 +94,13 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 {
     // Using statements.
     using boost::iequals;
-    // using namespace boost::random;
+    using namespace boost::random;
 
     using namespace assist::astrodynamics;
     using namespace assist::basics;
-    // using namespace assist::database;
     using namespace assist::input_output;
 
-    // using namespace tudat::basic_astrodynamics;
+    using namespace tudat::basic_astrodynamics;
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
     using namespace tudat::basic_astrodynamics::physical_constants;
     using namespace tudat::basic_astrodynamics::unit_conversions;
@@ -108,9 +110,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace tudat::input_output;
     using namespace tudat::input_output::field_types::general;
     using namespace tudat::input_output::parsed_data_vector_utilities;
-    // using namespace tudat::gravitation;
 
-    // using namespace stochastic_migration::database;
     using namespace stochastic_migration::input_output;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -135,10 +135,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     const ParsedDataVectorPtr parsedData = parser.parse( filteredInput );
 
     // Extract input parameters.
-    const std::string debugMode = extractParameterValue< std::string >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "DEBUGMODE" ), "ON" );
-
     const int caseNumber = extractParameterValue< int >(
                 parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "CASE" ) );
 
@@ -314,44 +310,52 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     const double perturbedBodyGravitationalParameter
             = computeGravitationalParameter( perturbedBodyMass );
 
-    // DEBUG.
-    if ( iequals( debugMode, "ON" ) )
-    {
-        std::cout << caseNumber << std::endl;
-        std::cout << databasePath << std::endl;
-        std::cout << numberOfSimulations << std::endl;
-        std::cout << randomWalkDuration << std::endl;
-        std::cout << synodicPeriodLimit << std::endl;
-        std::cout << outputInterval << std::endl;
-        std::cout << startUpIntegrationDuration << std::endl;
-        std::cout << conjunctionEventDetectionDistance << std::endl;
-        std::cout << oppositionEventDetectionDistance << std::endl;
-        std::cout << centralBodyGravitationalParameter << std::endl;
-        std::cout << centralBodyJ2GravityCoefficient << std::endl;
-        std::cout << centralBodyEquatorialRadius << std::endl;
-        std::cout << semiMajorAxisLimit << std::endl;
-        std::cout << eccentricityFWHM << std::endl;
-        std::cout << eccentricityMean << std::endl;
-        std::cout << eccentricityAngle << std::endl;
-        std::cout << inclinationFWHM << std::endl;
-        std::cout << inclinationMean << std::endl;
-        std::cout << inclinationAngle << std::endl;
-        std::cout << perturbedBodyRadius << std::endl;
-        std::cout << perturbedBodyBulkDensity << std::endl;
-        std::cout << perturbedBodyKeplerianElementsAtT0 << std::endl;
-        std::cout << numericalIntegratorType << std::endl;
-        std::cout << initialStepSize << std::endl;
-        std::cout << integratorRelativeTolerance << ", "
-                  << integratorAbsoluteTolerance << std::endl;
-        std::cout << perturbedBodyMass << std::endl;
-        std::cout << perturbedBodyGravitationalParameter << std::endl;
-        std::cout << testParticleCaseTableName << std::endl;
-        std::cout << testParticleInputTableName << std::endl;
-        std::cout << testParticleKickTableName << std::endl;
-        std::cout << randomWalkMonteCarloRunTableName << std::endl;
-        std::cout << randomWalkPerturberTableName << std::endl;
-        std::cout << randomWalkOutputTableName << std::endl;
-    }
+    std::cout << std::endl;
+    std::cout << "****************************************************************************" 
+              << std::endl;
+    std::cout << "Input parameters provided" << std::endl;
+    std::cout << "****************************************************************************" 
+              << std::endl;
+    std::cout << std::endl;
+    std::cout << "Case                              " << caseNumber << std::endl;
+    std::cout << "Database                          " << databasePath << std::endl;
+    std::cout << "Number of simulations             " << numberOfSimulations << std::endl;
+    std::cout << "Random walk duration              " << randomWalkDuration / JULIAN_YEAR << " yrs" 
+              << std::endl;
+    std::cout << "Synodic period limit              " << synodicPeriodLimit / JULIAN_YEAR << " yrs"
+              << std::endl;
+    std::cout << "Output interval                   " << convertSecondsToHours( outputInterval ) 
+              << " hrs" << std::endl;
+    std::cout << "Start-up integration duration     " << startUpIntegrationDuration / JULIAN_YEAR
+              << " yrs" << std::endl;
+    std::cout << conjunctionEventDetectionDistance << std::endl;
+    std::cout << oppositionEventDetectionDistance << std::endl;
+    std::cout << centralBodyGravitationalParameter << std::endl;
+    std::cout << centralBodyJ2GravityCoefficient << std::endl;
+    std::cout << centralBodyEquatorialRadius << std::endl;
+    std::cout << semiMajorAxisLimit << std::endl;
+    std::cout << eccentricityFWHM << std::endl;
+    std::cout << eccentricityMean << std::endl;
+    std::cout << eccentricityAngle << std::endl;
+    std::cout << inclinationFWHM << std::endl;
+    std::cout << inclinationMean << std::endl;
+    std::cout << inclinationAngle << std::endl;
+    std::cout << perturbedBodyRadius << std::endl;
+    std::cout << perturbedBodyBulkDensity << std::endl;
+    std::cout << perturbedBodyKeplerianElementsAtT0 << std::endl;
+    std::cout << numericalIntegratorType << std::endl;
+    std::cout << initialStepSize << std::endl;
+    std::cout << integratorRelativeTolerance << ", "
+              << integratorAbsoluteTolerance << std::endl;
+    std::cout << perturbedBodyMass << std::endl;
+    std::cout << perturbedBodyGravitationalParameter << std::endl;
+    std::cout << testParticleCaseTableName << std::endl;
+    std::cout << testParticleInputTableName << std::endl;
+    std::cout << testParticleKickTableName << std::endl;
+    std::cout << randomWalkMonteCarloRunTableName << std::endl;
+    std::cout << randomWalkPerturberTableName << std::endl;
+    std::cout << randomWalkOutputTableName << std::endl;
+    std::cout << std::endl;
 
     // Check that all required parameters have been set.
     checkRequiredParameters( dictionary );
@@ -360,364 +364,624 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     ///////////////////////////////////////////////////////////////////////////
 
-    // Setup database connector.
-
-    // // Initiate SQLite database connector.
-    // SQLite::Database databaseConnectorCreateTables( 
-    //     "test.db3", SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE);
-    // Sqlite3DatabaseConnectorPointer databaseConnectorCreateTables
-    //         = initiateDatabaseConnector( databasePath );
-
-    // // Create test particle case table if it does not exist already.
-    // std::ostringstream testParticleCaseTableCreate;
-    // testParticleCaseTableCreate
-    //         << "CREATE TABLE IF NOT EXISTS " << testParticleCaseTableName << " ("
-    //         << "\"case\" INTEGER PRIMARY KEY NOT NULL,"
-    //         << "\"randomWalkSimulationDuration\" REAL NOT NULL,"
-    //         << "\"synodicPeriodLimit\" REAL NOT NULL,"
-    //         << "\"outputInterval\" REAL NOT NULL,"
-    //         << "\"startUpIntegrationDuration\" REAL NOT NULL,"
-    //         << "\"conjunctionEventDetectionDistance\" REAL NOT NULL,"
-    //         << "\"oppositionEventDetectionDistance\" REAL NOT NULL,"
-    //         << "\"centralBodyGravitationalParameter\" REAL NOT NULL,"
-    //         << "\"centralBodyJ2GravityCoefficient\" REAL NOT NULL,"
-    //         << "\"centralBodyEquatorialRadius\" REAL NOT NULL,"
-    //         << "\"limitSemiMajorAxisDistribution\" REAL NOT NULL,"
-    //         << "\"meanEccentricityDistribution\" REAL NOT NULL,"
-    //         << "\"fullWidthHalfMaxmimumEccentricityDistribution\" REAL NOT NULL,"
-    //         << "\"meanInclinationDistribution\" REAL NOT NULL,"
-    //         << "\"fullWidthHalfMaxmimumInclinationDistribution\" REAL NOT NULL,"
-    //         << "\"perturbedBodyGravitationalParameter\" REAL NOT NULL,"
-    //         << "\"perturbedBodySemiMajorAxisAtT0\" REAL NOT NULL,"
-    //         << "\"perturbedBodyEccentricityAtT0\" REAL NOT NULL,"
-    //         << "\"perturbedBodyInclinationAtT0\" REAL NOT NULL,"
-    //         << "\"perturbedBodyArgumentOfPeriapsisAtT0\" REAL NOT NULL,"
-    //         << "\"perturbedBodyLongitudeOfAscendingNodeAtT0\" REAL NOT NULL,"
-    //         << "\"perturbedBodyTrueAnomalyAtT0\" REAL NOT NULL,"
-    //         << "\"numericalIntegratorType\" TEXT NOT NULL,"
-    //         << "\"relativeTolerance\" REAL NOT NULL,"
-    //         << "\"absoluteTolerance\" REAL NOT NULL,"
-    //         << "\"initialStepSize\" REAL NOT NULL);";
-
-    // // Execute command to create test particle case table.
-    // databaseConnectorCreateTables->execute( testParticleCaseTableCreate.str( ) );
-
-    // // Create test particle input table if it does not exist already.
-    // std::ostringstream testParticleInputTableCreate;
-    // testParticleInputTableCreate
-    //         << "CREATE TABLE IF NOT EXISTS " << testParticleInputTableName << " ("
-    //         << "\"testParticleSimulation\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-    //         << "\"completed\" INTEGER NOT NULL,"
-    //         << "\"semiMajorAxis\" REAL NOT NULL,"
-    //         << "\"eccentricity\" REAL NOT NULL,"
-    //         << "\"inclination\" REAL NOT NULL,"
-    //         << "\"argumentOfPeriapsis\" REAL NOT NULL,"
-    //         << "\"longitudeOfAscendingNode\" REAL NOT NULL,"
-    //         << "\"trueAnomaly\" REAL NOT NULL,"
-    //         << "\"perturbedBodyEnergyError\" REAL NULL,"
-    //         << "\"perturbedBodyAngularMomentumError\" REAL NULL);";
-
-    // // Execute command to create test particle input data table.
-    // databaseConnectorCreateTables->execute( testParticleInputTableCreate.str( ) );
-
-    // // Create test particle kick table if it does not exist already.
-    // std::ostringstream testParticleKickTableCreate;
-    // testParticleKickTableCreate
-    //         << "CREATE TABLE IF NOT EXISTS " << testParticleKickTableName << " ("
-    //         << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-    //         << "\"testParticleSimulation\" INTEGER NOT NULL,"
-    //         << "\"conjunctionEpoch\" REAL NOT NULL,"
-    //         << "\"conjunctionDistance\" REAL NOT NULL,"
-    //         << "\"conjunctionDuration\" REAL NOT NULL,"
-    //         << "\"preConjunctionEpoch\" REAL NOT NULL,"
-    //         << "\"preconjunctionEventDetectionDistance\" REAL NOT NULL,"
-    //         << "\"preConjunctionSemiMajorAxis\" REAL NOT NULL,"
-    //         << "\"preConjunctionEccentricity\" REAL NOT NULL,"
-    //         << "\"preConjunctionInclination\" REAL NOT NULL,"
-    //         << "\"postConjunctionEpoch\" REAL NOT NULL,"
-    //         << "\"postconjunctionEventDetectionDistance\" REAL NOT NULL,"
-    //         << "\"postConjunctionSemiMajorAxis\" REAL NOT NULL,"
-    //         << "\"postConjunctionEccentricity\" REAL NOT NULL,"
-    //         << "\"postConjunctionInclination\" REAL NOT NULL);";
-
-    // // Execute command to create test particle kick table.
-    // databaseConnectorCreateTables->execute( testParticleKickTableCreate.str( ) );
-
-    // // Create random walk Monte Carlo run table if it does not exist already.
-    // std::ostringstream randomWalkMonteCarloRunTableCreate;
-    // randomWalkMonteCarloRunTableCreate
-    //         << "CREATE TABLE IF NOT EXISTS " << randomWalkMonteCarloRunTableName << " ("
-    //         << "\"monteCarloRun\" INTEGER PRIMARY KEY NOT NULL,"
-    //         << "\"perturberPopulation\" INTEGER NOT NULL,"
-    //         << "\"massDistributionType\" TEXT NOT NULL,"
-    //         << "\"massDistributionParameter1\" REAL NOT NULL,"
-    //         << "\"massDistributionParameter2\" REAL NOT NULL,"
-    //         << "\"observationPeriod\" REAL NOT NULL,"
-    //         << "\"epochWindowSize\" REAL NOT NULL,"
-    //         << "\"numberOfEpochWindows\" REAL NOT NULL);";
-
-    // // Execute command to create random walk Monte Carlo run table.
-    // databaseConnectorCreateTables->execute( randomWalkMonteCarloRunTableCreate.str( ) );
-
-    // // Create random walk perturber table if it does not exist already.
-    // std::ostringstream randomWalkPerturberTableCreate;
-    // randomWalkPerturberTableCreate
-    //         << "CREATE TABLE IF NOT EXISTS " << randomWalkPerturberTableName << " ("
-    //         << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-    //         << "\"monteCarloRun\" INTEGER NOT NULL,"
-    //         << "\"testParticleSimulation\" INTEGER NOT NULL,"
-    //         << "\"massFactor\" REAL NOT NULL);";
-
-    // // Execute command to create random walk perturber table.
-    // databaseConnectorCreateTables->execute( randomWalkPerturberTableCreate.str( ) );
-
-    // // Create random walk output table if it does not exist already.
-    // std::ostringstream randomWalkOutputTableCreate;
-    // randomWalkOutputTableCreate
-    //         << "CREATE TABLE IF NOT EXISTS " << randomWalkOutputTableName << " ("
-    //         << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-    //         << "\"monteCarloRun\" INTEGER NOT NULL,"
-    //         << "\"maximumEccentricityChange\" REAL NOT NULL,"
-    //         << "\"maximumLongitudeResidualChange\" REAL NOT NULL,"
-    //         << "\"maximumInclinationChange\" REAL NOT NULL);";
-
-    // // Execute command to create random walk output table.
-    // databaseConnectorCreateTables->execute( randomWalkOutputTableCreate.str( ) );
-
-    // // End database transaction.
-    // databaseConnectorCreateTables->endTransaction( );
-
-    // // Disconnect from SQLite database.
-    // databaseConnectorCreateTables->closeDatabase( );
-
-    // ///////////////////////////////////////////////////////////////////////////
-
-    // ///////////////////////////////////////////////////////////////////////////
-
-    // // Write test particle case data to SQLite database.
-
-    // // Initiate SQLite database connector.
-    // Sqlite3DatabaseConnectorPointer databaseConnectorTestParticleCaseTable
-    //         = initiateDatabaseConnector( databasePath );
-
-    // // Create stringstream with test particle case data insert command.
-    // std::stringstream testParticleCaseDataInsert;
-    // testParticleCaseDataInsert
-    //         << "INSERT INTO " << testParticleCaseTableName << " VALUES ("
-    //         << caseNumber << ","
-    //         << randomWalkDuration << ","
-    //         << synodicPeriodLimit << ","
-    //         << outputInterval << ","
-    //         << startUpIntegrationDuration << ","
-    //         << conjunctionEventDetectionDistance << ","
-    //         << oppositionEventDetectionDistance << ","
-    //         << centralBodyGravitationalParameter << ","
-    //         << centralBodyJ2GravityCoefficient << ","
-    //         << centralBodyEquatorialRadius << ","
-    //         << semiMajorAxisLimit << ","
-    //         << eccentricityMean << ","
-    //         << eccentricityFWHM << ","
-    //         << inclinationMean << ","
-    //         << inclinationFWHM << ","
-    //         << perturbedBodyGravitationalParameter << ","
-    //         << perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) << ","
-    //         << perturbedBodyKeplerianElementsAtT0( eccentricityIndex ) << ","
-    //         << perturbedBodyKeplerianElementsAtT0( inclinationIndex ) << ","
-    //         << perturbedBodyKeplerianElementsAtT0( argumentOfPeriapsisIndex ) << ","
-    //         << perturbedBodyKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) << ","
-    //         << perturbedBodyKeplerianElementsAtT0( trueAnomalyIndex ) << ","
-    //         << "\"" << numericalIntegratorType << "\", "
-    //         << integratorRelativeTolerance << ", "
-    //         << integratorAbsoluteTolerance << ", "
-    //         << initialStepSize << ");";
-
-    // // Insert test particle case data.
-    // databaseConnectorTestParticleCaseTable->execute( testParticleCaseDataInsert.str( ) );
-
-    // // End database transaction.
-    // databaseConnectorTestParticleCaseTable->endTransaction( );
-
-    // // Disconnect from SQLite databaseConnector->
-    // databaseConnectorTestParticleCaseTable->closeDatabase( );
-
-    // ///////////////////////////////////////////////////////////////////////////
-
-    // ///////////////////////////////////////////////////////////////////////////
-
-    // // Define random number generators.
-
-    // // Define a random number generator and initialize it with a reproducible seed (current cpu
-    // // time).
-    // GlobalRandomNumberGeneratorType randomNumberGenerator = getGlobalRandomNumberGenerator( );
-
-    // // Define an uniform random number distribution for test particle mean anomaly [rad,rad].
-    // uniform_real_distribution< > meanAnomalyDistribution( 0.0, 2.0 * PI );
-
-    // // Define variate generator for mean anomaly values using the random number
-    // // generator and uniform distribution of mean anomaly.
-    // variate_generator< GlobalRandomNumberGeneratorType&, uniform_real_distribution< > >
-    //         generateMeanAnomaly( randomNumberGenerator, meanAnomalyDistribution );
-
-    // // Define an uniform random number distribution for test particle semi-major axis, centered at
-    // // perturbed body's semi-major axis [m].
-    // uniform_real_distribution< > semiMajorAxisDistribution(
-    //             -semiMajorAxisLimit + perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ),
-    //             semiMajorAxisLimit + perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) );
-
-    // // Define variate generator for semi-major axis values using the random number generator
-    // // and uniform distribution of semi-major axis.
-    // variate_generator< GlobalRandomNumberGeneratorType&, uniform_real_distribution< > >
-    //         generateSemiMajorAxis( randomNumberGenerator, semiMajorAxisDistribution );
-
-    // // Define normal random number distributions for test particle components of eccentricity
-    // // vector (h_e = e*cos( AoP ), k_e = e*sin( AoP ) ).
-    // normal_distribution< > distributionOfXComponentOfEccentricityVector(
-    //             eccentricityMean * std::cos( eccentricityAngle ),
-    //             convertFullWidthHalfMaximumToStandardDeviation( eccentricityFWHM ) );
-
-    // normal_distribution< > distributionOfYComponentOfEccentricityVector(
-    //             eccentricityMean * std::sin( eccentricityAngle ),
-    //             convertFullWidthHalfMaximumToStandardDeviation( eccentricityFWHM ) );
-
-    // // Define variate generators for h_e- and k_e-values using the random number generator
-    // // and normal distribution of h_e- and k_e-values.
-    // variate_generator< GlobalRandomNumberGeneratorType&, normal_distribution< > >
-    //         generateXComponentOfEccentricityVector(
-    //             randomNumberGenerator, distributionOfXComponentOfEccentricityVector );
-
-    // variate_generator< GlobalRandomNumberGeneratorType&, normal_distribution< > >
-    //         generateYComponentOfEccentricityVector(
-    //             randomNumberGenerator, distributionOfYComponentOfEccentricityVector );
-
-    // // Define normal random number distributions for test particle components of inclination
-    // // vector (h_i = i*cos( RAAN ), k_i = i*sin( RAAN ) ).
-    // normal_distribution< > distributionOfXComponentOfInclinationVector(
-    //             inclinationMean * std::cos( inclinationAngle ),
-    //             convertFullWidthHalfMaximumToStandardDeviation( inclinationFWHM ) );
-
-    // normal_distribution< > distributionOfYComponentOfInclinationVector(
-    //             inclinationMean * std::sin( inclinationAngle ),
-    //             convertFullWidthHalfMaximumToStandardDeviation( inclinationFWHM ) );
-
-    // // Define variate generators for h_i- and k_i-values using the random number generator
-    // // and normal distribution of h_i- and k_i-values.
-    // variate_generator< GlobalRandomNumberGeneratorType&, normal_distribution< > >
-    //         generateXComponentOfInclinationVector(
-    //             randomNumberGenerator, distributionOfXComponentOfInclinationVector );
-
-    // variate_generator< GlobalRandomNumberGeneratorType&, normal_distribution< > >
-    //         generateYComponentOfInclinationVector(
-    //             randomNumberGenerator, distributionOfYComponentOfInclinationVector );
-
-    // ///////////////////////////////////////////////////////////////////////////
-
-    // ///////////////////////////////////////////////////////////////////////////
-
-    // // Initiate SQLite database connector.
-    // Sqlite3DatabaseConnectorPointer databaseConnectorTestParticleInputTable
-    //         = initiateDatabaseConnector( databasePath );
-
-    // // Set up test particle input table insert statement.
-    // std::ostringstream testParticleInputTableInsert;
-    // testParticleInputTableInsert << "INSERT INTO " << testParticleInputTableName
-    //                              << " VALUES (NULL, 0, ?1, ?2, ?3, ?4, ?5, ?6, NULL, NULL);";
-
-    // // Prepare SQLite statement.
-    // databaseConnectorTestParticleInputTable->prepare_v2( testParticleInputTableInsert.str( ) );
-
-    // // Declare database handler status.
-    // unsigned int databaseStatus = 0;
-
-    // // Write test particle input data to SQLite database.
-    // for ( int simulationNumber = 0; simulationNumber < numberOfSimulations; simulationNumber++ )
-    // {
-    //     // Set random eccentricity vector.
-    //     const Eigen::Vector2d eccentricityVector( generateXComponentOfEccentricityVector( ),
-    //                                               generateYComponentOfEccentricityVector( ) );
-
-    //     // Compute eccentricity [-].
-    //     const double eccentricity = eccentricityVector.norm( );
-
-    //     // Compute argument of periapsis [rad].
-    //     const double argumentOfPeriapsis = std::atan2( eccentricityVector.y( ),
-    //                                                    eccentricityVector.x( ) );
-
-    //     // Set random inclination vector.
-    //     const Eigen::Vector2d inclinationVector( generateXComponentOfInclinationVector( ),
-    //                                              generateYComponentOfInclinationVector( ) );
-
-    //     // Compute inclination [rad].
-    //     const double inclination = inclinationVector.norm( );
-
-    //     // Compute longitude ascension of ascending node [rad].
-    //     const double longitudeOfAscendingNode = std::atan2( inclinationVector.y( ),
-    //                                                         inclinationVector.x( ) );
-
-    //     // Set random mean anomaly [rad].
-    //     const double meanAnomaly = generateMeanAnomaly( );
-
-    //     // Convert mean anomaly to eccentric anomaly [rad].
-    //     ConvertMeanAnomalyToEccentricAnomaly convertMeanAnomalyToEccentricAnomaly(
-    //                 eccentricity, meanAnomaly );
-    //     const double eccentricAnomaly = convertMeanAnomalyToEccentricAnomaly.convert( );
-
-    //     // Convert eccentric anomaly to true anomaly.
-    //     const double trueAnomaly = convertEccentricAnomalyToTrueAnomaly(
-    //                 eccentricAnomaly, eccentricity );
-
-    //     // Declare pre-defined Uranus central gravity field.
-    //     CentralGravityField uranusGravityField( CentralGravityField::uranus );
-
-    //     // Compute orbital period of perturbed body.
-    //     const double orbitalPeriodOfPerturbedBody = computeKeplerOrbitalPeriod(
-    //                 perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ),
-    //                 uranusGravityField.getGravitationalParameter( ) );
-
-    //     // Set random semi-major axis [m].
-    //     // If synodic period is too long, i.e., test particle semi-major axis is too close to
-    //     // perturbed body, regenerate value.
-    //     double synodicPeriodOfTestParticle = TUDAT_NAN;
-    //     double semiMajorAxis = TUDAT_NAN;
-    //     do
-    //     {
-    //         // Set random semi-major axis [m].
-    //         semiMajorAxis = generateSemiMajorAxis( );
-
-    //         // Compute orbital period of test particle [s].
-    //         const double orbitalPeriodOfTestParticle = computeKeplerOrbitalPeriod(
-    //                     semiMajorAxis, uranusGravityField.getGravitationalParameter( ) );
-
-    //         // Compute synodic period of test particle's motion with respect to perturbed body [s].
-    //         synodicPeriodOfTestParticle = computeSynodicPeriod(
-    //                     orbitalPeriodOfPerturbedBody, orbitalPeriodOfTestParticle );
-    //     }
-    //     while ( synodicPeriodOfTestParticle > synodicPeriodLimit );
-
-    //     // Bind values to prepared SQLite statement.
-    //     databaseConnectorTestParticleInputTable->bind( semiMajorAxis, 1 );
-    //     databaseConnectorTestParticleInputTable->bind( eccentricity, 2 );
-    //     databaseConnectorTestParticleInputTable->bind( inclination, 3 );
-    //     databaseConnectorTestParticleInputTable->bind( argumentOfPeriapsis, 4 );
-    //     databaseConnectorTestParticleInputTable->bind( longitudeOfAscendingNode, 5 );
-    //     databaseConnectorTestParticleInputTable->bind( trueAnomaly, 6 );
-
-    //     // Step through query rows.
-    //     if ( ( databaseStatus = databaseConnectorTestParticleInputTable->step( ) ) != SQLITE_DONE )
-    //     {
-    //         throwDatabaseError( databaseConnectorTestParticleInputTable, databaseStatus );
-    //     }
-
-    //     // Reset values in insert statement.
-    //     databaseConnectorTestParticleInputTable->clearBindings( );
-
-    //     // Reset insert statement.
-    //     databaseConnectorTestParticleInputTable->resetStatement( );
-    // }
-
-    // // Terminate database connector cleanly.
-    // terminateDatabaseConnector( databaseConnectorTestParticleInputTable );
-
-    // ///////////////////////////////////////////////////////////////////////////
+    // Define random number generators.
+
+    // Define a random number generator and initialize it with a reproducible seed (current cpu
+    // time).
+    GlobalRandomNumberGeneratorType randomNumberGenerator = getGlobalRandomNumberGenerator( );
+
+    // Define an uniform random number distribution for test particle mean anomaly [rad,rad].
+    uniform_real_distribution< > meanAnomalyDistribution( 0.0, 2.0 * PI );
+
+    // Define variate generator for mean anomaly values using the random number
+    // generator and uniform distribution of mean anomaly.
+    variate_generator< GlobalRandomNumberGeneratorType&, uniform_real_distribution< > >
+            generateMeanAnomaly( randomNumberGenerator, meanAnomalyDistribution );
+
+    // Define an uniform random number distribution for test particle semi-major axis, centered at
+    // perturbed body's semi-major axis [m].
+    uniform_real_distribution< > semiMajorAxisDistribution(
+                -semiMajorAxisLimit + perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ),
+                semiMajorAxisLimit + perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) );
+
+    // Define variate generator for semi-major axis values using the random number generator
+    // and uniform distribution of semi-major axis.
+    variate_generator< GlobalRandomNumberGeneratorType&, uniform_real_distribution< > >
+            generateSemiMajorAxis( randomNumberGenerator, semiMajorAxisDistribution );
+
+    // Define normal random number distributions for test particle components of eccentricity
+    // vector (h_e = e*cos( AoP ), k_e = e*sin( AoP ) ).
+    normal_distribution< > distributionOfXComponentOfEccentricityVector(
+                eccentricityMean * std::cos( eccentricityAngle ),
+                convertFullWidthHalfMaximumToStandardDeviation( eccentricityFWHM ) );
+
+    normal_distribution< > distributionOfYComponentOfEccentricityVector(
+                eccentricityMean * std::sin( eccentricityAngle ),
+                convertFullWidthHalfMaximumToStandardDeviation( eccentricityFWHM ) );
+
+    // Define variate generators for h_e- and k_e-values using the random number generator
+    // and normal distribution of h_e- and k_e-values.
+    variate_generator< GlobalRandomNumberGeneratorType&, normal_distribution< > >
+            generateXComponentOfEccentricityVector(
+                randomNumberGenerator, distributionOfXComponentOfEccentricityVector );
+
+    variate_generator< GlobalRandomNumberGeneratorType&, normal_distribution< > >
+            generateYComponentOfEccentricityVector(
+                randomNumberGenerator, distributionOfYComponentOfEccentricityVector );
+
+    // Define normal random number distributions for test particle components of inclination
+    // vector (h_i = i*cos( RAAN ), k_i = i*sin( RAAN ) ).
+    normal_distribution< > distributionOfXComponentOfInclinationVector(
+                inclinationMean * std::cos( inclinationAngle ),
+                convertFullWidthHalfMaximumToStandardDeviation( inclinationFWHM ) );
+
+    normal_distribution< > distributionOfYComponentOfInclinationVector(
+                inclinationMean * std::sin( inclinationAngle ),
+                convertFullWidthHalfMaximumToStandardDeviation( inclinationFWHM ) );
+
+    // Define variate generators for h_i- and k_i-values using the random number generator
+    // and normal distribution of h_i- and k_i-values.
+    variate_generator< GlobalRandomNumberGeneratorType&, normal_distribution< > >
+            generateXComponentOfInclinationVector(
+                randomNumberGenerator, distributionOfXComponentOfInclinationVector );
+
+    variate_generator< GlobalRandomNumberGeneratorType&, normal_distribution< > >
+            generateYComponentOfInclinationVector(
+                randomNumberGenerator, distributionOfYComponentOfInclinationVector );
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    std::cout << std::endl;
+    std::cout << "****************************************************************************" 
+              << std::endl;
+    std::cout << "Database operations" << std::endl;
+    std::cout << "****************************************************************************" 
+              << std::endl;
+    std::cout << std::endl;
+
+    // Check if database file already exists.
+    bool isDatabaseCreated = false;
+    if ( boost::filesystem::exists( databasePath ) )
+    {
+        std::cout << "Opening existing database at " << databasePath << " ..." << std::endl;
+    }
+
+    else
+    {
+        isDatabaseCreated = true;
+        std::cout << "WARNING: Database does not exist!" << std::endl;
+        std::cout << "Creating database at " << databasePath << " ..." << std::endl;
+    }
+
+    // Create/open database.          
+    SQLite::Database database( databasePath.c_str( ), SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE );
+
+    std::cout << "SQLite database file '" << database.getFilename().c_str();
+    if ( isDatabaseCreated ) { std::cout << "' created &"; }
+    std::cout << " opened successfully ..." << std::endl;
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Set up test particle case table.
+
+    // Create table if it doesn't exist.
+    if ( !database.tableExists( testParticleCaseTableName.c_str( ) ) )
+    {
+        std::cout << "Table '" << testParticleCaseTableName << "' does not exist ..." << std::endl;
+        std::cout << "Creating table ... " << std::endl;
+
+        std::ostringstream testParticleCaseTableCreate;
+        testParticleCaseTableCreate
+            << "CREATE TABLE IF NOT EXISTS " << testParticleCaseTableName << " ("
+            << "\"case\" INTEGER PRIMARY KEY NOT NULL,"
+            << "\"randomWalkSimulationDuration\" REAL NOT NULL,"
+            << "\"synodicPeriodLimit\" REAL NOT NULL,"
+            << "\"outputInterval\" REAL NOT NULL,"
+            << "\"startUpIntegrationDuration\" REAL NOT NULL,"
+            << "\"conjunctionEventDetectionDistance\" REAL NOT NULL,"
+            << "\"oppositionEventDetectionDistance\" REAL NOT NULL,"
+            << "\"centralBodyGravitationalParameter\" REAL NOT NULL,"
+            << "\"centralBodyJ2GravityCoefficient\" REAL NOT NULL,"
+            << "\"centralBodyEquatorialRadius\" REAL NOT NULL,"
+            << "\"limitSemiMajorAxisDistribution\" REAL NOT NULL,"
+            << "\"meanEccentricityDistribution\" REAL NOT NULL,"
+            << "\"fullWidthHalfMaxmimumEccentricityDistribution\" REAL NOT NULL,"
+            << "\"meanInclinationDistribution\" REAL NOT NULL,"
+            << "\"fullWidthHalfMaxmimumInclinationDistribution\" REAL NOT NULL,"
+            << "\"perturbedBodyGravitationalParameter\" REAL NOT NULL,"
+            << "\"perturbedBodySemiMajorAxisAtT0\" REAL NOT NULL,"
+            << "\"perturbedBodyEccentricityAtT0\" REAL NOT NULL,"
+            << "\"perturbedBodyInclinationAtT0\" REAL NOT NULL,"
+            << "\"perturbedBodyArgumentOfPeriapsisAtT0\" REAL NOT NULL,"
+            << "\"perturbedBodyLongitudeOfAscendingNodeAtT0\" REAL NOT NULL,"
+            << "\"perturbedBodyTrueAnomalyAtT0\" REAL NOT NULL,"
+            << "\"numericalIntegratorType\" TEXT NOT NULL,"
+            << "\"relativeTolerance\" REAL NOT NULL,"
+            << "\"absoluteTolerance\" REAL NOT NULL,"
+            << "\"initialStepSize\" REAL NOT NULL);";
+
+        // Execute command to create table.
+        database.exec( testParticleCaseTableCreate.str( ).c_str( ) );
+
+        // Check that the table was created successfully.
+        if ( database.tableExists( testParticleCaseTableName.c_str( ) ) )
+        {
+            std::cout << "Table '" << testParticleCaseTableName << "' successfully created!"
+                      << std::endl; 
+        }
+
+        else
+        {
+            std::ostringstream tableCreateError;
+            tableCreateError << "Error: Creating table '" << testParticleCaseTableName 
+            << "'' failed!";
+            throw std::runtime_error( tableCreateError.str( ).c_str( ) );
+
+        }
+    }
+
+    else
+    {
+        std::cout << "Table '" << testParticleCaseTableName 
+                  << "' already exists ... skipping creating table ..." << std::endl;
+
+    }
+
+    // Check data present in table.
+
+    // Check how many rows are present in table.
+    std::ostringstream testParticleCaseRowCount;
+    testParticleCaseRowCount << "SELECT COUNT( * ) FROM " << testParticleCaseTableName;
+    int caseTableRows = database.execAndGet( testParticleCaseRowCount.str( ).c_str( ) );
+
+    if ( caseTableRows > 1 )
+    {
+        std::ostringstream caseTableRowsError;
+        caseTableRowsError << "Error: Table '" << testParticleCaseTableName 
+                           << "'' contains " << caseTableRows << " rows!";
+        throw std::runtime_error( caseTableRowsError.str( ).c_str( ) );
+    }
+
+    else if ( caseTableRows == 1 )
+    {
+        std::cout << "Table '" << testParticleCaseTableName << "' contains 1 row of data ... "
+                  << "skipping populating table ... " << std::endl;;
+    }
+
+    // Write test particle case data to table.
+    else if ( caseTableRows == 0 )
+    {
+        std::cout << "No data present in table '" << testParticleCaseTableName << "' ... " 
+                  << std::endl;
+        std::cout << "Populating table ... " << std::endl;
+
+        // Create stringstream with test particle case data insert command.
+        std::stringstream testParticleCaseDataInsert;
+        testParticleCaseDataInsert
+            << "INSERT INTO " << testParticleCaseTableName << " VALUES ("
+            << caseNumber << ","
+            << randomWalkDuration << ","
+            << synodicPeriodLimit << ","
+            << outputInterval << ","
+            << startUpIntegrationDuration << ","
+            << conjunctionEventDetectionDistance << ","
+            << oppositionEventDetectionDistance << ","
+            << centralBodyGravitationalParameter << ","
+            << centralBodyJ2GravityCoefficient << ","
+            << centralBodyEquatorialRadius << ","
+            << semiMajorAxisLimit << ","
+            << eccentricityMean << ","
+            << eccentricityFWHM << ","
+            << inclinationMean << ","
+            << inclinationFWHM << ","
+            << perturbedBodyGravitationalParameter << ","
+            << perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) << ","
+            << perturbedBodyKeplerianElementsAtT0( eccentricityIndex ) << ","
+            << perturbedBodyKeplerianElementsAtT0( inclinationIndex ) << ","
+            << perturbedBodyKeplerianElementsAtT0( argumentOfPeriapsisIndex ) << ","
+            << perturbedBodyKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) << ","
+            << perturbedBodyKeplerianElementsAtT0( trueAnomalyIndex ) << ","
+            << "\"" << numericalIntegratorType << "\", "
+            << integratorRelativeTolerance << ", "
+            << integratorAbsoluteTolerance << ", "
+            << initialStepSize << ");";
+
+        // Insert test particle case data.
+        database.exec( testParticleCaseDataInsert.str( ).c_str( ) );
+
+        // Check that there is only one row present in the table.
+        caseTableRows = database.execAndGet( testParticleCaseRowCount.str( ).c_str( ) );
+        if ( caseTableRows == 1 )
+        {
+            std::cout << "Table '" << testParticleCaseTableName << "' populated successfully!" 
+                      << std::endl; 
+        }
+
+        else
+        {
+            std::ostringstream caseTableRowsError;
+            caseTableRowsError << "Error: Table '" << testParticleCaseTableName << "' contains" 
+                               << caseTableRows << "rows!";
+            std::runtime_error( caseTableRowsError.str( ).c_str( ) );
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Set up test particle input table.
+    if ( !database.tableExists( testParticleInputTableName.c_str( ) ) )
+    {
+        std::cout << "Table '" << testParticleInputTableName << "' does not exist ..." 
+                  << std::endl;
+        std::cout << "Creating table ... " << std::endl;
+
+        // Create table.
+        std::ostringstream testParticleInputTableCreate;
+        testParticleInputTableCreate
+            << "CREATE TABLE IF NOT EXISTS " << testParticleInputTableName << " ("
+            << "\"testParticleSimulation\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"completed\" INTEGER NOT NULL,"
+            << "\"semiMajorAxis\" REAL NOT NULL,"
+            << "\"eccentricity\" REAL NOT NULL,"
+            << "\"inclination\" REAL NOT NULL,"
+            << "\"argumentOfPeriapsis\" REAL NOT NULL,"
+            << "\"longitudeOfAscendingNode\" REAL NOT NULL,"
+            << "\"trueAnomaly\" REAL NOT NULL,"
+            << "\"perturbedBodyEnergyError\" REAL NULL,"
+            << "\"perturbedBodyAngularMomentumError\" REAL NULL);";
+
+        // Execute command to create table.
+        database.exec( testParticleInputTableCreate.str( ).c_str( ) );
+
+        // Check that the table was created successfully.
+        if ( database.tableExists( testParticleInputTableName.c_str( ) ) )
+        {
+            std::cout << "Table '" << testParticleInputTableName << "' successfully created!"
+                      << std::endl; 
+        }
+
+        else
+        {
+            std::ostringstream tableCreateError;
+            tableCreateError << "Error: Creating table '" << testParticleInputTableName 
+            << "'' failed!";
+            throw std::runtime_error( tableCreateError.str( ).c_str( ) );
+
+        }
+    }
+
+    else
+    {
+        std::cout << "Table '" << testParticleInputTableName 
+                  << "' already exists ... skipping creating table ..." << std::endl;
+
+    }
+
+    // Check data present in table.
+
+    // Check how many rows are present in table.
+    std::ostringstream testParticleInputRowCount;
+    testParticleInputRowCount << "SELECT COUNT( * ) FROM " << testParticleInputTableName;
+    int inputTableRows = database.execAndGet( testParticleInputRowCount.str( ).c_str( ) );
+
+    if ( inputTableRows > 0 )
+    {
+        std::cout << "Table '" << testParticleInputTableName << "' contains "
+                  << inputTableRows << " rows ... " << std::endl;
+    }
+
+    // Populate table.
+    std::cout << "Populating table with input data for " << numberOfSimulations 
+              << " new simulations ... " << std::endl;
+
+    // Set up database transaction.
+    SQLite::Transaction testParticleInputTableTransaction( database );
+
+    // Set up test particle input table insert statement.
+    std::ostringstream testParticleInputTableInsert;
+    testParticleInputTableInsert << "INSERT INTO " << testParticleInputTableName
+                                 << " VALUES (NULL, 0, :semiMajorAxis, :eccentricity, "
+                                 << ":inclination, :argumentOfPeriapsis, "
+                                 << ":longitudeOfAscendingNode, :trueAnomaly, NULL, NULL);";
+
+    // Compile a SQL query.
+    SQLite::Statement testParticleInputTableInsertQuery( 
+        database, testParticleInputTableInsert.str( ).c_str( ) );
+
+    // Generate test particle input data and populate table.
+    for ( int simulationNumber = 0; simulationNumber < numberOfSimulations; simulationNumber++ )
+    {
+        // Set random eccentricity vector.
+        const Eigen::Vector2d eccentricityVector( generateXComponentOfEccentricityVector( ),
+                                                  generateYComponentOfEccentricityVector( ) );
+
+        // Compute eccentricity [-].
+        const double eccentricity = eccentricityVector.norm( );
+
+        // Compute argument of periapsis [rad].
+        const double argumentOfPeriapsis = std::atan2( eccentricityVector.y( ),
+                                                       eccentricityVector.x( ) );
+
+        // Set random inclination vector.
+        const Eigen::Vector2d inclinationVector( generateXComponentOfInclinationVector( ),
+                                                 generateYComponentOfInclinationVector( ) );
+
+        // Compute inclination [rad].
+        const double inclination = inclinationVector.norm( );
+
+        // Compute longitude ascension of ascending node [rad].
+        const double longitudeOfAscendingNode = std::atan2( inclinationVector.y( ),
+                                                            inclinationVector.x( ) );
+
+        // Set random mean anomaly [rad].
+        const double meanAnomaly = generateMeanAnomaly( );
+
+        // Convert mean anomaly to eccentric anomaly [rad].
+        ConvertMeanAnomalyToEccentricAnomaly convertMeanAnomalyToEccentricAnomaly(
+                    eccentricity, meanAnomaly );
+        const double eccentricAnomaly = convertMeanAnomalyToEccentricAnomaly.convert( );
+
+        // Convert eccentric anomaly to true anomaly.
+        const double trueAnomaly = convertEccentricAnomalyToTrueAnomaly(
+                    eccentricAnomaly, eccentricity );
+
+        // Compute orbital period of perturbed body.
+        const double orbitalPeriodOfPerturbedBody = computeKeplerOrbitalPeriod(
+                    perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ),
+                    centralBodyGravitationalParameter );
+
+        // Set random semi-major axis [m].
+        // If synodic period is too long, i.e., test particle semi-major axis is too close to
+        // perturbed body, regenerate value.
+        double synodicPeriodOfTestParticle = TUDAT_NAN;
+        double semiMajorAxis = TUDAT_NAN;
+        do
+        {
+            // Set random semi-major axis [m].
+            semiMajorAxis = generateSemiMajorAxis( );
+
+            // Compute orbital period of test particle [s].
+            const double orbitalPeriodOfTestParticle = computeKeplerOrbitalPeriod(
+                        semiMajorAxis, centralBodyGravitationalParameter );
+
+            // Compute synodic period of test particle's motion with respect to perturbed body [s].
+            synodicPeriodOfTestParticle = computeSynodicPeriod(
+                        orbitalPeriodOfPerturbedBody, orbitalPeriodOfTestParticle );
+        }
+        while ( synodicPeriodOfTestParticle > synodicPeriodLimit );
+
+        // Bind values to prepared SQLite statement.
+        testParticleInputTableInsertQuery.bind( ":semiMajorAxis", semiMajorAxis );
+        testParticleInputTableInsertQuery.bind( ":eccentricity", eccentricity );
+        testParticleInputTableInsertQuery.bind( ":inclination", inclination );
+        testParticleInputTableInsertQuery.bind( ":argumentOfPeriapsis", argumentOfPeriapsis );
+        testParticleInputTableInsertQuery.bind( 
+            ":longitudeOfAscendingNode", longitudeOfAscendingNode );
+        testParticleInputTableInsertQuery.bind( ":trueAnomaly", trueAnomaly );
+
+        // Execute insert query.
+        testParticleInputTableInsertQuery.exec( );
+
+        // Reset query.
+        testParticleInputTableInsertQuery.reset( );
+    }
+
+    // Commit transaction.
+    testParticleInputTableTransaction.commit();
+
+    ///////////////////////////////////////////////////////////////////////////
+    
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Set up test particle kick table.
+    if ( !database.tableExists( testParticleKickTableName.c_str( ) ) )
+    {
+        std::cout << "Table '" << testParticleKickTableName << "' does not exist ..." 
+                  << std::endl;
+        std::cout << "Creating table ... " << std::endl;
+
+        // Create table.
+        std::ostringstream testParticleKickTableCreate;
+        testParticleKickTableCreate
+            << "CREATE TABLE IF NOT EXISTS " << testParticleKickTableName << " ("
+            << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"testParticleSimulation\" INTEGER NOT NULL,"
+            << "\"conjunctionEpoch\" REAL NOT NULL,"
+            << "\"conjunctionDistance\" REAL NOT NULL,"
+            << "\"conjunctionDuration\" REAL NOT NULL,"
+            << "\"preConjunctionEpoch\" REAL NOT NULL,"
+            << "\"preconjunctionEventDetectionDistance\" REAL NOT NULL,"
+            << "\"preConjunctionSemiMajorAxis\" REAL NOT NULL,"
+            << "\"preConjunctionEccentricity\" REAL NOT NULL,"
+            << "\"preConjunctionInclination\" REAL NOT NULL,"
+            << "\"postConjunctionEpoch\" REAL NOT NULL,"
+            << "\"postconjunctionEventDetectionDistance\" REAL NOT NULL,"
+            << "\"postConjunctionSemiMajorAxis\" REAL NOT NULL,"
+            << "\"postConjunctionEccentricity\" REAL NOT NULL,"
+            << "\"postConjunctionInclination\" REAL NOT NULL);";
+
+        // Execute command to create table.
+        database.exec( testParticleKickTableCreate.str( ).c_str( ) );
+
+        // Check that the table was created successfully.
+        if ( database.tableExists( testParticleKickTableName.c_str( ) ) )
+        {
+            std::cout << "Table '" << testParticleKickTableName << "' successfully created!"
+                      << std::endl; 
+        }
+
+        else
+        {
+            std::ostringstream tableCreateError;
+            tableCreateError << "Error: Creating table '" << testParticleKickTableName 
+            << "'' failed!";
+            throw std::runtime_error( tableCreateError.str( ).c_str( ) );
+        }
+    }
+
+    else
+    {
+        std::cout << "Table '" << testParticleKickTableName 
+                  << "' already exists ... skipping creating table ..." << std::endl;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Set up random walk Monte Carlo run table.
+    if ( !database.tableExists( randomWalkMonteCarloRunTableName.c_str( ) ) )
+    {
+        std::cout << "Table '" << randomWalkMonteCarloRunTableName << "' does not exist ..." 
+                  << std::endl;
+        std::cout << "Creating table ... " << std::endl;
+
+        // Create table.
+        std::ostringstream randomWalkMonteCarloRunTableCreate;
+        randomWalkMonteCarloRunTableCreate
+            << "CREATE TABLE IF NOT EXISTS " << randomWalkMonteCarloRunTableName << " ("
+            << "\"monteCarloRun\" INTEGER PRIMARY KEY NOT NULL,"
+            << "\"perturberPopulation\" INTEGER NOT NULL,"
+            << "\"massDistributionType\" TEXT NOT NULL,"
+            << "\"massDistributionParameter1\" REAL NOT NULL,"
+            << "\"massDistributionParameter2\" REAL NOT NULL,"
+            << "\"observationPeriod\" REAL NOT NULL,"
+            << "\"epochWindowSize\" REAL NOT NULL,"
+            << "\"numberOfEpochWindows\" REAL NOT NULL);";
+
+        // Execute command to create table.
+        database.exec( randomWalkMonteCarloRunTableCreate.str( ).c_str( ) );
+
+        // Check that the table was created successfully.
+        if ( database.tableExists( randomWalkMonteCarloRunTableName.c_str( ) ) )
+        {
+            std::cout << "Table '" << randomWalkMonteCarloRunTableName 
+                      << "' successfully created!" << std::endl; 
+        }
+
+        else
+        {
+            std::ostringstream tableCreateError;
+            tableCreateError << "Error: Creating table '" << randomWalkMonteCarloRunTableName 
+            << "'' failed!";
+            throw std::runtime_error( tableCreateError.str( ).c_str( ) );
+        }
+    }
+
+    else
+    {
+        std::cout << "Table '" << randomWalkMonteCarloRunTableName 
+                  << "' already exists ... skipping creating table ..." << std::endl;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Set up random walk perturber table.
+    if ( !database.tableExists( randomWalkPerturberTableName.c_str( ) ) )
+    {
+        std::cout << "Table '" << randomWalkPerturberTableName << "' does not exist ..." 
+                  << std::endl;
+        std::cout << "Creating table ... " << std::endl;
+
+        // Create table.
+        std::ostringstream randomWalkPerturberTableCreate;
+        randomWalkPerturberTableCreate
+            << "CREATE TABLE IF NOT EXISTS " << randomWalkPerturberTableName << " ("
+            << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"monteCarloRun\" INTEGER NOT NULL,"
+            << "\"testParticleSimulation\" INTEGER NOT NULL,"
+            << "\"massFactor\" REAL NOT NULL);";
+
+        // Execute command to create table.
+        database.exec( randomWalkPerturberTableCreate.str( ).c_str( ) );
+
+        // Check that the table was created successfully.
+        if ( database.tableExists( randomWalkPerturberTableName.c_str( ) ) )
+        {
+            std::cout << "Table '" << randomWalkPerturberTableName 
+                      << "' successfully created!" << std::endl; 
+        }
+
+        else
+        {
+            std::ostringstream tableCreateError;
+            tableCreateError << "Error: Creating table '" << randomWalkPerturberTableName 
+            << "'' failed!";
+            throw std::runtime_error( tableCreateError.str( ).c_str( ) );
+        }
+    }
+
+    else
+    {
+        std::cout << "Table '" << randomWalkPerturberTableName 
+                  << "' already exists ... skipping creating table ..." << std::endl;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Set up random walk output table.
+    if ( !database.tableExists( randomWalkOutputTableName.c_str( ) ) )
+    {
+        std::cout << "Table '" << randomWalkOutputTableName << "' does not exist ..." << std::endl;
+        std::cout << "Creating table ... " << std::endl;
+
+        // Create table.
+        std::ostringstream randomWalkOutputTableCreate;
+        randomWalkOutputTableCreate
+            << "CREATE TABLE IF NOT EXISTS " << randomWalkOutputTableName << " ("
+            << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"monteCarloRun\" INTEGER NOT NULL,"
+            << "\"maximumEccentricityChange\" REAL NOT NULL,"
+            << "\"maximumLongitudeResidualChange\" REAL NOT NULL,"
+            << "\"maximumInclinationChange\" REAL NOT NULL);";
+
+        // Execute command to create table.
+        database.exec( randomWalkOutputTableCreate.str( ).c_str( ) );
+
+        // Check that the table was created successfully.
+        if ( database.tableExists( randomWalkOutputTableName.c_str( ) ) )
+        {
+            std::cout << "Table '" << randomWalkOutputTableName 
+                      << "' successfully created!" << std::endl; 
+        }
+
+        else
+        {
+            std::ostringstream tableCreateError;
+            tableCreateError << "Error: Creating table '" << randomWalkOutputTableName 
+            << "'' failed!";
+            throw std::runtime_error( tableCreateError.str( ).c_str( ) );
+        }
+    }
+
+    else
+    {
+        std::cout << "Table '" << randomWalkOutputTableName 
+                  << "' already exists ... skipping creating table ..." << std::endl;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Close database.
+    // Database will be automatically closed after this statement 
+    // (when object goes out of scope its destructor will be called).
+    std::cout << "SQLite database file '" << database.getFilename().c_str() 
+              << "' closed successfully ..." << std::endl;
+    std::cout << std::endl;
+
+    ///////////////////////////////////////////////////////////////////////////
 
     return 0;
 }

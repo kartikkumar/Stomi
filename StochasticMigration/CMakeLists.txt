@@ -313,10 +313,15 @@ setup_executable_target(sandbox "${SRCROOT}")
 target_link_libraries(sandbox tudat_gravitation ${SQLITECPP_LIBRARY} ${SQLITE3_LIBRARY} 
                       ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
 
-## Add SQLite database generator for stochastic migration simulations.
-#add_executable(stochasticMigrationDatabaseGenerator "${SRCROOT}/Applications/stochasticMigrationDatabaseGenerator.cpp")
-#setup_executable_target(stochasticMigrationDatabaseGenerator "${SRCROOT}")
-#target_link_libraries(stochasticMigrationDatabaseGenerator stochastic_migration_input_output stochastic_migration_database assist_input_output assist_database assist_basics tudat_gravitation tudat_input_output tudat_basic_astrodynamics ${SQLITE3_LIBRARY} ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
+# Add SQLite database generator for stochastic migration simulations.
+add_executable(stochasticMigrationDatabaseGenerator
+               "${SRCROOT}/Applications/stochasticMigrationDatabaseGenerator.cpp")
+setup_executable_target(stochasticMigrationDatabaseGenerator "${SRCROOT}")
+target_link_libraries(stochasticMigrationDatabaseGenerator stochastic_migration_input_output 
+                      stochastic_migration_database assist_input_output assist_database 
+                      assist_basics tudat_gravitation tudat_input_output tudat_basic_astrodynamics
+                      ${TUDAT_CORE_LIBRARIES} ${SQLITECPP_LIBRARY} ${SQLITE3_LIBRARY} 
+                      ${Boost_LIBRARIES})
 
 ## Add test particle simulator (uses OpenMP).
 #add_executable(testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
