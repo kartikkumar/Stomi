@@ -147,12 +147,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     std::cout << "Number of simulations                                     " 
               << numberOfSimulations << std::endl;
 
-    const double randomWalkDuration = extractParameterValue< double >(
+    const double randomWalkSimulationDuration = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "RANDOMWALKDURATION" ),
+                findEntry( dictionary, "RANDOMWALKSIMULATIONDURATION" ),
                 50.0 * JULIAN_YEAR, &convertJulianYearsToSeconds );
-    std::cout << "Random walk duration                                      " 
-              << randomWalkDuration / JULIAN_YEAR << " yrs" << std::endl;
+    std::cout << "Random walk simulation duration                           " 
+              << randomWalkSimulationDuration / JULIAN_YEAR << " yrs" << std::endl;
 
     const double synodicPeriodLimit = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
@@ -269,57 +269,63 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     std::cout << "Perturbed body bulk density                               " 
               << perturbedBodyBulkDensity << " kg m^-3" << std::endl;
 
-    Vector6d perturbedBodyKeplerianElementsAtT0( 6 );
+    Vector6d perturbedBodyStateInKeplerianElementsAtT0( 6 );
 
-    perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) = extractParameterValue< double >(
+    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) 
+            = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0" ), 9.7736e7,
                 &convertKilometersToMeters< double > );
     std::cout << "Perturbed body semi-major axis at TO                      "
               << convertMetersToKilometers( 
-                    perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) ) 
+                    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) ) 
               << " km" << std::endl;
 
-    perturbedBodyKeplerianElementsAtT0( eccentricityIndex ) = extractParameterValue< double >(
+    perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) 
+            = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0" ), 0.00254 );
     std::cout << "Perturbed body eccentricity at TO                         "
-              << perturbedBodyKeplerianElementsAtT0( eccentricityIndex ) << std::endl;
+              << perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) << std::endl;
 
-    perturbedBodyKeplerianElementsAtT0( inclinationIndex ) = extractParameterValue< double >(
+    perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) 
+            = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0" ),
                 convertDegreesToRadians( 0.14 ), &convertDegreesToRadians< double > );
     std::cout << "Perturbed body inclination at TO                          "
-              << convertRadiansToDegrees( perturbedBodyKeplerianElementsAtT0( inclinationIndex ) ) 
+              << convertRadiansToDegrees(
+                    perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) ) 
               << " deg" << std::endl;
 
-    perturbedBodyKeplerianElementsAtT0( argumentOfPeriapsisIndex )
+    perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex )
             = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0" ),
                 convertDegreesToRadians( 18.9594 ), &convertDegreesToRadians< double > );
     std::cout << "Perturbed body argument of periapsis at TO                "
               << convertRadiansToDegrees( 
-                    perturbedBodyKeplerianElementsAtT0( argumentOfPeriapsisIndex ) ) 
+                    perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex ) ) 
               << " deg" << std::endl;
 
-    perturbedBodyKeplerianElementsAtT0( longitudeOfAscendingNodeIndex )
+    perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex )
             = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0" ),
                 convertDegreesToRadians( 251.932 ), &convertDegreesToRadians< double > );
     std::cout << "Perturbed body longitude of ascending node at TO          "
               << convertRadiansToDegrees( 
-                    perturbedBodyKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) ) 
+                    perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) ) 
               << " deg" << std::endl;
 
-    perturbedBodyKeplerianElementsAtT0( trueAnomalyIndex ) = extractParameterValue< double >(
+    perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) 
+            = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0" ),
                 convertDegreesToRadians( 354.516 ), &convertDegreesToRadians< double > );
     std::cout << "Perturbed body true anomaly at TO                         "
-              << convertRadiansToDegrees( perturbedBodyKeplerianElementsAtT0( trueAnomalyIndex ) ) 
+              << convertRadiansToDegrees( 
+                    perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) ) 
               << " deg" << std::endl;
 
     const std::string numericalIntegratorType = extractParameterValue< std::string >(
@@ -334,17 +340,17 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     std::cout << "Initial step size                                         "
               << initialStepSize << " s" << std::endl;
 
-    const double integratorRelativeTolerance = extractParameterValue< double >(
+    const double numericalIntegratorRelativeTolerance = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE" ), 1.0e-12 );
     std::cout << "Numerical integrator relative tolerance                   " 
-              << integratorRelativeTolerance << std::endl;
+              << numericalIntegratorRelativeTolerance << std::endl;
 
-    const double integratorAbsoluteTolerance = extractParameterValue< double >(
+    const double numericalIntegratorAbsoluteTolerance = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "RUNGEKUTTAABSOLUTEERRORTOLERANCE" ), 1.0e-15 );
     std::cout << "Numerical integrator absolute tolerance                   " 
-              << integratorAbsoluteTolerance << std::endl;
+              << numericalIntegratorAbsoluteTolerance << std::endl;
 
     const std::string testParticleCaseTableName = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ),
@@ -409,9 +415,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // perturbed body's semi-major axis [m].
     uniform_real_distribution< > semiMajorAxisDistribution(
                 -semiMajorAxisDistributionLimit 
-                + perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ),
+                + perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ),
                 semiMajorAxisDistributionLimit 
-                + perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) );
+                + perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
 
     // Define variate generator for semi-major axis values using the random number generator
     // and uniform distribution of semi-major axis.
@@ -610,7 +616,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"" << caseName << "\",";
         testParticleCaseDataInsert 
             << std::setprecision( std::numeric_limits< double >::digits10 )
-            << randomWalkDuration << ","
+            << randomWalkSimulationDuration << ","
             << synodicPeriodLimit << ","
             << outputInterval << ","
             << startUpIntegrationDuration << ","
@@ -628,19 +634,19 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << inclinationDistributionFullWidthHalfMaxmimum << ","
             << perturbedBodyRadius << ","
             << perturbedBodyBulkDensity << ","
-            << perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) << ","
-            << perturbedBodyKeplerianElementsAtT0( eccentricityIndex ) << ","
-            << perturbedBodyKeplerianElementsAtT0( inclinationIndex ) << ","
-            << perturbedBodyKeplerianElementsAtT0( argumentOfPeriapsisIndex ) << ","
-            << perturbedBodyKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) << ","
-            << perturbedBodyKeplerianElementsAtT0( trueAnomalyIndex ) << ",";
+            << perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) << ","
+            << perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) << ","
+            << perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) << ","
+            << perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex ) << ","
+            << perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) << ","
+            << perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) << ",";
         testParticleCaseDataInsert    
             << "\"" << numericalIntegratorType << "\",";
         testParticleCaseDataInsert
             << std::setprecision( std::numeric_limits< double >::digits10 )
             << initialStepSize << ","
-            << integratorRelativeTolerance << ","
-            << integratorAbsoluteTolerance
+            << numericalIntegratorRelativeTolerance << ","
+            << numericalIntegratorAbsoluteTolerance
             << ");";
 
         // Insert test particle case data.
@@ -792,7 +798,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Compute orbital period of perturbed body.
         const double orbitalPeriodOfPerturbedBody = computeKeplerOrbitalPeriod(
-                    perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ),
+                    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ),
                     centralBodyGravitationalParameter );
 
         // Set random semi-major axis [m].

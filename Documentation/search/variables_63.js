@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['casenumber',['caseNumber',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#a7da06ff12e46da4b19b013b68316845d',1,'stochastic_migration::database::TestParticleCase']]],
+  ['caseid',['caseId',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#a4b7a158a78130ea3b55296e7d5641b32',1,'stochastic_migration::database::TestParticleCase']]],
+  ['casename',['caseName',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#a6003b00e874f64637f0869788e7dbd87',1,'stochastic_migration::database::TestParticleCase']]],
   ['centralbodyequatorialradius',['centralBodyEquatorialRadius',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#ae7f1ccca59faeed2031ce40e8a4bd85d',1,'stochastic_migration::database::TestParticleCase']]],
   ['centralbodygravitationalparameter',['centralBodyGravitationalParameter',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#a1a667c16e573d6c9494a6a66c3fee723',1,'stochastic_migration::database::TestParticleCase']]],
   ['centralbodyj2gravitycoefficient',['centralBodyJ2GravityCoefficient',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#af1bc171c30d6d370a40a31ccabbce263',1,'stochastic_migration::database::TestParticleCase']]],

@@ -38,7 +38,7 @@ DictionaryPointer getDatabaseGeneratorDictionary( )
     addEntry( dictionary, "CASE",                                  1, 0 );
     addEntry( dictionary, "DATABASE",                              1, 0, list_of( "DB" ) );
     addEntry( dictionary, "NUMBEROFSIMULATIONS",                   1, 0, list_of( "POPULATION" ) );
-    addEntry( dictionary, "RANDOMWALKDURATION",                    0, 0 );
+    addEntry( dictionary, "RANDOMWALKSIMULATIONDURATION",          0, 0 );
     addEntry( dictionary, "SYNODICPERIODLIMIT",                    0, 0 );
     addEntry( dictionary, "OUTPUTINTERVAL",                        0, 0 );
     addEntry( dictionary, "STARTUPINTEGRATIONDURATION",            0, 0, list_of( "STARTUP" ) );
@@ -85,14 +85,43 @@ DictionaryPointer getDatabaseGeneratorDictionary( )
 DictionaryPointer getTestParticleSimulatorDictionary( )
 {
     // Retrieve dictionary for database generator.
-    DictionaryPointer dictionary = getDatabaseGeneratorDictionary( );
+    DictionaryPointer dictionary = make_shared< Dictionary >( );
 
     // Add additional entries for test particle simulator.
-    addEntry( dictionary, "APPLICATIONMODE",                   0, 0, list_of( "MODE" ) );
-    addEntry( dictionary, "DATABASE",                          1, 0, list_of( "DB" ) );
-    addEntry( dictionary, "NUMBEROFTHREADS",                   0, 0, list_of( "THREADS" ) );
-    addEntry( dictionary, "FILEOUTPUTDIRECTORY",               0, 0, list_of( "OUTPUTDIR" ) );
-    addEntry( dictionary, "SIMULATIONSTOEXECUTE",              0, 0, list_of( "SIMULATIONS" ) );
+    addEntry( dictionary, "APPLICATIONMODE",                       0, 0, list_of( "MODE" ) );
+    addEntry( dictionary, "DATABASE",                              1, 0, list_of( "DB" ) );
+    addEntry( dictionary, "CASE",                                  1, 0 );
+    addEntry( dictionary, "NUMBEROFTHREADS",                       0, 0, list_of( "THREADS" ) );
+    addEntry( dictionary, "FILEOUTPUTDIRECTORY",                   0, 0, list_of( "OUTPUTDIR" ) );
+    addEntry( dictionary, "SIMULATIONSTOEXECUTE",                  0, 0, 
+                list_of( "SIMULATIONS" ) );
+    addEntry( dictionary, "TESTPARTICLECASETABLENAME",             0, 0 );
+    addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            0, 0 );
+    addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             0, 0 );  
+    addEntry( dictionary, "RANDOMWALKSIMULATIONDURATION",          0, 0 ); 
+    addEntry( dictionary, "SYNODICPERIODLIMIT",                    0, 0 );
+    addEntry( dictionary, "OUTPUTINTERVAL",                        0, 0 );
+    addEntry( dictionary, "STARTUPINTEGRATIONDURATION",            0, 0, list_of( "STARTUP" ) );
+    addEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE",     0, 0,
+                list_of( "CONJUNCTIONDISTANCE ") );
+    addEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE",      0, 0,
+                list_of( "OPPOSITIONDISTANCE ") );
+    addEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER",     0, 0, list_of( "GRAVPARAM" ) );
+    addEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT",       0, 0, list_of( "J2" ) );
+    addEntry( dictionary, "CENTRALBODYEQUATORIALRADIUS",           0, 0, list_of( "RADIUS" ) );
+    addEntry( dictionary, "PERTURBEDBODYRADIUS",                   0, 0 );
+    addEntry( dictionary, "PERTURBEDBODYBULKDENSITY",              0, 0 );
+    addEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0",        0, 0, list_of( "SMA0" ) );
+    addEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0",         0, 0, list_of( "ECC0" ) );
+    addEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0",          0, 0, list_of( "INC0" ) );
+    addEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0",  0, 0, list_of( "AOP0" ) );
+    addEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0",
+                0, 0, list_of( "RAAN0" ) );
+    addEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0",          0, 0, list_of( "TRAN0" ) );  
+    addEntry( dictionary, "NUMERICALINTEGRATORTYPE",               0, 0, list_of( "INTEGRATOR" ) );
+    addEntry( dictionary, "INITIALSTEPSIZE",                       0, 0, list_of( "STEPSIZE0" ) );
+    addEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE",      0, 0, list_of( "RELTOL" ) );
+    addEntry( dictionary, "RUNGEKUTTAABSOLUTEERRORTOLERANCE",      0, 0, list_of( "ABSTOL" ) );   
 
     return dictionary;
 }

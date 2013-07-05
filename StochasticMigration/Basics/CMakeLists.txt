@@ -16,7 +16,7 @@
 
 # Set source files.
 set(BASICS_SOURCES
-  "${SRCROOT}${BASICSDIR}/void.cpp"
+  "${SRCROOT}${BASICSDIR}/basics.cpp"
 )
 
 # Set header files.

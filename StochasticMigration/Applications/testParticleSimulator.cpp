@@ -40,21 +40,22 @@
 // #include <string>
 // #include <utility>
 
-// #include <boost/algorithm/string/predicate.hpp>
 // #include <boost/assign/list_of.hpp>
 // #include <boost/bind.hpp>
 // #include <boost/exception/all.hpp>
-// #include <boost/make_shared.hpp>
+#include <boost/make_shared.hpp>
 // #include <boost/shared_ptr.hpp>
 
 // #include <omp.h>
 
- #include <Assist/InputOutput/basicInputOutput.h>
+#include <Assist/Astrodynamics/unitConversions.h>
+#include <Assist/Basics/basics.h>
+#include <Assist/InputOutput/basicInputOutput.h>
 
 // #include <TudatCore/Astrodynamics/BasicAstrodynamics/astrodynamicsFunctions.h>
-// #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
-// #include <TudatCore/Astrodynamics/BasicAstrodynamics/physicalConstants.h>
-// #include <TudatCore/Astrodynamics/BasicAstrodynamics/unitConversions.h>
+#include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
+#include <TudatCore/Astrodynamics/BasicAstrodynamics/physicalConstants.h>
+#include <TudatCore/Astrodynamics/BasicAstrodynamics/unitConversions.h>
 // #include <TudatCore/Mathematics/BasicMathematics/mathematicalConstants.h>
 
 // #include <Tudat/Astrodynamics/BasicAstrodynamics/accelerationModel.h>
@@ -66,15 +67,11 @@
 #include <Tudat/InputOutput/fieldType.h>
 #include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 #include <Tudat/InputOutput/separatedParser.h>
-// #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaCoefficients.h>
+#include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaCoefficients.h>
 // #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaVariableStepSizeIntegrator.h>
-// #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
+#include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-// #include <GeneralTools/Basics/commonTypedefs.h>
-// #include <GeneralTools/Astrodynamics/body.h>
-// #include <GeneralTools/Astrodynamics/dataUpdater.h>
-// #include <GeneralTools/InputOutput/basicInputOutput.h>
-
+#include "StochasticMigration/Basics/basics.h"
 #include "StochasticMigration/Database/databaseReadFunctions.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 // #include "StochasticMigration/Database/testParticleInput.h"
@@ -96,31 +93,33 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //     using boost::assign::list_of;
 //     using boost::bind;
 //     using boost::enable_error_info;
-//     using boost::iequals;
-//     using boost::make_shared;
+    using boost::make_shared;
 //     using boost::shared_ptr;
 //     using boost::throw_exception;
 
+    using namespace assist::astrodynamics;
+    using namespace assist::basics;
     using namespace assist::input_output;
 
 //     using namespace tudat::basic_astrodynamics;
-//     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
-//     using namespace tudat::basic_astrodynamics::physical_constants;
-//     using namespace tudat::basic_astrodynamics::unit_conversions;
-//     using namespace tudat::basic_mathematics;
+    using namespace tudat::basic_astrodynamics::orbital_element_conversions;
+    using namespace tudat::basic_astrodynamics::physical_constants;
+    using namespace tudat::basic_astrodynamics::unit_conversions;
+    using namespace tudat::basic_mathematics;
 //     using namespace tudat::basic_mathematics::mathematical_constants;
 //     using namespace tudat::gravitation;
     using namespace tudat::input_output;
     using namespace tudat::input_output::dictionary;
     using namespace tudat::input_output::field_types::general;
     using namespace tudat::input_output::parsed_data_vector_utilities;
-//     using namespace tudat::numerical_integrators;
+    using namespace tudat::numerical_integrators;
 //     using namespace tudat::state_derivative_models;
 
 //     using namespace general_tools::astrodynamics;
 //     using namespace general_tools::basics;
 //     using namespace general_tools::input_output;
 
+    using namespace stochastic_migration::basics;
     using namespace stochastic_migration::database;
     using namespace stochastic_migration::input_output;
 
@@ -171,6 +170,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     std::cout << "Database                                                  "
               << databasePath << std::endl;
 
+    const std::string caseName = extractParameterValue< std::string >(
+                parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "CASE" ) );
+    std::cout << "Case                                                      " 
+              << caseName << std::endl;              
+
     const int numberOfThreads = extractParameterValue< int >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "NUMBEROFTHREADS" ), 1 );
@@ -209,93 +213,256 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Retrieve and store test particle case data from database.
     const TestParticleCasePointer caseDataFromDatabase = getTestParticleCase(
-                databasePath, testParticleCaseTableName );
+                databasePath, caseName, testParticleCaseTableName );
 
-    // const int caseNumber = extractParameterValue< int >(
-    //             parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "CASE" ),
-    //             caseDataFromDatabase->caseNumber );
-    // std::cout << "Case                                                      " 
-    //           << caseNumber << std::endl;
+    // Check if any case parameters are overwritten by user input.
+    const double randomWalkSimulationDuration = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "RANDOMWALKSIMULATIONDURATION" ),
+                caseDataFromDatabase->randomWalkSimulationDuration, &convertJulianYearsToSeconds );
+    std::cout << "Random walk simulation duration                           " 
+              << randomWalkSimulationDuration / JULIAN_YEAR << " yrs" << std::endl;
 
-    // const double randomWalkSimulationDuration = extractParameterValue< double >(
-    //         parsedData->begin( ), parsedData->end( ), 
-    //         findEntry( dictionary, "RANDOMWALKSIMULATIONDURATION" ),
-    //         testParticleCase->randomWalkSimulationDuration );
+    const double synodicPeriodLimit = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "SYNODICPERIODLIMIT" ),
+                caseDataFromDatabase->synodicPeriodLimit, &convertJulianYearsToSeconds );
+    std::cout << "Synodic period limit                                      " 
+              << synodicPeriodLimit / JULIAN_YEAR << " yrs" << std::endl;
 
-    // const double synodicPeriodLimit = extractParameterValue< double >(
-    //     parsedData->begin( ), parsedData->end( ), 
-    //     findEntry( dictionary, "SYNODICPERIODLIMIT" ),
-    //     testParticleCase->synodicPeriodLimit );
+    const double outputInterval = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "OUTPUTINTERVAL" ),
+                caseDataFromDatabase->outputInterval, &convertHoursToSeconds< double > );
+    std::cout << "Output interval                                           " 
+              << convertSecondsToHours( outputInterval ) << " hrs" << std::endl;
 
-    // const double outputInterval = extractParameterValue< double >(
-    //         parsedData->begin( ), parsedData->end( ),
-    //         findEntry( dictionary, "OUTPUTINTERVAL" ), testParticleCase->outputInterval );
+    const double startUpIntegrationDuration = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "STARTUPINTEGRATIONDURATION" ),
+                caseDataFromDatabase->startUpIntegrationDuration, &convertJulianYearsToSeconds );
+    std::cout << "Start-up integration duration                             " 
+              << startUpIntegrationDuration / JULIAN_YEAR << " yrs" << std::endl;
 
-    // const double startUpIntegrationDuration = extractParameterValue< double >(
-    //         parsedData->begin( ), parsedData->end( ),
-    //         findEntry( dictionary, "STARTUPINTEGRATIONDURATION" ),
-    //         testParticleCase->startUpIntegrationDuration );
+    const double conjunctionEventDetectionDistance = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE" ), 
+                caseDataFromDatabase->conjunctionEventDetectionDistance );
+    std::cout << "Conjunction event detection distance                      " 
+              << convertMetersToKilometers( conjunctionEventDetectionDistance ) 
+              << " km" << std::endl;
 
-    // const double conjunctionEventDetectionDistance = extractParameterValue< double >(
-    //             parsedData->begin( ), parsedData->end( ),
-    //             findEntry( dictionary, "CONJUNCTIONDISTANCE" ),
-    //             testParticleCase->conjunctionEventDetectionDistance );
+    const double oppositionEventDetectionDistance = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE" ),
+                caseDataFromDatabase->oppositionEventDetectionDistance );
+    std::cout << "Opposition event detection distance                       " 
+              << convertMetersToKilometers( oppositionEventDetectionDistance ) 
+              << " km" << std::endl;
 
-    // const double oppositionEventDetectionDistance = extractParameterValue< double >(
-    //             parsedData->begin( ), parsedData->end( ),
-    //             findEntry( dictionary, "OPPOSITIONDISTANCE" ),
-    //             testParticleCase->oppositionEventDetectionDistance );
+    const double centralBodyGravitationalParameter = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER" ),
+                caseDataFromDatabase->centralBodyGravitationalParameter );
+    std::cout << "Central body gravitational parameter                      " 
+              << centralBodyGravitationalParameter << " m^3 s^-2" << std::endl;
 
-    // const double centralBodyGravitationalParameter = extractParameterValue< double >(
-    //             parsedData->begin( ), parsedData->end( ),
-    //             findEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER" ),
-    //             testParticleCase->centralBodyGravitationalParameter );
+    const double centralBodyJ2GravityCoefficient = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT" ), 
+                caseDataFromDatabase->centralBodyJ2GravityCoefficient );
+    std::cout << "Central body J2 gravity coefficient                       "
+              << centralBodyJ2GravityCoefficient << std::endl;
 
-    // const double centralBodyJ2GravityCoefficient = extractParameterValue< double >(
-    //             parsedData->begin( ), parsedData->end( ),
-    //             findEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT" ),
-    //             testParticleCase->centralBodyJ2GravityCoefficient );
+    const double centralBodyEquatorialRadius = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "CENTRALBODYEQUATORIALRADIUS" ),
+                caseDataFromDatabase->centralBodyEquatorialRadius );
+    std::cout << "Central body equatorial radius                            "
+              << convertMetersToKilometers( centralBodyEquatorialRadius ) << " km" << std::endl;
 
+    const double perturbedBodyRadius = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYRADIUS" ),
+                caseDataFromDatabase->perturbedBodyRadius, &convertKilometersToMeters< double > );
+    std::cout << "Perturbed body radius                                     " 
+              << convertMetersToKilometers( perturbedBodyRadius ) << " km" << std::endl;
 
+    const double perturbedBodyBulkDensity = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYBULKDENSITY" ),
+                caseDataFromDatabase->perturbedBodyBulkDensity );
+    std::cout << "Perturbed body bulk density                               " 
+              << perturbedBodyBulkDensity << " kg m^-3" << std::endl;
 
+    Vector6d perturbedBodyStateInKeplerianElementsAtT0( 6 );
 
+    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) 
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0" ),
+                caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                    semiMajorAxisIndex ),
+                &convertKilometersToMeters< double > );
+    std::cout << "Perturbed body semi-major axis at TO                      "
+              << convertMetersToKilometers( 
+                    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) ) 
+              << " km" << std::endl;
 
+    perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) 
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0" ), 
+                caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                    eccentricityIndex ) );
+    std::cout << "Perturbed body eccentricity at TO                         "
+              << perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) << std::endl;
 
+    perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) 
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0" ),
+                caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                    inclinationIndex ),
+                 &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body inclination at TO                          "
+              << convertRadiansToDegrees( 
+                    perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) ) 
+              << " deg" << std::endl;
 
-    // testParticleCase->numericalIntegratorType = extractParameterValue< std::string >(
-    //             parsedData->begin( ), parsedData->end( ),
-    //             findEntry( dictionary, "NUMERICALINTEGRATORTYPE" ),
-    //             testParticleCase->numericalIntegratorType );
+    perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex )
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0" ),
+                caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                    argumentOfPeriapsisIndex ),
+                &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body argument of periapsis at TO                "
+              << convertRadiansToDegrees( 
+                    perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex ) ) 
+              << " deg" << std::endl;
 
-    // testParticleCase->initialStepSize = extractParameterValue< double >(
-    //             parsedData->begin( ), parsedData->end( ),
-    //             findEntry( dictionary, "INITIALSTEPSIZE" ), testParticleCase->initialStepSize );
+    perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex )
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0" ),
+                caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                    longitudeOfAscendingNodeIndex ),
+                &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body longitude of ascending node at TO          "
+              << convertRadiansToDegrees( 
+                    perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) ) 
+              << " deg" << std::endl;
 
-    // testParticleCase->numericalIntegratorRelativeTolerance = extractParameterValue< double >(
-    //             parsedData->begin( ), parsedData->end( ),
-    //             findEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE" ),
-    //             testParticleCase->numericalIntegratorRelativeTolerance );
+    perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) 
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0" ),
+                caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0(
+                    trueAnomalyIndex ),
+                 &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body true anomaly at TO                         "
+              << convertRadiansToDegrees( 
+                    perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) ) 
+              << " deg" << std::endl;
 
-    // testParticleCase->numericalIntegratorAbsoluteTolerance = extractParameterValue< double >(
-    //             parsedData->begin( ), parsedData->end( ),
-    //             findEntry( dictionary, "RUNGEKUTTAABSOLUTEERRORTOLERANCE" ),
-    //             testParticleCase->numericalIntegratorAbsoluteTolerance );
+    const std::string numericalIntegratorType = extractParameterValue< std::string >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "NUMERICALINTEGRATORTYPE" ),
+                caseDataFromDatabase->numericalIntegratorType );
+    std::cout << "Numerical integrator type                                 "
+              << numericalIntegratorType << std::endl;
+
+    const double initialStepSize = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "INITIALSTEPSIZE" ), 
+                caseDataFromDatabase->initialStepSize );
+    std::cout << "Initial step size                                         "
+              << initialStepSize << " s" << std::endl;
+
+    const double numericalIntegratorRelativeTolerance = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE" ),
+                caseDataFromDatabase->numericalIntegratorRelativeTolerance );
+    std::cout << "Numerical integrator relative tolerance                   " 
+              << numericalIntegratorRelativeTolerance << std::endl;
+
+    const double numericalIntegratorAbsoluteTolerance = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "RUNGEKUTTAABSOLUTEERRORTOLERANCE" ), 
+                caseDataFromDatabase->numericalIntegratorAbsoluteTolerance );
+    std::cout << "Numerical integrator absolute tolerance                   " 
+              << numericalIntegratorAbsoluteTolerance << std::endl;
+
+    // Store case data with possible overwritten data.
+    TestParticleCasePointer testParticleCase = make_shared< TestParticleCase >(
+        TestParticleCase( 
+            caseDataFromDatabase->caseId, caseDataFromDatabase->caseName, 
+            randomWalkSimulationDuration, synodicPeriodLimit, outputInterval, 
+            startUpIntegrationDuration, conjunctionEventDetectionDistance, 
+            oppositionEventDetectionDistance, centralBodyGravitationalParameter,
+            centralBodyJ2GravityCoefficient, centralBodyEquatorialRadius, 
+            caseDataFromDatabase->semiMajorAxisDistributionLimit,
+            caseDataFromDatabase->eccentricityDistributionMean, 
+            caseDataFromDatabase->eccentricityDistributionAngle,
+            caseDataFromDatabase->eccentricityDistributionFullWidthHalfMaximum,
+            caseDataFromDatabase->inclinationDistributionMean, 
+            caseDataFromDatabase->inclinationDistributionAngle,
+            caseDataFromDatabase->inclinationDistributionFullWidthHalfMaximum, 
+            perturbedBodyRadius, perturbedBodyBulkDensity, 
+            perturbedBodyStateInKeplerianElementsAtT0, numericalIntegratorType, initialStepSize,
+            numericalIntegratorRelativeTolerance, numericalIntegratorRelativeTolerance ) );
+
+    // Check that all required parameters have been set.
+    checkRequiredParameters( dictionary );
 
     ///////////////////////////////////////////////////////////////////////////
 
+    ///////////////////////////////////////////////////////////////////////////
 
+    // Compute derived parameters.
 
+    std::cout << std::endl;
+    std::cout << "****************************************************************************" 
+              << std::endl;
+    std::cout << "Derived parameters" << std::endl;
+    std::cout << "****************************************************************************" 
+              << std::endl;
+    std::cout << std::endl;
 
-//     // Check if all incomplete simulations are to be run and fetch the input table, else only fetch
-//     // the requested test particle simulation numbers.
-//     TestParticleInputTable testParticleInputTable;
+    // Compute mass of perturbed body [kg].
+    const double perturbedBodyMass = computeMassOfSphere(
+                testParticleCase->perturbedBodyRadius, 
+                testParticleCase->perturbedBodyBulkDensity );
+    std::cout << "Perturbed body mass                                       " 
+              << perturbedBodyMass << " kg" << std::endl;
 
-//     if ( iequals( applicationMode, "BULKSIMULATION" )  )
-//     {
-//         // Get entire test particle input table from database.
-//         testParticleInputTable = getTestParticleInputTable(
-//                     databasePath, false, testParticleInputTableName );
-//     }
+    // Compute perturbed body's gravitational parameter [m^3 s^-2].
+    const double perturbedBodyGravitationalParameter
+            = computeGravitationalParameter( perturbedBodyMass );
+    std::cout << "Perturbed body gravitational parameter                    " 
+              << perturbedBodyGravitationalParameter << " m^3 s^-2" << std::endl;
+
+    // Set coefficient set selected for numerical integrator.
+    RungeKuttaCoefficients rungeKuttaCoefficients 
+        = getRungeKuttaCoefficients( testParticleCase->numericalIntegratorType );
+
+    ///////////////////////////////////////////////////////////////////////////
+    
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Fetch test particle input table.    
+
+    // Check if all incomplete simulations are to be run and fetch the input table, else only fetch
+    // the requested test particle simulation numbers.
+    // TestParticleInputTablePointer testParticleInputTable;
+
+    // if ( iequals( applicationMode, "BULKSIMULATION" )  )
+    // {
+    //     // Get entire test particle input table from database.
+    //     testParticleInputTable = getTestParticleInputTable(
+    //                 databasePath, false, testParticleInputTableName );
+    // }
 
 //     else if ( iequals( applicationMode, "SINGLESIMULATION" ) )
 //     {
@@ -332,61 +499,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //         std::cout << std::endl;
 //     }
 
-//     // Check that all required parameters have been set.
-//     checkRequiredParameters( dictionary );
-
-//     // Set coefficient set selected for numerical integrator.
-//     RungeKuttaCoefficients rungeKuttaCoefficients;
-
-//     if ( !iequals( testParticleCase->numericalIntegratorType, "DOPRI853" ) )
-//     {
-//         rungeKuttaCoefficients = RungeKuttaCoefficients::get(
-//                     RungeKuttaCoefficients::rungeKutta87DormandPrince );
-//     }
-
-//     else if ( !iequals( testParticleCase->numericalIntegratorType, "RKF78" ) )
-//     {
-//         rungeKuttaCoefficients = RungeKuttaCoefficients::get(
-//                     RungeKuttaCoefficients::rungeKuttaFehlberg78 );
-//     }
-
-//     else
-//     {
-//         throw_exception( enable_error_info( runtime_error(
-//                "Invalid coefficient set specified for numerical integrator." ) ) );
-//     }
-
-    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////  
 
 
 
-    // ///////////////////////////////////////////////////////////////////////////
 
-    // // Compute derived parameters.
-
-    // std::cout << std::endl;
-    // std::cout << "****************************************************************************" 
-    //           << std::endl;
-    // std::cout << "Derived parameters" << std::endl;
-    // std::cout << "****************************************************************************" 
-    //           << std::endl;
-    // std::cout << std::endl;
-
-    // // Compute mass of perturbed body [kg].
-    // const double perturbedBodyMass = computeMassOfSphere(
-    //             perturbedBodyRadius, perturbedBodyBulkDensity );
-    // std::cout << "Perturbed body mass                                       " 
-    //           << perturbedBodyMass << " kg" << std::endl;
-
-    // // Compute perturbed body's gravitational parameter [m^3 s^-2].
-    // const double perturbedBodyGravitationalParameter
-    //         = computeGravitationalParameter( perturbedBodyMass );
-    // std::cout << "Perturbed body gravitational parameter                    " 
-    //           << perturbedBodyGravitationalParameter << " m^3 s^-2" << std::endl;
-
-    // ///////////////////////////////////////////////////////////////////////////
-
-    
 
 //     ///////////////////////////////////////////////////////////////////////////
 
@@ -525,8 +642,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //                       testParticle->getCurrentState( ) ).finished( ),
 //                     numeric_limits< double >::epsilon( ),
 //                     numeric_limits< double >::max( ),
-//                     testParticleCase->numericalIntegratorRelativeTolerance,
-//                     testParticleCase->numericalIntegratorAbsoluteTolerance );
+//                     testParticleCase->numericalnumericalIntegratorRelativeTolerance,
+//                     testParticleCase->numericalnumericalIntegratorAbsoluteTolerance );
 
 //         // Numerically integrate motion of test particle up to end of start-up period.
 //         integrator->integrateTo( testParticleCase->startUpIntegrationDuration,

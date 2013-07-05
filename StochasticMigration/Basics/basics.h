@@ -7,11 +7,13 @@
  *      YYMMDD    Author            Comment
  *      130212    K. Kumar          File created from code in basicInputOutput.h.
  *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration".
+ *      130705    K. Kumar          Added getRungeKuttaCoefficients() function.
  *
  *    References
  *
  *    Notes
- *      A unit test is needed for the getStochasticMigrationRootPath() function.
+ *      A unit test is needed for the getStochasticMigrationRootPath() and 
+ *      getRungeKuttaCoefficients() functions.
  *
  */
 
@@ -19,6 +21,8 @@
 #define STOCHASTIC_MIGRATION_BASICS_H
 
 #include <string>
+
+#include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaCoefficients.h>
 
 namespace stochastic_migration
 {
@@ -45,6 +49,17 @@ static inline std::string getStochasticMigrationRootPath( )
                                 std::string( "Basics/basics.h" ).length( ) );
 #endif
 }
+
+//! Get Runge-Kutta integrator coefficient set.
+/*!
+ * Returns Runge-Kutta integrator coefficient set based on string-name provided as input. If the 
+ * string-name provided cannot be located, a run-time error is thrown.
+ * \param coefficientSet String-name for Runge-Kutta integrator coefficient set. Currently, the
+ *          options available are: DOPRI853, RKF78. 
+ * \return RungeKuttaCoefficients object with coefficient set loaded.
+ */
+tudat::numerical_integrators::RungeKuttaCoefficients getRungeKuttaCoefficients( 
+    const std::string& coefficientSet );
 
 } // namespace basics
 } // namespace stochastic_migration
