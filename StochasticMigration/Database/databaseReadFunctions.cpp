@@ -45,12 +45,14 @@ namespace database
 // using namespace assist::database;
 
 //! Get test particle case data.
-TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolutePath,
+TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolutePath, 
+                                             const std::string& caseName,
                                              const std::string& testParticleCaseTableName )
 {
     // Set stream with database query.
     std::ostringstream testParticleCaseQuery;
-    testParticleCaseQuery << "SELECT * FROM " <<  testParticleCaseTableName << ";";
+    testParticleCaseQuery << "SELECT * FROM " <<  testParticleCaseTableName 
+                          << " WHERE \"caseName\" = \"" << caseName << "\";";
 
     // Oopen database in read-only mode.          
     SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY );
@@ -69,18 +71,18 @@ TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolute
                           query.getColumn( 9 ), query.getColumn( 10 ), query.getColumn( 11 ),
                           query.getColumn( 12 ), query.getColumn( 13 ), query.getColumn( 14 ), 
                           query.getColumn( 15 ), query.getColumn( 16 ), query.getColumn( 17 ),
-                          query.getColumn( 18 ),
+                          query.getColumn( 18 ), query.getColumn( 19 ),
                           ( Eigen::VectorXd( 6 ) << 
-                                query.getColumn( 19 ), query.getColumn( 20 ),
-                                query.getColumn( 21 ), query.getColumn( 22 ), 
-                                query.getColumn( 23 ), query.getColumn( 24 ) ).finished( ),
-                          query.getColumn( 25 ), query.getColumn( 26 ), query.getColumn( 27 ), 
-                          query.getColumn( 28 ) ) );
+                                query.getColumn( 20 ), query.getColumn( 21 ),
+                                query.getColumn( 22 ), query.getColumn( 23 ), 
+                                query.getColumn( 24 ), query.getColumn( 25 ) ).finished( ),
+                          query.getColumn( 26 ), query.getColumn( 27 ), query.getColumn( 28 ), 
+                          query.getColumn( 29 ) ) );
 
     // Throw an error if there are multiple rows present in the table.
     if ( query.executeStep( ) )
     {
-        throw std::runtime_error( "Multiple cases in table!" );
+        throw std::runtime_error( "Multiple rows for case in table!" );
     }
 
     return testParticleCase;

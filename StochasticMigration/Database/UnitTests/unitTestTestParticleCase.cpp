@@ -52,7 +52,8 @@ public:
 
     //! Constructor initializing valid parameters.
     TestParticleCaseFixture( )
-        : caseNumber( 1 ),
+        : caseId( 1 ),
+          caseName( "test_case" ),
           randomWalkSimulationDuration( 1.2345e6 ),
           synodicPeriodLimit( 1.23e4 ),
           outputInterval( 3600.0 ),
@@ -80,8 +81,11 @@ public:
     { }
 
     //! Declare parameters of test particle case.
-    //! Case number.
-    int caseNumber;
+    //! Case ID.
+    int caseId;
+
+    //! Case name.
+    std::string caseName;
 
     //! Random walk simulation duration [s].
     double randomWalkSimulationDuration;
@@ -157,7 +161,7 @@ public:
     {
         return boost::make_shared< database::TestParticleCase >(
             database::TestParticleCase( 
-                caseNumber, randomWalkSimulationDuration, synodicPeriodLimit,
+                caseId, caseName, randomWalkSimulationDuration, synodicPeriodLimit,
                 outputInterval, startUpIntegrationDuration, conjunctionEventDetectionDistance,
                 oppositionEventDetectionDistance, centralBodyGravitationalParameter,
                 centralBodyJ2GravityCoefficient, centralBodyEquatorialRadius, 
@@ -184,7 +188,8 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseStructContruction )
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
     // Check that the test particle case created contains all the data as required.
-    BOOST_CHECK_EQUAL( testParticleCase->caseNumber, caseNumber );     
+    BOOST_CHECK_EQUAL( testParticleCase->caseId, caseId );    
+    BOOST_CHECK_EQUAL( testParticleCase->caseName, caseName );      
     BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationDuration, 
                        randomWalkSimulationDuration );
     BOOST_CHECK_EQUAL( testParticleCase->synodicPeriodLimit, synodicPeriodLimit );
@@ -233,14 +238,14 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseStructContruction )
                        numericalIntegratorAbsoluteTolerance );
 }
 
-//! Test initialization of test particle case with non-positive case number.
-BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveCaseNumberError )
+//! Test initialization of test particle case ID with non-positive number.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseIdNonPositiveNumberError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set case number to invalid (non-positive) number.
-    caseNumber = -1;
+    // Set case ID to invalid (non-positive) number.
+    caseId = -1;
 
     // Try to create test particle case.
     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
@@ -736,7 +741,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseNonEqualComparison )
     // Create TestParticleCase pointers.
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-    caseNumber = 2;
+    caseId = 2;
     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
     // Check that operator is overloaded correctly.
@@ -749,7 +754,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseLessThanComparison )
     // Create TestParticleCase pointers.
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-    caseNumber = 2;
+    caseId = 2;
     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
     // Check that operator is overloaded correctly.
@@ -764,7 +769,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseGreaterThanComparison )
     // Create TestParticleCase pointers.
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-    caseNumber = 2;
+    caseId = 2;
     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
     // Check that operator is overloaded correctly.
@@ -779,7 +784,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseLessThanOrEqualComparison )
     // Create TestParticleCase pointers.
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-    caseNumber = 2;
+    caseId = 2;
     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
     // Check that operator is overloaded correctly.
@@ -794,7 +799,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseGreaterThanOrEqualComparison )
     // Create TestParticleCase pointers.
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-    caseNumber = 2;
+    caseId = 2;
     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
     // Check that operator is overloaded correctly.

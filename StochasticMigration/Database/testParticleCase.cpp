@@ -55,7 +55,8 @@ using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
 //! Constructor taking all case data as input.
 TestParticleCase::TestParticleCase(
-        const int aCaseNumber,
+        const int aCaseId,
+        const std::string aCaseName,
         const double aRandomWalkSimulationDuration,
         const double aSynodicPeriodLimit,
         const double anOutputInterval,
@@ -79,7 +80,8 @@ TestParticleCase::TestParticleCase(
         const double anInitialStepSize,
         const double aNumericalIntegratorRelativeTolerance,
         const double aNumericalIntegratorAbsoluteTolerance )
-    : caseNumber( checkPositive( aCaseNumber, "Case number" ) ),
+    : caseId( checkPositive( aCaseId, "Case ID" ) ),
+      caseName( aCaseName ),
       randomWalkSimulationDuration( 
         checkPositive( aRandomWalkSimulationDuration, "Random walk duration [s]" ) ),
       synodicPeriodLimit( 
@@ -154,7 +156,8 @@ TestParticleCase::TestParticleCase(
 bool operator==( const TestParticleCase& testParticleCase1,
                  const TestParticleCase& testParticleCase2 )
 {
-    return ( testParticleCase1.caseNumber == testParticleCase2.caseNumber
+    return ( testParticleCase1.caseId == testParticleCase2.caseId
+             && testParticleCase1.caseName == testParticleCase2.caseName
              && testParticleCase1.randomWalkSimulationDuration
              == testParticleCase2.randomWalkSimulationDuration
              && testParticleCase1.synodicPeriodLimit == testParticleCase2.synodicPeriodLimit
@@ -203,7 +206,7 @@ bool operator==( const TestParticleCase& testParticleCase1,
 bool operator<( const TestParticleCase& testParticleCase1,
                 const TestParticleCase& testParticleCase2 )
 {
-    return testParticleCase1.caseNumber < testParticleCase2.caseNumber;
+    return testParticleCase1.caseId < testParticleCase2.caseId;
 }
 
 //! Overload << operator.
@@ -214,7 +217,8 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
     using namespace assist::astrodynamics;
     
     // Write contents of TestParticleCase object to output stream.
-    outputStream << "Case: " << testParticleCase.caseNumber << std::endl;
+    outputStream << "Case ID: " << testParticleCase.caseId << std::endl;
+    outputStream << "Case: " << testParticleCase.caseName << std::endl;    
     outputStream << "Random walk simulation duration [Jyr]: "
                  << convertSecondsToJulianYears(
                         testParticleCase.randomWalkSimulationDuration ) << std::endl;

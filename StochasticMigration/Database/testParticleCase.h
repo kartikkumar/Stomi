@@ -74,7 +74,8 @@ public:
 
     //! Constructor taking all case data as input.
     TestParticleCase(
-            const int aCaseNumber,
+            const int aCaseId,
+            const std::string aCaseName,
             const double aRandomWalkSimulationDuration,
             const double aSynodicPeriodLimit,
             const double anOutputInterval,
@@ -99,8 +100,11 @@ public:
             const double aNumericalIntegratorRelativeTolerance,
             const double aNumericalIntegratorAbsoluteTolerance );
 
-    //! Case number.
-    const int caseNumber;
+    //! Case ID.
+    const int caseId;
+
+    //! Case name.
+    const std::string caseName;
 
     //! Random walk simulation duration [s].
     const  double randomWalkSimulationDuration;

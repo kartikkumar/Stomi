@@ -59,10 +59,12 @@ namespace database
  * Returns case data, used as metadata for a set of test particle simulations, retrieved from
  * simulation database.
  * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param caseName Name stored in table for test particle case.
  * \param testParticleCaseTableName String name of test particle case table in database.
  * \return Test particle case data, stored in a shared-point to a TestParticleCase object.
  */
 TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolutePath, 
+                                             const std::string& caseName,
                                              const std::string& testParticleCaseTableName );
 
 // //! Get test particle input table.

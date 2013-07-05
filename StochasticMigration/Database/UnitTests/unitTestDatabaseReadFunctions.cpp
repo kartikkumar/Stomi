@@ -88,10 +88,11 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
 
     // Retrieve test particle case data.
     const TestParticleCasePointer testParticleCase 
-        = getTestParticleCase( absolutePathToTestDatabase, "test_particle_case" );
+        = getTestParticleCase( absolutePathToTestDatabase, "test_case", "test_particle_case" );
 
     // Check that the values read from the database are correct.
-    BOOST_CHECK_EQUAL( testParticleCase->caseNumber, 1 );
+    BOOST_CHECK_EQUAL( testParticleCase->caseId, 1 );
+    BOOST_CHECK_EQUAL( testParticleCase->caseName, "test_case" );
     BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationDuration, 1577880000.0 );
     BOOST_CHECK_EQUAL( testParticleCase->synodicPeriodLimit, 1577880000.0 );
     BOOST_CHECK_EQUAL( testParticleCase->outputInterval, 14400.0 );
@@ -101,7 +102,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyGravitationalParameter, 5.793966e15 );
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyEquatorialRadius, 0.0 );
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyJ2GravityCoefficient, 0.0 );
-    BOOST_CHECK_EQUAL( testParticleCase->semiMajorAxisDistributionLimit, 1000000.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->semiMajorAxisDistributionLimit, 1500000.0 );
     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionMean, 0.0 );
     BOOST_CHECK_SMALL( testParticleCase->eccentricityDistributionAngle - ( PI / 4.0 ), 1.0e-15 );    
     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionFullWidthHalfMaximum, 0.0 );
@@ -128,7 +129,8 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorAbsoluteTolerance, 1.0e-15 );
 }
 
-//! Test run-time error in case of multiple test particle cases defined in SQLite3 database.
+//! Test run-time error in case of multiple identical test particle cases defined in SQLite3 
+//! database.
 BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 {
     using namespace basics;
@@ -146,7 +148,8 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
     {
         // Retrieve test particle case data.
         const TestParticleCasePointer testParticleCase
-                = getTestParticleCase( absolutePathToTestDatabase, "test_particle_case" );
+                = getTestParticleCase( absolutePathToTestDatabase,
+                                       "test_case", "test_particle_case" );
     }
 
     // Catch expected run-time error.
