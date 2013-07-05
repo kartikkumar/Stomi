@@ -1,26 +1,7 @@
-/*    Copyright (c) 2010-2013, Delft University of Technology
+/*    
+ *    Copyright (c) 2010-2013, Delft University of Technology
  *    All rights reserved.
- *
- *    Redistribution and use in source and binary forms, with or without modification, are
- *    permitted provided that the following conditions are met:
- *      - Redistributions of source code must retain the above copyright notice, this list of
- *        conditions and the following disclaimer.
- *      - Redistributions in binary form must reproduce the above copyright notice, this list of
- *        conditions and the following disclaimer in the documentation and/or other materials
- *        provided with the distribution.
- *      - Neither the name of the Delft University of Technology nor the names of its contributors
- *        may be used to endorse or promote products derived from this software without specific
- *        prior written permission.
- *
- *    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
- *    OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- *    MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- *    COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- *    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- *    GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- *    AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- *    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *    OF THE POSSIBILITY OF SUCH DAMAGE.
+ *    See COPYING for license details.
  *
  *    Changelog
  *      YYMMDD    Author            Comment
@@ -37,7 +18,11 @@
  *                                  StochasticMigration project.
  *      130218    K. Kumar          Updated "encounter" to "conjunction".
  *      130702    K. Kumar          Updated code to use SQLiteCpp library; added output messages.
- *      130702    K. Kumar          Completed update of code.
+ *      130702    K. Kumar          Completed update of code; updated table schemas for test 
+ *                                  particle input and output.
+ *      130704    K. Kumar          Updated case table schema; updated variable-naming.
+ *      130705    K. Kumar          Updated database structure to store multiple cases in a single
+ *                                  file.
  *
  *    References
  *      Kumar, K., de Pater, I., Showalter, M.R. In prep, 2013.
@@ -52,20 +37,19 @@
  *
  */
 
+#include <iomanip>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <stdexcept>
 #include <string>
 
-#include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
 #include <Eigen/Core>
-
-#include <sqlite3.h>
 
 #include <SQLiteC++.h>
 
@@ -92,8 +76,10 @@
 //! Execute stochastic migration database generator.
 int main( const int numberOfInputs, const char* inputArguments[ ] )
 {
-    // Using statements.
-    using boost::iequals;
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Declare using-statements.
+    
     using namespace boost::random;
 
     using namespace assist::astrodynamics;
@@ -115,14 +101,16 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     ///////////////////////////////////////////////////////////////////////////
 
-    // Input deck.
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Set up input deck.
 
     // Check number of input parameters is correct (the numberOfInputs variable includes the
     // application itself, so one is subtracted from this number).
     checkNumberOfInputArguments( numberOfInputs - 1 );
 
     // Get input parameter dictionary.
-    DictionaryPointer dictionary = getStochasticMigrationDatabaseGeneratorDictionary( );
+    DictionaryPointer dictionary = getDatabaseGeneratorDictionary( );
 
     // Read and filter input stream (this can't be declared const because the parser's parse
     // function is not const-correct at the moment).
@@ -134,98 +122,152 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Parse filtered data.
     const ParsedDataVectorPtr parsedData = parser.parse( filteredInput );
 
+    std::cout << std::endl;
+    std::cout << "****************************************************************************" 
+              << std::endl;
+    std::cout << "Input parameters" << std::endl;
+    std::cout << "****************************************************************************" 
+              << std::endl;
+    std::cout << std::endl;
+
     // Extract input parameters.
-    const int caseNumber = extractParameterValue< int >(
+    const std::string caseName = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "CASE" ) );
+    std::cout << "Case                                                      " 
+              << caseName << std::endl;
 
     const std::string databasePath = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "DATABASE" ) );
+    std::cout << "Database                                                  "
+              << databasePath << std::endl;
 
     const double numberOfSimulations = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "NUMBEROFSIMULATIONS" ) );
+    std::cout << "Number of simulations                                     " 
+              << numberOfSimulations << std::endl;
 
     const double randomWalkDuration = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "RANDOMWALKDURATION" ),
                 50.0 * JULIAN_YEAR, &convertJulianYearsToSeconds );
+    std::cout << "Random walk duration                                      " 
+              << randomWalkDuration / JULIAN_YEAR << " yrs" << std::endl;
 
     const double synodicPeriodLimit = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "SYNODICPERIODLIMIT" ),
                 50.0 * JULIAN_YEAR, &convertJulianYearsToSeconds );
+    std::cout << "Synodic period limit                                      " 
+              << synodicPeriodLimit / JULIAN_YEAR << " yrs" << std::endl;
 
     const double outputInterval = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "OUTPUTINTERVAL" ),
                 convertHoursToSeconds( 4.0 ), &convertHoursToSeconds< double > );
+    std::cout << "Output interval                                           " 
+              << convertSecondsToHours( outputInterval ) << " hrs" << std::endl;
 
     const double startUpIntegrationDuration = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "STARTUPINTEGRATIONDURATION" ), 0.0,
                 &convertJulianYearsToSeconds );
+    std::cout << "Start-up integration duration                             " 
+              << startUpIntegrationDuration / JULIAN_YEAR << " yrs" << std::endl;
 
     const double conjunctionEventDetectionDistance = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE" ), 3.0e7 );
+    std::cout << "Conjunction event detection distance                      " 
+              << convertMetersToKilometers( conjunctionEventDetectionDistance ) 
+              << " km" << std::endl;
 
     const double oppositionEventDetectionDistance = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE" ), 1.5e8 );
+    std::cout << "Opposition event detection distance                       " 
+              << convertMetersToKilometers( oppositionEventDetectionDistance ) 
+              << " km" << std::endl;
 
     const double centralBodyGravitationalParameter = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER" ), 5.793966e15 );
+    std::cout << "Central body gravitational parameter                      " 
+              << centralBodyGravitationalParameter << " m^3 s^-2" << std::endl;
 
     const double centralBodyJ2GravityCoefficient = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT" ), 0.0 );
+    std::cout << "Central body J2 gravity coefficient                       "
+              << centralBodyJ2GravityCoefficient << std::endl;
 
     const double centralBodyEquatorialRadius = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "CENTRALBODYEQUATORIALRADIUS" ), 0.0 );
+    std::cout << "Central body equatorial radius                            "
+              << convertMetersToKilometers( centralBodyEquatorialRadius ) << " km" << std::endl;
 
-    const double semiMajorAxisLimit = extractParameterValue< double >(
+    const double semiMajorAxisDistributionLimit = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "SEMIMAJORAXISLIMIT" ), TUDAT_NAN,
+                findEntry( dictionary, "SEMIMAJORAXISDISTRIBUTIONLIMIT" ), TUDAT_NAN,
                 &convertKilometersToMeters< double > );
+    std::cout << "Semi-major axis limit                                     " 
+              << convertMetersToKilometers( semiMajorAxisDistributionLimit )
+              << " km" << std::endl;
 
-    const double eccentricityMean = extractParameterValue< double >(
+    const double eccentricityDistributionMean = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "ECCENTRICITYMEAN" ), 0.0 );
+                findEntry( dictionary, "ECCENTRICITYDISTRIBUTIONMEAN" ), 0.0 );
+    std::cout << "Eccentricity distribution mean                            " 
+              << eccentricityDistributionMean << std::endl;
 
-    const double eccentricityAngle = extractParameterValue< double >(
+    const double eccentricityDistributionAngle = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "ECCENTRICITYANGLE" ), PI / 4.0,
+                findEntry( dictionary, "ECCENTRICITYDISTRIBUTIONANGLE" ), PI / 4.0,
                 &convertDegreesToRadians< double > );
+    std::cout << "Eccentricity distribution angle                           " 
+              << convertRadiansToDegrees( eccentricityDistributionAngle ) << " deg" << std::endl;
 
-    const double eccentricityFWHM = extractParameterValue< double >(
+    const double eccentricityDistributionFullWidthHalfMaxmimum = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "ECCENTRICITYFWHM" ) );
+                findEntry( dictionary, "ECCENTRICITYDISTRIBUTIONFULLWIDTHHALFMAXIMUM" ) );
+    std::cout << "Eccentricity distribution Full-Width Half-Maximum         " 
+              << eccentricityDistributionFullWidthHalfMaxmimum << std::endl;
 
-    const double inclinationMean = extractParameterValue< double >(
+    const double inclinationDistributionMean = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "INCLINATIONMEAN" ), 0.0,
+                findEntry( dictionary, "INCLINATIONDISTRIBUTIONMEAN" ), 0.0,
                 &convertDegreesToRadians< double > );
+    std::cout << "Inclination distribution mean                             "
+              << convertRadiansToDegrees( inclinationDistributionMean ) << " deg" << std::endl;
 
-    const double inclinationAngle = extractParameterValue< double >(
+    const double inclinationDistributionAngle = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "INCLINATIONANGLE" ), PI / 4.0,
+                findEntry( dictionary, "INCLINATIONDISTRIBUTIONANGLE" ), PI / 4.0,
                 &convertDegreesToRadians< double > );
+    std::cout << "Inclination distribution angle                            " 
+              << convertRadiansToDegrees( inclinationDistributionAngle ) << " deg" << std::endl;
 
-    const double inclinationFWHM = extractParameterValue< double >(
+    const double inclinationDistributionFullWidthHalfMaxmimum = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "INCLINATIONFWHM" ), 0.0,
+                findEntry( dictionary, "INCLINATIONDISTRIBUTIONFULLWIDTHHALFMAXIMUM" ), 0.0,
                 &convertDegreesToRadians< double > );
+    std::cout << "Inclination distribution Full-Width Half-Maximum          " 
+              << convertRadiansToDegrees( inclinationDistributionFullWidthHalfMaxmimum ) 
+              << " deg" << std::endl;
 
     const double perturbedBodyRadius = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYRADIUS" ),
                 1.2e4, &convertKilometersToMeters< double > );
+    std::cout << "Perturbed body radius                                     " 
+              << convertMetersToKilometers( perturbedBodyRadius ) << " km" << std::endl;
 
     const double perturbedBodyBulkDensity = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYBULKDENSITY" ), 1500.0 );
+    std::cout << "Perturbed body bulk density                               " 
+              << perturbedBodyBulkDensity << " kg m^-3" << std::endl;
 
     Vector6d perturbedBodyKeplerianElementsAtT0( 6 );
 
@@ -233,129 +275,114 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0" ), 9.7736e7,
                 &convertKilometersToMeters< double > );
+    std::cout << "Perturbed body semi-major axis at TO                      "
+              << convertMetersToKilometers( 
+                    perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) ) 
+              << " km" << std::endl;
 
     perturbedBodyKeplerianElementsAtT0( eccentricityIndex ) = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0" ), 0.00254 );
+    std::cout << "Perturbed body eccentricity at TO                         "
+              << perturbedBodyKeplerianElementsAtT0( eccentricityIndex ) << std::endl;
 
     perturbedBodyKeplerianElementsAtT0( inclinationIndex ) = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0" ),
                 convertDegreesToRadians( 0.14 ), &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body inclination at TO                          "
+              << convertRadiansToDegrees( perturbedBodyKeplerianElementsAtT0( inclinationIndex ) ) 
+              << " deg" << std::endl;
 
     perturbedBodyKeplerianElementsAtT0( argumentOfPeriapsisIndex )
             = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0" ),
                 convertDegreesToRadians( 18.9594 ), &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body argument of periapsis at TO                "
+              << convertRadiansToDegrees( 
+                    perturbedBodyKeplerianElementsAtT0( argumentOfPeriapsisIndex ) ) 
+              << " deg" << std::endl;
 
     perturbedBodyKeplerianElementsAtT0( longitudeOfAscendingNodeIndex )
             = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0" ),
                 convertDegreesToRadians( 251.932 ), &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body longitude of ascending node at TO          "
+              << convertRadiansToDegrees( 
+                    perturbedBodyKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) ) 
+              << " deg" << std::endl;
 
     perturbedBodyKeplerianElementsAtT0( trueAnomalyIndex ) = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0" ),
                 convertDegreesToRadians( 354.516 ), &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body true anomaly at TO                         "
+              << convertRadiansToDegrees( perturbedBodyKeplerianElementsAtT0( trueAnomalyIndex ) ) 
+              << " deg" << std::endl;
 
     const std::string numericalIntegratorType = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "NUMERICALINTEGRATORTYPE" ), "DOPRI853" );
+    std::cout << "Numerical integrator type                                 "
+              << numericalIntegratorType << std::endl;
 
     const double initialStepSize = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "INITIALSTEPSIZE" ), 60.0 );
+    std::cout << "Initial step size                                         "
+              << initialStepSize << " s" << std::endl;
 
     const double integratorRelativeTolerance = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE" ), 1.0e-12 );
+    std::cout << "Numerical integrator relative tolerance                   " 
+              << integratorRelativeTolerance << std::endl;
 
     const double integratorAbsoluteTolerance = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "RUNGEKUTTAABSOLUTEERRORTOLERANCE" ), 1.0e-15 );
+    std::cout << "Numerical integrator absolute tolerance                   " 
+              << integratorAbsoluteTolerance << std::endl;
 
     const std::string testParticleCaseTableName = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "TESTPARTICLECASETABLENAME" ), "test_particle_case" );
+    std::cout << "Test particle case table                                  "
+              << testParticleCaseTableName << std::endl;
 
     const std::string testParticleInputTableName = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "TESTPARTICLEINPUTTABLENAME" ), "test_particle_input" );
+    std::cout << "Test particle input table                                 "
+              << testParticleInputTableName << std::endl;
 
     const std::string testParticleKickTableName = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "TESTPARTICLEKICKTABLENAME" ), "test_particle_kicks" );
+    std::cout << "Test particle kick table                                  "
+              << testParticleKickTableName << std::endl;
 
     const std::string randomWalkMonteCarloRunTableName = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "RANDOMWALKMONTECARLORUNTABLENAME" ),
                 "random_walk_monte_carlo_runs" );
+    std::cout << "Random walk Monte Carlo run table                         "
+              << randomWalkMonteCarloRunTableName << std::endl;
 
     const std::string randomWalkPerturberTableName = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME" ),
                 "random_walk_perturbers" );
+    std::cout << "Random walk perturber table                               "
+              << randomWalkPerturberTableName << std::endl;
 
     const std::string randomWalkOutputTableName = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME" ), "random_walk_output" );
-
-    // Compute mass of perturbed body [kg].
-    const double perturbedBodyMass = computeMassOfSphere(
-                perturbedBodyRadius, perturbedBodyBulkDensity );
-
-    // Compute perturbed body's gravitational parameter [m^3 s^-2].
-    const double perturbedBodyGravitationalParameter
-            = computeGravitationalParameter( perturbedBodyMass );
-
-    std::cout << std::endl;
-    std::cout << "****************************************************************************" 
-              << std::endl;
-    std::cout << "Input parameters provided" << std::endl;
-    std::cout << "****************************************************************************" 
-              << std::endl;
-    std::cout << std::endl;
-    std::cout << "Case                              " << caseNumber << std::endl;
-    std::cout << "Database                          " << databasePath << std::endl;
-    std::cout << "Number of simulations             " << numberOfSimulations << std::endl;
-    std::cout << "Random walk duration              " << randomWalkDuration / JULIAN_YEAR << " yrs" 
-              << std::endl;
-    std::cout << "Synodic period limit              " << synodicPeriodLimit / JULIAN_YEAR << " yrs"
-              << std::endl;
-    std::cout << "Output interval                   " << convertSecondsToHours( outputInterval ) 
-              << " hrs" << std::endl;
-    std::cout << "Start-up integration duration     " << startUpIntegrationDuration / JULIAN_YEAR
-              << " yrs" << std::endl;
-    std::cout << conjunctionEventDetectionDistance << std::endl;
-    std::cout << oppositionEventDetectionDistance << std::endl;
-    std::cout << centralBodyGravitationalParameter << std::endl;
-    std::cout << centralBodyJ2GravityCoefficient << std::endl;
-    std::cout << centralBodyEquatorialRadius << std::endl;
-    std::cout << semiMajorAxisLimit << std::endl;
-    std::cout << eccentricityFWHM << std::endl;
-    std::cout << eccentricityMean << std::endl;
-    std::cout << eccentricityAngle << std::endl;
-    std::cout << inclinationFWHM << std::endl;
-    std::cout << inclinationMean << std::endl;
-    std::cout << inclinationAngle << std::endl;
-    std::cout << perturbedBodyRadius << std::endl;
-    std::cout << perturbedBodyBulkDensity << std::endl;
-    std::cout << perturbedBodyKeplerianElementsAtT0 << std::endl;
-    std::cout << numericalIntegratorType << std::endl;
-    std::cout << initialStepSize << std::endl;
-    std::cout << integratorRelativeTolerance << ", "
-              << integratorAbsoluteTolerance << std::endl;
-    std::cout << perturbedBodyMass << std::endl;
-    std::cout << perturbedBodyGravitationalParameter << std::endl;
-    std::cout << testParticleCaseTableName << std::endl;
-    std::cout << testParticleInputTableName << std::endl;
-    std::cout << testParticleKickTableName << std::endl;
-    std::cout << randomWalkMonteCarloRunTableName << std::endl;
-    std::cout << randomWalkPerturberTableName << std::endl;
-    std::cout << randomWalkOutputTableName << std::endl;
-    std::cout << std::endl;
+    std::cout << "Random walk output table                                  "
+              << randomWalkOutputTableName << std::endl;
 
     // Check that all required parameters have been set.
     checkRequiredParameters( dictionary );
@@ -381,8 +408,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Define an uniform random number distribution for test particle semi-major axis, centered at
     // perturbed body's semi-major axis [m].
     uniform_real_distribution< > semiMajorAxisDistribution(
-                -semiMajorAxisLimit + perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ),
-                semiMajorAxisLimit + perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) );
+                -semiMajorAxisDistributionLimit 
+                + perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ),
+                semiMajorAxisDistributionLimit 
+                + perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) );
 
     // Define variate generator for semi-major axis values using the random number generator
     // and uniform distribution of semi-major axis.
@@ -392,12 +421,14 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Define normal random number distributions for test particle components of eccentricity
     // vector (h_e = e*cos( AoP ), k_e = e*sin( AoP ) ).
     normal_distribution< > distributionOfXComponentOfEccentricityVector(
-                eccentricityMean * std::cos( eccentricityAngle ),
-                convertFullWidthHalfMaximumToStandardDeviation( eccentricityFWHM ) );
+                eccentricityDistributionMean * std::cos( eccentricityDistributionAngle ),
+                convertFullWidthHalfMaximumToStandardDeviation( 
+                    eccentricityDistributionFullWidthHalfMaxmimum ) );
 
     normal_distribution< > distributionOfYComponentOfEccentricityVector(
-                eccentricityMean * std::sin( eccentricityAngle ),
-                convertFullWidthHalfMaximumToStandardDeviation( eccentricityFWHM ) );
+                eccentricityDistributionMean * std::sin( eccentricityDistributionAngle ),
+                convertFullWidthHalfMaximumToStandardDeviation( 
+                    eccentricityDistributionFullWidthHalfMaxmimum ) );
 
     // Define variate generators for h_e- and k_e-values using the random number generator
     // and normal distribution of h_e- and k_e-values.
@@ -412,12 +443,14 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Define normal random number distributions for test particle components of inclination
     // vector (h_i = i*cos( RAAN ), k_i = i*sin( RAAN ) ).
     normal_distribution< > distributionOfXComponentOfInclinationVector(
-                inclinationMean * std::cos( inclinationAngle ),
-                convertFullWidthHalfMaximumToStandardDeviation( inclinationFWHM ) );
+                inclinationDistributionMean * std::cos( inclinationDistributionAngle ),
+                convertFullWidthHalfMaximumToStandardDeviation( 
+                    inclinationDistributionFullWidthHalfMaxmimum ) );
 
     normal_distribution< > distributionOfYComponentOfInclinationVector(
-                inclinationMean * std::sin( inclinationAngle ),
-                convertFullWidthHalfMaximumToStandardDeviation( inclinationFWHM ) );
+                inclinationDistributionMean * std::sin( inclinationDistributionAngle ),
+                convertFullWidthHalfMaximumToStandardDeviation( 
+                    inclinationDistributionFullWidthHalfMaxmimum ) );
 
     // Define variate generators for h_i- and k_i-values using the random number generator
     // and normal distribution of h_i- and k_i-values.
@@ -432,6 +465,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     ///////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////
+
+    // Open (and if necessary create) database.
 
     std::cout << std::endl;
     std::cout << "****************************************************************************" 
@@ -477,7 +512,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         std::ostringstream testParticleCaseTableCreate;
         testParticleCaseTableCreate
             << "CREATE TABLE IF NOT EXISTS " << testParticleCaseTableName << " ("
-            << "\"case\" INTEGER PRIMARY KEY NOT NULL,"
+            << "\"caseId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"                
+            << "\"caseName\" TEXT NOT NULL,"
             << "\"randomWalkSimulationDuration\" REAL NOT NULL,"
             << "\"synodicPeriodLimit\" REAL NOT NULL,"
             << "\"outputInterval\" REAL NOT NULL,"
@@ -487,12 +523,15 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"centralBodyGravitationalParameter\" REAL NOT NULL,"
             << "\"centralBodyJ2GravityCoefficient\" REAL NOT NULL,"
             << "\"centralBodyEquatorialRadius\" REAL NOT NULL,"
-            << "\"limitSemiMajorAxisDistribution\" REAL NOT NULL,"
-            << "\"meanEccentricityDistribution\" REAL NOT NULL,"
-            << "\"fullWidthHalfMaxmimumEccentricityDistribution\" REAL NOT NULL,"
-            << "\"meanInclinationDistribution\" REAL NOT NULL,"
-            << "\"fullWidthHalfMaxmimumInclinationDistribution\" REAL NOT NULL,"
-            << "\"perturbedBodyGravitationalParameter\" REAL NOT NULL,"
+            << "\"semiMajorAxisDistributionLimit\" REAL NOT NULL,"
+            << "\"eccentricityDistributionMean\" REAL NOT NULL,"
+            << "\"eccentricityDistributionAngle\" REAL NOT NULL,"
+            << "\"eccentricityDistributionFullWidthHalfMaxmimum\" REAL NOT NULL,"
+            << "\"inclinationDistributionMean\" REAL NOT NULL,"
+            << "\"inclinationDistributionAngle\" REAL NOT NULL,"
+            << "\"inclinationDistributionFullWidthHalfMaxmimum\" REAL NOT NULL,"
+            << "\"perturbedBodyRadius\" REAL NOT NULL,"
+            << "\"perturbedBodyBulkDensity\" REAL NOT NULL,"
             << "\"perturbedBodySemiMajorAxisAtT0\" REAL NOT NULL,"
             << "\"perturbedBodyEccentricityAtT0\" REAL NOT NULL,"
             << "\"perturbedBodyInclinationAtT0\" REAL NOT NULL,"
@@ -500,9 +539,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"perturbedBodyLongitudeOfAscendingNodeAtT0\" REAL NOT NULL,"
             << "\"perturbedBodyTrueAnomalyAtT0\" REAL NOT NULL,"
             << "\"numericalIntegratorType\" TEXT NOT NULL,"
+            << "\"initialStepSize\" REAL NOT NULL,"
             << "\"relativeTolerance\" REAL NOT NULL,"
-            << "\"absoluteTolerance\" REAL NOT NULL,"
-            << "\"initialStepSize\" REAL NOT NULL);";
+            << "\"absoluteTolerance\" REAL NOT NULL);";
 
         // Execute command to create table.
         database.exec( testParticleCaseTableCreate.str( ).c_str( ) );
@@ -533,37 +572,44 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Check data present in table.
 
-    // Check how many rows are present in table.
-    std::ostringstream testParticleCaseRowCount;
-    testParticleCaseRowCount << "SELECT COUNT( * ) FROM " << testParticleCaseTableName;
-    int caseTableRows = database.execAndGet( testParticleCaseRowCount.str( ).c_str( ) );
+    // Check if case is already present in table.
+    std::ostringstream testParticleCaseCheck;
+    testParticleCaseCheck << "SELECT COUNT( * ) FROM " << testParticleCaseTableName 
+                          << " WHERE \"caseName\" = \"" << caseName << "\"";
+    int numberOfCaseRows = database.execAndGet( testParticleCaseCheck.str( ).c_str( ) );
+    int caseId = 0;
 
-    if ( caseTableRows > 1 )
+    if ( numberOfCaseRows > 1 )
     {
-        std::ostringstream caseTableRowsError;
-        caseTableRowsError << "Error: Table '" << testParticleCaseTableName 
-                           << "'' contains " << caseTableRows << " rows!";
-        throw std::runtime_error( caseTableRowsError.str( ).c_str( ) );
+        std::ostringstream numberOfCaseRowsError;
+        numberOfCaseRowsError << "Error: Table '" << testParticleCaseTableName << "' contains " 
+                              << numberOfCaseRows << " rows for case '" << caseName << "'!";
+        throw std::runtime_error( numberOfCaseRowsError.str( ).c_str( ) );
     }
 
-    else if ( caseTableRows == 1 )
+    else if ( numberOfCaseRows == 1 )
     {
-        std::cout << "Table '" << testParticleCaseTableName << "' contains 1 row of data ... "
-                  << "skipping populating table ... " << std::endl;;
+        std::cout << "Table '" << testParticleCaseTableName 
+                  << "' contains 1 row of data for case '" << caseName << "' ... "
+                  << "skipping populating table ... " << std::endl;
     }
 
     // Write test particle case data to table.
-    else if ( caseTableRows == 0 )
+    else if ( numberOfCaseRows == 0 )
     {
-        std::cout << "No data present in table '" << testParticleCaseTableName << "' ... " 
-                  << std::endl;
+        std::cout << "No data present in table '" << testParticleCaseTableName 
+                  << "' for case '" << caseName << "' ... " << std::endl;
         std::cout << "Populating table ... " << std::endl;
 
         // Create stringstream with test particle case data insert command.
-        std::stringstream testParticleCaseDataInsert;
+        // For floating-point values, ensure the data is written to the stream at full precision.
+        std::ostringstream testParticleCaseDataInsert;
         testParticleCaseDataInsert
             << "INSERT INTO " << testParticleCaseTableName << " VALUES ("
-            << caseNumber << ","
+            << "NULL,"
+            << "\"" << caseName << "\",";
+        testParticleCaseDataInsert 
+            << std::setprecision( std::numeric_limits< double >::digits10 )
             << randomWalkDuration << ","
             << synodicPeriodLimit << ","
             << outputInterval << ","
@@ -573,29 +619,36 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << centralBodyGravitationalParameter << ","
             << centralBodyJ2GravityCoefficient << ","
             << centralBodyEquatorialRadius << ","
-            << semiMajorAxisLimit << ","
-            << eccentricityMean << ","
-            << eccentricityFWHM << ","
-            << inclinationMean << ","
-            << inclinationFWHM << ","
-            << perturbedBodyGravitationalParameter << ","
+            << semiMajorAxisDistributionLimit << ","
+            << eccentricityDistributionMean << ","
+            << eccentricityDistributionAngle << ","
+            << eccentricityDistributionFullWidthHalfMaxmimum << ","
+            << inclinationDistributionMean << ","
+            << inclinationDistributionAngle << ","
+            << inclinationDistributionFullWidthHalfMaxmimum << ","
+            << perturbedBodyRadius << ","
+            << perturbedBodyBulkDensity << ","
             << perturbedBodyKeplerianElementsAtT0( semiMajorAxisIndex ) << ","
             << perturbedBodyKeplerianElementsAtT0( eccentricityIndex ) << ","
             << perturbedBodyKeplerianElementsAtT0( inclinationIndex ) << ","
             << perturbedBodyKeplerianElementsAtT0( argumentOfPeriapsisIndex ) << ","
             << perturbedBodyKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) << ","
-            << perturbedBodyKeplerianElementsAtT0( trueAnomalyIndex ) << ","
-            << "\"" << numericalIntegratorType << "\", "
-            << integratorRelativeTolerance << ", "
-            << integratorAbsoluteTolerance << ", "
-            << initialStepSize << ");";
+            << perturbedBodyKeplerianElementsAtT0( trueAnomalyIndex ) << ",";
+        testParticleCaseDataInsert    
+            << "\"" << numericalIntegratorType << "\",";
+        testParticleCaseDataInsert
+            << std::setprecision( std::numeric_limits< double >::digits10 )
+            << initialStepSize << ","
+            << integratorRelativeTolerance << ","
+            << integratorAbsoluteTolerance
+            << ");";
 
         // Insert test particle case data.
         database.exec( testParticleCaseDataInsert.str( ).c_str( ) );
 
         // Check that there is only one row present in the table.
-        caseTableRows = database.execAndGet( testParticleCaseRowCount.str( ).c_str( ) );
-        if ( caseTableRows == 1 )
+        numberOfCaseRows = database.execAndGet( testParticleCaseCheck.str( ).c_str( ) );
+        if ( numberOfCaseRows == 1 )
         {
             std::cout << "Table '" << testParticleCaseTableName << "' populated successfully!" 
                       << std::endl; 
@@ -603,12 +656,20 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         else
         {
-            std::ostringstream caseTableRowsError;
-            caseTableRowsError << "Error: Table '" << testParticleCaseTableName << "' contains" 
-                               << caseTableRows << "rows!";
-            std::runtime_error( caseTableRowsError.str( ).c_str( ) );
+            std::ostringstream numberOfCaseRowsError;
+            numberOfCaseRowsError << "Error: Table '" << testParticleCaseTableName 
+                                  << "' contains " << numberOfCaseRows << " rows for case '"
+                                  << caseName << "'!";
+            std::runtime_error( numberOfCaseRowsError.str( ).c_str( ) );
         }
     }
+
+    // Retrieve and output case id.
+    std::ostringstream testParticleCaseId;          
+    testParticleCaseId << "SELECT \"caseId\" FROM " << testParticleCaseTableName
+                       << " WHERE \"caseName\" = \"" << caseName << "\"";
+    caseId = database.execAndGet( testParticleCaseId.str( ).c_str( ) );
+    std::cout << "Case ID is " << caseId << " for case '" << caseName << "'" << std::endl;
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -626,15 +687,14 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         testParticleInputTableCreate
             << "CREATE TABLE IF NOT EXISTS " << testParticleInputTableName << " ("
             << "\"testParticleSimulation\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"caseId\" INTEGER NOT NULL,"
             << "\"completed\" INTEGER NOT NULL,"
             << "\"semiMajorAxis\" REAL NOT NULL,"
             << "\"eccentricity\" REAL NOT NULL,"
             << "\"inclination\" REAL NOT NULL,"
             << "\"argumentOfPeriapsis\" REAL NOT NULL,"
             << "\"longitudeOfAscendingNode\" REAL NOT NULL,"
-            << "\"trueAnomaly\" REAL NOT NULL,"
-            << "\"perturbedBodyEnergyError\" REAL NULL,"
-            << "\"perturbedBodyAngularMomentumError\" REAL NULL);";
+            << "\"trueAnomaly\" REAL NOT NULL);";
 
         // Execute command to create table.
         database.exec( testParticleInputTableCreate.str( ).c_str( ) );
@@ -652,7 +712,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             tableCreateError << "Error: Creating table '" << testParticleInputTableName 
             << "'' failed!";
             throw std::runtime_error( tableCreateError.str( ).c_str( ) );
-
         }
     }
 
@@ -660,24 +719,24 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     {
         std::cout << "Table '" << testParticleInputTableName 
                   << "' already exists ... skipping creating table ..." << std::endl;
-
     }
 
     // Check data present in table.
 
     // Check how many rows are present in table.
     std::ostringstream testParticleInputRowCount;
-    testParticleInputRowCount << "SELECT COUNT( * ) FROM " << testParticleInputTableName;
+    testParticleInputRowCount << "SELECT COUNT( * ) FROM " << testParticleInputTableName 
+                              << " WHERE \"caseId\" = " << caseId;
     int inputTableRows = database.execAndGet( testParticleInputRowCount.str( ).c_str( ) );
 
     if ( inputTableRows > 0 )
     {
         std::cout << "Table '" << testParticleInputTableName << "' contains "
-                  << inputTableRows << " rows ... " << std::endl;
+                  << inputTableRows << " rows for case '" << caseName << "' ... " << std::endl;
     }
 
     // Populate table.
-    std::cout << "Populating table with input data for " << numberOfSimulations 
+    std::cout << "Populating input table with data for " << numberOfSimulations 
               << " new simulations ... " << std::endl;
 
     // Set up database transaction.
@@ -686,9 +745,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Set up test particle input table insert statement.
     std::ostringstream testParticleInputTableInsert;
     testParticleInputTableInsert << "INSERT INTO " << testParticleInputTableName
-                                 << " VALUES (NULL, 0, :semiMajorAxis, :eccentricity, "
-                                 << ":inclination, :argumentOfPeriapsis, "
-                                 << ":longitudeOfAscendingNode, :trueAnomaly, NULL, NULL);";
+                                 << " VALUES (NULL, " << caseId << ", 0, :semiMajorAxis, "
+                                 << ":eccentricity, :inclination, :argumentOfPeriapsis, "
+                                 << ":longitudeOfAscendingNode, :trueAnomaly);";
 
     // Compile a SQL query.
     SQLite::Statement testParticleInputTableInsertQuery( 
@@ -790,7 +849,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         std::ostringstream testParticleKickTableCreate;
         testParticleKickTableCreate
             << "CREATE TABLE IF NOT EXISTS " << testParticleKickTableName << " ("
-            << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"kick\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             << "\"testParticleSimulation\" INTEGER NOT NULL,"
             << "\"conjunctionEpoch\" REAL NOT NULL,"
             << "\"conjunctionDistance\" REAL NOT NULL,"
@@ -804,7 +863,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"postconjunctionEventDetectionDistance\" REAL NOT NULL,"
             << "\"postConjunctionSemiMajorAxis\" REAL NOT NULL,"
             << "\"postConjunctionEccentricity\" REAL NOT NULL,"
-            << "\"postConjunctionInclination\" REAL NOT NULL);";
+            << "\"postConjunctionInclination\" REAL NOT NULL,"
+            << "\"tisserandParameterRelativeError\" REAL NOT NULL,"
+            << "\"perturbedBodyEnergyRelativeError\" REAL NOT NULL,"
+            << "\"perturbedBodyAngularMomentumRelativeError\" REAL NOT NULL);";
 
         // Execute command to create table.
         database.exec( testParticleKickTableCreate.str( ).c_str( ) );
@@ -975,6 +1037,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     ///////////////////////////////////////////////////////////////////////////
 
     // Close database.
+
     // Database will be automatically closed after this statement 
     // (when object goes out of scope its destructor will be called).
     std::cout << "SQLite database file '" << database.getFilename().c_str() 

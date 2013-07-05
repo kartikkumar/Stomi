@@ -1,26 +1,7 @@
+ #
  #    Copyright (c) 2010-2013, Delft University of Technology
  #    All rights reserved.
- #
- #    Redistribution and use in source and binary forms, with or without modification, are
- #    permitted provided that the following conditions are met:
- #      - Redistributions of source code must retain the above copyright notice, this list of
- #        conditions and the following disclaimer.
- #      - Redistributions in binary form must reproduce the above copyright notice, this list of
- #        conditions and the following disclaimer in the documentation and/or other materials
- #        provided with the distribution.
- #      - Neither the name of the Delft University of Technology nor the names of its contributors
- #        may be used to endorse or promote products derived from this software without specific
- #        prior written permission.
- #
- #    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
- #    OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- #    MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- #    COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- #    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- #    GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- #    AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- #    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- #    OF THE POSSIBILITY OF SUCH DAMAGE.
+ #    See COPYING for license details.
  #
  #    Changelog
  #      YYMMDD    Author            Comment
@@ -310,23 +291,30 @@ endforeach(CURRENT_SUBDIR)
 # Add sandbox.
 add_executable(sandbox "${SRCROOT}/Applications/sandbox.cpp")
 setup_executable_target(sandbox "${SRCROOT}")
-target_link_libraries(sandbox tudat_gravitation ${SQLITECPP_LIBRARY} ${SQLITE3_LIBRARY} 
+target_link_libraries(sandbox ${SQLITECPP_LIBRARY} ${SQLITE3_LIBRARY} 
                       ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
 
 # Add SQLite database generator for stochastic migration simulations.
-add_executable(stochasticMigrationDatabaseGenerator
-               "${SRCROOT}/Applications/stochasticMigrationDatabaseGenerator.cpp")
-setup_executable_target(stochasticMigrationDatabaseGenerator "${SRCROOT}")
-target_link_libraries(stochasticMigrationDatabaseGenerator stochastic_migration_input_output 
-                      stochastic_migration_database assist_input_output assist_database 
-                      assist_basics tudat_gravitation tudat_input_output tudat_basic_astrodynamics
-                      ${TUDAT_CORE_LIBRARIES} ${SQLITECPP_LIBRARY} ${SQLITE3_LIBRARY} 
+add_executable(databaseGenerator "${SRCROOT}/Applications/databaseGenerator.cpp")
+setup_executable_target(databaseGenerator "${SRCROOT}")
+target_link_libraries(databaseGenerator 
+                      stochastic_migration_input_output 
+                      assist_input_output assist_basics assist_astrodynamics
+                      tudat_basic_mathematics tudat_input_output tudat_basic_astrodynamics
+                      ${TUDAT_CORE_LIBRARIES} 
+                      ${SQLITECPP_LIBRARY} 
+                      ${SQLITE3_LIBRARY} 
                       ${Boost_LIBRARIES})
 
-## Add test particle simulator (uses OpenMP).
-#add_executable(testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
-#setup_executable_target(testParticleSimulator "${SRCROOT}")
-#target_link_libraries(testParticleSimulator stochastic_migration_database stochastic_migration_input_output assist_astrodynamics assist_input_output tudat_state_derivative_models tudat_basic_mathematics tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators tudat_input_output ${SQLITE3_LIBRARY} ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
+# Add test particle simulator (uses OpenMP).
+add_executable(testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
+setup_executable_target(testParticleSimulator "${SRCROOT}")
+target_link_libraries(testParticleSimulator stochastic_migration_database
+                      stochastic_migration_input_output assist_astrodynamics assist_input_output
+                      tudat_state_derivative_models tudat_basic_mathematics 
+                      tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators 
+                      tudat_input_output ${TUDAT_CORE_LIBRARIES} ${SQLITECPP_LIBRARY} 
+                      ${SQLITE3_LIBRARY} ${Boost_LIBRARIES})
 
 ## Add Mab random walk application (uses openmp).
 #add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")

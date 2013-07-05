@@ -92,11 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;string&gt;</code><br/>
-<code>#include &quot;<a class="el" href="random_walk_monte_carlo_run_8h_source.html">StochasticMigration/Database/randomWalkMonteCarloRun.h</a>&quot;</code><br/>
-<code>#include &quot;<a class="el" href="random_walk_perturber_8h_source.html">StochasticMigration/Database/randomWalkPerturber.h</a>&quot;</code><br/>
 <code>#include &quot;<a class="el" href="test_particle_case_8h_source.html">StochasticMigration/Database/testParticleCase.h</a>&quot;</code><br/>
-<code>#include &quot;<a class="el" href="test_particle_input_8h_source.html">StochasticMigration/Database/testParticleInput.h</a>&quot;</code><br/>
-<code>#include &quot;<a class="el" href="test_particle_kick_8h_source.html">StochasticMigration/Database/testParticleKick.h</a>&quot;</code><br/>
 </div>
 <p><a href="database_read_functions_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -116,29 +112,14 @@ Constant Groups</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:aa6fc6b014110b4bcf9bd7762a9924213"><td class="memItemLeft" align="right" valign="top">RandomWalkMonteCarloRunTable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1database.html#aa6fc6b014110b4bcf9bd7762a9924213">stochastic_migration::database::getRandomWalkMonteCarloRunsTable</a> (const std::string &amp;databaseAbsolutePath, const std::vector&lt; unsigned int &gt; &amp;monteCarloRuns, const std::string &amp;randomWalkMonteCarloRunTableName=&quot;random_walk_monte_carlo_runs&quot;)</td></tr>
-<tr class="memdesc:aa6fc6b014110b4bcf9bd7762a9924213"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get table of random walk Monte Carlo runs.  <a href="#aa6fc6b014110b4bcf9bd7762a9924213">More...</a><br/></td></tr>
-<tr class="separator:aa6fc6b014110b4bcf9bd7762a9924213"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a640ebc6c1190f89c19ad4279e8c8a5f9"><td class="memItemLeft" align="right" valign="top">RandomWalkPerturberTable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1database.html#a640ebc6c1190f89c19ad4279e8c8a5f9">stochastic_migration::database::getRandomWalkPerturberTable</a> (const std::string &amp;databaseAbsolutePath, const unsigned int monteCarloRun, const std::string &amp;randomWalkPerturberTableName=&quot;random_walk_perturbers&quot;)</td></tr>
-<tr class="memdesc:a640ebc6c1190f89c19ad4279e8c8a5f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get table of selected perturbers for random walk Monte Carlo run.  <a href="#a640ebc6c1190f89c19ad4279e8c8a5f9">More...</a><br/></td></tr>
-<tr class="separator:a640ebc6c1190f89c19ad4279e8c8a5f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e6d2cfebd77b9ada24fa2a586d24dcf"><td class="memItemLeft" align="right" valign="top">TestParticleCasePointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1database.html#a7e6d2cfebd77b9ada24fa2a586d24dcf">stochastic_migration::database::getTestParticleCase</a> (const std::string &amp;databaseAbsolutePath, const std::string &amp;testParticleCaseTableName=&quot;test_particle_case&quot;)</td></tr>
-<tr class="memdesc:a7e6d2cfebd77b9ada24fa2a586d24dcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get test particle case data.  <a href="#a7e6d2cfebd77b9ada24fa2a586d24dcf">More...</a><br/></td></tr>
-<tr class="separator:a7e6d2cfebd77b9ada24fa2a586d24dcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af717adced738fcf99b25a2fc75637d61"><td class="memItemLeft" align="right" valign="top">TestParticleInputTable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1database.html#af717adced738fcf99b25a2fc75637d61">stochastic_migration::database::getTestParticleInputTable</a> (const std::string &amp;databaseAbsolutePath, bool isCompleted=false, const std::string &amp;testParticleInputTableName=&quot;test_particle_input&quot;)</td></tr>
-<tr class="memdesc:af717adced738fcf99b25a2fc75637d61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get test particle input table.  <a href="#af717adced738fcf99b25a2fc75637d61">More...</a><br/></td></tr>
-<tr class="separator:af717adced738fcf99b25a2fc75637d61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a116f1f8829e7f6c244d452f257c6b2e6"><td class="memItemLeft" align="right" valign="top">TestParticleInputTable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1database.html#a116f1f8829e7f6c244d452f257c6b2e6">stochastic_migration::database::getTestParticleInputTable</a> (const std::string &amp;databaseAbsolutePath, const std::string &amp;testParticleSimulationNumbers, const std::string &amp;testParticleInputTableName=&quot;test_particle_input&quot;)</td></tr>
-<tr class="memdesc:a116f1f8829e7f6c244d452f257c6b2e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get test particle input table.  <a href="#a116f1f8829e7f6c244d452f257c6b2e6">More...</a><br/></td></tr>
-<tr class="separator:a116f1f8829e7f6c244d452f257c6b2e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc385e50b3cb2287e13c19194cf95a7f"><td class="memItemLeft" align="right" valign="top">TestParticleKickTable&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1database.html#adc385e50b3cb2287e13c19194cf95a7f">stochastic_migration::database::getTestParticleKickTable</a> (const std::string &amp;databaseAbsolutePath, const double randomWalkDuration, const TestParticleSimulationNumbersAndMassRatios &amp;testParticleSimulationNumbersAndMassRatios, const std::string &amp;testParticleKickTableName=&quot;test_particle_kicks&quot;)</td></tr>
-<tr class="memdesc:adc385e50b3cb2287e13c19194cf95a7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get test particle kick table.  <a href="#adc385e50b3cb2287e13c19194cf95a7f">More...</a><br/></td></tr>
-<tr class="separator:adc385e50b3cb2287e13c19194cf95a7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabb70b35ea3dfb9ca6590d1c75d75019"><td class="memItemLeft" align="right" valign="top">TestParticleCasePointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1database.html#aabb70b35ea3dfb9ca6590d1c75d75019">stochastic_migration::database::getTestParticleCase</a> (const std::string &amp;databaseAbsolutePath, const std::string &amp;testParticleCaseTableName)</td></tr>
+<tr class="memdesc:aabb70b35ea3dfb9ca6590d1c75d75019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get test particle case data.  <a href="#aabb70b35ea3dfb9ca6590d1c75d75019">More...</a><br/></td></tr>
+<tr class="separator:aabb70b35ea3dfb9ca6590d1c75d75019"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jun 30 2013 13:14:46 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jul 5 2013 11:14:42 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>

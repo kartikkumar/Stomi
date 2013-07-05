@@ -1,7 +1,16 @@
-'''
-Created on Sep 7, 2012
-
-@author: kartikkumar
+'''   
+      Copyright (c) 2010-2012, Delft University of Technology
+      All rights reserved.
+      See COPYING for license details.
+  
+      Changelog
+        YYMMDD    Author            Comment
+        120907    K. Kumar          File created.
+  
+      References
+  
+      Notes
+      
 '''
 
 import numpy

@@ -29,6 +29,7 @@
  *                                  namespace; renamed file and struct.
  *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration";
  *                                  renamed file.
+ *      130704    K. Kumar          Updated class contents based on revised table schema.
  *
  *    References
  *      sbi. C++ Operator Overloading, Stack Overflow,
@@ -83,17 +84,20 @@ public:
             const double aCentralBodyGravitationalParameter,
             const double aCentralBodyJ2GravityCoefficient,
             const double aCentralBodyEquatorialRadius,
-            const double aSemiMajorAxisLimit,
-            const double aMeanEccentricity,
-            const double aFullWidthHalfMaxmimumEccentricityDistribution,
-            const double aMeanInclination,
-            const double aFullWidthHalfMaxmimumInclinationDistribution,
-            const double aPerturbedBodyGravitationalParameter,
+            const double aSemiMajorAxisDistributionLimit,
+            const double anEccentricityDistributionMean,
+            const double anEccentricityDistributionAngle,
+            const double anEccentricityDistributionFullWidthHalfMaximum,
+            const double anInclinationDistributionMean,
+            const double anInclinationDistributionAngle,
+            const double anInclinationDistributionFullWidthHalfMaximum,
+            const double aPerturbedBodyRadius,
+            const double aPerturbedBodyBulkDensity,
             const tudat::basic_mathematics::Vector6d& aPerturbedBodyStateInKeplerianElementsAtT0,
             const std::string& aNumericalIntegratorType,
+            const double anInitialStepSize,
             const double aNumericalIntegratorRelativeTolerance,
-            const double aNumericalIntegratorAbsoluteTolerance,
-            const double anInitialStepSize );
+            const double aNumericalIntegratorAbsoluteTolerance );
 
     //! Case number.
     const int caseNumber;
@@ -126,22 +130,31 @@ public:
     const double centralBodyEquatorialRadius;
 
     //! Limits on maximum semi-major axis values wrt perturbed body [m].
-    const double semiMajorAxisLimit;
+    const double semiMajorAxisDistributionLimit;
 
     //! Mean eccentricity value for distribution.
-    const double meanEccentricity;
+    const double eccentricityDistributionMean;
+
+    //! Angle between vector components of eccentricity distribution [rad].
+    const double eccentricityDistributionAngle;
 
     //! FWHM eccentricity value for distribution.
-    const double fullWidthHalfMaxmimumEccentricityDistribution;
+    const double eccentricityDistributionFullWidthHalfMaximum;
 
-    //! Mean inclination value for distribution.
-    const double meanInclination;
+    //! Mean inclination value for distribution [rad].
+    const double inclinationDistributionMean;
 
-    //! FWHM inclination value for distribution.
-    const double fullWidthHalfMaxmimumInclinationDistribution;
+    //! Angle between vector components of inclination distribution [rad].
+    const double inclinationDistributionAngle;
 
-    //! Perturbed gravitational parameter [m^3 s^-2].
-    const double perturbedBodyGravitationalParameter;
+    //! FWHM inclination value for distribution [rad].
+    const double inclinationDistributionFullWidthHalfMaximum;
+
+    //! Perturbed body radius [m].
+    const double perturbedBodyRadius;
+
+    //! Perturbed body bulk density [kg m^-3].
+    const double perturbedBodyBulkDensity;
 
     //! Perturbed body state in Keplerian elements at T0.
     const tudat::basic_mathematics::Vector6d perturbedBodyStateInKeplerianElementsAtT0;
@@ -149,14 +162,14 @@ public:
     //! Numerical integrator type.
     const std::string numericalIntegratorType;
 
+    //! Initial step size for numerical integrator.
+    const double initialStepSize;
+
     //! Relative tolerance for numerical integrator.
     const double numericalIntegratorRelativeTolerance;
 
     //! Absolute tolerance for numerical integrator.
     const double numericalIntegratorAbsoluteTolerance;
-
-    //! Initial step size for numerical integrator.
-    const double initialStepSize;
 
 protected:
 private:

@@ -25,6 +25,7 @@
  *    Changelog
  *      YYMMDD    Author            Comment
  *      130218    K. Kumar          File created.
+ *      130704    K. Kumar          Updated class contents based on revised table schema.
  *
  *    References
  *
@@ -64,17 +65,20 @@ TestParticleCase::TestParticleCase(
         const double aCentralBodyGravitationalParameter,
         const double aCentralBodyJ2GravityCoefficient,
         const double aCentralBodyEquatorialRadius,
-        const double aSemiMajorAxisLimit,
-        const double aMeanEccentricity,
-        const double aFullWidthHalfMaxmimumEccentricityDistribution,
-        const double aMeanInclination,
-        const double aFullWidthHalfMaxmimumInclinationDistribution,
-        const double aPerturbedBodyGravitationalParameter,
+        const double aSemiMajorAxisDistributionLimit,
+        const double anEccentricityDistributionMean,
+        const double anEccentricityDistributionAngle,
+        const double anEccentricityDistributionFullWidthHalfMaximum,
+        const double anInclinationDistributionMean,
+        const double anInclinationDistributionAngle,
+        const double anInclinationDistributionFullWidthHalfMaximum,
+        const double aPerturbedBodyRadius,
+        const double aPerturbedBodyBulkDensity,
         const tudat::basic_mathematics::Vector6d& aPerturbedBodyStateInKeplerianElementsAtT0,
         const std::string& aNumericalIntegratorType,
+        const double anInitialStepSize,
         const double aNumericalIntegratorRelativeTolerance,
-        const double aNumericalIntegratorAbsoluteTolerance,
-        const double anInitialStepSize )
+        const double aNumericalIntegratorAbsoluteTolerance )
     : caseNumber( checkPositive( aCaseNumber, "Case number" ) ),
       randomWalkSimulationDuration( 
         checkPositive( aRandomWalkSimulationDuration, "Random walk duration [s]" ) ),
@@ -99,18 +103,27 @@ TestParticleCase::TestParticleCase(
       centralBodyEquatorialRadius( 
         checkGreaterThan( aCentralBodyEquatorialRadius, "Central body equatorial radius [m]",
                           -std::numeric_limits< double >::min( ) ) ),
-      semiMajorAxisLimit( checkPositive( aSemiMajorAxisLimit, "Semi-major axis limit [m]" ) ),
-      meanEccentricity( checkPositive( aMeanEccentricity, "Mean eccentricity [-]" ) ),
-      fullWidthHalfMaxmimumEccentricityDistribution( 
-        checkPositive( aFullWidthHalfMaxmimumEccentricityDistribution, 
-                       "Full-Width Half-Maximum eccentricity [-]" ) ),
-      meanInclination( checkPositive( aMeanInclination, "Mean inclination [rad]" ) ),
-      fullWidthHalfMaxmimumInclinationDistribution( 
-        checkPositive( aFullWidthHalfMaxmimumInclinationDistribution, 
-                       "Full-Width Half-Maximum inclination [rad]" ) ),
-      perturbedBodyGravitationalParameter( 
-        checkPositive( aPerturbedBodyGravitationalParameter, 
-                       "Perturbed body gravitational parameter [m^3 s^-2]" ) ),
+      semiMajorAxisDistributionLimit( checkPositive( aSemiMajorAxisDistributionLimit,
+                                         "Semi-major axis distribution limit [m]" ) ),
+      eccentricityDistributionMean( 
+        checkPositive( anEccentricityDistributionMean, "Eccentricity distribution mean [-]" ) ),
+      eccentricityDistributionAngle(
+        checkPositive( 
+            anEccentricityDistributionAngle, "Eccentricity distribution angle [rad]" ) ),
+      eccentricityDistributionFullWidthHalfMaximum( 
+        checkPositive( anEccentricityDistributionFullWidthHalfMaximum, 
+                       "Eccentricity distribution Full-Width Half-Maximum [-]" ) ),
+      inclinationDistributionMean( 
+        checkPositive( anInclinationDistributionMean, "Inclination distribution mean [rad]" ) ),
+      inclinationDistributionAngle( 
+        checkPositive( anInclinationDistributionAngle, "Inclination distribution angle [rad]" ) ),
+      inclinationDistributionFullWidthHalfMaximum( 
+        checkPositive( anInclinationDistributionFullWidthHalfMaximum, 
+                       "Inclination distribution Full-Width Half-Maximum [rad]" ) ),
+      perturbedBodyRadius( 
+        checkPositive( aPerturbedBodyRadius, "Perturbed body radius [m]" ) ),
+      perturbedBodyBulkDensity( 
+        checkPositive( aPerturbedBodyBulkDensity, "Perturbed body bulk density [kg m^-3]" ) ),
       perturbedBodyStateInKeplerianElementsAtT0( 
         ( Eigen::VectorXd( 6 ) 
             << checkPositive( aPerturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ),
@@ -121,13 +134,13 @@ TestParticleCase::TestParticleCase(
                               "Perturbed body initial inclination [rad]" ),
                aPerturbedBodyStateInKeplerianElementsAtT0.segment( 3, 3 ) ).finished( ) ),
       numericalIntegratorType( aNumericalIntegratorType ),
+      initialStepSize( anInitialStepSize ),
       numericalIntegratorRelativeTolerance( 
         checkPositive( aNumericalIntegratorRelativeTolerance, 
                        "Numerical integrator relative tolerance [-]" ) ),
       numericalIntegratorAbsoluteTolerance( 
         checkPositive( aNumericalIntegratorAbsoluteTolerance, 
-                       "Numerical integrator absolute tolerance [-]" ) ),
-      initialStepSize( anInitialStepSize )
+                       "Numerical integrator absolute tolerance [-]" ) )
 {
     if ( aNumericalIntegratorType.empty( ) )
     {
@@ -158,24 +171,32 @@ bool operator==( const TestParticleCase& testParticleCase1,
              == testParticleCase2.centralBodyJ2GravityCoefficient
              && testParticleCase1.centralBodyEquatorialRadius
              == testParticleCase2.centralBodyEquatorialRadius
-             && testParticleCase1.semiMajorAxisLimit == testParticleCase2.semiMajorAxisLimit
-             && testParticleCase1.meanEccentricity == testParticleCase2.meanEccentricity
-             && testParticleCase1.fullWidthHalfMaxmimumEccentricityDistribution
-             == testParticleCase2.fullWidthHalfMaxmimumEccentricityDistribution
-             && testParticleCase1.meanInclination == testParticleCase2.meanInclination
-             && testParticleCase1.fullWidthHalfMaxmimumInclinationDistribution
-             == testParticleCase2.fullWidthHalfMaxmimumInclinationDistribution
-             && testParticleCase1.perturbedBodyGravitationalParameter
-             == testParticleCase2.perturbedBodyGravitationalParameter
+             && testParticleCase1.semiMajorAxisDistributionLimit 
+             == testParticleCase2.semiMajorAxisDistributionLimit
+             && testParticleCase1.eccentricityDistributionMean 
+             == testParticleCase2.eccentricityDistributionMean
+             && testParticleCase1.eccentricityDistributionAngle
+             == testParticleCase2.eccentricityDistributionAngle
+             && testParticleCase1.eccentricityDistributionFullWidthHalfMaximum
+             == testParticleCase2.eccentricityDistributionFullWidthHalfMaximum
+             && testParticleCase1.inclinationDistributionMean 
+             == testParticleCase2.inclinationDistributionMean
+             && testParticleCase1.inclinationDistributionAngle
+             == testParticleCase2.inclinationDistributionAngle
+             && testParticleCase1.inclinationDistributionFullWidthHalfMaximum
+             == testParticleCase2.inclinationDistributionFullWidthHalfMaximum
+             && testParticleCase1.perturbedBodyRadius == testParticleCase2.perturbedBodyRadius
+             && testParticleCase1.perturbedBodyBulkDensity 
+             == testParticleCase2.perturbedBodyBulkDensity
              && testParticleCase1.perturbedBodyStateInKeplerianElementsAtT0
              == testParticleCase2.perturbedBodyStateInKeplerianElementsAtT0
              && !testParticleCase1.numericalIntegratorType.compare(
                  testParticleCase2.numericalIntegratorType )
+             && testParticleCase1.initialStepSize == testParticleCase2.initialStepSize
              && testParticleCase1.numericalIntegratorRelativeTolerance
              == testParticleCase2.numericalIntegratorRelativeTolerance
              && testParticleCase1.numericalIntegratorAbsoluteTolerance
-             == testParticleCase2.numericalIntegratorAbsoluteTolerance
-             && testParticleCase1.initialStepSize == testParticleCase2.initialStepSize );
+             == testParticleCase2.numericalIntegratorAbsoluteTolerance );
 }
 
 //! Overload < operator.
@@ -215,22 +236,32 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
                  << testParticleCase.centralBodyJ2GravityCoefficient << std::endl;
     outputStream << "Central body equatorial radius [m]: "
                  << testParticleCase.centralBodyEquatorialRadius << std::endl;
-    outputStream << "Semi-major axis limit [m]: "
-                 << testParticleCase.semiMajorAxisLimit << std::endl;
-    outputStream << "Mean eccentricity [-]: "
-                 << testParticleCase.meanEccentricity << std::endl;
-    outputStream << "FWHM eccentricity [-]: "
-                 << testParticleCase.fullWidthHalfMaxmimumEccentricityDistribution << std::endl;
-    outputStream << "Mean inclination [deg]: "
-                 << convertRadiansToDegrees( testParticleCase.meanInclination ) << std::endl;
-    outputStream << "FWHM inclination [deg]: "
-                 << convertRadiansToDegrees(
-                        testParticleCase.fullWidthHalfMaxmimumInclinationDistribution )
+    outputStream << "Semi-major axis distribution limit [m]: "
+                 << testParticleCase.semiMajorAxisDistributionLimit << std::endl;
+    outputStream << "Eccentricity distribution mean [-]: "
+                 << testParticleCase.eccentricityDistributionMean << std::endl;
+    outputStream << "Eccentricity distribution angle [deg]: "
+                 << convertRadiansToDegrees( testParticleCase.eccentricityDistributionAngle ) 
                  << std::endl;
-    outputStream << "Perturbed body's gravitational parameter [m^3 s^-2]: "
-                 << testParticleCase.perturbedBodyGravitationalParameter << std::endl;
+    outputStream << "Eccentricity distribution Full-Width Half-Maximum [-]: "
+                 << testParticleCase.eccentricityDistributionFullWidthHalfMaximum << std::endl;
+    outputStream << "Inclination distribution mean [deg]: "
+                 << convertRadiansToDegrees( testParticleCase.inclinationDistributionMean ) 
+                 << std::endl;
+    outputStream << "Inclination distribution angle [deg]: "
+                 << convertRadiansToDegrees( testParticleCase.inclinationDistributionAngle ) 
+                 << std::endl;                 
+    outputStream << "Inclination distribution Full-Width Half-Maximum [deg]: "
+                 << convertRadiansToDegrees(
+                        testParticleCase.inclinationDistributionFullWidthHalfMaximum )
+                 << std::endl;
+    outputStream << "Perturbed body's radius [km]: "
+                 << convertMetersToKilometers( testParticleCase.perturbedBodyRadius ) << std::endl;
+    outputStream << "Perturbed body's bulkd density [kg m^-3]: "
+                 << convertMetersToKilometers( testParticleCase.perturbedBodyBulkDensity ) 
+                 << std::endl;                 
     outputStream << "Perturbed body's semi-major axis at T0 [m]: "
-                 << testParticleCase.perturbedBodyStateInKeplerianElementsAtT0(
+                 << testParticleCase.perturbedBodyStateInKeplerianElementsAtT0( 
                         semiMajorAxisIndex ) << std::endl;
     outputStream << "Perturbed body's eccentricity at T0 [-]: "
                  << testParticleCase.perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex )
@@ -253,12 +284,12 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
                             trueAnomalyIndex ) ) << std::endl;
     outputStream << "Numerical integration type: "
                  << testParticleCase.numericalIntegratorType << std::endl;
+    outputStream << "Numerical integrator initial step size [s]: "
+                 << testParticleCase.initialStepSize << std::endl;                 
     outputStream << "Numerical integrator relative tolerance: "
                  << testParticleCase.numericalIntegratorRelativeTolerance << std::endl;
     outputStream << "Numerical integrator absolute tolerance: "
                  << testParticleCase.numericalIntegratorAbsoluteTolerance << std::endl;
-    outputStream << "Numerical integrator initial step size [s]: "
-                 << testParticleCase.initialStepSize << std::endl;
 
     // Return output stream.
     return outputStream;

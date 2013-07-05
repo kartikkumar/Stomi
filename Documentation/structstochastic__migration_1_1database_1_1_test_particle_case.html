@@ -101,9 +101,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3572591c831f93560c3aa88df381240f"><td class="memItemLeft" align="right" valign="top">EIGEN_MAKE_ALIGNED_OPERATOR_NEW&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a3572591c831f93560c3aa88df381240f">TestParticleCase</a> (const int aCaseNumber, const double aRandomWalkSimulationDuration, const double aSynodicPeriodLimit, const double anOutputInterval, const double aStartUpIntegrationDuration, const double aConjunctionEventDetectionDistance, const double anOppositionEventDetectionDistance, const double aCentralBodyGravitationalParameter, const double aCentralBodyJ2GravityCoefficient, const double aCentralBodyEquatorialRadius, const double aSemiMajorAxisLimit, const double aMeanEccentricity, const double aFullWidthHalfMaxmimumEccentricityDistribution, const double aMeanInclination, const double aFullWidthHalfMaxmimumInclinationDistribution, const double aPerturbedBodyGravitationalParameter, const tudat::basic_mathematics::Vector6d &amp;aPerturbedBodyStateInKeplerianElementsAtT0, const std::string &amp;aNumericalIntegratorType, const double aNumericalIntegratorRelativeTolerance, const double aNumericalIntegratorAbsoluteTolerance, const double anInitialStepSize)</td></tr>
-<tr class="memdesc:a3572591c831f93560c3aa88df381240f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor taking all case data as input.  <a href="#a3572591c831f93560c3aa88df381240f">More...</a><br/></td></tr>
-<tr class="separator:a3572591c831f93560c3aa88df381240f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a445a5969c13cb606bfdb2c9ba165c28b"><td class="memItemLeft" align="right" valign="top">EIGEN_MAKE_ALIGNED_OPERATOR_NEW&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a445a5969c13cb606bfdb2c9ba165c28b">TestParticleCase</a> (const int aCaseNumber, const double aRandomWalkSimulationDuration, const double aSynodicPeriodLimit, const double anOutputInterval, const double aStartUpIntegrationDuration, const double aConjunctionEventDetectionDistance, const double anOppositionEventDetectionDistance, const double aCentralBodyGravitationalParameter, const double aCentralBodyJ2GravityCoefficient, const double aCentralBodyEquatorialRadius, const double aSemiMajorAxisDistributionLimit, const double anEccentricityDistributionMean, const double anEccentricityDistributionAngle, const double anEccentricityDistributionFullWidthHalfMaximum, const double anInclinationDistributionMean, const double anInclinationDistributionAngle, const double anInclinationDistributionFullWidthHalfMaximum, const double aPerturbedBodyRadius, const double aPerturbedBodyBulkDensity, const tudat::basic_mathematics::Vector6d &amp;aPerturbedBodyStateInKeplerianElementsAtT0, const std::string &amp;aNumericalIntegratorType, const double anInitialStepSize, const double aNumericalIntegratorRelativeTolerance, const double aNumericalIntegratorAbsoluteTolerance)</td></tr>
+<tr class="memdesc:a445a5969c13cb606bfdb2c9ba165c28b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor taking all case data as input.  <a href="#a445a5969c13cb606bfdb2c9ba165c28b">More...</a><br/></td></tr>
+<tr class="separator:a445a5969c13cb606bfdb2c9ba165c28b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -122,21 +122,27 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a546e8919f6ed3dbdd07e0c274f6e79f6"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a546e8919f6ed3dbdd07e0c274f6e79f6">conjunctionEventDetectionDistance</a></td></tr>
 <tr class="memdesc:a546e8919f6ed3dbdd07e0c274f6e79f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mutual distance used to detect start and end of conjunction events [m].  <a href="#a546e8919f6ed3dbdd07e0c274f6e79f6">More...</a><br/></td></tr>
 <tr class="separator:a546e8919f6ed3dbdd07e0c274f6e79f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07e67a3eb36cf3bcc536345fe2db2ccf"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a07e67a3eb36cf3bcc536345fe2db2ccf">fullWidthHalfMaxmimumEccentricityDistribution</a></td></tr>
-<tr class="memdesc:a07e67a3eb36cf3bcc536345fe2db2ccf"><td class="mdescLeft">&#160;</td><td class="mdescRight">FWHM eccentricity value for distribution.  <a href="#a07e67a3eb36cf3bcc536345fe2db2ccf">More...</a><br/></td></tr>
-<tr class="separator:a07e67a3eb36cf3bcc536345fe2db2ccf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec9c3c5f252d1f7b285fd87328a9fc19"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#aec9c3c5f252d1f7b285fd87328a9fc19">fullWidthHalfMaxmimumInclinationDistribution</a></td></tr>
-<tr class="memdesc:aec9c3c5f252d1f7b285fd87328a9fc19"><td class="mdescLeft">&#160;</td><td class="mdescRight">FWHM inclination value for distribution.  <a href="#aec9c3c5f252d1f7b285fd87328a9fc19">More...</a><br/></td></tr>
-<tr class="separator:aec9c3c5f252d1f7b285fd87328a9fc19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1de61452a79481c2ef5243bc698556d"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#ad1de61452a79481c2ef5243bc698556d">eccentricityDistributionAngle</a></td></tr>
+<tr class="memdesc:ad1de61452a79481c2ef5243bc698556d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Angle between vector components of eccentricity distribution [rad].  <a href="#ad1de61452a79481c2ef5243bc698556d">More...</a><br/></td></tr>
+<tr class="separator:ad1de61452a79481c2ef5243bc698556d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b8152490dce7848eeb20b6cc0750c00"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a4b8152490dce7848eeb20b6cc0750c00">eccentricityDistributionFullWidthHalfMaximum</a></td></tr>
+<tr class="memdesc:a4b8152490dce7848eeb20b6cc0750c00"><td class="mdescLeft">&#160;</td><td class="mdescRight">FWHM eccentricity value for distribution.  <a href="#a4b8152490dce7848eeb20b6cc0750c00">More...</a><br/></td></tr>
+<tr class="separator:a4b8152490dce7848eeb20b6cc0750c00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9d249a55db313b810566edafbf56bd7"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#ab9d249a55db313b810566edafbf56bd7">eccentricityDistributionMean</a></td></tr>
+<tr class="memdesc:ab9d249a55db313b810566edafbf56bd7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mean eccentricity value for distribution.  <a href="#ab9d249a55db313b810566edafbf56bd7">More...</a><br/></td></tr>
+<tr class="separator:ab9d249a55db313b810566edafbf56bd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad7637027f724f09c5ac8aa8a35e95f22"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#ad7637027f724f09c5ac8aa8a35e95f22">inclinationDistributionAngle</a></td></tr>
+<tr class="memdesc:ad7637027f724f09c5ac8aa8a35e95f22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Angle between vector components of inclination distribution [rad].  <a href="#ad7637027f724f09c5ac8aa8a35e95f22">More...</a><br/></td></tr>
+<tr class="separator:ad7637027f724f09c5ac8aa8a35e95f22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd37bef250063c38732ef4dac0917417"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#abd37bef250063c38732ef4dac0917417">inclinationDistributionFullWidthHalfMaximum</a></td></tr>
+<tr class="memdesc:abd37bef250063c38732ef4dac0917417"><td class="mdescLeft">&#160;</td><td class="mdescRight">FWHM inclination value for distribution [rad].  <a href="#abd37bef250063c38732ef4dac0917417">More...</a><br/></td></tr>
+<tr class="separator:abd37bef250063c38732ef4dac0917417"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a52e98faf44bb3ec88aea2db0f25e27f2"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a52e98faf44bb3ec88aea2db0f25e27f2">inclinationDistributionMean</a></td></tr>
+<tr class="memdesc:a52e98faf44bb3ec88aea2db0f25e27f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mean inclination value for distribution [rad].  <a href="#a52e98faf44bb3ec88aea2db0f25e27f2">More...</a><br/></td></tr>
+<tr class="separator:a52e98faf44bb3ec88aea2db0f25e27f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e917e30331d0dc19716ac44ad4e452b"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a5e917e30331d0dc19716ac44ad4e452b">initialStepSize</a></td></tr>
 <tr class="memdesc:a5e917e30331d0dc19716ac44ad4e452b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initial step size for numerical integrator.  <a href="#a5e917e30331d0dc19716ac44ad4e452b">More...</a><br/></td></tr>
 <tr class="separator:a5e917e30331d0dc19716ac44ad4e452b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58c7e8958f827e164214c493c0304cf3"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a58c7e8958f827e164214c493c0304cf3">meanEccentricity</a></td></tr>
-<tr class="memdesc:a58c7e8958f827e164214c493c0304cf3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mean eccentricity value for distribution.  <a href="#a58c7e8958f827e164214c493c0304cf3">More...</a><br/></td></tr>
-<tr class="separator:a58c7e8958f827e164214c493c0304cf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f8d0d3aaf22d5d11f29cf028a354afc"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a9f8d0d3aaf22d5d11f29cf028a354afc">meanInclination</a></td></tr>
-<tr class="memdesc:a9f8d0d3aaf22d5d11f29cf028a354afc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mean inclination value for distribution.  <a href="#a9f8d0d3aaf22d5d11f29cf028a354afc">More...</a><br/></td></tr>
-<tr class="separator:a9f8d0d3aaf22d5d11f29cf028a354afc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97ae2aad308a99f39880ce99bfb61ed4"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a97ae2aad308a99f39880ce99bfb61ed4">numericalIntegratorAbsoluteTolerance</a></td></tr>
 <tr class="memdesc:a97ae2aad308a99f39880ce99bfb61ed4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Absolute tolerance for numerical integrator.  <a href="#a97ae2aad308a99f39880ce99bfb61ed4">More...</a><br/></td></tr>
 <tr class="separator:a97ae2aad308a99f39880ce99bfb61ed4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -152,9 +158,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a12c6664f4743abc91e0b79bea5118b91"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a12c6664f4743abc91e0b79bea5118b91">outputInterval</a></td></tr>
 <tr class="memdesc:a12c6664f4743abc91e0b79bea5118b91"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output interval, determining output frequency for data files [s].  <a href="#a12c6664f4743abc91e0b79bea5118b91">More...</a><br/></td></tr>
 <tr class="separator:a12c6664f4743abc91e0b79bea5118b91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e82b4f0e01d310082b92eeebdef6596"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a8e82b4f0e01d310082b92eeebdef6596">perturbedBodyGravitationalParameter</a></td></tr>
-<tr class="memdesc:a8e82b4f0e01d310082b92eeebdef6596"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perturbed gravitational parameter [m^3 s^-2].  <a href="#a8e82b4f0e01d310082b92eeebdef6596">More...</a><br/></td></tr>
-<tr class="separator:a8e82b4f0e01d310082b92eeebdef6596"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0fc71d654d3880e2618eba360e675df7"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a0fc71d654d3880e2618eba360e675df7">perturbedBodyBulkDensity</a></td></tr>
+<tr class="memdesc:a0fc71d654d3880e2618eba360e675df7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perturbed body bulk density [kg m^-3].  <a href="#a0fc71d654d3880e2618eba360e675df7">More...</a><br/></td></tr>
+<tr class="separator:a0fc71d654d3880e2618eba360e675df7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adbdf271f3c8bdbb794c72a01da8c5529"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#adbdf271f3c8bdbb794c72a01da8c5529">perturbedBodyRadius</a></td></tr>
+<tr class="memdesc:adbdf271f3c8bdbb794c72a01da8c5529"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perturbed body radius [m].  <a href="#adbdf271f3c8bdbb794c72a01da8c5529">More...</a><br/></td></tr>
+<tr class="separator:adbdf271f3c8bdbb794c72a01da8c5529"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60baa6a42409a6703c07622f501866fb"><td class="memItemLeft" align="right" valign="top">const <br class="typebreak"/>
 tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a60baa6a42409a6703c07622f501866fb">perturbedBodyStateInKeplerianElementsAtT0</a></td></tr>
 <tr class="memdesc:a60baa6a42409a6703c07622f501866fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perturbed body state in Keplerian elements at T0.  <a href="#a60baa6a42409a6703c07622f501866fb">More...</a><br/></td></tr>
@@ -162,9 +171,9 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
 <tr class="memitem:aeb1bc213df7758eeb14a18f72a1383a4"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#aeb1bc213df7758eeb14a18f72a1383a4">randomWalkSimulationDuration</a></td></tr>
 <tr class="memdesc:aeb1bc213df7758eeb14a18f72a1383a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Random walk simulation duration [s].  <a href="#aeb1bc213df7758eeb14a18f72a1383a4">More...</a><br/></td></tr>
 <tr class="separator:aeb1bc213df7758eeb14a18f72a1383a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad6abb96653395bc5998afb2100c0f8f0"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#ad6abb96653395bc5998afb2100c0f8f0">semiMajorAxisLimit</a></td></tr>
-<tr class="memdesc:ad6abb96653395bc5998afb2100c0f8f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Limits on maximum semi-major axis values wrt perturbed body [m].  <a href="#ad6abb96653395bc5998afb2100c0f8f0">More...</a><br/></td></tr>
-<tr class="separator:ad6abb96653395bc5998afb2100c0f8f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeda63a067e8de7be104cde1c0c7fad58"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#aeda63a067e8de7be104cde1c0c7fad58">semiMajorAxisDistributionLimit</a></td></tr>
+<tr class="memdesc:aeda63a067e8de7be104cde1c0c7fad58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Limits on maximum semi-major axis values wrt perturbed body [m].  <a href="#aeda63a067e8de7be104cde1c0c7fad58">More...</a><br/></td></tr>
+<tr class="separator:aeda63a067e8de7be104cde1c0c7fad58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a90f5141695469e03ce9d7d667256ff"><td class="memItemLeft" align="right" valign="top">const double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a9a90f5141695469e03ce9d7d667256ff">startUpIntegrationDuration</a></td></tr>
 <tr class="memdesc:a9a90f5141695469e03ce9d7d667256ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Startup integration duration [s].  <a href="#a9a90f5141695469e03ce9d7d667256ff">More...</a><br/></td></tr>
 <tr class="separator:a9a90f5141695469e03ce9d7d667256ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -175,9 +184,9 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This data struct contains all of the case information for a set of test particle simulations, stored in an SQLite3 database. The data stored is, in essence, metadata for test particle simulations. </p>
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00067">67</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00068">68</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a3572591c831f93560c3aa88df381240f"></a>
+<a class="anchor" id="a445a5969c13cb606bfdb2c9ba165c28b"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -245,37 +254,55 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>aSemiMajorAxisLimit</em>, </td>
+          <td class="paramname"><em>aSemiMajorAxisDistributionLimit</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>aMeanEccentricity</em>, </td>
+          <td class="paramname"><em>anEccentricityDistributionMean</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>aFullWidthHalfMaxmimumEccentricityDistribution</em>, </td>
+          <td class="paramname"><em>anEccentricityDistributionAngle</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>aMeanInclination</em>, </td>
+          <td class="paramname"><em>anEccentricityDistributionFullWidthHalfMaximum</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>aFullWidthHalfMaxmimumInclinationDistribution</em>, </td>
+          <td class="paramname"><em>anInclinationDistributionMean</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>aPerturbedBodyGravitationalParameter</em>, </td>
+          <td class="paramname"><em>anInclinationDistributionAngle</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>anInclinationDistributionFullWidthHalfMaximum</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>aPerturbedBodyRadius</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>aPerturbedBodyBulkDensity</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -293,19 +320,19 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>anInitialStepSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
           <td class="paramname"><em>aNumericalIntegratorRelativeTolerance</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>aNumericalIntegratorAbsoluteTolerance</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const double&#160;</td>
-          <td class="paramname"><em>anInitialStepSize</em>&#160;</td>
+          <td class="paramname"><em>aNumericalIntegratorAbsoluteTolerance</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -328,7 +355,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00099">99</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00103">103</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -342,7 +369,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00126">126</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00130">130</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -356,7 +383,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00120">120</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00124">124</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -370,7 +397,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00123">123</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00127">127</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -384,35 +411,91 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00114">114</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00118">118</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a07e67a3eb36cf3bcc536345fe2db2ccf"></a>
+<a class="anchor" id="ad1de61452a79481c2ef5243bc698556d"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const double stochastic_migration::database::TestParticleCase::fullWidthHalfMaxmimumEccentricityDistribution</td>
+          <td class="memname">const double stochastic_migration::database::TestParticleCase::eccentricityDistributionAngle</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00135">135</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00139">139</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="aec9c3c5f252d1f7b285fd87328a9fc19"></a>
+<a class="anchor" id="a4b8152490dce7848eeb20b6cc0750c00"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const double stochastic_migration::database::TestParticleCase::fullWidthHalfMaxmimumInclinationDistribution</td>
+          <td class="memname">const double stochastic_migration::database::TestParticleCase::eccentricityDistributionFullWidthHalfMaximum</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00141">141</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00142">142</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ab9d249a55db313b810566edafbf56bd7"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double stochastic_migration::database::TestParticleCase::eccentricityDistributionMean</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00136">136</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad7637027f724f09c5ac8aa8a35e95f22"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double stochastic_migration::database::TestParticleCase::inclinationDistributionAngle</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00148">148</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="abd37bef250063c38732ef4dac0917417"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double stochastic_migration::database::TestParticleCase::inclinationDistributionFullWidthHalfMaximum</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00151">151</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a52e98faf44bb3ec88aea2db0f25e27f2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double stochastic_migration::database::TestParticleCase::inclinationDistributionMean</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00145">145</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -426,35 +509,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00159">159</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a58c7e8958f827e164214c493c0304cf3"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const double stochastic_migration::database::TestParticleCase::meanEccentricity</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00132">132</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a9f8d0d3aaf22d5d11f29cf028a354afc"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const double stochastic_migration::database::TestParticleCase::meanInclination</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00138">138</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00166">166</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -468,7 +523,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00156">156</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00172">172</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -482,7 +537,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00153">153</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00169">169</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -496,7 +551,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00150">150</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00163">163</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -510,7 +565,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00117">117</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00121">121</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -524,21 +579,35 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00108">108</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00112">112</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a8e82b4f0e01d310082b92eeebdef6596"></a>
+<a class="anchor" id="a0fc71d654d3880e2618eba360e675df7"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const double stochastic_migration::database::TestParticleCase::perturbedBodyGravitationalParameter</td>
+          <td class="memname">const double stochastic_migration::database::TestParticleCase::perturbedBodyBulkDensity</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00144">144</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00157">157</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="adbdf271f3c8bdbb794c72a01da8c5529"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const double stochastic_migration::database::TestParticleCase::perturbedBodyRadius</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00154">154</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -552,7 +621,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00147">147</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00160">160</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -566,21 +635,21 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00102">102</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00106">106</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="ad6abb96653395bc5998afb2100c0f8f0"></a>
+<a class="anchor" id="aeda63a067e8de7be104cde1c0c7fad58"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const double stochastic_migration::database::TestParticleCase::semiMajorAxisLimit</td>
+          <td class="memname">const double stochastic_migration::database::TestParticleCase::semiMajorAxisDistributionLimit</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00129">129</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00133">133</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -594,7 +663,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00111">111</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00115">115</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -608,7 +677,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00105">105</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_case_8h_source.html#l00109">109</a> of file <a class="el" href="test_particle_case_8h_source.html">testParticleCase.h</a>.</p>
 
 </div>
 </div>
@@ -618,7 +687,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 3 2013 15:35:27 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jul 5 2013 11:14:42 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>

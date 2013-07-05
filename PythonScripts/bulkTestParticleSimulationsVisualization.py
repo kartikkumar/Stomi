@@ -1,7 +1,16 @@
 '''   
-Copyright (c) 2010-2013, Delft University of Technology      
-Distributed under the BSD 3-Clause License 
-(see COPYING or visit http://opensource.org/licenses/BSD-3-Clause )
+      Copyright (c) 2010-2012, Delft University of Technology
+      All rights reserved.
+      See COPYING for license details.
+  
+      Changelog
+        YYMMDD    Author            Comment
+        121011    K. Kumar          File created.
+  
+      References
+  
+      Notes
+      
 '''
 
 # Import necessary external modules.

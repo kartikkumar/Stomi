@@ -132,57 +132,109 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor"></span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="random_walk_monte_carlo_run_8h.html">StochasticMigration/Database/randomWalkMonteCarloRun.h</a>&quot;</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="random_walk_perturber_8h.html">StochasticMigration/Database/randomWalkPerturber.h</a>&quot;</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">// #include &quot;StochasticMigration/Database/randomWalkMonteCarloRun.h&quot;</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">// #include &quot;StochasticMigration/Database/randomWalkPerturber.h&quot;</span></div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="test_particle_case_8h.html">StochasticMigration/Database/testParticleCase.h</a>&quot;</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="test_particle_input_8h.html">StochasticMigration/Database/testParticleInput.h</a>&quot;</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="test_particle_kick_8h.html">StochasticMigration/Database/testParticleKick.h</a>&quot;</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">// #include &quot;StochasticMigration/Database/testParticleInput.h&quot;</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">// #include &quot;StochasticMigration/Database/testParticleKick.h&quot;</span></div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keyword">namespace </span>stochastic_migration</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;{</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keyword">namespace </span>database</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="code" href="namespacestochastic__migration_1_1database.html">   54</a></span>&#160;<span class="keyword">namespace </span>database</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;{</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<a class="code" href="namespacestochastic__migration_1_1database.html#aec08dc84745f791faf0a7f515677efa7" title="Typedef for shared-pointer to TestParticleCase object. ">TestParticleCasePointer</a> <a class="code" href="namespacestochastic__migration_1_1database.html#a7e6d2cfebd77b9ada24fa2a586d24dcf" title="Get test particle case data. ">getTestParticleCase</a>(</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keyword">const</span> std::string&amp; databaseAbsolutePath,</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keyword">const</span> std::string&amp; testParticleCaseTableName = <span class="stringliteral">&quot;test_particle_case&quot;</span> );</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<a class="code" href="namespacestochastic__migration_1_1database.html#a46cb2835920352a6da7430ae43965f10" title="Typedef for input table (pointers) for test particle simulations. ">TestParticleInputTable</a> <a class="code" href="namespacestochastic__migration_1_1database.html#af717adced738fcf99b25a2fc75637d61" title="Get test particle input table. ">getTestParticleInputTable</a>(</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keyword">const</span> std::string&amp; databaseAbsolutePath, <span class="keywordtype">bool</span> isCompleted = <span class="keyword">false</span>,</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keyword">const</span> std::string&amp; testParticleInputTableName = <span class="stringliteral">&quot;test_particle_input&quot;</span> );</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<a class="code" href="namespacestochastic__migration_1_1database.html#a46cb2835920352a6da7430ae43965f10" title="Typedef for input table (pointers) for test particle simulations. ">TestParticleInputTable</a> <a class="code" href="namespacestochastic__migration_1_1database.html#af717adced738fcf99b25a2fc75637d61" title="Get test particle input table. ">getTestParticleInputTable</a>(</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keyword">const</span> std::string&amp; databaseAbsolutePath, <span class="keyword">const</span> std::string&amp; testParticleSimulationNumbers,</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keyword">const</span> std::string&amp; testParticleInputTableName = <span class="stringliteral">&quot;test_particle_input&quot;</span> );</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<a class="code" href="namespacestochastic__migration_1_1database.html#a6862196ddf3bc5080e80a13b939959ef" title="Typedef for table of kicks (pointers) generated by test particle simulations. ">TestParticleKickTable</a> <a class="code" href="namespacestochastic__migration_1_1database.html#adc385e50b3cb2287e13c19194cf95a7f" title="Get test particle kick table. ">getTestParticleKickTable</a>(</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="keyword">const</span> std::string&amp; databaseAbsolutePath, <span class="keyword">const</span> <span class="keywordtype">double</span> randomWalkDuration,</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keyword">const</span> <a class="code" href="namespacestochastic__migration_1_1database.html#a528cf6d30d5fac3f59d93b662b92b6fe" title="Typedef for map of test particle simulation numbers &amp; mass ratios. ">TestParticleSimulationNumbersAndMassRatios</a>&amp;</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        testParticleSimulationNumbersAndMassRatios,</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        <span class="keyword">const</span> std::string&amp; testParticleKickTableName = <span class="stringliteral">&quot;test_particle_kicks&quot;</span> );</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<a class="code" href="namespacestochastic__migration_1_1database.html#abb9bc2fc32540c3606e953564798ab02" title="Typedef for table of random walk Monte Carlo runs (pointers). ">RandomWalkMonteCarloRunTable</a> <a class="code" href="namespacestochastic__migration_1_1database.html#aa6fc6b014110b4bcf9bd7762a9924213" title="Get table of random walk Monte Carlo runs. ">getRandomWalkMonteCarloRunsTable</a>(</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="keyword">const</span> std::string&amp; databaseAbsolutePath, <span class="keyword">const</span> std::vector&lt; unsigned int &gt;&amp; monteCarloRuns,</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        <span class="keyword">const</span> std::string&amp; randomWalkMonteCarloRunTableName = <span class="stringliteral">&quot;random_walk_monte_carlo_runs&quot;</span> );</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<a class="code" href="namespacestochastic__migration_1_1database.html#a8df062e8611a25cd62f584fbaf84129a" title="Typedef for table of perturbers (pointers) for a random walk Monte Carlo run. ">RandomWalkPerturberTable</a> <a class="code" href="namespacestochastic__migration_1_1database.html#a640ebc6c1190f89c19ad4279e8c8a5f9" title="Get table of selected perturbers for random walk Monte Carlo run. ">getRandomWalkPerturberTable</a>(</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        <span class="keyword">const</span> std::string&amp; databaseAbsolutePath, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> monteCarloRun,</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        <span class="keyword">const</span> std::string&amp; randomWalkPerturberTableName = <span class="stringliteral">&quot;random_walk_perturbers&quot;</span> );</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;} <span class="comment">// namespace database</span></div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;} <span class="comment">// namespace stochastic_migration</span></div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="preprocessor">#endif // STOCHASTIC_MIGRATION_DATABASE_READ_FUNCTIONS_H</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<a class="code" href="namespacestochastic__migration_1_1database.html#aec08dc84745f791faf0a7f515677efa7" title="Typedef for shared-pointer to TestParticleCase object. ">TestParticleCasePointer</a> <a class="code" href="namespacestochastic__migration_1_1database.html#aabb70b35ea3dfb9ca6590d1c75d75019" title="Get test particle case data. ">getTestParticleCase</a>( <span class="keyword">const</span> std::string&amp; databaseAbsolutePath, </div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                                             <span class="keyword">const</span> std::string&amp; testParticleCaseTableName );</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">// //! Get test particle input table.</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">// /*!</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">//  * Returns table of input data for test particle simulations, retrieved from simulation database.</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">//  * Completed (true) or incomplete (false) simulations can be retrieved.</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">//  * \param databaseAbsolutePath Absolute path to simulation database.</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">//  * \param isCompleted Flag indicating whether to retrieve completed or incomplete simulations</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">//  *          (default is set to retrieve input data for simulations that haven&#39;t been completed).</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">//  * \param testParticleInputTableName String name of test particle input table in database (default</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">//  *          is set to &quot;test_particle_input&quot;).</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">//  * \return Test particle input table, as a set of TestParticleInput pointers.</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">//  */</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">// TestParticleInputTable getTestParticleInputTable(</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">//         const std::string&amp; databaseAbsolutePath, bool isCompleted = false,</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">//         const std::string&amp; testParticleInputTableName = &quot;test_particle_input&quot; );</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="comment">// //! Get test particle input table.</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">// /*!</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">//  * Returns table of input data for test particle simulations, retrieved from simulation database.</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">//  * A list of specific test particle simulation numbers can be requested to be retrieved from the</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">//  * SQLite database.</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="comment">//  * \param databaseAbsolutePath Absolute path to simulation database.</span></div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">//  * \param testParticleSimulationNumbers List of test particle simulation numbers to select from</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">//  *          database.</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="comment">//  * \param testParticleInputTableName String name of test particle input table in database (default</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="comment">//  *          is set to &quot;test_particle_input&quot;).</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">//  * \return Test particle input table, as a vector of TestParticleInput objects.</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">//  */</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">// TestParticleInputTable getTestParticleInputTable(</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">//         const std::string&amp; databaseAbsolutePath, const std::string&amp; testParticleSimulationNumbers,</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">//         const std::string&amp; testParticleInputTableName = &quot;test_particle_input&quot; );</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">// //! Get test particle kick table.</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">// !</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">//  * Returns table of test particle kick data, aggregated based on specified test particle simulation</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">//  * numbers.</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">//  * \param databaseAbsolutePath Absolute path to simulation database.</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">//  * \param randomWalkDuration Duration of random walk [s].</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">//  * \param testParticleSimulationNumbersAndMassRatios Map of specified test particle simulation</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">//  *          numbers to include in kick table and mass ratios associated with each.</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">//  * \param testParticleKickTableName String name of test particle kick table in database (default</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="comment">//  *          is set to &quot;test_particle_kicks&quot;).</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">//  * \return Table of test particle kick data, aggregated from selected test particle simulation</span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">//  *          numbers.</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160; </div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="comment">// TestParticleKickTable getTestParticleKickTable(</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">//         const std::string&amp; databaseAbsolutePath, const double randomWalkDuration,</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">//         const TestParticleSimulationNumbersAndMassRatios&amp;</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;<span class="comment">//         testParticleSimulationNumbersAndMassRatios,</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">//         const std::string&amp; testParticleKickTableName = &quot;test_particle_kicks&quot; );</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">// //! Get table of random walk Monte Carlo runs.</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">// /*!</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">//  * Returns random_walk_runs table retrieved from SQLite simulation database, aggregated from the</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">//  * Monte Carlo runs requested.</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment">//  * \param databaseAbsolutePath Absolute path to simulation database.</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">//  * \param monteCarloRuns Monte Carlo runs to retrieve data for.</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">//  * \param randomWalkMonteCarloRunTableName String name of random walk Monte Carlo run table in</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">//  *          database (default is set to &quot;random_walk_monte_carlo_runs&quot;).</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">//  * \return Monte Carlo run table, stored in a set of RandomWalkMonteCarloRun objects.</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="comment">//  */</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">// RandomWalkMonteCarloRunTable getRandomWalkMonteCarloRunsTable(</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="comment">//         const std::string&amp; databaseAbsolutePath, const std::vector&lt; unsigned int &gt;&amp; monteCarloRuns,</span></div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="comment">//         const std::string&amp; randomWalkMonteCarloRunTableName = &quot;random_walk_monte_carlo_runs&quot; );</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="comment">// //! Get table of selected perturbers for random walk Monte Carlo run.</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="comment">// /*!</span></div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="comment">//  * Returns table of selected perturbers retrieved from SQLite simulation database, aggregated from</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">//  * the test particle simulation numbers and associated mass factors for the requested Monte Carlo</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">//  * run.</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;<span class="comment">//  * \param databaseAbsolutePath Absolute path to simulation database.</span></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">//  * \param monteCarloRun Monte Carlo run to retrieve list of selected perturbers for.</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">//  * \param randomWalkPerturberTableName String name of random walk perturber table in database</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">//  *          (default is set to &quot;random_walk_perturber_selection&quot;).</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">//  * \return Random walk perturber selection table, stored in a set of RandomWalkPerturber</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">//  *          objects.</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">//  */</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">// RandomWalkPerturberTable getRandomWalkPerturberTable(</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">//         const std::string&amp; databaseAbsolutePath, const unsigned int monteCarloRun,</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">//         const std::string&amp; randomWalkPerturberTableName = &quot;random_walk_perturbers&quot; );</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;} <span class="comment">// namespace database</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;} <span class="comment">// namespace stochastic_migration</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;<span class="preprocessor">#endif // STOCHASTIC_MIGRATION_DATABASE_READ_FUNCTIONS_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Jun 30 2013 13:14:46 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jul 5 2013 11:14:42 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>
