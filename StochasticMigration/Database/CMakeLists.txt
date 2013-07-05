@@ -22,7 +22,7 @@ set(DATABASE_SOURCES
 #  "${SRCROOT}${DATABASEDIR}/randomWalkMonteCarloRun.cpp"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.cpp"
-#  "${SRCROOT}${DATABASEDIR}/testParticleInput.cpp"
+  "${SRCROOT}${DATABASEDIR}/testParticleInput.cpp"
 #  "${SRCROOT}${DATABASEDIR}/testParticleKick.cpp"
 )
 
@@ -33,7 +33,7 @@ set(DATABASE_HEADERS
 #  "${SRCROOT}${DATABASEDIR}/randomWalkMonteCarloRun.h"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.h"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.h"
-#  "${SRCROOT}${DATABASEDIR}/testParticleInput.h"
+  "${SRCROOT}${DATABASEDIR}/testParticleInput.h"
 #  "${SRCROOT}${DATABASEDIR}/testParticleKick.h"
 )
 
