@@ -77,14 +77,18 @@ setup_unit_test_target(test_TestParticleCase "${SRCROOT}${DATABASEDIR}")
 target_link_libraries(test_TestParticleCase stochastic_migration_database assist_basics 
                       tudat_basic_mathematics ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
 
+add_executable(test_TestParticleInput 
+               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleInput.cpp")
+setup_unit_test_target(test_TestParticleInput "${SRCROOT}${DATABASEDIR}")
+target_link_libraries(test_TestParticleInput 
+                      stochastic_migration_database 
+                      assist_basics
+                      tudat_basic_mathematics
+                      ${TUDAT_CORE_LIBRARIES} 
+                      ${Boost_LIBRARIES})
+
 # add_executable(test_TestParticleKick 
 #                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleKick.cpp")
 # setup_unit_test_target(test_TestParticleKick "${SRCROOT}${DATABASEDIR}")
 # target_link_libraries(test_TestParticleKick stochastic_migration_database assist_basics 
-#                       ${TUDAT_CORE_LIBRARIES} ${SQLITE3_LIBRARY} ${Boost_LIBRARIES})
-
-# add_executable(test_TestParticleInput 
-#                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleInput.cpp")
-# setup_unit_test_target(test_TestParticleInput "${SRCROOT}${DATABASEDIR}")
-# target_link_libraries(test_TestParticleInput stochastic_migration_database assist_basics
 #                       ${TUDAT_CORE_LIBRARIES} ${SQLITE3_LIBRARY} ${Boost_LIBRARIES})

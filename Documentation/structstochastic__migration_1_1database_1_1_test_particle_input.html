@@ -101,12 +101,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a961b79ba110aebdd850b61461bcbe655"><td class="memItemLeft" align="right" valign="top">EIGEN_MAKE_ALIGNED_OPERATOR_NEW&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html#a961b79ba110aebdd850b61461bcbe655">TestParticleInput</a> (const int aSimulationNumber, const bool aCompletedFlag, const tudat::basic_mathematics::Vector6d &amp;anInitialStateInKeplerianElements)</td></tr>
-<tr class="memdesc:a961b79ba110aebdd850b61461bcbe655"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor, initializing class members.  <a href="#a961b79ba110aebdd850b61461bcbe655">More...</a><br/></td></tr>
-<tr class="separator:a961b79ba110aebdd850b61461bcbe655"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4959144d3c1b7b963ec25106b90719a"><td class="memItemLeft" align="right" valign="top">EIGEN_MAKE_ALIGNED_OPERATOR_NEW&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html#aa4959144d3c1b7b963ec25106b90719a">TestParticleInput</a> (const int aSimulationNumber, const int aCaseId, const bool aCompletedFlag, const tudat::basic_mathematics::Vector6d &amp;anInitialStateInKeplerianElements)</td></tr>
+<tr class="memdesc:aa4959144d3c1b7b963ec25106b90719a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor, initializing class members.  <a href="#aa4959144d3c1b7b963ec25106b90719a">More...</a><br/></td></tr>
+<tr class="separator:aa4959144d3c1b7b963ec25106b90719a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:a8bce54b08448c4c413617ae257fcca04"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html#a8bce54b08448c4c413617ae257fcca04">caseId</a></td></tr>
+<tr class="memdesc:a8bce54b08448c4c413617ae257fcca04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Case ID.  <a href="#a8bce54b08448c4c413617ae257fcca04">More...</a><br/></td></tr>
+<tr class="separator:a8bce54b08448c4c413617ae257fcca04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd5a4438f862e007408d1bb282548bf5"><td class="memItemLeft" align="right" valign="top">const <br class="typebreak"/>
 tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html#acd5a4438f862e007408d1bb282548bf5">initialStateInKeplerianElements</a></td></tr>
 <tr class="memdesc:acd5a4438f862e007408d1bb282548bf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initial state of test particle in Keplerian elements.  <a href="#acd5a4438f862e007408d1bb282548bf5">More...</a><br/></td></tr>
@@ -121,9 +124,9 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This data struct contains input data, stored in an SQLite3 database. The data stored is used to set up a test particle simulation. </p>
 
-<p>Definition at line <a class="el" href="test_particle_input_8h_source.html#l00072">72</a> of file <a class="el" href="test_particle_input_8h_source.html">testParticleInput.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_input_8h_source.html#l00054">54</a> of file <a class="el" href="test_particle_input_8h_source.html">testParticleInput.h</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a961b79ba110aebdd850b61461bcbe655"></a>
+<a class="anchor" id="aa4959144d3c1b7b963ec25106b90719a"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -132,6 +135,12 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>aSimulationNumber</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>aCaseId</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -156,6 +165,20 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a class="anchor" id="a8bce54b08448c4c413617ae257fcca04"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int stochastic_migration::database::TestParticleInput::caseId</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="test_particle_input_8h_source.html#l00072">72</a> of file <a class="el" href="test_particle_input_8h_source.html">testParticleInput.h</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="acd5a4438f862e007408d1bb282548bf5"></a>
 <div class="memitem">
 <div class="memproto">
@@ -166,7 +189,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_input_8h_source.html#l00092">92</a> of file <a class="el" href="test_particle_input_8h_source.html">testParticleInput.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_input_8h_source.html#l00078">78</a> of file <a class="el" href="test_particle_input_8h_source.html">testParticleInput.h</a>.</p>
 
 </div>
 </div>
@@ -180,7 +203,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_input_8h_source.html#l00089">89</a> of file <a class="el" href="test_particle_input_8h_source.html">testParticleInput.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_input_8h_source.html#l00075">75</a> of file <a class="el" href="test_particle_input_8h_source.html">testParticleInput.h</a>.</p>
 
 </div>
 </div>
@@ -194,7 +217,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_input_8h_source.html#l00086">86</a> of file <a class="el" href="test_particle_input_8h_source.html">testParticleInput.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_input_8h_source.html#l00069">69</a> of file <a class="el" href="test_particle_input_8h_source.html">testParticleInput.h</a>.</p>
 
 </div>
 </div>
@@ -204,7 +227,7 @@ tudat::basic_mathematics::Vector6d&#160;</td><td class="memItemRight" valign="bo
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jul 4 2013 12:53:47 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat Jul 6 2013 12:14:48 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>
