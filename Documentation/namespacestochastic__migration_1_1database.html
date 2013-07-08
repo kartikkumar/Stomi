@@ -119,6 +119,12 @@ Typedefs</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a264399c294c16d8488cbf4dbd4a421a2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacestochastic__migration_1_1database.html#a46cb2835920352a6da7430ae43965f10">TestParticleInputTable</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1database.html#a264399c294c16d8488cbf4dbd4a421a2">getCompleteTestParticleInputTable</a> (const std::string &amp;databaseAbsolutePath, const int caseId, const std::string &amp;testParticleInputTableName, bool isCompleted=false)</td></tr>
+<tr class="memdesc:a264399c294c16d8488cbf4dbd4a421a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get complete test particle input table.  <a href="#a264399c294c16d8488cbf4dbd4a421a2">More...</a><br/></td></tr>
+<tr class="separator:a264399c294c16d8488cbf4dbd4a421a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a665af00b032749b4cece6d1a08c5aa62"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacestochastic__migration_1_1database.html#a46cb2835920352a6da7430ae43965f10">TestParticleInputTable</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1database.html#a665af00b032749b4cece6d1a08c5aa62">getSelectedTestParticleInputTable</a> (const std::string &amp;databaseAbsolutePath, const int caseId, const std::string &amp;testParticleSimulationNumbers, const std::string &amp;testParticleInputTableName)</td></tr>
+<tr class="memdesc:a665af00b032749b4cece6d1a08c5aa62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get selected test particle input table.  <a href="#a665af00b032749b4cece6d1a08c5aa62">More...</a><br/></td></tr>
+<tr class="separator:a665af00b032749b4cece6d1a08c5aa62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7b7f7f3d9d0a618ab35eb5fb22b3443"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacestochastic__migration_1_1database.html#aec08dc84745f791faf0a7f515677efa7">TestParticleCasePointer</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1database.html#aa7b7f7f3d9d0a618ab35eb5fb22b3443">getTestParticleCase</a> (const std::string &amp;databaseAbsolutePath, const std::string &amp;caseName, const std::string &amp;testParticleCaseTableName)</td></tr>
 <tr class="memdesc:aa7b7f7f3d9d0a618ab35eb5fb22b3443"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get test particle case data.  <a href="#aa7b7f7f3d9d0a618ab35eb5fb22b3443">More...</a><br/></td></tr>
 <tr class="separator:aa7b7f7f3d9d0a618ab35eb5fb22b3443"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,6 +191,104 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a class="anchor" id="a264399c294c16d8488cbf4dbd4a421a2"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacestochastic__migration_1_1database.html#a46cb2835920352a6da7430ae43965f10">TestParticleInputTable</a> stochastic_migration::database::getCompleteTestParticleInputTable </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>databaseAbsolutePath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>caseId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>testParticleInputTableName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>isCompleted</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns table of input data for test particle simulations, retrieved from simulation database, for a given case, defined by a string-name. Completed (true) or incomplete (false) simulations can be retrieved. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">databaseAbsolutePath</td><td>Absolute path to simulation database. </td></tr>
+    <tr><td class="paramname">caseId</td><td>ID stored in table for requested test particle case. </td></tr>
+    <tr><td class="paramname">testParticleInputTableName</td><td>String name of test particle input table in database. </td></tr>
+    <tr><td class="paramname">isCompleted</td><td>Flag indicating whether to retrieve completed or incomplete simulations (default is set to retrieve input data for simulations that haven't been completed). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Test particle input table, as a set of <a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html" title="Data struct that contains input data for one test particle simulation. ">TestParticleInput</a> pointers. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a665af00b032749b4cece6d1a08c5aa62"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacestochastic__migration_1_1database.html#a46cb2835920352a6da7430ae43965f10">TestParticleInputTable</a> stochastic_migration::database::getSelectedTestParticleInputTable </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>databaseAbsolutePath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>caseId</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>testParticleSimulationNumbers</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>testParticleInputTableName</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Returns table of input data for test particle simulations, retrieved from simulation database, for a given case, defined by a string-name. A list of specific test particle simulation numbers can be requested to be retrieved from the SQLite database. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">databaseAbsolutePath</td><td>Absolute path to simulation database. </td></tr>
+    <tr><td class="paramname">caseId</td><td>ID stored in table for requested test particle case. </td></tr>
+    <tr><td class="paramname">testParticleSimulationNumbers</td><td>List of test particle simulation numbers to select from database. </td></tr>
+    <tr><td class="paramname">testParticleInputTableName</td><td>String name of test particle input table in database. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Test particle input table, as a vector of <a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html" title="Data struct that contains input data for one test particle simulation. ">TestParticleInput</a> objects. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="aa7b7f7f3d9d0a618ab35eb5fb22b3443"></a>
 <div class="memitem">
 <div class="memproto">
@@ -386,7 +490,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat Jul 6 2013 12:14:48 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jul 8 2013 11:40:50 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>

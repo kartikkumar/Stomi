@@ -47,6 +47,7 @@ add_executable(test_DatabaseReadFunctions
 setup_unit_test_target(test_DatabaseReadFunctions "${SRCROOT}${DATABASEDIR}")
 target_link_libraries(test_DatabaseReadFunctions 
                       stochastic_migration_database stochastic_migration_basics 
+                      tudat_input_output
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 
                       ${SQLITE3_LIBRARY}  

@@ -27,7 +27,7 @@
 // #include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
 // #include "StochasticMigration/Database/randomWalkPerturber.h"
 #include "StochasticMigration/Database/testParticleCase.h"
-// #include "StochasticMigration/Database/testParticleInput.h"
+#include "StochasticMigration/Database/testParticleInput.h"
 // #include "StochasticMigration/Database/testParticleKick.h"
 
 namespace stochastic_migration
@@ -48,36 +48,39 @@ TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolute
                                              const std::string& caseName,
                                              const std::string& testParticleCaseTableName );
 
-// //! Get test particle input table.
-// /*!
-//  * Returns table of input data for test particle simulations, retrieved from simulation database.
-//  * Completed (true) or incomplete (false) simulations can be retrieved.
-//  * \param databaseAbsolutePath Absolute path to simulation database.
-//  * \param isCompleted Flag indicating whether to retrieve completed or incomplete simulations
-//  *          (default is set to retrieve input data for simulations that haven't been completed).
-//  * \param testParticleInputTableName String name of test particle input table in database (default
-//  *          is set to "test_particle_input").
-//  * \return Test particle input table, as a set of TestParticleInput pointers.
-//  */
-// TestParticleInputTable getTestParticleInputTable(
-//         const std::string& databaseAbsolutePath, bool isCompleted = false,
-//         const std::string& testParticleInputTableName = "test_particle_input" );
+//! Get complete test particle input table.
+/*!
+ * Returns table of input data for test particle simulations, retrieved from simulation database,
+ * for a given case, defined by a string-name.
+ * Completed (true) or incomplete (false) simulations can be retrieved.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param caseId ID stored in table for requested test particle case.
+ * \param testParticleInputTableName String name of test particle input table in database.
+ * \param isCompleted Flag indicating whether to retrieve completed or incomplete simulations
+ *          (default is set to retrieve input data for simulations that haven't been completed).
+ * \return Test particle input table, as a set of TestParticleInput pointers.
+ */
+TestParticleInputTable getCompleteTestParticleInputTable(
+        const std::string& databaseAbsolutePath, const int caseId,
+        const std::string& testParticleInputTableName, bool isCompleted = false );
 
-// //! Get test particle input table.
-// /*!
-//  * Returns table of input data for test particle simulations, retrieved from simulation database.
-//  * A list of specific test particle simulation numbers can be requested to be retrieved from the
-//  * SQLite database.
-//  * \param databaseAbsolutePath Absolute path to simulation database.
-//  * \param testParticleSimulationNumbers List of test particle simulation numbers to select from
-//  *          database.
-//  * \param testParticleInputTableName String name of test particle input table in database (default
-//  *          is set to "test_particle_input").
-//  * \return Test particle input table, as a vector of TestParticleInput objects.
-//  */
-// TestParticleInputTable getTestParticleInputTable(
-//         const std::string& databaseAbsolutePath, const std::string& testParticleSimulationNumbers,
-//         const std::string& testParticleInputTableName = "test_particle_input" );
+//! Get selected test particle input table.
+/*!
+ * Returns table of input data for test particle simulations, retrieved from simulation database,
+ * for a given case, defined by a string-name.
+ * A list of specific test particle simulation numbers can be requested to be retrieved from the
+ * SQLite database.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param caseId ID stored in table for requested test particle case.
+ * \param testParticleSimulationNumbers List of test particle simulation numbers to select from
+ *          database.
+ * \param testParticleInputTableName String name of test particle input table in database.
+ * \return Test particle input table, as a vector of TestParticleInput objects.
+ */
+TestParticleInputTable getSelectedTestParticleInputTable(
+        const std::string& databaseAbsolutePath, const int caseId,
+        const std::string& testParticleSimulationNumbers,
+        const std::string& testParticleInputTableName );
 
 // //! Get test particle kick table.
 // !

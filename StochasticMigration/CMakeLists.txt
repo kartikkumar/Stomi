@@ -312,7 +312,7 @@ setup_executable_target(testParticleSimulator "${SRCROOT}")
 target_link_libraries(testParticleSimulator 
                       stochastic_migration_basics stochastic_migration_database
                       stochastic_migration_input_output 
-                      assist_astrodynamics assist_input_output
+                      assist_astrodynamics assist_basics assist_input_output
                       tudat_state_derivative_models tudat_basic_mathematics 
                       tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators 
                       tudat_input_output 
