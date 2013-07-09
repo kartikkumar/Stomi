@@ -436,6 +436,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Set start epoch for numerical integration.
     const double startEpoch = 0.0;            
+    cout << "Start epoch for numerical integration (T0)                " 
+         << startEpoch << " yrs" << endl;    
 
     ///////////////////////////////////////////////////////////////////////////
     
@@ -654,78 +656,55 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                         semiMajorAxisIndex ),
                     testParticleCase->centralBodyGravitationalParameter );
 
-//         // Compute orbital period of test particle [s].
-//         const double orbitalPeriodOfTestParticle = computeKeplerOrbitalPeriod(
-//                     testParticleStateAfterStartUp( semiMajorAxisIndex ),
-//                     testParticleCase->centralBodyGravitationalParameter );
+        // Compute orbital period of test particle [s].
+        const double orbitalPeriodOfTestParticle = computeKeplerOrbitalPeriod(
+                    testParticleStateAfterStartUp( semiMajorAxisIndex ),
+                    testParticleCase->centralBodyGravitationalParameter );
 
-//         // Compute synodic period of test particle's motion with respect to perturbed body [s].
-//         const double synodicPeriod = computeSynodicPeriod(
-//                     orbitalPeriodOfPerturbedBody, orbitalPeriodOfTestParticle );
+        // Compute synodic period of test particle's motion with respect to perturbed body [s].
+        const double synodicPeriod = computeSynodicPeriod(
+                    orbitalPeriodOfPerturbedBody, orbitalPeriodOfTestParticle );
 
-//         // Compute perturbed body's initial energy.
-//         const double perturbedBodyInitialEnergy = computeKeplerEnergy(
-//                     testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                         semiMajorAxisIndex ),
-//                     testParticleCase->centralBodyGravitationalParameter );
+        // Compute perturbed body's initial energy.
+        const double perturbedBodyInitialEnergy = computeKeplerEnergy(
+                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                        semiMajorAxisIndex ),
+                    testParticleCase->centralBodyGravitationalParameter );
 
-//         // Compute perturbed body's initial angular momentum.
-//         const double perturbedBodyInitialAngularMomentum = computeKeplerAngularMomentum(
-//                     testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                         semiMajorAxisIndex ),
-//                     testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                         eccentricityIndex ),
-//                     testParticleCase->centralBodyGravitationalParameter );
+        // Compute perturbed body's initial angular momentum.
+        const double perturbedBodyInitialAngularMomentum = computeKeplerAngularMomentum(
+                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                        semiMajorAxisIndex ),
+                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                        eccentricityIndex ),
+                    testParticleCase->centralBodyGravitationalParameter );
 
-//         // DEBUG.
-//         if ( iequals( debugMode, "ON" ) )
-//         {
-//             cout << "Test particle orbital period [hr]: "
-//                       << convertSecondsToHours( orbitalPeriodOfTestParticle ) << endl;
-//             cout << "Perturbed body orbital period [hr]: "
-//                       << convertSecondsToHours( orbitalPeriodOfPerturbedBody ) << endl;
-//             cout << "Test particle synodic period [yr]: "
-//                       << synodicPeriod / JULIAN_YEAR << endl;
-//             cout << "Perturbed body's initial energy [m^2 s^-2]: "
-//                       << perturbedBodyInitialEnergy << endl;
-//             cout << "Perturbed body's initial angular momentum [m^2 s^-1]: "
-//                       << perturbedBodyInitialAngularMomentum << endl;
-//         }
+        // Numerically integrate motion of test particle forward by one synodic period
+        // (TMinusSynodicPeriod).
+        integrator->integrateTo( testParticleCase->startUpIntegrationDuration + synodicPeriod,
+                                 testParticleCase->initialStepSize );
 
-//         // Numerically integrate motion of test particle back by one synodic period
-//         // (TMinusSynodicPeriod).
-//         integrator->integrateTo( testParticleCase->startUpIntegrationDuration - synodicPeriod,
-//                                  -testParticleCase->initialStepSize );
+        // Copy integrator in case the full history needs to be written to file.
+        RungeKuttaVariableStepSizeIntegratorXdPointer integratorCopy =
+                make_shared< RungeKuttaVariableStepSizeIntegratorXd >( *integrator );
 
-//         // Copy integrator in case the full history needs to be written to file.
-//         RungeKuttaVariableStepSizeIntegratorXdPointer integratorCopy =
-//                 make_shared< RungeKuttaVariableStepSizeIntegratorXd >( *integrator );
+        ///////////////////////////////////////////////////////////////////////////
 
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
-//         ///////////////////////////////////////////////////////////////////////////
+        // Numerically integrate system from TMinusSynodicPeriod to 
+        // TPlusSimulationAndSynodicPeriod.
 
-//         // Numerically integrate system from TMinusSynodicPeriod to
-//         // simulationDuration + synodicPeriod.
+       // Propagate system and generate test particle kick table.
+//        KickTable kickTable = propagateSystemAndGenerateKickTable(
+//                    mab, testParticle, initialStepSize, simulationDuration, synodicPeriod,
+//                    startUpIntegrationDuration, minimumDistanceCrossing, maximumDistanceCrossing,
+//                    integrator, testParticleCase->uranusGravitationalParameter, mabInitialEnergy,
+//                    mabInitialAngularMomentum, perturbedBodyEnergyError, perturbedBodyAngularMomentumError );
 
-//         // Declare error in perturbed body's energy.
-//         double perturbedBodyEnergyError = TUDAT_NAN;
+        ///////////////////////////////////////////////////////////////////////////
 
-//         // Declare error in perturbed body's angular momentum.
-//         double perturbedBodyAngularMomentumError = TUDAT_NAN;
-
-// //        // Propagate system and generate test particle kick table.
-// //        KickTable kickTable = propagateSystemAndGenerateKickTable(
-// //                    mab, testParticle, initialStepSize, simulationDuration, synodicPeriod,
-// //                    startUpIntegrationDuration, minimumDistanceCrossing, maximumDistanceCrossing,
-// //                    integrator, testParticleCase->uranusGravitationalParameter, mabInitialEnergy,
-// //                    mabInitialAngularMomentum, perturbedBodyEnergyError, perturbedBodyAngularMomentumError );
-
-// ////        // DEBUG.
-// ////        cout << "Mab energy error: " << perturbedBodyEnergyError << endl;
-// ////        cout << "Mab angular momentum error: " << perturbedBodyAngularMomentumError << endl;
-
-// //        ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
 // //        // Save output. To avoid locking of the database, this section is thread-critical, so will
 // //        // be executed one-by-one by multiple threads.

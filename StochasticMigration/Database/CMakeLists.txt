@@ -23,7 +23,7 @@ set(DATABASE_SOURCES
 #  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleInput.cpp"
-#  "${SRCROOT}${DATABASEDIR}/testParticleKick.cpp"
+  "${SRCROOT}${DATABASEDIR}/testParticleKick.cpp"
 )
 
 # Set header files.
@@ -34,7 +34,7 @@ set(DATABASE_HEADERS
 #  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.h"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.h"
   "${SRCROOT}${DATABASEDIR}/testParticleInput.h"
-#  "${SRCROOT}${DATABASEDIR}/testParticleKick.h"
+  "${SRCROOT}${DATABASEDIR}/testParticleKick.h"
 )
 
 # Add static library.
@@ -88,8 +88,11 @@ target_link_libraries(test_TestParticleInput
                       ${TUDAT_CORE_LIBRARIES} 
                       ${Boost_LIBRARIES})
 
-# add_executable(test_TestParticleKick 
-#                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleKick.cpp")
-# setup_unit_test_target(test_TestParticleKick "${SRCROOT}${DATABASEDIR}")
-# target_link_libraries(test_TestParticleKick stochastic_migration_database assist_basics 
-#                       ${TUDAT_CORE_LIBRARIES} ${SQLITE3_LIBRARY} ${Boost_LIBRARIES})
+add_executable(test_TestParticleKick 
+               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleKick.cpp")
+setup_unit_test_target(test_TestParticleKick "${SRCROOT}${DATABASEDIR}")
+target_link_libraries(test_TestParticleKick 
+                      stochastic_migration_database 
+                      assist_basics 
+                      ${TUDAT_CORE_LIBRARIES} 
+                      ${Boost_LIBRARIES})
