@@ -142,7 +142,7 @@ install(FILES ${CODEROOT}/LICENSE ${CODEROOT}/NOTICE ${CODEROOT}/README
         DESTINATION "${STOCHASTIC_MIGRATION_DISTRIBUTION_PATH}")
 
 # Set the main sub-directories.
-#set(ASTRODYNAMICSDIR "/Astrodynamics")
+set(ASTRODYNAMICSDIR "/Astrodynamics")
 set(BASICSDIR "/Basics")
 set(DATABASEDIR "/Database")
 set(INPUTOUTPUTDIR "/InputOutput")
@@ -280,8 +280,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # Set sub-directories.
-set(SUBDIRS ${BASICSDIR} ${DATABASEDIR} ${INPUTOUTPUTDIR})
-#${ASTRODYNAMICSDIR} )
+set(SUBDIRS ${ASTRODYNAMICSDIR} ${BASICSDIR} ${DATABASEDIR} ${INPUTOUTPUTDIR})
 
 # Add sub-directories to CMake process.
 foreach(CURRENT_SUBDIR ${SUBDIRS})
@@ -310,8 +309,8 @@ target_link_libraries(databaseGenerator
 add_executable(testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
 setup_executable_target(testParticleSimulator "${SRCROOT}")
 target_link_libraries(testParticleSimulator 
-                      stochastic_migration_basics stochastic_migration_database
-                      stochastic_migration_input_output 
+                      stochastic_migration_astrodynamics stochastic_migration_basics 
+                      stochastic_migration_database stochastic_migration_input_output 
                       assist_astrodynamics assist_basics assist_input_output
                       tudat_state_derivative_models tudat_basic_mathematics 
                       tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators 

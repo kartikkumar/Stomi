@@ -67,10 +67,12 @@
 #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaVariableStepSizeIntegrator.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
+#include "StochasticMigration/Astrodynamics/testParticlePropagationFunctions.h"
 #include "StochasticMigration/Basics/basics.h"
 #include "StochasticMigration/Database/databaseReadFunctions.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
+#include "StochasticMigration/Database/testParticleKick.h"
 #include "StochasticMigration/InputOutput/dictionaries.h"
 
 //! Execute test particle simulations.
@@ -112,6 +114,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace tudat::numerical_integrators;
     using namespace tudat::state_derivative_models;
 
+    using namespace stochastic_migration::astrodynamics;
     using namespace stochastic_migration::basics;
     using namespace stochastic_migration::database;
     using namespace stochastic_migration::input_output;
@@ -695,12 +698,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Numerically integrate system from TMinusSynodicPeriod to 
         // TPlusSimulationAndSynodicPeriod.
 
-       // Propagate system and generate test particle kick table.
-//        KickTable kickTable = propagateSystemAndGenerateKickTable(
-//                    mab, testParticle, initialStepSize, simulationDuration, synodicPeriod,
-//                    startUpIntegrationDuration, minimumDistanceCrossing, maximumDistanceCrossing,
-//                    integrator, testParticleCase->uranusGravitationalParameter, mabInitialEnergy,
-//                    mabInitialAngularMomentum, perturbedBodyEnergyError, perturbedBodyAngularMomentumError );
+        // Propagate system and generate test particle kick table.
+        TestParticleKickTable kickTable = propagateSystemAndGenerateKickTable(
+            perturbedBody, testParticle, testParticleCase, integrator );
+        exit( 0 );
 
         ///////////////////////////////////////////////////////////////////////////
 
