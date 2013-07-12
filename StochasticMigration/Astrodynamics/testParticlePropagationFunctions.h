@@ -65,12 +65,19 @@ inline bool checkIfMinimum( const double currentValue, const double previousValu
 * \param numericalIntegrator Shared-pointer to numerical integrator used to propagate system.
 * \return Table of test particle kicks, stored as a set of pointers.
 */
-database::TestParticleKickTable propagateSystemAndGenerateKickTable(
+// database::TestParticleKickTable propagateSystemAndGenerateKickTable(
+//         const assist::astrodynamics::BodyPointer perturbedBody,
+//         const assist::astrodynamics::BodyPointer testParticle,
+//         const database::TestParticleCasePointer testParticleCase,
+//         const tudat::numerical_integrators::
+//                 RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator );
+void propagateSystemAndGenerateKickTable(
         const assist::astrodynamics::BodyPointer perturbedBody,
         const assist::astrodynamics::BodyPointer testParticle,
         const database::TestParticleCasePointer testParticleCase,
         const tudat::numerical_integrators::
-                RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator );
+                RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator, 
+        const double synodicPeriod, const double nextStepSize, const int i );
 
 } // namespace astrodynamics
 } // namespace stochastic_migration

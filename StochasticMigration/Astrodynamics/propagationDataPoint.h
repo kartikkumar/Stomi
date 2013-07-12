@@ -15,8 +15,8 @@
  */
 
 #include <iostream>
+#include <set> 
 
-#include <boost/ptr_container/ptr_set.hpp>
 #include <boost/shared_ptr.hpp> 
 
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
@@ -71,7 +71,7 @@ struct PropagationDataPoint
 typedef boost::shared_ptr< PropagationDataPoint > PropagationDataPointPointer;
 
 //! Typedef for table of propgation data points test particle simulations.
-typedef boost::ptr_set< PropagationDataPoint > PropagationDataPointTable;
+typedef std::set< PropagationDataPoint > PropagationDataPointTable;
 
 // // Define all of the operator overloads as non-member functions (sbi, 2010).
 
@@ -86,6 +86,12 @@ bool operator<( const PropagationDataPoint& PropagationDataPoint1,
 //! Overload << operator.
 std::ostream& operator<<( std::ostream& outputStream, 
                           const PropagationDataPoint& testParticleEvent );
+
+inline bool compareMutualDistances( const PropagationDataPoint& propagationDataPoint1,
+                                    const PropagationDataPoint& propagationDataPoint2 )
+{
+  return propagationDataPoint1.mutualDistance < propagationDataPoint2.mutualDistance;
+}
 
 } // namespace astrodynamics
 } // namespace stochastic_migration

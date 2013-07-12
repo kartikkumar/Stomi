@@ -30,7 +30,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
- #include <utility>
+#include <utility>
 
 #include <Eigen/Core>
 
@@ -502,7 +502,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     iteratorInputTable = testParticleInputTable.begin( );
 
 #pragma omp parallel for num_threads( numberOfThreads ) schedule( static, 1 )
-    for ( unsigned int i = 0; i < testParticleInputTable.size( ); i++ )
+    for ( unsigned int i = 0; i < 10; i++ )
     {
 
 #pragma omp critical( outputToConsole )
@@ -622,7 +622,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         ///////////////////////////////////////////////////////////////////////////
 
-        // Set up integrator.
+        // Set up integrator and perform start-up integration.
 
         // Declare Runge-Kutta, variable-stepsize, integrator.
         RungeKuttaVariableStepSizeIntegratorXdPointer integrator
@@ -639,8 +639,13 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                     testParticleCase->numericalIntegratorAbsoluteTolerance );
 
         // Numerically integrate motion of test particle up to end of start-up period.
-        integrator->integrateTo( testParticleCase->startUpIntegrationDuration,
-                                 testParticleCase->initialStepSize );
+        bool isStartup = false;
+        while ( integrator->getCurrentIndependentVariable( ) 
+                < testParticleCase->startUpIntegrationDuration )
+        {
+            isStartup = true;
+            integrator->performIntegrationStep( testParticleCase->initialStepSize );
+        }   
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -682,26 +687,31 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                         eccentricityIndex ),
                     testParticleCase->centralBodyGravitationalParameter );
 
-        // Numerically integrate motion of test particle forward by one synodic period
-        // (TMinusSynodicPeriod).
-        integrator->integrateTo( testParticleCase->startUpIntegrationDuration + synodicPeriod,
-                                 testParticleCase->initialStepSize );
-
-        // Copy integrator in case the full history needs to be written to file.
-        RungeKuttaVariableStepSizeIntegratorXdPointer integratorCopy =
-                make_shared< RungeKuttaVariableStepSizeIntegratorXd >( *integrator );
-
         ///////////////////////////////////////////////////////////////////////////
 
         ///////////////////////////////////////////////////////////////////////////
 
-        // Numerically integrate system from TMinusSynodicPeriod to 
-        // TPlusSimulationAndSynodicPeriod.
+        // Numerically integrate system to TPlusSimulationAndSynodicPeriod.
 
-        // Propagate system and generate test particle kick table.
-        TestParticleKickTable kickTable = propagateSystemAndGenerateKickTable(
-            perturbedBody, testParticle, testParticleCase, integrator );
-        exit( 0 );
+        // Set the next step size, depending on whether the start-up integration was performed.
+        double nextStepSize = 0.0;
+
+        // Check if the start-up integration period was performed. If so, se the next step for the
+        // numerical integrator based on the internally computed value.
+        if ( isStartup )
+        {
+            nextStepSize = integrator->getNextStepSize( );
+        }
+
+        // Else, set it to the initial step size specified in the case data.
+        else
+        {
+            nextStepSize = testParticleCase->initialStepSize;
+        }
+
+        propagateSystemAndGenerateKickTable(
+            perturbedBody, testParticle, testParticleCase, integrator, 
+            synodicPeriod, nextStepSize, iteratorInputTable->simulationNumber );        
 
         ///////////////////////////////////////////////////////////////////////////
 

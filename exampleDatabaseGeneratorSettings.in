@@ -1,0 +1,50 @@
+#
+#    Copyright (c) 2010-2013, Delft University of Technology
+#    All rights reserved.
+#    See COPYING for license details.
+#
+#    This is an example input file for the databaseGenerator application provided with the 
+#    StochasticMigration project. 
+#
+#    All lines preceded by the '#' character are interpretted as comments.
+#
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+#
+# REQUIRED PARAMETERS
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+# Set the name for the case.
+# The value of this parameter is interpretted as a string.
+CASE                test_case
+
+# Set the absolute path to the database.
+# If the file doesn't exist, it will be created.
+DB                  /Users/kartikkumar/Desktop/testDatabase.db 
+
+# Set number of simulations to populate database with.
+POPULATION          100
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+#
+# OPTIONAL PARAMETERS
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+## Set the limits of the semi-major axis uniform distribution [-limit, limit] 
+## UNIT: [km]
+#SMALIMIT            1500.0
+
+## Set the full-width half-maximum (FWHM) of the eccentricity distribution (normal)
+## UNIT: [-]
+#ECCMEAN    : 0.0
+#ECCFWHM    : 0.0
+
+## Set the full-width half-maximum (FWHM) of the inclination distribution (normal) [deg].
+#INCMEAN    : 0.0
+#INCFWHM    : 0.0
+
+

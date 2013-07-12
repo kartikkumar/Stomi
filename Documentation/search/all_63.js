@@ -7,6 +7,7 @@ var searchData=
   ['centralbodyj2gravitycoefficient',['centralBodyJ2GravityCoefficient',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#af1bc171c30d6d370a40a31ccabbce263',1,'stochastic_migration::database::TestParticleCase']]],
   ['checkifmaximum',['checkIfMaximum',['../namespacestochastic__migration_1_1astrodynamics.html#a4c681140eb85512938b95a98fd46ed98',1,'stochastic_migration::astrodynamics']]],
   ['checkifminimum',['checkIfMinimum',['../namespacestochastic__migration_1_1astrodynamics.html#a3a917fa36d75f982801a73e627656bcf',1,'stochastic_migration::astrodynamics']]],
+  ['comparemutualdistances',['compareMutualDistances',['../namespacestochastic__migration_1_1astrodynamics.html#aaa24b916aeff0e39ca5656b1f7da0115',1,'stochastic_migration::astrodynamics']]],
   ['conjunctiondistance',['conjunctionDistance',['../structstochastic__migration_1_1database_1_1_test_particle_kick.html#a4502b35229f97af7985adc88fb19b8f3',1,'stochastic_migration::database::TestParticleKick']]],
   ['conjunctionduration',['conjunctionDuration',['../structstochastic__migration_1_1database_1_1_test_particle_kick.html#a2f3e2d54aed63fde21744d90acd4f558',1,'stochastic_migration::database::TestParticleKick']]],
   ['conjunctionepoch',['conjunctionEpoch',['../structstochastic__migration_1_1database_1_1_test_particle_kick.html#af7081258acffed16babe7dc760f95865',1,'stochastic_migration::database::TestParticleKick']]],

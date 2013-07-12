@@ -16,9 +16,11 @@
  *
  */
 
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <limits> 
+#include <sstream> 
 
 
 #include <algorithm>
@@ -53,252 +55,262 @@ namespace astrodynamics
 
 //using namespace database;
 
-database::TestParticleKickTable propagateSystemAndGenerateKickTable(
+// database::TestParticleKickTable propagateSystemAndGenerateKickTable(
+//         const assist::astrodynamics::BodyPointer perturbedBody,
+//         const assist::astrodynamics::BodyPointer testParticle,
+//         const database::TestParticleCasePointer testParticleCase,
+//         const tudat::numerical_integrators::
+//             RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator )
+void propagateSystemAndGenerateKickTable(
         const assist::astrodynamics::BodyPointer perturbedBody,
         const assist::astrodynamics::BodyPointer testParticle,
         const database::TestParticleCasePointer testParticleCase,
         const tudat::numerical_integrators::
-            RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator )
+            RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator, 
+        const double synodicPeriod, const double nextStepSize, const int i )
 {
+    // TEMP
+    PropagationDataPointTable dataPointsAll;
+
     // Declare using-statements.
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
     // Set time shift (this is the amount of time by which all the epochs have to be shifted
     // so that the kicks lie in the range [0.0, randomWalkSimulationDuration]).
-    const double timeShift = -( testParticleCase->startUpIntegrationDuration 
-                                + testParticleCase->synodicPeriodLimit );
+    const double timeShift = -( numericalIntegrator->getCurrentIndependentVariable( ) 
+                                + synodicPeriod );
 
-    // Create a table of propagation data points. This is used to store the previous, current and
-    // next data points.
+    // Create a table of propagation data points.
     PropagationDataPointTable dataPoints;
-
-    // Create a tables of local maxima and minima.
-    PropagationDataPointTable localMaxima;
-    PropagationDataPointTable localMinima;
+    PropagationDataPointTable::iterator iteratorDataPoints = dataPoints.begin( );
 
     // Create a tables of opposition (global maxima) and conjunction events (global minima).
     PropagationDataPointTable oppositionEvents;
     PropagationDataPointTable conjunctionEvents;
 
-    // Extract local maxima and minima from propagation data. Numerical integration is done 
-    // "on-the-fly", in the sense that after each integration step the check if performed for
-    // local extrema.
+    // Compute mutual distance between test particle and perturbed body [m].
+    double mutualDistance = ( perturbedBody->getCurrentPosition( ) 
+            - testParticle->getCurrentPosition( ) ).norm( );
+
+    dataPointsAll.insert( PropagationDataPoint( 
+        testParticle->getCurrentTime( ) + timeShift,
+        mutualDistance,
+        convertCartesianToKeplerianElements( 
+            testParticle->getCurrentState( ),
+            testParticleCase->centralBodyGravitationalParameter ),
+        convertCartesianToKeplerianElements( 
+            perturbedBody->getCurrentState( ),
+            testParticleCase->centralBodyGravitationalParameter ) ) ); 
+        
+    // Integrate one step forwards.
+    numericalIntegrator->performIntegrationStep( nextStepSize );
+
+    // Integrate until the first opposition event is detected.
+    while ( mutualDistance < testParticleCase->oppositionEventDetectionDistance )
     {
-        // Add propagation data point to table based on initial data. The states of the test 
-        // particle and perturbed body are converted to Keplerian elements.
-        dataPoints.insert( new PropagationDataPoint( 
+        dataPointsAll.insert( PropagationDataPoint( 
             testParticle->getCurrentTime( ) + timeShift,
-            ( perturbedBody->getCurrentPosition( ) - testParticle->getCurrentPosition( ) ).norm( ),
+            mutualDistance,
             convertCartesianToKeplerianElements( 
                 testParticle->getCurrentState( ),
                 testParticleCase->centralBodyGravitationalParameter ),
             convertCartesianToKeplerianElements( 
                 perturbedBody->getCurrentState( ),
-                testParticleCase->centralBodyGravitationalParameter ) ) );        
+                testParticleCase->centralBodyGravitationalParameter ) ) ); 
 
-        // Integrate one step forward and store data in table.
+        // Integrate one step forwards.
         numericalIntegrator->performIntegrationStep( numericalIntegrator->getNextStepSize( ) );
 
-        dataPoints.insert( new PropagationDataPoint( 
-            testParticle->getCurrentTime( ) + timeShift,
-            ( perturbedBody->getCurrentPosition( ) - testParticle->getCurrentPosition( ) ).norm( ),
-            convertCartesianToKeplerianElements( 
-                testParticle->getCurrentState( ),
-                testParticleCase->centralBodyGravitationalParameter ),
-            convertCartesianToKeplerianElements( 
-                perturbedBody->getCurrentState( ),
-                testParticleCase->centralBodyGravitationalParameter ) ) );     
+        // Compute mutual distance based on new test particle and perturbed body states.
+        mutualDistance = ( perturbedBody->getCurrentPosition( ) 
+            - testParticle->getCurrentPosition( ) ).norm( );                 
+    }
 
-        // Integrate one step forward and store data in table.
-        numericalIntegrator->performIntegrationStep( numericalIntegrator->getNextStepSize( ) );
+    // Set flag indicating if an opposition event has been detected to true.
+    bool isOppositionEventDetected = true;
 
-        dataPoints.insert( new PropagationDataPoint( 
-            testParticle->getCurrentTime( ) + timeShift,
-            ( perturbedBody->getCurrentPosition( ) - testParticle->getCurrentPosition( ) ).norm( ),
-            convertCartesianToKeplerianElements( 
-                testParticle->getCurrentState( ),
-                testParticleCase->centralBodyGravitationalParameter ),
-            convertCartesianToKeplerianElements( 
-                perturbedBody->getCurrentState( ),
-                testParticleCase->centralBodyGravitationalParameter ) ) );     
+    // Integrate until the end of the simulation period and detect local maxima and minima.
+    while ( numericalIntegrator->getCurrentIndependentVariable( )
+            < testParticleCase->startUpIntegrationDuration
+            + testParticleCase->randomWalkSimulationDuration + 2.0 * synodicPeriod )
+    {
+        // Compute mutual distance between test particle and perturbed body.
+        mutualDistance = ( perturbedBody->getCurrentPosition( ) 
+            - testParticle->getCurrentPosition( ) ).norm( );
 
-        // Declare iterators to previous, current and next data points.
-        PropagationDataPointTable::iterator iteratorDataPoint = dataPoints.begin( );
-        const PropagationDataPointTable::iterator iteratorPreviousDataPoint = iteratorDataPoint;
-
-        iteratorDataPoint++;
-        const PropagationDataPointTable::iterator iteratorCurrentDataPoint = iteratorDataPoint;
-
-        iteratorDataPoint++;
-        const PropagationDataPointTable::iterator iteratorNextDataPoint = iteratorDataPoint;
-
-        assist::basics::DoubleKeyDoubleValueMap distanceHistory;
-        distanceHistory[ iteratorCurrentDataPoint->epoch ] = iteratorCurrentDataPoint->mutualDistance;
-
-        int i = 0;
-
-        // Integrate until the end of the simulation period and detect local maxima and minima.
-        while ( numericalIntegrator->getCurrentIndependentVariable( )
-                < testParticleCase->startUpIntegrationDuration
-                + testParticleCase->randomWalkSimulationDuration 
-                + 2.0 * testParticleCase->synodicPeriodLimit )
+        // Check if the current event detected is an opposition event.
+        if ( isOppositionEventDetected )
         {
-            if ( i == 100000 ) break;
-
-            // Check if the current data point is a local maximum.
-            if ( checkIfMaximum( iteratorCurrentDataPoint->mutualDistance,
-                                 iteratorPreviousDataPoint->mutualDistance,
-                                 iteratorNextDataPoint->mutualDistance ) )
+            // Check if end of opposition event is detected (i.e., start of conjunction event).
+            if ( mutualDistance < testParticleCase->conjunctionEventDetectionDistance )
             {
-                // Add the current data point to the table of local maxima.
-                localMaxima.insert( new PropagationDataPoint( *iteratorCurrentDataPoint ) );
+                // Set flag to false.
+                isOppositionEventDetected = false;
+
+                // Find data point at opposition event.
+                iteratorDataPoints = std::max_element( 
+                    dataPoints.begin( ), dataPoints.end( ), compareMutualDistances );
+
+                // Add opposition event to table.
+                oppositionEvents.insert( PropagationDataPoint( *iteratorDataPoints ) );
+
+                // Clear table of data points.
+                dataPoints.clear( );
             }
-
-            // Else, check if the current data point is a local minimum.
-            else if ( checkIfMinimum( iteratorCurrentDataPoint->mutualDistance,
-                                      iteratorPreviousDataPoint->mutualDistance,
-                                      iteratorNextDataPoint->mutualDistance ) )
-            {
-                // Add the current data point to the table of local minima.
-                localMinima.insert( new PropagationDataPoint( *iteratorCurrentDataPoint ) );
-            }
-
-            // Integrate one step forwards.
-            numericalIntegrator->performIntegrationStep( numericalIntegrator->getNextStepSize( ) );
-
-            // Advance previous and current data points. Store new data in next data point.
-            iteratorPreviousDataPoint->epoch = iteratorCurrentDataPoint->epoch;
-            iteratorPreviousDataPoint->mutualDistance = iteratorCurrentDataPoint->mutualDistance;
-            iteratorPreviousDataPoint->testParticleStateInKeplerianElements 
-                = iteratorCurrentDataPoint->testParticleStateInKeplerianElements;
-            iteratorPreviousDataPoint->perturbedBodyStateInKeplerianElements
-                = iteratorCurrentDataPoint->perturbedBodyStateInKeplerianElements;
-
-
-            iteratorCurrentDataPoint->epoch = iteratorNextDataPoint->epoch;
-            iteratorCurrentDataPoint->mutualDistance = iteratorNextDataPoint->mutualDistance;
-            iteratorCurrentDataPoint->testParticleStateInKeplerianElements 
-                = iteratorNextDataPoint->testParticleStateInKeplerianElements;
-            iteratorCurrentDataPoint->perturbedBodyStateInKeplerianElements
-                = iteratorNextDataPoint->perturbedBodyStateInKeplerianElements;
-
-            iteratorNextDataPoint->epoch = testParticle->getCurrentTime( ) + timeShift;
-            iteratorNextDataPoint->mutualDistance 
-                = ( perturbedBody->getCurrentPosition( ) 
-                    - testParticle->getCurrentPosition( ) ).norm( );
-            iteratorNextDataPoint->testParticleStateInKeplerianElements
-                = convertCartesianToKeplerianElements( 
-                    testParticle->getCurrentState( ),
-                    testParticleCase->centralBodyGravitationalParameter );
-            iteratorNextDataPoint->perturbedBodyStateInKeplerianElements
-                = convertCartesianToKeplerianElements( 
-                    perturbedBody->getCurrentState( ),
-                    testParticleCase->centralBodyGravitationalParameter );
-
-            distanceHistory[ iteratorCurrentDataPoint->epoch ] 
-                = iteratorCurrentDataPoint->mutualDistance;
-            i++;
         }
 
-    tudat::input_output::writeDataMapToTextFile( 
-        distanceHistory.begin( ), distanceHistory.end( ),
-        "distanceHistory.dat", "/Users/kartikkumar/Desktop", "Epoch,Distance\n",
-        std::numeric_limits< double >::digits10, 
-        std::numeric_limits< double >::digits10, "," );        
+        // Else, the current event must be a conjunction event.
+        else
+        {
+            // Check if end of conjunction event is detected (i.e., start of opposition event).
+            if ( mutualDistance > testParticleCase->conjunctionEventDetectionDistance )
+            {
+                // Set flag to true.
+                isOppositionEventDetected = true;
+
+                // Find data point at conjunctiion event.
+                iteratorDataPoints = std::min_element( 
+                    dataPoints.begin( ), dataPoints.end( ), compareMutualDistances );
+
+                // Add conjunction event to table.
+                conjunctionEvents.insert( PropagationDataPoint( *iteratorDataPoints ) );
+
+                // Clear table of data points.
+                dataPoints.clear( );
+            }            
+        }
+
+        // Add data point to table.
+        dataPoints.insert( PropagationDataPoint( 
+            testParticle->getCurrentTime( ) + timeShift,
+            mutualDistance,
+            convertCartesianToKeplerianElements( 
+                testParticle->getCurrentState( ),
+                testParticleCase->centralBodyGravitationalParameter ),
+            convertCartesianToKeplerianElements( 
+                perturbedBody->getCurrentState( ),
+                testParticleCase->centralBodyGravitationalParameter ) ) ); 
+
+        dataPointsAll.insert( PropagationDataPoint( 
+            testParticle->getCurrentTime( ) + timeShift,
+            mutualDistance,
+            convertCartesianToKeplerianElements( 
+                testParticle->getCurrentState( ),
+                testParticleCase->centralBodyGravitationalParameter ),
+            convertCartesianToKeplerianElements( 
+                perturbedBody->getCurrentState( ),
+                testParticleCase->centralBodyGravitationalParameter ) ) );  
+
+        // Integrate one step forward and store data in table.
+        numericalIntegrator->performIntegrationStep( numericalIntegrator->getNextStepSize( ) );
     }
 
-    std::cout << std::endl;
-    std::cout << localMaxima.size( ) << "detected!" << std::endl;
-    std::cout << std::endl;
-
-    // Loop through local maxima.
-    for ( PropagationDataPointTable::iterator it = localMaxima.begin( );
-          it != localMaxima.end( ); it++ )
+    if ( conjunctionEvents.size( ) == 0 || oppositionEvents.size( ) == 0 ) 
     {
-        std::cout << std::setprecision( std::numeric_limits< double >::digits10 )
-                  << it->epoch << ", " << it->mutualDistance << std::endl;
+         std::cout << "AHHHHH!" << std::endl; exit( 0 ); 
     }
 
-    std::cout << std::endl;
-
-    std::cout << localMinima.size( ) << "detected!" << std::endl;
-
-    for ( PropagationDataPointTable::iterator it = localMinima.begin( );
-          it != localMinima.end( ); it++ )
+    // Check if epoch of last conjunction event is greater than that of the last opposition event.
+    // If so, remove from the table.
+    if ( conjunctionEvents.rbegin( )->epoch > oppositionEvents.rbegin( )->epoch )
     {
-        std::cout << std::setprecision( std::numeric_limits< double >::digits10 )
-                  << it->epoch << ", " << it->mutualDistance << std::endl;
+        // Set iterator to last element in table of conjunction events.
+        PropagationDataPointTable::iterator iteratorLastElement = conjunctionEvents.end( );
+        iteratorLastElement--;
+
+        // Erase last element.
+        conjunctionEvents.erase( iteratorLastElement );
     }
 
+    // Check if the epoch of the last conjunction event is beyond the random walk simulation 
+    // window [0, randomWalkSimulationDuration].
+    // If so, delete the last conjunction event and the last opposition event.
+    // Repeat until the last epoch is within the window.
+    while ( conjunctionEvents.rbegin( )->epoch > testParticleCase->randomWalkSimulationDuration )
+    {
+        // Set iterator to last element in table of conjunction events.
+        PropagationDataPointTable::iterator iteratorLastElement = conjunctionEvents.end( );
+        iteratorLastElement--;
 
+        // Erase last element.
+        conjunctionEvents.erase( iteratorLastElement );
 
+        // Set iterator to last element in table of opposition events.
+        iteratorLastElement = oppositionEvents.end( );
+        iteratorLastElement--;
 
-    // // Extract global maxima (opposition events) from table of local maxima.
-    // {
-    //     // Declare iterators to previous, current and next local maxima.
-    //     PropagationDataPointTable::iterator iteratorLocalMaximum = localMaxima.begin( );
-    //     PropagationDataPointTable::iterator iteratorPreviousLocalMaximum = iteratorLocalMaximum;
+        // Erase last element.
+        oppositionEvents.erase( iteratorLastElement );
+    }
 
-    //     iteratorLocalMaximum++;
-    //     PropagationDataPointTable::iterator iteratorCurrentLocalMaximum = iteratorLocalMaximum;
+    // Check if the epoch of the first conjunction event is before the random walk simulation 
+    // window [0.0, randomWalkSimulationDuration].
+    // If so, delete the first conjunction event and the first opposition event.
+    // Repeat until the first epoch is within the window.
+    while ( conjunctionEvents.begin( )->epoch < 0.0 )
+    {
+        // Erase first element.
+        conjunctionEvents.erase( conjunctionEvents.begin( ) );
 
-    //     iteratorLocalMaximum++;
-    //     PropagationDataPointTable::iterator iteratorNextLocalMaximum = iteratorLocalMaximum;
+        // Erase last element.
+        oppositionEvents.erase( oppositionEvents.begin( ) );
+    }    
 
-    //     // Loop through local maxima.
-    //     for ( ; iteratorNextLocalMaximum != localMaxima.end( ); iteratorNextLocalMaximum++ )
-    //     {
-    //         // Check if the current local maximum is also an opposition event.
-    //         if ( checkIfMaximum( iteratorCurrentLocalMaximum->mutualDistance,
-    //                              iteratorPreviousLocalMaximum->mutualDistance,
-    //                              iteratorNextLocalMaximum->mutualDistance ) )
-    //         {
-    //             // Add the current data point to the table of opposition events.
-    //             oppositionEvents.insert( 
-    //                 new PropagationDataPoint( *iteratorCurrentLocalMaximum ) );
-    //         }
+    std::ostringstream fileName;
+    fileName << "/Users/kartikkumar/Desktop/data" << i << ".csv";
+    std::ofstream file( fileName.str( ).c_str( ) );
 
-    //         // Advance iterators.
-    //         iteratorPreviousLocalMaximum++;
-    //         iteratorCurrentLocalMaximum++;
-    //     }
-    // }
+    file << "t,d" << std::endl;
 
-    // // Extract global minima (conjunction events) from table of local minima.
-    // {
-    //     // Declare iterators to previous, current and next local minima.
-    //     PropagationDataPointTable::iterator iteratorLocalMinimum = localMinima.begin( );
-    //     PropagationDataPointTable::iterator iteratorPreviousLocalMinimum = iteratorLocalMinimum;
+    int counter = 0;
 
-    //     iteratorLocalMinimum++;
-    //     PropagationDataPointTable::iterator iteratorCurrentLocalMinimum = iteratorLocalMinimum;
+    for ( PropagationDataPointTable::iterator it = dataPointsAll.begin( );
+          it != dataPointsAll.end( );
+          it++ )
+    {
+        if ( it->epoch > testParticleCase->outputInterval * counter - synodicPeriod )
+        {
+            file << std::setprecision( std::numeric_limits< double >::digits10 )
+                 << it->epoch << "," << it->mutualDistance << std::endl;
+            counter++;
+        }
+    }
 
-    //     iteratorLocalMinimum++;
-    //     PropagationDataPointTable::iterator iteratorNextLocalMinimum = iteratorLocalMinimum;
+    file.close( );
 
-    //     // Loop through local minima.
-    //     for ( ; iteratorNextLocalMinimum != localMinima.end( ); iteratorNextLocalMinimum++ )
-    //     {
-    //         // Check if the current local minimum is also a conjunction event.
-    //         if ( checkIfMinimum( iteratorCurrentLocalMinimum->mutualDistance,
-    //                              iteratorPreviousLocalMinimum->mutualDistance,
-    //                              iteratorNextLocalMinimum->mutualDistance ) )
-    //         {
-    //             // Add the current data point to the table of conjunction events.
-    //             conjunctionEvents.insert( 
-    //                 new PropagationDataPoint( *iteratorCurrentLocalMinimum ) );
-    //         }
+    std::ostringstream fileName2;
+    fileName2 << "/Users/kartikkumar/Desktop/opposition" << i << ".csv";
+    std::ofstream file2( fileName2.str( ).c_str( ) );
 
-    //         // Advance iterators.
-    //         iteratorPreviousLocalMinimum++;
-    //         iteratorCurrentLocalMinimum++;
-    //     }
-    // }
+    file2 << "t,d" << std::endl;
 
-    // // Populate kick table.
+    for ( PropagationDataPointTable::iterator it = oppositionEvents.begin( );
+          it != oppositionEvents.end( );
+          it++ )
+    {
+        file2 << std::setprecision( std::numeric_limits< double >::digits10 )
+              << it->epoch << "," << it->mutualDistance << std::endl;
+    }
 
-    std::cout << "Hi! " << std::endl;
+    file2.close( );
 
+    std::ostringstream fileName3;
+    fileName3 << "/Users/kartikkumar/Desktop/conjunction" << i << ".csv";
+    std::ofstream file3( fileName3.str( ).c_str( ) );
+
+    file3 << "t,d" << std::endl;
+
+    for ( PropagationDataPointTable::iterator it = conjunctionEvents.begin( );
+          it != conjunctionEvents.end( );
+          it++ )
+    {
+        file3 << std::setprecision( std::numeric_limits< double >::digits10 )
+              << it->epoch << "," << it->mutualDistance << std::endl;
+    }
+
+    file3.close( );
+
+    std::cout << "Hi!" << std::endl;
 }
 
 } // namespace astrodynamics

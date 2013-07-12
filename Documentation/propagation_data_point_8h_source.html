@@ -104,8 +104,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;boost/ptr_container/ptr_set.hpp&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;set&gt;</span> </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;boost/shared_ptr.hpp&gt;</span> </div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h&gt;</span></div>
@@ -151,7 +151,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
 <div class="line"><a name="l00071"></a><span class="lineno"><a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#ad5794d4c8f400e6705492ce48a2fc171">   71</a></span>&#160;<span class="keyword">typedef</span> boost::shared_ptr&lt; PropagationDataPoint &gt; <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#ad5794d4c8f400e6705492ce48a2fc171" title="Typedef for shared-pointer to PropagationDataPoint object. ">PropagationDataPointPointer</a>;</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno"><a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a6f28dc483c5ca2246552308cf574d3b1">   74</a></span>&#160;<span class="keyword">typedef</span> boost::ptr_set&lt; PropagationDataPoint &gt; <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a6f28dc483c5ca2246552308cf574d3b1" title="Typedef for table of propgation data points test particle simulations. ">PropagationDataPointTable</a>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a0a42c1bf76b4512f704aaad7cb927172">   74</a></span>&#160;<span class="keyword">typedef</span> std::set&lt; PropagationDataPoint &gt; <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a0a42c1bf76b4512f704aaad7cb927172" title="Typedef for table of propgation data points test particle simulations. ">PropagationDataPointTable</a>;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">// // Define all of the operator overloads as non-member functions (sbi, 2010).</span></div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
@@ -164,12 +164,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;std::ostream&amp; <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a10fb7e38545824020a374c968226e4b3" title="Overload &lt;&lt; operator. ">operator&lt;&lt;</a>( std::ostream&amp; outputStream, </div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                          <span class="keyword">const</span> <a class="code" href="structstochastic__migration_1_1astrodynamics_1_1_propagation_data_point.html">PropagationDataPoint</a>&amp; testParticleEvent );</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;} <span class="comment">// namespace astrodynamics</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;} <span class="comment">// namespace stochastic_migration</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#aaa24b916aeff0e39ca5656b1f7da0115">   90</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#aaa24b916aeff0e39ca5656b1f7da0115">compareMutualDistances</a>( <span class="keyword">const</span> <a class="code" href="structstochastic__migration_1_1astrodynamics_1_1_propagation_data_point.html">PropagationDataPoint</a>&amp; propagationDataPoint1,</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                                    <span class="keyword">const</span> <a class="code" href="structstochastic__migration_1_1astrodynamics_1_1_propagation_data_point.html">PropagationDataPoint</a>&amp; propagationDataPoint2 )</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;{</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordflow">return</span> propagationDataPoint1.<a class="code" href="structstochastic__migration_1_1astrodynamics_1_1_propagation_data_point.html#a404b222bbeb2865db64f667287c85127" title="Mutual distance. ">mutualDistance</a> &lt; propagationDataPoint2.<a class="code" href="structstochastic__migration_1_1astrodynamics_1_1_propagation_data_point.html#a404b222bbeb2865db64f667287c85127" title="Mutual distance. ">mutualDistance</a>;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;}</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;} <span class="comment">// namespace astrodynamics</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;} <span class="comment">// namespace stochastic_migration</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 10 2013 23:10:47 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jul 11 2013 19:59:14 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>
