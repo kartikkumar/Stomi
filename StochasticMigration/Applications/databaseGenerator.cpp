@@ -23,6 +23,9 @@
  *      130704    K. Kumar          Updated case table schema; updated variable-naming.
  *      130705    K. Kumar          Updated database structure to store multiple cases in a single
  *                                  file.
+ *      130715    K. Kumar          Updated test particle case table schema, split input parameters
+ *                                  into required and optional categories, changed input for 
+ *                                  SMALIMIT to Hill radii.
  *
  *    References
  *      Kumar, K., de Pater, I., Showalter, M.R. In prep, 2013.
@@ -71,6 +74,7 @@
 #include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
+#include "StochasticMigration/Astrodynamics/hillSphere.h"
 #include "StochasticMigration/InputOutput/dictionaries.h"
 
 //! Execute stochastic migration database generator.
@@ -97,6 +101,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace tudat::input_output::field_types::general;
     using namespace tudat::input_output::parsed_data_vector_utilities;
 
+    using namespace stochastic_migration::astrodynamics;
     using namespace stochastic_migration::input_output;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -131,13 +136,16 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     std::cout << std::endl;
 
     // Extract input parameters.
+
+    // Extract required parameters.
     const std::string caseName = extractParameterValue< std::string >(
                 parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "CASE" ) );
     std::cout << "Case                                                      " 
               << caseName << std::endl;
 
     const std::string databasePath = extractParameterValue< std::string >(
-                parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "DATABASE" ) );
+                parsedData->begin( ), parsedData->end( ), 
+                findEntry( dictionary, "DATABASEPATH" ) );
     std::cout << "Database                                                  "
               << databasePath << std::endl;
 
@@ -147,53 +155,121 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     std::cout << "Number of simulations                                     " 
               << numberOfSimulations << std::endl;
 
-    const double randomWalkSimulationDuration = extractParameterValue< double >(
+    const double randomWalkSimulationPeriod = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "RANDOMWALKSIMULATIONDURATION" ),
-                50.0 * JULIAN_YEAR, &convertJulianYearsToSeconds );
-    std::cout << "Random walk simulation duration                           " 
-              << randomWalkSimulationDuration / JULIAN_YEAR << " yrs" << std::endl;
-
-    const double synodicPeriodLimit = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "SYNODICPERIODLIMIT" ),
-                50.0 * JULIAN_YEAR, &convertJulianYearsToSeconds );
-    std::cout << "Synodic period limit                                      " 
-              << synodicPeriodLimit / JULIAN_YEAR << " yrs" << std::endl;
-
-    const double outputInterval = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "OUTPUTINTERVAL" ),
-                convertHoursToSeconds( 4.0 ), &convertHoursToSeconds< double > );
-    std::cout << "Output interval                                           " 
-              << convertSecondsToHours( outputInterval ) << " hrs" << std::endl;
-
-    const double startUpIntegrationDuration = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "STARTUPINTEGRATIONDURATION" ), 0.0,
-                &convertJulianYearsToSeconds );
-    std::cout << "Start-up integration duration                             " 
-              << startUpIntegrationDuration / JULIAN_YEAR << " yrs" << std::endl;
-
-    const double conjunctionEventDetectionDistance = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE" ), 3.0e7 );
-    std::cout << "Conjunction event detection distance                      " 
-              << convertMetersToKilometers( conjunctionEventDetectionDistance ) 
-              << " km" << std::endl;
-
-    const double oppositionEventDetectionDistance = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE" ), 1.5e8 );
-    std::cout << "Opposition event detection distance                       " 
-              << convertMetersToKilometers( oppositionEventDetectionDistance ) 
-              << " km" << std::endl;
+                findEntry( dictionary, "RANDOMWALKSIMULATIONPERIOD" ),
+                TUDAT_NAN, &convertJulianYearsToSeconds );
+    std::cout << "Random walk simulation period                             " 
+              << randomWalkSimulationPeriod / JULIAN_YEAR << " yrs" << std::endl;
 
     const double centralBodyGravitationalParameter = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER" ), 5.793966e15 );
+                findEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER" ) );
     std::cout << "Central body gravitational parameter                      " 
               << centralBodyGravitationalParameter << " m^3 s^-2" << std::endl;
+
+    const double perturbedBodyRadius = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYRADIUS" ) );
+    std::cout << "Perturbed body radius                                     " 
+              << convertMetersToKilometers( perturbedBodyRadius ) << " km" << std::endl;
+
+    const double perturbedBodyBulkDensity = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYBULKDENSITY" ) );
+    std::cout << "Perturbed body bulk density                               " 
+              << perturbedBodyBulkDensity << " kg m^-3" << std::endl;
+
+    // Compute mass of perturbed body [kg].
+    const double perturbedBodyMass = computeMassOfSphere(
+                perturbedBodyRadius, perturbedBodyBulkDensity );
+
+    // Compute perturbed body's gravitational parameter [m^3 s^-2].
+    const double perturbedBodyGravitationalParameter
+            = computeGravitationalParameter( perturbedBodyMass );       
+
+    Vector6d perturbedBodyStateInKeplerianElementsAtT0( 6 );
+
+    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) 
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0" ) );
+    std::cout << "Perturbed body semi-major axis at TO                      "
+              << perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex )
+              << " m" << std::endl;
+
+    perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) 
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0" ) );
+    std::cout << "Perturbed body eccentricity at TO                         "
+              << perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) << std::endl;
+
+    perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) 
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0" ), TUDAT_NAN,
+                &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body inclination at TO                          "
+              << convertRadiansToDegrees(
+                    perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) ) 
+              << " deg" << std::endl;
+
+    perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex )
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0" ), TUDAT_NAN,
+                 &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body argument of periapsis at TO                "
+              << convertRadiansToDegrees( 
+                    perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex ) ) 
+              << " deg" << std::endl;
+
+    perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex )
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0" ), TUDAT_NAN,
+                &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body longitude of ascending node at TO          "
+              << convertRadiansToDegrees( 
+                    perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) ) 
+              << " deg" << std::endl;
+
+    perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) 
+            = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0" ), TUDAT_NAN,
+                &convertDegreesToRadians< double > );
+    std::cout << "Perturbed body true anomaly at TO                         "
+              << convertRadiansToDegrees( 
+                    perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) ) 
+              << " deg" << std::endl;
+
+    const double semiMajorAxisDistributionLimit = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "SEMIMAJORAXISDISTRIBUTIONLIMIT" ), TUDAT_NAN,
+                ConvertHillRadiiToKilometers( 
+                    centralBodyGravitationalParameter, 
+                    perturbedBodyGravitationalParameter,
+                    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) ) );
+    std::cout << "Semi-major axis limit                                     " 
+              << semiMajorAxisDistributionLimit << " m" << std::endl;
+
+    // Extract optional parameters (parameters that take on default values if they are not  
+    // specified in the input file).
+    const double synodicPeriodMaximum = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "SYNODICPERIODMAXIMUM" ),
+                randomWalkSimulationPeriod, &convertJulianYearsToSeconds );
+    std::cout << "Synodic period maximum                                    " 
+              << synodicPeriodMaximum / JULIAN_YEAR << " yrs" << std::endl;
+
+    const double startUpIntegrationPeriod = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "STARTUPINTEGRATIONPERIOD" ), 0.0,
+                &convertJulianYearsToSeconds );
+    std::cout << "Start-up integration period                               " 
+              << startUpIntegrationPeriod / JULIAN_YEAR << " yrs" << std::endl;
 
     const double centralBodyJ2GravityCoefficient = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
@@ -207,12 +283,20 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     std::cout << "Central body equatorial radius                            "
               << convertMetersToKilometers( centralBodyEquatorialRadius ) << " km" << std::endl;
 
-    const double semiMajorAxisDistributionLimit = extractParameterValue< double >(
+    const double conjunctionEventDetectionDistance = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "SEMIMAJORAXISDISTRIBUTIONLIMIT" ), TUDAT_NAN,
-                &convertKilometersToMeters< double > );
-    std::cout << "Semi-major axis limit                                     " 
-              << convertMetersToKilometers( semiMajorAxisDistributionLimit )
+                findEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE" ), 
+                1.6 * perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
+    std::cout << "Conjunction event detection distance                      " 
+              << convertMetersToKilometers( conjunctionEventDetectionDistance ) 
+              << " km" << std::endl;
+
+    const double oppositionEventDetectionDistance = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE" ),
+                0.2 * perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
+    std::cout << "Opposition event detection distance                       " 
+              << convertMetersToKilometers( oppositionEventDetectionDistance ) 
               << " km" << std::endl;
 
     const double eccentricityDistributionMean = extractParameterValue< double >(
@@ -230,7 +314,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     const double eccentricityDistributionFullWidthHalfMaxmimum = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "ECCENTRICITYDISTRIBUTIONFULLWIDTHHALFMAXIMUM" ) );
+                findEntry( dictionary, "ECCENTRICITYDISTRIBUTIONFULLWIDTHHALFMAXIMUM" ), 0.0 );
     std::cout << "Eccentricity distribution Full-Width Half-Maximum         " 
               << eccentricityDistributionFullWidthHalfMaxmimum << std::endl;
 
@@ -254,78 +338,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 &convertDegreesToRadians< double > );
     std::cout << "Inclination distribution Full-Width Half-Maximum          " 
               << convertRadiansToDegrees( inclinationDistributionFullWidthHalfMaxmimum ) 
-              << " deg" << std::endl;
-
-    const double perturbedBodyRadius = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "PERTURBEDBODYRADIUS" ),
-                1.2e4, &convertKilometersToMeters< double > );
-    std::cout << "Perturbed body radius                                     " 
-              << convertMetersToKilometers( perturbedBodyRadius ) << " km" << std::endl;
-
-    const double perturbedBodyBulkDensity = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "PERTURBEDBODYBULKDENSITY" ), 1500.0 );
-    std::cout << "Perturbed body bulk density                               " 
-              << perturbedBodyBulkDensity << " kg m^-3" << std::endl;
-
-    Vector6d perturbedBodyStateInKeplerianElementsAtT0( 6 );
-
-    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) 
-            = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0" ), 9.7736e7,
-                &convertKilometersToMeters< double > );
-    std::cout << "Perturbed body semi-major axis at TO                      "
-              << convertMetersToKilometers( 
-                    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) ) 
-              << " km" << std::endl;
-
-    perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) 
-            = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0" ), 0.00254 );
-    std::cout << "Perturbed body eccentricity at TO                         "
-              << perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) << std::endl;
-
-    perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) 
-            = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0" ),
-                convertDegreesToRadians( 0.14 ), &convertDegreesToRadians< double > );
-    std::cout << "Perturbed body inclination at TO                          "
-              << convertRadiansToDegrees(
-                    perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) ) 
-              << " deg" << std::endl;
-
-    perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex )
-            = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0" ),
-                convertDegreesToRadians( 18.9594 ), &convertDegreesToRadians< double > );
-    std::cout << "Perturbed body argument of periapsis at TO                "
-              << convertRadiansToDegrees( 
-                    perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex ) ) 
-              << " deg" << std::endl;
-
-    perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex )
-            = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0" ),
-                convertDegreesToRadians( 251.932 ), &convertDegreesToRadians< double > );
-    std::cout << "Perturbed body longitude of ascending node at TO          "
-              << convertRadiansToDegrees( 
-                    perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) ) 
-              << " deg" << std::endl;
-
-    perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) 
-            = extractParameterValue< double >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0" ),
-                convertDegreesToRadians( 354.516 ), &convertDegreesToRadians< double > );
-    std::cout << "Perturbed body true anomaly at TO                         "
-              << convertRadiansToDegrees( 
-                    perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) ) 
               << " deg" << std::endl;
 
     const std::string numericalIntegratorType = extractParameterValue< std::string >(
@@ -520,22 +532,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "CREATE TABLE IF NOT EXISTS " << testParticleCaseTableName << " ("
             << "\"caseId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"                
             << "\"caseName\" TEXT NOT NULL,"
-            << "\"randomWalkSimulationDuration\" REAL NOT NULL,"
-            << "\"synodicPeriodLimit\" REAL NOT NULL,"
-            << "\"outputInterval\" REAL NOT NULL,"
-            << "\"startUpIntegrationDuration\" REAL NOT NULL,"
-            << "\"conjunctionEventDetectionDistance\" REAL NOT NULL,"
-            << "\"oppositionEventDetectionDistance\" REAL NOT NULL,"
+            << "\"randomWalkSimulationPeriod\" REAL NOT NULL,"
             << "\"centralBodyGravitationalParameter\" REAL NOT NULL,"
-            << "\"centralBodyJ2GravityCoefficient\" REAL NOT NULL,"
-            << "\"centralBodyEquatorialRadius\" REAL NOT NULL,"
-            << "\"semiMajorAxisDistributionLimit\" REAL NOT NULL,"
-            << "\"eccentricityDistributionMean\" REAL NOT NULL,"
-            << "\"eccentricityDistributionAngle\" REAL NOT NULL,"
-            << "\"eccentricityDistributionFullWidthHalfMaxmimum\" REAL NOT NULL,"
-            << "\"inclinationDistributionMean\" REAL NOT NULL,"
-            << "\"inclinationDistributionAngle\" REAL NOT NULL,"
-            << "\"inclinationDistributionFullWidthHalfMaxmimum\" REAL NOT NULL,"
             << "\"perturbedBodyRadius\" REAL NOT NULL,"
             << "\"perturbedBodyBulkDensity\" REAL NOT NULL,"
             << "\"perturbedBodySemiMajorAxisAtT0\" REAL NOT NULL,"
@@ -544,6 +542,19 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"perturbedBodyArgumentOfPeriapsisAtT0\" REAL NOT NULL,"
             << "\"perturbedBodyLongitudeOfAscendingNodeAtT0\" REAL NOT NULL,"
             << "\"perturbedBodyTrueAnomalyAtT0\" REAL NOT NULL,"
+            << "\"semiMajorAxisDistributionLimit\" REAL NOT NULL,"
+            << "\"synodicPeriodMaximum\" REAL NOT NULL,"
+            << "\"startUpIntegrationPeriod\" REAL NOT NULL,"
+            << "\"centralBodyJ2GravityCoefficient\" REAL NOT NULL,"
+            << "\"centralBodyEquatorialRadius\" REAL NOT NULL,"
+            << "\"conjunctionEventDetectionDistance\" REAL NOT NULL,"
+            << "\"oppositionEventDetectionDistance\" REAL NOT NULL,"
+            << "\"eccentricityDistributionMean\" REAL NOT NULL,"
+            << "\"eccentricityDistributionAngle\" REAL NOT NULL,"
+            << "\"eccentricityDistributionFullWidthHalfMaxmimum\" REAL NOT NULL,"
+            << "\"inclinationDistributionMean\" REAL NOT NULL,"
+            << "\"inclinationDistributionAngle\" REAL NOT NULL,"
+            << "\"inclinationDistributionFullWidthHalfMaxmimum\" REAL NOT NULL,"
             << "\"numericalIntegratorType\" TEXT NOT NULL,"
             << "\"initialStepSize\" REAL NOT NULL,"
             << "\"relativeTolerance\" REAL NOT NULL,"
@@ -616,22 +627,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"" << caseName << "\",";
         testParticleCaseDataInsert 
             << std::setprecision( std::numeric_limits< double >::digits10 )
-            << randomWalkSimulationDuration << ","
-            << synodicPeriodLimit << ","
-            << outputInterval << ","
-            << startUpIntegrationDuration << ","
-            << conjunctionEventDetectionDistance << ","
-            << oppositionEventDetectionDistance << ","
+            << randomWalkSimulationPeriod << ","
             << centralBodyGravitationalParameter << ","
-            << centralBodyJ2GravityCoefficient << ","
-            << centralBodyEquatorialRadius << ","
-            << semiMajorAxisDistributionLimit << ","
-            << eccentricityDistributionMean << ","
-            << eccentricityDistributionAngle << ","
-            << eccentricityDistributionFullWidthHalfMaxmimum << ","
-            << inclinationDistributionMean << ","
-            << inclinationDistributionAngle << ","
-            << inclinationDistributionFullWidthHalfMaxmimum << ","
             << perturbedBodyRadius << ","
             << perturbedBodyBulkDensity << ","
             << perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) << ","
@@ -639,7 +636,20 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) << ","
             << perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex ) << ","
             << perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) << ","
-            << perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) << ",";
+            << perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) << ","            
+            << semiMajorAxisDistributionLimit << ","
+            << synodicPeriodMaximum << ","
+            << startUpIntegrationPeriod << ","
+            << centralBodyJ2GravityCoefficient << ","
+            << centralBodyEquatorialRadius << ","            
+            << conjunctionEventDetectionDistance << ","
+            << oppositionEventDetectionDistance << ","            
+            << eccentricityDistributionMean << ","
+            << eccentricityDistributionAngle << ","
+            << eccentricityDistributionFullWidthHalfMaxmimum << ","
+            << inclinationDistributionMean << ","
+            << inclinationDistributionAngle << ","
+            << inclinationDistributionFullWidthHalfMaxmimum << ",";
         testParticleCaseDataInsert    
             << "\"" << numericalIntegratorType << "\",";
         testParticleCaseDataInsert
@@ -819,7 +829,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             synodicPeriodOfTestParticle = computeSynodicPeriod(
                         orbitalPeriodOfPerturbedBody, orbitalPeriodOfTestParticle );
         }
-        while ( synodicPeriodOfTestParticle > synodicPeriodLimit );
+        while ( synodicPeriodOfTestParticle > synodicPeriodMaximum );
 
         // Bind values to prepared SQLite statement.
         testParticleInputTableInsertQuery.bind( ":semiMajorAxis", semiMajorAxis );
@@ -855,8 +865,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         std::ostringstream testParticleKickTableCreate;
         testParticleKickTableCreate
             << "CREATE TABLE IF NOT EXISTS " << testParticleKickTableName << " ("
-            << "\"kick\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            << "\"testParticleSimulation\" INTEGER NOT NULL,"
+            << "\"kickId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"testParticleSimulationId\" INTEGER NOT NULL,"
             << "\"conjunctionEpoch\" REAL NOT NULL,"
             << "\"conjunctionDistance\" REAL NOT NULL,"
             << "\"conjunctionDuration\" REAL NOT NULL,"
@@ -869,10 +879,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"postconjunctionEventDetectionDistance\" REAL NOT NULL,"
             << "\"postConjunctionSemiMajorAxis\" REAL NOT NULL,"
             << "\"postConjunctionEccentricity\" REAL NOT NULL,"
-            << "\"postConjunctionInclination\" REAL NOT NULL,"
-            << "\"tisserandParameterRelativeError\" REAL NOT NULL,"
-            << "\"perturbedBodyEnergyRelativeError\" REAL NOT NULL,"
-            << "\"perturbedBodyAngularMomentumRelativeError\" REAL NOT NULL);";
+            << "\"postConjunctionInclination\" REAL NOT NULL);";
 
         // Execute command to create table.
         database.exec( testParticleKickTableCreate.str( ).c_str( ) );
@@ -965,7 +972,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "CREATE TABLE IF NOT EXISTS " << randomWalkPerturberTableName << " ("
             << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             << "\"monteCarloRun\" INTEGER NOT NULL,"
-            << "\"testParticleSimulation\" INTEGER NOT NULL,"
+            << "\"testParticleSimulationId\" INTEGER NOT NULL,"
             << "\"massFactor\" REAL NOT NULL);";
 
         // Execute command to create table.
@@ -1008,7 +1015,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         randomWalkOutputTableCreate
             << "CREATE TABLE IF NOT EXISTS " << randomWalkOutputTableName << " ("
             << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            << "\"monteCarloRun\" INTEGER NOT NULL,"
+            << "\"monteCarloRunId\" INTEGER NOT NULL,"
             << "\"maximumEccentricityChange\" REAL NOT NULL,"
             << "\"maximumLongitudeResidualChange\" REAL NOT NULL,"
             << "\"maximumInclinationChange\" REAL NOT NULL);";

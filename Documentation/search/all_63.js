@@ -11,5 +11,7 @@ var searchData=
   ['conjunctiondistance',['conjunctionDistance',['../structstochastic__migration_1_1database_1_1_test_particle_kick.html#a4502b35229f97af7985adc88fb19b8f3',1,'stochastic_migration::database::TestParticleKick']]],
   ['conjunctionduration',['conjunctionDuration',['../structstochastic__migration_1_1database_1_1_test_particle_kick.html#a2f3e2d54aed63fde21744d90acd4f558',1,'stochastic_migration::database::TestParticleKick']]],
   ['conjunctionepoch',['conjunctionEpoch',['../structstochastic__migration_1_1database_1_1_test_particle_kick.html#af7081258acffed16babe7dc760f95865',1,'stochastic_migration::database::TestParticleKick']]],
-  ['conjunctioneventdetectiondistance',['conjunctionEventDetectionDistance',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#a546e8919f6ed3dbdd07e0c274f6e79f6',1,'stochastic_migration::database::TestParticleCase']]]
+  ['conjunctioneventdetectiondistance',['conjunctionEventDetectionDistance',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#a546e8919f6ed3dbdd07e0c274f6e79f6',1,'stochastic_migration::database::TestParticleCase']]],
+  ['converthillradiitokilometers',['ConvertHillRadiiToKilometers',['../classstochastic__migration_1_1astrodynamics_1_1_convert_hill_radii_to_kilometers.html',1,'stochastic_migration::astrodynamics']]],
+  ['converthillradiitokilometers',['ConvertHillRadiiToKilometers',['../classstochastic__migration_1_1astrodynamics_1_1_convert_hill_radii_to_kilometers.html#a1e597fb102c123efcb26f8725fedead4',1,'stochastic_migration::astrodynamics::ConvertHillRadiiToKilometers']]]
 ];

@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.4"/>
-<title>Stochastic Migration: Member List</title>
+<title>Stochastic Migration: Astrodynamics/hillSphere.h File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -38,8 +38,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
-      <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
-      <li><a href="files.html"><span>Files</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li class="current"><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -60,9 +60,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
   <div id="navrow2" class="tabs2">
     <ul class="tablist">
-      <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
-      <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
-      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
+      <li><a href="files.html"><span>File&#160;List</span></a></li>
     </ul>
   </div>
 <!-- window showing the filter options -->
@@ -81,23 +79,44 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacestochastic__migration.html">stochastic_migration</a></li><li class="navelem"><a class="el" href="namespacestochastic__migration_1_1database.html">database</a></li><li class="navelem"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html">TestParticleInput</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_b2d173c4acd871444f01e8c5e4744d97.html">Astrodynamics</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#namespaces">Constant Groups</a>  </div>
   <div class="headertitle">
-<div class="title">stochastic_migration::database::TestParticleInput Member List</div>  </div>
+<div class="title">hillSphere.h File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>This is the complete list of members for <a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html">stochastic_migration::database::TestParticleInput</a>, including all inherited members.</p>
-<table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html#a8bce54b08448c4c413617ae257fcca04">caseId</a></td><td class="entry"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html">stochastic_migration::database::TestParticleInput</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html#acd5a4438f862e007408d1bb282548bf5">initialStateInKeplerianElements</a></td><td class="entry"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html">stochastic_migration::database::TestParticleInput</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html#aeab97a546ddeb7cc73832f31e813f03a">isCompleted</a></td><td class="entry"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html">stochastic_migration::database::TestParticleInput</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html#ab62ec43e15a2306b93364323d46c2e63">simulationNumber</a></td><td class="entry"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html">stochastic_migration::database::TestParticleInput</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html#aa4959144d3c1b7b963ec25106b90719a">TestParticleInput</a>(const int aSimulationNumber, const int aCaseId, const bool aCompletedFlag, const tudat::basic_mathematics::Vector6d &amp;anInitialStateInKeplerianElements)</td><td class="entry"><a class="el" href="structstochastic__migration_1_1database_1_1_test_particle_input.html">stochastic_migration::database::TestParticleInput</a></td><td class="entry"></td></tr>
-</table></div><!-- contents -->
+<div class="textblock"><code>#include &lt;iostream&gt;</code><br/>
+<code>#include &lt;cmath&gt;</code><br/>
+</div>
+<p><a href="hill_sphere_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classstochastic__migration_1_1astrodynamics_1_1_convert_hill_radii_to_kilometers.html">stochastic_migration::astrodynamics::ConvertHillRadiiToKilometers</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Functor to convert Hill radii to kilometers.  <a href="classstochastic__migration_1_1astrodynamics_1_1_convert_hill_radii_to_kilometers.html#details">More...</a><br/></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacestochastic__migration"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration.html">stochastic_migration</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacestochastic__migration_1_1astrodynamics"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1astrodynamics.html">stochastic_migration::astrodynamics</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
+Constant Groups</h2></td></tr>
+<tr class="memitem:namespacestochastic__migration"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration.html">stochastic_migration</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:namespacestochastic__migration_1_1astrodynamics"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1astrodynamics.html">stochastic_migration::astrodynamics</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated on Mon Jul 15 2013 15:46:40 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">

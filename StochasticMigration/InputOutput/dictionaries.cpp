@@ -35,48 +35,53 @@ DictionaryPointer getDatabaseGeneratorDictionary( )
 {
     DictionaryPointer dictionary = make_shared< Dictionary >( );
 
+    // Add required parameters.
     addEntry( dictionary, "CASE",                                  1, 0 );
-    addEntry( dictionary, "DATABASE",                              1, 0, list_of( "DB" ) );
+    addEntry( dictionary, "DATABASEPATH",                          1, 0, 
+                list_of( "DATABASE" )( "DB" ) );
     addEntry( dictionary, "NUMBEROFSIMULATIONS",                   1, 0, list_of( "POPULATION" ) );
-    addEntry( dictionary, "RANDOMWALKSIMULATIONDURATION",          0, 0 );
-    addEntry( dictionary, "SYNODICPERIODLIMIT",                    0, 0 );
-    addEntry( dictionary, "OUTPUTINTERVAL",                        0, 0 );
-    addEntry( dictionary, "STARTUPINTEGRATIONDURATION",            0, 0, list_of( "STARTUP" ) );
-    addEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE",     0, 0,
-                list_of( "CONJUNCTIONDISTANCE ") );
-    addEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE",      0, 0,
-                list_of( "OPPOSITIONDISTANCE ") );
-    addEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER",     0, 0, list_of( "GRAVPARAM" ) );
-    addEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT",       0, 0, list_of( "J2" ) );
-    addEntry( dictionary, "CENTRALBODYEQUATORIALRADIUS",           0, 0, list_of( "RADIUS" ) );
+    addEntry( dictionary, "RANDOMWALKSIMULATIONPERIOD",            1, 0, list_of( "TRANDOM" ) );
+    addEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER",     1, 0, list_of( "GRAVPARAM" ) );
+    addEntry( dictionary, "PERTURBEDBODYRADIUS",                   1, 0, list_of( "RPERTURBED") );
+    addEntry( dictionary, "PERTURBEDBODYBULKDENSITY",              1, 0, 
+                list_of( "RHOPERTURBED" ) );
+    addEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0",        1, 0, list_of( "SMA0" ) );
+    addEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0",         1, 0, list_of( "ECC0" ) );
+    addEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0",          1, 0, list_of( "INC0" ) );
+    addEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0",  1, 0, list_of( "AOP0" ) );
+    addEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0",
+                0, 0, list_of( "LAN0" ) );
+    addEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0",          1, 0, list_of( "TRAN0" ) );
     addEntry( dictionary, "SEMIMAJORAXISDISTRIBUTIONLIMIT",        1, 0, list_of( "SMALIMIT" ) );
+
+    // Add optional parameters.
+    addEntry( dictionary, "SYNODICPERIODMAXIMUM",                  0, 0, 
+        list_of( "TSYNODICMAX" ) );
+    addEntry( dictionary, "STARTUPINTEGRATIONPERIOD",              0, 0, list_of( "TSTARTUP" ) );
+    addEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT",       0, 0, list_of( "J2" ) );
+    addEntry( dictionary, "CENTRALBODYEQUATORIALRADIUS",           0, 0, list_of( "RCENTRAL" ) );
+    addEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE",     0, 0, 
+                list_of( "DCONJUNCTION ") );
+    addEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE",      0, 0,
+                list_of( "DOPPOSITION ") );
     addEntry( dictionary, "ECCENTRICITYDISTRIBUTIONMEAN",          0, 0, list_of( "ECCMEAN" ) );
     addEntry( dictionary, "ECCENTRICITYDISTRIBUTIONANGLE",         0, 0, list_of( "ECCANGLE" ) );
     addEntry( dictionary, "ECCENTRICITYDISTRIBUTIONFULLWIDTHHALFMAXIMUM", 
-                1, 0, list_of( "ECCFWHM" ) );
+                0, 0, list_of( "ECCFWHM" ) );
     addEntry( dictionary, "INCLINATIONDISTRIBUTIONMEAN",           0, 0, list_of( "INCMEAN" ) );
     addEntry( dictionary, "INCLINATIONDISTRIBUTIONANGLE",          0, 0, list_of( "INCANGLE" ) );
     addEntry( dictionary, "INCLINATIONDISTRIBUTIONFULLWIDTHHALFMAXIMUM",                       
-                1, 0, list_of( "INCFWHM" ) );
-    addEntry( dictionary, "PERTURBEDBODYRADIUS",                   0, 0 );
-    addEntry( dictionary, "PERTURBEDBODYBULKDENSITY",              0, 0 );
-    addEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0",        0, 0, list_of( "SMA0" ) );
-    addEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0",         0, 0, list_of( "ECC0" ) );
-    addEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0",          0, 0, list_of( "INC0" ) );
-    addEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0",  0, 0, list_of( "AOP0" ) );
-    addEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0",
-                0, 0, list_of( "RAAN0" ) );
-    addEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0",          0, 0, list_of( "TRAN0" ) );
+                0, 0, list_of( "INCFWHM" ) );
     addEntry( dictionary, "NUMERICALINTEGRATORTYPE",               0, 0, list_of( "INTEGRATOR" ) );
     addEntry( dictionary, "INITIALSTEPSIZE",                       0, 0, list_of( "STEPSIZE0" ) );
     addEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE",      0, 0, list_of( "RELTOL" ) );
     addEntry( dictionary, "RUNGEKUTTAABSOLUTEERRORTOLERANCE",      0, 0, list_of( "ABSTOL" ) );
-    addEntry( dictionary, "TESTPARTICLECASETABLENAME",             0, 0 );
-    addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            0, 0 );
-    addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             0, 0 );
-    addEntry( dictionary, "RANDOMWALKMONTECARLORUNTABLENAME",      0, 0 );
-    addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          0, 0 );
-    addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             0, 0 );
+    addEntry( dictionary, "TESTPARTICLECASETABLENAME",             0, 0, list_of( "TPCASE" ) );
+    addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            0, 0, list_of( "TPINPUT" ) );
+    addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             0, 0, list_of( "TPKICK" ) );
+    addEntry( dictionary, "RANDOMWALKMONTECARLORUNTABLENAME",      0, 0, list_of( "RWMC" ) );
+    addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          0, 0, list_of( "RWPERTURB" ) );
+    addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             0, 0, list_of( "RWOUTPUT" ) );
 
     return dictionary;
 }

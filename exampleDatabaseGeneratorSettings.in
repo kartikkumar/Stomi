@@ -3,48 +3,194 @@
 #    All rights reserved.
 #    See COPYING for license details.
 #
-#    This is an example input file for the databaseGenerator application provided with the 
-#    StochasticMigration project. 
+#    This is an example input file for the Database Generator application provided with the 
+#    Stochastic Migration project. 
 #
-#    All lines preceded by the '#' character are interpretted as comments.
+#    All lines preceded by the '#' character are interpreted as comments.
+#    Each line must contain only a single parameter/value pair, separated by a ':' character.
 #
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # REQUIRED PARAMETERS
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# These parameters must be specified for the Database Generator application to be executed.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Set the name for the case.
-# The value of this parameter is interpretted as a string.
-CASE                test_case
+# The value of this parameter is interpreted as a string.
+CASE                :  test_case
 
 # Set the absolute path to the database.
 # If the file doesn't exist, it will be created.
-DB                  /Users/kartikkumar/Desktop/testDatabase.db 
+DB                  : /Users/kartikkumar/Desktop/testDatabase.db 
 
 # Set number of simulations to populate database with.
-POPULATION          100
+POPULATION          : 100
 
+# Set duration of random walk simulations.
+# UNIT              : yrs
+TRANDOM             : 50.0
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# Set gravitational parameter of central body.
+# UNIT              : m^3 s^-2
+GRAVPARAM           : 5.793966e15
+
+# Set radius of perturbed body.
+# The perturbed body is taken to be a sphere with radius specified by the value given below.
+# UNIT              : m
+RPERTURBED          : 12.0e3
+
+# Set bulk (mean) density of perturbed body.
+# The perturbed body is assumed to have homogeneous mass distribution.
+# UNIT              : kg m^-3
+RHOPERTURBED        : 1500.0
+
+# Set semi-major axis of perturbed body at time T0 (start of random walk simulation period).
+# UNIT              : m
+SMA0                : 9.7736e7    
+
+# Set eccentricity of perturbed body at time T0 (start of random walk simulation period).
+# UNIT              : -
+ECC0                : 0.00254
+
+# Set inclination of perturbed body at time T0 (start of random walk simulation period).
+# UNIT              : deg
+INC0                : 0.14
+
+# Set argument of periapsis of perturbed body at time T0 (start of random walk simulation period).
+# UNIT              : deg
+AOP0                : 18.9594
+
+# Set longitude of ascending node of perturbed body at time T0 (start of random walk simulation 
+# period).
+# UNIT              : deg
+LAN0                : 251.932
+
+# Set true anomaly of perturbed body at time T0 (start of random walk simulation period).
+# UNIT              : deg
+TRAN0               : 354.516
+
+# Set limits of uniform distribution for test particle semi-major axes.
+# Test particles are seeded with semi-major axes from an uniform distribution, centered at the
+# semi-major axis of the perturbed body (SMA0), with the +/- limits set by the value specified 
+# here.
+# In other words, semi-major axes values are picked from: [-SMALIMIT+SMA0,+SMALIMIT+SMA0]. 
+# The limit is specified in terms of Hill radii of the perturbed body, which is converted to 
+# kilometers to seed the semi-major axes of the test particles.
+# UNIT              : R_HILL
+SMALIMIT            : 30.0  
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
 # OPTIONAL PARAMETERS
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# If these parameter are not uncommented and given specified values, default values are assumed.
+# DO NOT uncomment the DEFAULT and UNIT lines; they are simply comment lines.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-## Set the limits of the semi-major axis uniform distribution [-limit, limit] 
-## UNIT: [km]
-#SMALIMIT            1500.0
+# Set maximum synodic period.
+# This is the maximum synodic period permitted for a test particle (relative to the orbit of the 
+# perturbed body).
+# In other words, by setting this limit, the minimum difference in semi-major axes between the test
+# particle and perturbed body is also set.
+# UNIT              : yrs
+# TSYNODICMAX       : TRANDOM
 
-## Set the full-width half-maximum (FWHM) of the eccentricity distribution (normal)
-## UNIT: [-]
-#ECCMEAN    : 0.0
-#ECCFWHM    : 0.0
+# Set start-up integration period.
+# This is the integration period that precedes the random walk simulation period. By setting this 
+# parameter, the test particle will be propagated by the specified time period first, before the 
+# propagation for the random walk period.
+# UNIT              : yrs
+# TSTARTUP          : 0.0
 
-## Set the full-width half-maximum (FWHM) of the inclination distribution (normal) [deg].
-#INCMEAN    : 0.0
-#INCFWHM    : 0.0
+# Set J2 gravity coefficient and equatorial radius of the central body.
+# These parameters describe the oblateness of the central body, as per the standard spherical 
+# harmonics expansion for the gravity generated by that body.
+# It is important to note that the J2 coefficient is not normalized.
+# Both these parameters must be set, for the oblateness of the central body to be accounted for.
+# The default setting is that the central body is perfectly spherical, meaning that these 
+# parameters do not need to be set.
+# UNIT              : J2 -> -, RCENTRAL -> m
+# J2                : 0.0
+# RCENTRAL          : 0.0
 
+# Set the distances used for detection of conjunction and opposition events.
+# These parameters set the distances used in the algorithm in the Test Particle Simulator to detect
+# conjunction and opposition events of the test particle with the perturbed body.
+# The default values of these parameters are 20% and 80% respectively of the maximum distance 
+# distance between the test particle and the perturbed body, which is approximately twice the
+# semi-major axis of the perturbed body's orbit. The assumption here is that SMALIMIT << SMA0
+# and that INC0 is small.
+# This default values of these parameters have been obtained through experimentation, thus it might 
+# be prudent to play around with the values for difference simulation scenarios.
+# UNIT              : m
+# DCONJUNCTION      : 20% of 2 * SMA0
+# DOPPOSITION       : 80% of 2 * SMA0
 
+# Set the parameters of the distibution of initial eccentricities for the test particles.
+# The following parameters describe the distribution of eccentricities that the test particles
+# are seeded with. 
+# The Full-Width Half-Maximum is equivalent to 2 * sqrt( 2 * ln( 2 ) ) * sigma,
+# in the case of a normal distribution for the magnitude of the eccentricities (sigma = standard
+# deviation).
+# The angle parameter sets the angle between the eccentricity vector components, which
+# are generated randomly using a Rayleigh distribution. By default, the angle is 90 deg, which 
+# means that the components are orthogonal and the distribution of the magnitude of the
+# eccentricities is normal. The associated angle, the argument of periapsis, is in this case 
+# uniformly distributed. 
+# With the default settings the test particles are all placed on circular orbits.
+# All three parameters have default values, which can be overwritten.
+# UNIT              : ECCMEAN -> -, ECCANGLE -> deg, ECCFWHM -> -
+# ECCMEAN           : 0.0
+# ECCANGLE          : 90.0
+# ECCFWHM           : 0.0 
+
+# Set the parameters of the distibution of initial inclinations for the test particles.
+# The following parameters describe the distribution of inclinations that the test particles
+# are seeded with. 
+# The Full-Width Half-Maximum is equivalent to 2 * sqrt( 2 * ln( 2 ) ) * sigma,
+# in the case of a normal distribution for the magnitude of the inclinations (sigma = standard
+# deviation).
+# The angle parameter sets the angle between the inclinations vector components, which
+# are generated randomly using a Rayleigh distribution. By default, the angle is 90 deg, which 
+# means that the components are orthogonal and the distribution of the magnitude of the
+# inclinations is normal. The associated angle, the longitude of the ascending node, is in this  
+# case uniformly distributed. 
+# With the default settings the test particles are all placed on equatorial orbits.
+# All three parameters have default values, which can be overwritten.
+# UNIT              : INCMEAN -> -, INCANGLE -> deg, INCFWHM -> -
+# INCMEAN           : 0.0
+# INCANGLE          : 90.0
+# INCFWHM           : 0.0
+
+# Set the numerical integrator and its parameters.
+# The following parameters set the numerical integrator used for the test particle simulations,
+# and associated settings.
+# The numerical integrator is set to the Dormand-Prince 8(7) scheme by default. The other option
+# permitted is the Runge-Kutta-Fehlberg 7(8) scheme.
+# The default value for the initial step size is 60.0 seconds. It might be prudent to play with 
+# this starter value for different simulation scenarios.
+# The default values for the relative and absolute tolerance for error control are 10^-12 and
+# 10^-15 respectively, which are common settings for RKF-type schemes. It might be important to
+# play around with these values for different simulation scenarios. 
+# UNIT              : INTEGRATOR -> -; STEPESIZE -> s, RELTOL -> -, ABSTOL -> -
+# INTEGRATOR        : DOPRI853
+# STEPSIZE          : 60.0
+# RELTOL            : 10.0e-12
+# ABSTOL            : 10.0e-15
+
+# Set the names of the database tables.
+# The following parameters can be used to change the default names for the database tables.
+# All the test particle and random walk simulation data is stored in an SQLite database,
+# with these table names.
+# In general, it should not be necessary to change these table names.
+# TPCASE            : test_particle_case
+# TPINPUT           : test_particle_input
+# TPKICk            : test_particle_kick
+# RWMC              : random_walk_monte_carlo_runs
+# RWPERTURB         : random_walk_perturbers
+# RWOUTPUT          : random_walk_output
