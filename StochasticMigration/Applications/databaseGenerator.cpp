@@ -286,7 +286,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     const double conjunctionEventDetectionDistance = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE" ), 
-                1.6 * perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
+                1.5 * perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
     std::cout << "Conjunction event detection distance                      " 
               << convertMetersToKilometers( conjunctionEventDetectionDistance ) 
               << " km" << std::endl;
@@ -294,7 +294,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     const double oppositionEventDetectionDistance = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE" ),
-                0.2 * perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
+                0.5 * perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
     std::cout << "Opposition event detection distance                       " 
               << convertMetersToKilometers( oppositionEventDetectionDistance ) 
               << " km" << std::endl;

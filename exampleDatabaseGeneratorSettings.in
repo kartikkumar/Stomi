@@ -121,15 +121,15 @@ SMALIMIT            : 30.0
 # Set the distances used for detection of conjunction and opposition events.
 # These parameters set the distances used in the algorithm in the Test Particle Simulator to detect
 # conjunction and opposition events of the test particle with the perturbed body.
-# The default values of these parameters are 20% and 80% respectively of the maximum distance 
+# The default values of these parameters are 25% and 75% respectively of the maximum distance 
 # distance between the test particle and the perturbed body, which is approximately twice the
 # semi-major axis of the perturbed body's orbit. The assumption here is that SMALIMIT << SMA0
 # and that INC0 is small.
 # This default values of these parameters have been obtained through experimentation, thus it might 
 # be prudent to play around with the values for difference simulation scenarios.
 # UNIT              : m
-# DCONJUNCTION      : 20% of 2 * SMA0
-# DOPPOSITION       : 80% of 2 * SMA0
+# DCONJUNCTION      : 25% of 2 * SMA0
+# DOPPOSITION       : 75% of 2 * SMA0
 
 # Set the parameters of the distibution of initial eccentricities for the test particles.
 # The following parameters describe the distribution of eccentricities that the test particles
