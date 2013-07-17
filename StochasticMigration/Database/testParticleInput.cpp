@@ -37,12 +37,12 @@ using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
 //! Default constructor, initializing class members.
 TestParticleInput::TestParticleInput(
-        const int aSimulationNumber,
+        const int aSimulationId,
         const int aCaseId,
         const bool aCompletedFlag,
         const tudat::basic_mathematics::Vector6d& anInitialStateInKeplerianElements )
-    : simulationNumber( checkPositive( aSimulationNumber, "Simulation number" ) ),
-      caseId( checkPositive( aCaseId, "Case id" ) ),
+    : simulationId( checkPositive( aSimulationId, "Simulation ID" ) ),
+      caseId( checkPositive( aCaseId, "Case ID" ) ),
       isCompleted( aCompletedFlag ),
       initialStateInKeplerianElements( 
         ( Eigen::VectorXd( 6 ) 
@@ -59,7 +59,7 @@ TestParticleInput::TestParticleInput(
 bool operator==( const TestParticleInput& testParticleInput1,
                  const TestParticleInput& testParticleInput2 )
 {
-    return ( testParticleInput1.simulationNumber == testParticleInput2.simulationNumber
+    return ( testParticleInput1.simulationId == testParticleInput2.simulationId
              && testParticleInput1.caseId == testParticleInput2.caseId
              && testParticleInput1.isCompleted == testParticleInput2.isCompleted
              && testParticleInput1.initialStateInKeplerianElements
@@ -70,7 +70,7 @@ bool operator==( const TestParticleInput& testParticleInput1,
 bool operator<( const TestParticleInput& testParticleInput1,
                 const TestParticleInput& testParticleInput2 )
 {
-    return testParticleInput1.simulationNumber < testParticleInput2.simulationNumber;
+    return testParticleInput1.simulationId < testParticleInput2.simulationId;
 }
 
 //! Overload << operator.
@@ -92,8 +92,8 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleInput& t
     }
 
     // Write contents of TestParticleInput object to output stream.
-    outputStream << "Test particle simulation number: "
-                 << testParticleInput.simulationNumber << std::endl;
+    outputStream << "Test particle simulation ID: "
+                 << testParticleInput.simulationId << std::endl;
     outputStream << "Case ID: " << testParticleInput.caseId << std::endl;
     outputStream << "Test particle simulation completed?: " << completedStatus << std::endl;
     outputStream << "Test particle's initial semi-major axis [m]: "

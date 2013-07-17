@@ -124,49 +124,51 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">namespace </span>astrodynamics</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;{</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
-<div class="line"><a name="l00038"></a><span class="lineno"><a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a4c681140eb85512938b95a98fd46ed98">   38</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a4c681140eb85512938b95a98fd46ed98">checkIfMaximum</a>( <span class="keyword">const</span> <span class="keywordtype">double</span> currentValue, <span class="keyword">const</span> <span class="keywordtype">double</span> previousValue, <span class="keyword">const</span> <span class="keywordtype">double</span> nextValue )</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;{</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keywordflow">if</span> ( currentValue &gt; previousValue &amp;&amp; currentValue &gt; nextValue )        </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    {</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a3a917fa36d75f982801a73e627656bcf">   48</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a3a917fa36d75f982801a73e627656bcf">checkIfMinimum</a>( <span class="keyword">const</span> <span class="keywordtype">double</span> currentValue, <span class="keyword">const</span> <span class="keywordtype">double</span> previousValue, <span class="keyword">const</span> <span class="keywordtype">double</span> nextValue )</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;{</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">if</span> ( currentValue &lt; previousValue &amp;&amp; currentValue &lt; nextValue )        </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno"><a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a4c681140eb85512938b95a98fd46ed98">   38</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a4c681140eb85512938b95a98fd46ed98">checkIfMaximum</a>( </div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> currentValue, <span class="keyword">const</span> <span class="keywordtype">double</span> previousValue, <span class="keyword">const</span> <span class="keywordtype">double</span> nextValue )</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordflow">if</span> ( currentValue &gt; previousValue &amp;&amp; currentValue &gt; nextValue )        </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    {</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a3a917fa36d75f982801a73e627656bcf">   49</a></span>&#160;<span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a3a917fa36d75f982801a73e627656bcf">checkIfMinimum</a>( </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> currentValue, <span class="keyword">const</span> <span class="keywordtype">double</span> previousValue, <span class="keyword">const</span> <span class="keywordtype">double</span> nextValue )</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;{</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keywordflow">if</span> ( currentValue &lt; previousValue &amp;&amp; currentValue &lt; nextValue )        </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;}</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">// database::TestParticleKickTable propagateSystemAndGenerateKickTable(</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">//         const assist::astrodynamics::BodyPointer perturbedBody,</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">//         const assist::astrodynamics::BodyPointer testParticle,</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">//         const database::TestParticleCasePointer testParticleCase,</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">//         const tudat::numerical_integrators::</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">//                 RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator );</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#af9e4fe0cd4abfdd4e04f98c0a9c80184" title="Propagate test-particle-perturbed-body system and generate test particle kick table. ">propagateSystemAndGenerateKickTable</a>(</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <span class="keyword">const</span> assist::astrodynamics::BodyPointer perturbedBody,</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keyword">const</span> assist::astrodynamics::BodyPointer testParticle,</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keyword">const</span> <a class="code" href="namespacestochastic__migration_1_1database.html#aec08dc84745f791faf0a7f515677efa7" title="Typedef for shared-pointer to TestParticleCase object. ">database::TestParticleCasePointer</a> testParticleCase,</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keyword">const</span> tudat::numerical_integrators::</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator, </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> synodicPeriod, <span class="keyword">const</span> <span class="keywordtype">double</span> nextStepSize, <span class="keyword">const</span> <span class="keywordtype">int</span> i );</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;} <span class="comment">// namespace astrodynamics</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;} <span class="comment">// namespace stochastic_migration</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">// database::TestParticleKickTable propagateSystemAndGenerateKickTable(</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">//         const assist::astrodynamics::BodyPointer perturbedBody,</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">//         const assist::astrodynamics::BodyPointer testParticle,</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">//         const database::TestParticleCasePointer testParticleCase,</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">//         const tudat::numerical_integrators::</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment">//                 RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator );</span></div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacestochastic__migration_1_1astrodynamics.html#a332994eeca93290b0abfc9c1324ab611" title="Propagate test-particle-perturbed-body system. ">propagateSystem</a>( <span class="keyword">const</span> assist::astrodynamics::BodyPointer perturbedBody,</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                      <span class="keyword">const</span> assist::astrodynamics::BodyPointer testParticle,</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                      <span class="keyword">const</span> <a class="code" href="namespacestochastic__migration_1_1database.html#aec08dc84745f791faf0a7f515677efa7" title="Typedef for shared-pointer to TestParticleCase object. ">database::TestParticleCasePointer</a> testParticleCase,</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                      <span class="keyword">const</span> tudat::numerical_integrators::</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                        RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator, </div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                      <span class="keyword">const</span> <span class="keywordtype">double</span> synodicPeriod, <span class="keyword">const</span> <span class="keywordtype">double</span> nextStepSize, </div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                      <span class="keyword">const</span> <span class="keywordtype">double</span> outputInterval, <span class="keyword">const</span> <span class="keywordtype">int</span> i );</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="preprocessor">#endif // STOCHASTIC_MIGRATION_TEST_PARTICLE_PROPAGATION_FUNCTIONS_H</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;} <span class="comment">// namespace astrodynamics</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;} <span class="comment">// namespace stochastic_migration</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="preprocessor">#endif // STOCHASTIC_MIGRATION_TEST_PARTICLE_PROPAGATION_FUNCTIONS_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 17 2013 15:52:07 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 17 2013 16:46:23 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>

@@ -60,13 +60,13 @@ public:
 
     //! Default constructor, initializing class members.
     TestParticleInput(
-            const int aSimulationNumber,
+            const int aSimulationId,
             const int aCaseId,
             const bool aCompletedFlag,
             const tudat::basic_mathematics::Vector6d& anInitialStateInKeplerianElements );
 
-    //! Simulation number.
-    const int simulationNumber;
+    //! Simulation ID.
+    const int simulationId;
 
     //! Case ID.
     const int caseId;

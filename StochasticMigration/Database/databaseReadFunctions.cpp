@@ -167,7 +167,7 @@ TestParticleInputTable getSelectedTestParticleInputTable(
     std::ostringstream testParticleInputQuery;
     testParticleInputQuery << "SELECT * FROM " << testParticleInputTableName
                            << " WHERE \"caseId\" = " << caseId
-                           << " AND \"testParticleSimulation\" = :testParticleSimulationNumber;";
+                           << " AND \"simulationId\" = :testParticleSimulationNumber;";
 
     // Compile a SQL query.
     SQLite::Statement query( database, testParticleInputQuery.str( ).c_str( ) );

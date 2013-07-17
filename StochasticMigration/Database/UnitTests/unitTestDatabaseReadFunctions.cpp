@@ -14,7 +14,7 @@
  *                                  "stochastic migration".
  *      130218    K. Kumar          Updated "encounter" to "conjunction".
  *      130329    K. Kumar          Updated unit tests to use pointers to data structs.
- *      130704    K. Kumar          Updated tests based on revised case table schema.
+ *      130704    K. Kumar          Updated tests based on revised case and input table schemas.
  *
  *    References
  *
@@ -141,181 +141,181 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
     BOOST_CHECK( isExtraRowPresent );
 }
 
-// //! Test implementation of function to get incomplete simulations from test particle input table in
-// //! SQLite3 database for a given case ID.
-// BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionIncompleteSimulations )
-// {
-//     using tudat::input_output::readMatrixFromFile;
-//     using namespace basics;
-//     using namespace database;
+//! Test implementation of function to get incomplete simulations from test particle input table in
+//! SQLite3 database for a given case ID.
+BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionIncompleteSimulations )
+{
+    using tudat::input_output::readMatrixFromFile;
+    using namespace basics;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase
-//             = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleInputTable.db";
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
-//     // Set requested case ID.
-//     const int caseId = 1;
+    // Set requested case ID.
+    const int caseId = 1;
 
-//     // Retrieve table of input data for test particle simulations.
-//     const TestParticleInputTable testParticleInputTable
-//             = getCompleteTestParticleInputTable( 
-//                 absolutePathToTestDatabase, caseId, "test_particle_input" );
+    // Retrieve table of input data for test particle simulations.
+    const TestParticleInputTable testParticleInputTable
+            = getCompleteTestParticleInputTable( 
+                absolutePathToTestDatabase, caseId, "test_particle_input" );
 
-//     // Read in table of test particle input data from test data file.
-//     const Eigen::Matrix< double, 10, 9 > testDataTestParticleInputTable
-//             = readMatrixFromFile( getStochasticMigrationRootPath( )
-//                                   + "/Database/UnitTests/testDataTestParticleInputTable.csv" );
+    // Read in table of test particle input data from test data file.
+    const Eigen::Matrix< double, 10, 9 > testDataTestParticleInputTable
+            = readMatrixFromFile( getStochasticMigrationRootPath( )
+                                  + "/Database/UnitTests/testDataTestParticleInputTable.csv" );
 
-//     // Check that the input data table retrieved matches the test data.
-//     unsigned int i = 0;
+    // Check that the input data table retrieved matches the test data.
+    unsigned int i = 0;
 
-//     for ( TestParticleInputTable::iterator iteratorInputTable = testParticleInputTable.begin( );
-//           iteratorInputTable != testParticleInputTable.end( ); iteratorInputTable++ )
-//     {
-//         BOOST_CHECK_EQUAL( iteratorInputTable->simulationNumber,
-//                            testDataTestParticleInputTable( i, 0 ) );
-//         BOOST_CHECK_EQUAL( iteratorInputTable->caseId, caseId );
-//         BOOST_CHECK_EQUAL( iteratorInputTable->isCompleted, false );
+    for ( TestParticleInputTable::iterator iteratorInputTable = testParticleInputTable.begin( );
+          iteratorInputTable != testParticleInputTable.end( ); iteratorInputTable++ )
+    {
+        BOOST_CHECK_EQUAL( iteratorInputTable->simulationId,
+                           testDataTestParticleInputTable( i, 0 ) );
+        BOOST_CHECK_EQUAL( iteratorInputTable->caseId, caseId );
+        BOOST_CHECK_EQUAL( iteratorInputTable->isCompleted, false );
 
-//         {
-//             TUDAT_CHECK_MATRIX_CLOSE_FRACTION(
-//                         iteratorInputTable->initialStateInKeplerianElements,
-//                         testDataTestParticleInputTable.block( i, 3, 1, 6 ).transpose( ),
-//                         1.0e-15 );
-//         }
+        {
+            TUDAT_CHECK_MATRIX_CLOSE_FRACTION(
+                        iteratorInputTable->initialStateInKeplerianElements,
+                        testDataTestParticleInputTable.block( i, 3, 1, 6 ).transpose( ),
+                        1.0e-15 );
+        }
 
-//         i++;
-//     }
-// }
+        i++;
+    }
+}
 
-// //! Test run-time error in case of no fetched test particle input data from SQLite3 database,
-// //! when requesting data for completed simulations.
-// BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNoRows )
-// {
-//     using namespace basics;
-//     using namespace database;
+//! Test run-time error in case of no fetched test particle input data from SQLite3 database,
+//! when requesting data for completed simulations.
+BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNoRows )
+{
+    using namespace basics;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase
-//             = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleInputTable.db";
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
-//     // Try to retrieve test particle input data.
-//     bool isNoRowPresent = false;
+    // Try to retrieve test particle input data.
+    bool isNoRowPresent = false;
 
-//     try
-//     {
-//         // Retrieve all input data for test particle simulations that are complete.
-//         const TestParticleInputTable testParticleInputTable
-//                 = getCompleteTestParticleInputTable( 
-//                     absolutePathToTestDatabase, 1, "test_particle_input", true );
-//     }
+    try
+    {
+        // Retrieve all input data for test particle simulations that are complete.
+        const TestParticleInputTable testParticleInputTable
+                = getCompleteTestParticleInputTable( 
+                    absolutePathToTestDatabase, 1, "test_particle_input", true );
+    }
 
-//     // Catch expected run-time error.
-//     catch( std::runtime_error& )
-//     {
-//         isNoRowPresent = true;
-//     }
+    // Catch expected run-time error.
+    catch( std::runtime_error& )
+    {
+        isNoRowPresent = true;
+    }
 
-//     // Check that the expected run-time error was thrown.
-//     BOOST_CHECK( isNoRowPresent );
-// }
+    // Check that the expected run-time error was thrown.
+    BOOST_CHECK( isNoRowPresent );
+}
 
-// //! Test implementation of function to get selected test particle input data from SQLite3 database
-// //! for given case ID.
-// BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionSpecificSimulations )
-// {
-//     using tudat::input_output::readMatrixFromFile;
-//     using namespace basics;
-//     using namespace database;
+//! Test implementation of function to get selected test particle input data from SQLite3 database
+//! for given case ID.
+BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionSpecificSimulations )
+{
+    using tudat::input_output::readMatrixFromFile;
+    using namespace basics;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase
-//             = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleInputTable.db";
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
-//     // Set string of selected test particle simulation numbers.
-//     const std::string testParticleSimulationNumbers = "1 3 5 9";
+    // Set string of selected test particle simulation numbers.
+    const std::string testParticlesimulationIds = "1 3 5 9";
 
-//     // Set vector of selected test particle simulation numbers.
-//     const std::vector< int > testParticleSimulationNumbersVector
-//             = boost::assign::list_of( 1 )( 3 )( 5 )( 9 );
+    // Set vector of selected test particle simulation numbers.
+    const std::vector< int > testParticlesimulationIdsVector
+            = boost::assign::list_of( 1 )( 3 )( 5 )( 9 );
 
-//     // Set requested case ID.
-//     const int caseId = 1;
+    // Set requested case ID.
+    const int caseId = 1;
 
-//     // Retrieve table of input data for selected test particle simulations.
-//     const TestParticleInputTable testParticleInputTable = getSelectedTestParticleInputTable(
-//                 absolutePathToTestDatabase, caseId, 
-//                 testParticleSimulationNumbers, "test_particle_input" );
+    // Retrieve table of input data for selected test particle simulations.
+    const TestParticleInputTable testParticleInputTable = getSelectedTestParticleInputTable(
+                absolutePathToTestDatabase, caseId, 
+                testParticlesimulationIds, "test_particle_input" );
 
-//     // Read in table of test particle input data from test data file.
-//     const Eigen::Matrix< double, 4, 9 > testDataTestParticleInputTable = readMatrixFromFile(
-//                 getStochasticMigrationRootPath( )
-//                 + "/Database/UnitTests/testDataSelectedTestParticleInputTable.csv" ); 
+    // Read in table of test particle input data from test data file.
+    const Eigen::Matrix< double, 4, 9 > testDataTestParticleInputTable = readMatrixFromFile(
+                getStochasticMigrationRootPath( )
+                + "/Database/UnitTests/testDataSelectedTestParticleInputTable.csv" ); 
 
-//     // Check that the input data table retrieved matches the test data.
-//     unsigned int i = 0;
+    // Check that the input data table retrieved matches the test data.
+    unsigned int i = 0;
 
-//     for ( TestParticleInputTable::iterator iteratorInputTable = testParticleInputTable.begin( );
-//           iteratorInputTable != testParticleInputTable.end( ); iteratorInputTable++ )
-//     {
-//         BOOST_CHECK_EQUAL( iteratorInputTable->simulationNumber,
-//                            testDataTestParticleInputTable( i, 0 ) );
-//         BOOST_CHECK_EQUAL( iteratorInputTable->caseId, caseId );
-//         BOOST_CHECK_EQUAL( iteratorInputTable->isCompleted, false );
+    for ( TestParticleInputTable::iterator iteratorInputTable = testParticleInputTable.begin( );
+          iteratorInputTable != testParticleInputTable.end( ); iteratorInputTable++ )
+    {
+        BOOST_CHECK_EQUAL( iteratorInputTable->simulationId,
+                           testDataTestParticleInputTable( i, 0 ) );
+        BOOST_CHECK_EQUAL( iteratorInputTable->caseId, caseId );
+        BOOST_CHECK_EQUAL( iteratorInputTable->isCompleted, false );
 
-//         {
-//             TUDAT_CHECK_MATRIX_CLOSE_FRACTION(
-//                         iteratorInputTable->initialStateInKeplerianElements,
-//                         testDataTestParticleInputTable.block( i, 3, 1, 6 ).transpose( ),
-//                         1.0e-15 );
-//         }
+        {
+            TUDAT_CHECK_MATRIX_CLOSE_FRACTION(
+                        iteratorInputTable->initialStateInKeplerianElements,
+                        testDataTestParticleInputTable.block( i, 3, 1, 6 ).transpose( ),
+                        1.0e-15 );
+        }
 
-//         i++;
-//     }
-// }
+        i++;
+    }
+}
 
-// //! Test run-time error in case of no fetched test particle input data from SQLite3 database,
-// //! when requesting non-existent test particle simulations.
-// BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNonExistentSimulation )
-// {
-//     using namespace basics;
-//     using namespace database;
+//! Test run-time error in case of no fetched test particle input data from SQLite3 database,
+//! when requesting non-existent test particle simulations.
+BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNonExistentSimulation )
+{
+    using namespace basics;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase
-//             = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleInputTable.db";
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
-//     // Set string of selected test particle simulation numbers.
-//     const std::string testParticleSimulationNumbers = "1 999999";
+    // Set string of selected test particle simulation numbers.
+    const std::string testParticlesimulationIds = "1 999999";
 
-//     // Set requested case ID.
-//     const int caseId = 1;
+    // Set requested case ID.
+    const int caseId = 1;
 
-//     // Try to retrieve table of test particle input data, and catch expected error.
-//     bool isRunTimeErrorThrown = false;
+    // Try to retrieve table of test particle input data, and catch expected error.
+    bool isRunTimeErrorThrown = false;
 
-//     try
-//     {
-//         // Retrieve all input data for selected test particle simulations.
-//         const TestParticleInputTable testParticleInputTable
-//                 = getSelectedTestParticleInputTable( 
-//                     absolutePathToTestDatabase, caseId,
-//                     testParticleSimulationNumbers, "test_particle_input" );
-//     }
+    try
+    {
+        // Retrieve all input data for selected test particle simulations.
+        const TestParticleInputTable testParticleInputTable
+                = getSelectedTestParticleInputTable( 
+                    absolutePathToTestDatabase, caseId,
+                    testParticlesimulationIds, "test_particle_input" );
+    }
 
-//     catch( std::runtime_error& )
-//     {
-//         isRunTimeErrorThrown = true;
-//     }
+    catch( std::runtime_error& )
+    {
+        isRunTimeErrorThrown = true;
+    }
 
-//     // Check that expected run-time error was thrown due to request for non-existent test particle
-//     // simulation number.
-//     BOOST_CHECK( isRunTimeErrorThrown );
-// }
+    // Check that expected run-time error was thrown due to request for non-existent test particle
+    // simulation number.
+    BOOST_CHECK( isRunTimeErrorThrown );
+}
 
 // //! Test implementation of function to get selected test particle kick data from SQLite3 database.
 // BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionSpecificSimulations )
@@ -329,19 +329,19 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 
 //     // Set absolute path to test database.
 //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleKickTable.db";
+//             + "/Database/UnitTests/testDatabaseTestParticleKickTable.sqlite";
 
 //     // Set random walk simulation period [s].
 //     const double randomWalkSimulationPeriod = 1577880000.0;
 
 //     // Set vector of selected test particle simulation numbers.
-//     const TestParticleSimulationNumbersAndMassRatios testParticleSimulationNumbersAndMassRatios
+//     const TestParticlesimulationIdsAndMassRatios testParticlesimulationIdsAndMassRatios
 //             = map_list_of( 1, 0.1 )( 5, 0.2 )( 9, 0.05 );
 
 //     // Retrieve table of test particle kick data.
 //     const TestParticleKickTable testParticleKickTable = getTestParticleKickTable(
 //                 absolutePathToTestDatabase, randomWalkSimulationPeriod,
-//                 testParticleSimulationNumbersAndMassRatios );
+//                 testParticlesimulationIdsAndMassRatios );
 
 //     // Read in table of test particle kick data from test data file.
 //     const Eigen::MatrixXd testDataTestParticleKickTable
@@ -349,8 +349,8 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 //                                   + "/Database/UnitTests/testDataTestParticleKickTable.csv" );
 
 //     // Set iterator to map of test particle simulation numbers and mass ratios to beginning.
-//     TestParticleSimulationNumbersAndMassRatios::const_iterator
-//             iteratorTestParticleSimulationNumbersAndMassRatios;
+//     TestParticlesimulationIdsAndMassRatios::const_iterator
+//             iteratorTestParticlesimulationIdsAndMassRatios;
 
 //     // Check that the test particle kick table retrieved matches the test data.
 //     unsigned int i = 0;
@@ -358,7 +358,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 //     for ( TestParticleKickTable::iterator iteratorKickTable = testParticleKickTable.begin( );
 //           iteratorKickTable != testParticleKickTable.end( ); iteratorKickTable++ )
 //     {
-//         BOOST_CHECK_EQUAL( iteratorKickTable->simulationNumber,
+//         BOOST_CHECK_EQUAL( iteratorKickTable->simulationId,
 //                            testDataTestParticleKickTable( i, 1 ) );
 //         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionEpoch,
 //                                     testDataTestParticleKickTable( i, 2 ), 1.0e-14 );
@@ -388,12 +388,12 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 //                                     testDataTestParticleKickTable( i, 14 ), 1.0e-14 );
 
 //         // Find the test particle simulation number corresponding to the current row in map.
-//         iteratorTestParticleSimulationNumbersAndMassRatios
-//                 = testParticleSimulationNumbersAndMassRatios.find(
-//                     iteratorKickTable->simulationNumber );
+//         iteratorTestParticlesimulationIdsAndMassRatios
+//                 = testParticlesimulationIdsAndMassRatios.find(
+//                     iteratorKickTable->simulationId );
 
 //         BOOST_CHECK_EQUAL( iteratorKickTable->massRatio,
-//                            iteratorTestParticleSimulationNumbersAndMassRatios->second );
+//                            iteratorTestParticlesimulationIdsAndMassRatios->second );
 
 //         i++;
 //     }
@@ -410,13 +410,13 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 
 //     // Set absolute path to test database.
 //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleKickTable.db";
+//             + "/Database/UnitTests/testDatabaseTestParticleKickTable.sqlite";
 
 //     // Set random walk simulation period [s].
 //     const double randomWalkSimulationPeriod = 1577880000.0;
 
 //     // Set vector of selected test particle simulation numbers.
-//     const TestParticleSimulationNumbersAndMassRatios testParticleSimulationNumbersAndMassRatios
+//     const TestParticlesimulationIdsAndMassRatios testParticlesimulationIdsAndMassRatios
 //             = map_list_of( 1, 0.5 )( 999999, 0.1 );
 
 //     // Try to retrieve table of test particle kick data, and catch expected error.
@@ -427,7 +427,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 //         // Retrieve kick data for test particle simulations.
 //         const TestParticleKickTable testParticleKickTable = getTestParticleKickTable(
 //                     absolutePathToTestDatabase, randomWalkSimulationPeriod,
-//                     testParticleSimulationNumbersAndMassRatios );
+//                     testParticlesimulationIdsAndMassRatios );
 //     }
 
 //     catch( std::runtime_error& )
@@ -452,7 +452,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 
 //     // Set absolute path to test database.
 //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.db";
+//             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.sqlite";
 
 //     // Set vector of selected Monte Carlo runs.
 //     const std::vector< unsigned int > monteCarloRuns = list_of( 1 )( 5 )( 1001 )( 1005 );
@@ -515,7 +515,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 
 //     // Set absolute path to test database.
 //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.db";
+//             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.sqlite";
 
 //     // Set vector of selected Monte Carlo runs.
 //     const std::vector< unsigned int > monteCarloRuns = list_of( 1 )( 99999 );
@@ -551,7 +551,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 
 //     // Set absolute path to test database.
 //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseRandomWalkPerturberTable.db";
+//             + "/Database/UnitTests/testDatabaseRandomWalkPerturberTable.sqlite";
 
 //     // Set Monte Carlo run to retrieve data for.
 //     const unsigned int monteCarloRun = 1;
@@ -575,7 +575,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 //     {
 //         BOOST_CHECK_EQUAL( iteratorPerturberTable->monteCarloRun,
 //                            testRandomWalkPerturberData( i, 1 ) );
-//         BOOST_CHECK_EQUAL( iteratorPerturberTable->testParticleSimulationNumber,
+//         BOOST_CHECK_EQUAL( iteratorPerturberTable->testParticlesimulationId,
 //                            testRandomWalkPerturberData( i, 2 ) );
 //         BOOST_CHECK_EQUAL( iteratorPerturberTable->massRatio,
 //                            testRandomWalkPerturberData( i, 3 ) );
@@ -595,7 +595,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 
 //     // Set absolute path to test database.
 //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseRandomWalkPerturberTable.db";
+//             + "/Database/UnitTests/testDatabaseRandomWalkPerturberTable.sqlite";
 
 //     // Set selected Monte Carlo run.
 //     const unsigned int monteCarloRun = 999999;

@@ -435,308 +435,317 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     ///////////////////////////////////////////////////////////////////////////
 
-//     // Compute derived parameters.
+    // Compute derived parameters.
 
-//     cout << endl;
-//     cout << "****************************************************************************" << endl;
-//     cout << "Derived parameters" << endl;
-//     cout << "****************************************************************************" << endl;
-//     cout << endl;
+    cout << endl;
+    cout << "****************************************************************************" << endl;
+    cout << "Derived parameters" << endl;
+    cout << "****************************************************************************" << endl;
+    cout << endl;
 
-//     // Compute mass of perturbed body [kg].
-//     const double perturbedBodyMass = computeMassOfSphere(
-//                 testParticleCase->perturbedBodyRadius, 
-//                 testParticleCase->perturbedBodyBulkDensity );
-//     cout << "Perturbed body mass                                       " 
-//          << perturbedBodyMass << " kg" << endl;
+    // Compute mass of perturbed body [kg].
+    const double perturbedBodyMass = computeMassOfSphere(
+                testParticleCase->perturbedBodyRadius, 
+                testParticleCase->perturbedBodyBulkDensity );
+    cout << "Perturbed body mass                                       " 
+         << perturbedBodyMass << " kg" << endl;
 
-//     // Compute perturbed body's gravitational parameter [m^3 s^-2].
-//     const double perturbedBodyGravitationalParameter
-//             = computeGravitationalParameter( perturbedBodyMass );
-//     cout << "Perturbed body gravitational parameter                    " 
-//          << perturbedBodyGravitationalParameter << " m^3 s^-2" << endl;
+    // Compute perturbed body's gravitational parameter [m^3 s^-2].
+    const double perturbedBodyGravitationalParameter
+            = computeGravitationalParameter( perturbedBodyMass );
+    cout << "Perturbed body gravitational parameter                    " 
+         << perturbedBodyGravitationalParameter << " m^3 s^-2" << endl;
 
-//     // Set coefficient set selected for numerical integrator.
-//     RungeKuttaCoefficients rungeKuttaCoefficients 
-//         = getRungeKuttaCoefficients( testParticleCase->numericalIntegratorType );
+    // Set coefficient set selected for numerical integrator.
+    RungeKuttaCoefficients rungeKuttaCoefficients 
+        = getRungeKuttaCoefficients( testParticleCase->numericalIntegratorType );
 
-//     // Set start epoch for numerical integration.
-//     const double startEpoch = 0.0;            
-//     cout << "Start epoch for numerical integration (T0)                " 
-//          << startEpoch << " yrs" << endl;    
+    // Set start epoch for numerical integration.
+    const double startEpoch = 0.0;            
+    cout << "Start epoch for numerical integration (T0)                " 
+         << startEpoch << " yrs" << endl;    
 
-//     ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
     
-//     ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
-//     // Fetch test particle input table.
+    // Fetch test particle input table.
 
-//     cout << endl;
-//     cout << "****************************************************************************" << endl;
-//     cout << "Database operations" << endl;
-//     cout << "****************************************************************************" << endl;
-//     cout << endl;
+    cout << endl;
+    cout << "****************************************************************************" << endl;
+    cout << "Database operations" << endl;
+    cout << "****************************************************************************" << endl;
+    cout << endl;
 
-//     // Generate output message.
-//     cout << "Fetching test particle input data from database ..." << endl;    
+    // Generate output message.
+    cout << "Fetching test particle input data from database ..." << endl;    
 
-//     // Check if all incomplete simulations are to be run and fetch the input table, else only fetch
-//     // the requested test particle simulation numbers.
-//     TestParticleInputTable testParticleInputTable;
+    // Check if all incomplete simulations are to be run and fetch the input table, else only fetch
+    // the requested test particle simulation numbers.
+    TestParticleInputTable testParticleInputTable;
 
-//     if ( iequals( applicationMode, "BULKSIMULATION" )  )
-//     {
-//         cout << "Fetching all incomplete test particle simulations ..." << endl;    
+    if ( iequals( simulationsToExecute, "ALL" )  )
+    {
+        cout << "Fetching all incomplete test particle simulations ..." << endl;    
 
-//         // Get entire test particle input table from database.
-//         testParticleInputTable = getCompleteTestParticleInputTable(
-//                     databasePath, testParticleCase->caseId, testParticleInputTableName );
-//     }
+        // Get entire test particle input table from database.
+        testParticleInputTable = getCompleteTestParticleInputTable(
+                    databasePath, testParticleCase->caseId, testParticleInputTableName );
+    }
 
-//     else if ( iequals( applicationMode, "SINGLESIMULATION" ) )
-//     {
+    else
+    {
+        cout << "Fetching all requested test particle simulations ..." << endl;    
 
-//         cout << "Fetching all requested test particle simulations ..." << endl;    
+        // Get selected test particle input table from database.
+        testParticleInputTable = getSelectedTestParticleInputTable(
+                    databasePath, testParticleCase->caseId, 
+                    simulationsToExecute, testParticleInputTableName );
+    }
 
-//         // Get selected test particle input table from database.
-//         testParticleInputTable = getSelectedTestParticleInputTable(
-//                     databasePath, testParticleCase->caseId, 
-//                     simulationsToExecute, testParticleInputTableName );
-//     }
+    cout << "Test particle input data (" << testParticleInputTable.size( )
+         << " rows) fetched successfully from database!" << endl;    
 
-//     cout << "Test particle input data (" << testParticleInputTable.size( )
-//          << " rows) fetched successfully from database!" << endl;    
+    ///////////////////////////////////////////////////////////////////////////  
 
-//     ///////////////////////////////////////////////////////////////////////////  
+    ///////////////////////////////////////////////////////////////////////////
 
-//     ///////////////////////////////////////////////////////////////////////////
+    cout << endl;
+    cout << "****************************************************************************" << endl;
+    cout << "Simulation loop" << endl;
+    cout << "****************************************************************************" << endl;
+    cout << endl;
 
-//     cout << endl;
-//     cout << "****************************************************************************" << endl;
-//     cout << "Simulation loop" << endl;
-//     cout << "****************************************************************************" << endl;
-//     cout << endl;
+    // Execute simulation loop.
+    cout << "Starting simulation loop ... " << endl;
+    cout << endl;
 
-//     // Execute simulation loop.
-//     cout << "Starting simulation loop ... " << endl;
-//     cout << endl;
+    TestParticleInputTable::iterator iteratorInputTable;
+    iteratorInputTable = testParticleInputTable.begin( );
 
-//     TestParticleInputTable::iterator iteratorInputTable;
-//     iteratorInputTable = testParticleInputTable.begin( );
+#pragma omp parallel for num_threads( numberOfThreads ) schedule( static, 1 )
+    for ( unsigned int i = 0; i < 3; i++ )
+    {
 
-// #pragma omp parallel for num_threads( numberOfThreads ) schedule( static, 1 )
-//     for ( unsigned int i = 0; i < 10; i++ )
-//     {
+#pragma omp critical( outputToConsole )
+        {
+            cout << "Run " << i + 1 << " / " << testParticleInputTable.size( )
+                 << " (simulation ID: " << iteratorInputTable->simulationId << ")"
+                 << " on thread " << omp_get_thread_num( ) + 1
+                 << " / " << omp_get_num_threads( ) << endl;
+        }
 
-// #pragma omp critical( outputToConsole )
-//         {
-//             cout << "Run " << i + 1 << " / " << testParticleInputTable.size( )
-//                  << " (simulation " << iteratorInputTable->simulationNumber << ")"
-//                  << " on thread " << omp_get_thread_num( ) + 1
-//                  << " / " << omp_get_num_threads( ) << endl;
-//         }
+        ///////////////////////////////////////////////////////////////////////////
 
-//         ///////////////////////////////////////////////////////////////////////////
+        // Create perturbed body and test particle.
 
-//         // Create perturbed body and test particle.
+        // Convert test particle initial state in Keplerian elements to Cartesian elements.
+        const Vector6d testParticleInitialState
+                = convertKeplerianToCartesianElements(
+                    iteratorInputTable->initialStateInKeplerianElements,
+                    testParticleCase->centralBodyGravitationalParameter );
 
-//         // Convert test particle initial state in Keplerian elements to Cartesian elements.
-//         const Vector6d testParticleInitialState
-//                 = convertKeplerianToCartesianElements(
-//                     iteratorInputTable->initialStateInKeplerianElements,
-//                     testParticleCase->centralBodyGravitationalParameter );
+        // Convert perturbed body initial state in Keplerian elements to Cartesian elements.
+        const Vector6d perturbedBodyInitialState
+                = convertKeplerianToCartesianElements(
+                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0,
+                    testParticleCase->centralBodyGravitationalParameter );
 
-//         // Convert perturbed body initial state in Keplerian elements to Cartesian elements.
-//         const Vector6d perturbedBodyInitialState
-//                 = convertKeplerianToCartesianElements(
-//                     testParticleCase->perturbedBodyStateInKeplerianElementsAtT0,
-//                     testParticleCase->centralBodyGravitationalParameter );
+        // Create perturbed body and test particle.
+        BodyPointer perturbedBody = make_shared< Body >(
+                    "Perturbed body", perturbedBodyInitialState );
+        BodyPointer testParticle = make_shared< Body >(
+                    "Test particle", testParticleInitialState );
 
-//         // Create perturbed body and test particle.
-//         BodyPointer perturbedBody = make_shared< Body >(
-//                     "Perturbed body", perturbedBodyInitialState );
-//         BodyPointer testParticle = make_shared< Body >(
-//                     "Test particle", testParticleInitialState );
+        ///////////////////////////////////////////////////////////////////////////
 
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
-//         ///////////////////////////////////////////////////////////////////////////
+        // Set up dynamics.
 
-//         // Set up dynamics.
+        // Set acceleration models for perturbed body and test particle.
+        AccelerationModel3dPointer perturbedBodyGravityOnTestParticle
+                = make_shared< CentralGravitationalAccelerationModel3d >(
+                    bind( &Body::getCurrentPosition, testParticle ),
+                    perturbedBodyGravitationalParameter,
+                    bind( &Body::getCurrentPosition, perturbedBody ) );
 
-//         // Set acceleration models for perturbed body and test particle.
-//         AccelerationModel3dPointer perturbedBodyGravityOnTestParticle
-//                 = make_shared< CentralGravitationalAccelerationModel3d >(
-//                     bind( &Body::getCurrentPosition, testParticle ),
-//                     perturbedBodyGravitationalParameter,
-//                     bind( &Body::getCurrentPosition, perturbedBody ) );
+        AccelerationModel3dPointer centralBodyGravityOnPerturbedBody;
+        AccelerationModel3dPointer centralBodyGravityOnTestParticle;
 
-//         AccelerationModel3dPointer centralBodyGravityOnPerturbedBody;
-//         AccelerationModel3dPointer centralBodyGravityOnTestParticle;
+        if ( fabs( testParticleCase->centralBodyJ2GravityCoefficient )
+             < numeric_limits< double >::min( ) )
+        {
+            centralBodyGravityOnPerturbedBody
+                    = make_shared< CentralGravitationalAccelerationModel3d >(
+                        bind( &Body::getCurrentPosition, perturbedBody ),
+                        testParticleCase->centralBodyGravitationalParameter );
 
-//         if ( fabs( testParticleCase->centralBodyJ2GravityCoefficient )
-//              < numeric_limits< double >::min( ) )
-//         {
-//             centralBodyGravityOnPerturbedBody
-//                     = make_shared< CentralGravitationalAccelerationModel3d >(
-//                         bind( &Body::getCurrentPosition, perturbedBody ),
-//                         testParticleCase->centralBodyGravitationalParameter );
+            centralBodyGravityOnTestParticle
+                    = make_shared< CentralGravitationalAccelerationModel3d >(
+                        bind( &Body::getCurrentPosition, testParticle ),
+                        testParticleCase->centralBodyGravitationalParameter );
+        }
 
-//             centralBodyGravityOnTestParticle
-//                     = make_shared< CentralGravitationalAccelerationModel3d >(
-//                         bind( &Body::getCurrentPosition, testParticle ),
-//                         testParticleCase->centralBodyGravitationalParameter );
-//         }
+        else
+        {
+            centralBodyGravityOnPerturbedBody
+                    = make_shared< CentralJ2GravitationalAccelerationModel >(
+                        bind( &Body::getCurrentPosition, perturbedBody ),
+                        testParticleCase->centralBodyGravitationalParameter,
+                        testParticleCase->centralBodyJ2GravityCoefficient,
+                        testParticleCase->centralBodyEquatorialRadius );
 
-//         else
-//         {
-//             centralBodyGravityOnPerturbedBody
-//                     = make_shared< CentralJ2GravitationalAccelerationModel >(
-//                         bind( &Body::getCurrentPosition, perturbedBody ),
-//                         testParticleCase->centralBodyGravitationalParameter,
-//                         testParticleCase->centralBodyJ2GravityCoefficient,
-//                         testParticleCase->centralBodyEquatorialRadius );
+            centralBodyGravityOnTestParticle
+                    = make_shared< CentralJ2GravitationalAccelerationModel >(
+                        bind( &Body::getCurrentPosition, testParticle ),
+                        testParticleCase->centralBodyGravitationalParameter,
+                        testParticleCase->centralBodyJ2GravityCoefficient,
+                        testParticleCase->centralBodyEquatorialRadius );
+        }
 
-//             centralBodyGravityOnTestParticle
-//                     = make_shared< CentralJ2GravitationalAccelerationModel >(
-//                         bind( &Body::getCurrentPosition, testParticle ),
-//                         testParticleCase->centralBodyGravitationalParameter,
-//                         testParticleCase->centralBodyJ2GravityCoefficient,
-//                         testParticleCase->centralBodyEquatorialRadius );
-//         }
+        // Create lists of acceleration models to provide to state derivative models.
+        CartesianStateDerivativeModel6d::AccelerationModelPointerVector
+                perturbedBodyAccelerationList = list_of( centralBodyGravityOnPerturbedBody );
 
-//         // Create lists of acceleration models to provide to state derivative models.
-//         CartesianStateDerivativeModel6d::AccelerationModelPointerVector
-//                 perturbedBodyAccelerationList = list_of( centralBodyGravityOnPerturbedBody );
+        CartesianStateDerivativeModel6d::AccelerationModelPointerVector
+                testParticleAccelerationList = list_of( centralBodyGravityOnTestParticle )(
+                    perturbedBodyGravityOnTestParticle );
 
-//         CartesianStateDerivativeModel6d::AccelerationModelPointerVector
-//                 testParticleAccelerationList = list_of( centralBodyGravityOnTestParticle )(
-//                     perturbedBodyGravityOnTestParticle );
+        // Set Cartesian state derivative models for perturbed body and test particle.
+        CartesianStateDerivativeModel6dPointer perturbedBodyStateDerivative
+                = make_shared< CartesianStateDerivativeModel6d >(
+                    perturbedBodyAccelerationList, &updateNothing< double, Vector6d > );
 
-//         // Set Cartesian state derivative models for perturbed body and test particle.
-//         CartesianStateDerivativeModel6dPointer perturbedBodyStateDerivative
-//                 = make_shared< CartesianStateDerivativeModel6d >(
-//                     perturbedBodyAccelerationList, &updateNothing< double, Vector6d > );
+        CartesianStateDerivativeModel6dPointer testParticleStateDerivative
+                = make_shared< CartesianStateDerivativeModel6d >(
+                    testParticleAccelerationList, &updateNothing< double, Vector6d > );
 
-//         CartesianStateDerivativeModel6dPointer testParticleStateDerivative
-//                 = make_shared< CartesianStateDerivativeModel6d >(
-//                     testParticleAccelerationList, &updateNothing< double, Vector6d > );
+        // Construct and return composite state derivative model.
+        CompositeStateDerivativeModel12d::VectorStateDerivativeModelMap stateDerivativeModelMap;
+        stateDerivativeModelMap[ make_pair( 0, 6 ) ]
+                = bind( &CartesianStateDerivativeModel6d::computeStateDerivative,
+                        perturbedBodyStateDerivative, _1, _2 );
+        stateDerivativeModelMap[ make_pair( 6, 6 ) ]
+                = bind( &CartesianStateDerivativeModel6d::computeStateDerivative,
+                        testParticleStateDerivative, _1, _2 );
 
-//         // Construct and return composite state derivative model.
-//         CompositeStateDerivativeModel12d::VectorStateDerivativeModelMap stateDerivativeModelMap;
-//         stateDerivativeModelMap[ make_pair( 0, 6 ) ]
-//                 = bind( &CartesianStateDerivativeModel6d::computeStateDerivative,
-//                         perturbedBodyStateDerivative, _1, _2 );
-//         stateDerivativeModelMap[ make_pair( 6, 6 ) ]
-//                 = bind( &CartesianStateDerivativeModel6d::computeStateDerivative,
-//                         testParticleStateDerivative, _1, _2 );
+        // Construct data updater that disassembles the composite state and updates the states of
+        // the bodies.
+        DataUpdaterPointer dataUpdater = make_shared< DataUpdater >( perturbedBody, testParticle );
 
-//         // Construct data updater that disassembles the composite state and updates the states of
-//         // the bodies.
-//         DataUpdaterPointer dataUpdater = make_shared< DataUpdater >( perturbedBody, testParticle );
+        // Construct composite state derivative model.
+        CompositeStateDerivativeModel12dPointer stateDerivativeModel
+                = make_shared< CompositeStateDerivativeModel12d >(
+                    stateDerivativeModelMap,
+                    bind( &DataUpdater::updateTimeAndCompositeState, dataUpdater, _1, _2 ) );
 
-//         // Construct composite state derivative model.
-//         CompositeStateDerivativeModel12dPointer stateDerivativeModel
-//                 = make_shared< CompositeStateDerivativeModel12d >(
-//                     stateDerivativeModelMap,
-//                     bind( &DataUpdater::updateTimeAndCompositeState, dataUpdater, _1, _2 ) );
+        ///////////////////////////////////////////////////////////////////////////
 
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
-//         ///////////////////////////////////////////////////////////////////////////
+        // Set up integrator and perform start-up integration.
 
-//         // Set up integrator and perform start-up integration.
+        // Declare Runge-Kutta, variable-stepsize, integrator.
+        RungeKuttaVariableStepSizeIntegratorXdPointer integrator
+                = make_shared< RungeKuttaVariableStepSizeIntegratorXd >(
+                    rungeKuttaCoefficients,
+                    bind( &CompositeStateDerivativeModel12d::computeStateDerivative,
+                          stateDerivativeModel, _1, _2 ),
+                    startEpoch,
+                    ( VectorXd( 12 ) << perturbedBody->getCurrentState( ),
+                      testParticle->getCurrentState( ) ).finished( ),
+                    numeric_limits< double >::epsilon( ),
+                    numeric_limits< double >::max( ),
+                    testParticleCase->numericalIntegratorRelativeTolerance,
+                    testParticleCase->numericalIntegratorAbsoluteTolerance );
 
-//         // Declare Runge-Kutta, variable-stepsize, integrator.
-//         RungeKuttaVariableStepSizeIntegratorXdPointer integrator
-//                 = make_shared< RungeKuttaVariableStepSizeIntegratorXd >(
-//                     rungeKuttaCoefficients,
-//                     bind( &CompositeStateDerivativeModel12d::computeStateDerivative,
-//                           stateDerivativeModel, _1, _2 ),
-//                     startEpoch,
-//                     ( VectorXd( 12 ) << perturbedBody->getCurrentState( ),
-//                       testParticle->getCurrentState( ) ).finished( ),
-//                     numeric_limits< double >::epsilon( ),
-//                     numeric_limits< double >::max( ),
-//                     testParticleCase->numericalIntegratorRelativeTolerance,
-//                     testParticleCase->numericalIntegratorAbsoluteTolerance );
+        // Numerically integrate motion of test particle up to end of start-up period.
+        // Set a flag that indicates whether the start-up period is non-zero, i.e., numerical
+        // integration was performed.
+        bool isStartup = false;
 
-//         // Numerically integrate motion of test particle up to end of start-up period.
-//         bool isStartup = false;
-//         while ( integrator->getCurrentIndependentVariable( ) 
-//                 < testParticleCase->startUpIntegrationPeriod )
-//         {
-//             isStartup = true;
-//             integrator->performIntegrationStep( testParticleCase->initialStepSize );
-//         }   
+        if ( integrator->getCurrentIndependentVariable( ) 
+                < testParticleCase->startUpIntegrationPeriod )
+        {
+            isStartup = true;
+        }
 
-//         ///////////////////////////////////////////////////////////////////////////
+        while ( integrator->getCurrentIndependentVariable( ) 
+                < testParticleCase->startUpIntegrationPeriod )
+        {
+            integrator->performIntegrationStep( testParticleCase->initialStepSize );
+        }   
 
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
-//         // Compute system parameters at end of start-up period (T0).
+        ///////////////////////////////////////////////////////////////////////////
 
-//         // Convert test particle's state to Keplerian elements.
-//         const Vector6d testParticleStateAfterStartUp = convertCartesianToKeplerianElements(
-//                     testParticle->getCurrentState( ),
-//                     testParticleCase->centralBodyGravitationalParameter );
+        // Compute system parameters at end of start-up period (T0).
 
-//         // Compute orbital period of perturbed body [s].
-//         const double orbitalPeriodOfPerturbedBody = computeKeplerOrbitalPeriod(
-//                     testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                         semiMajorAxisIndex ),
-//                     testParticleCase->centralBodyGravitationalParameter );
+        // Convert test particle's state to Keplerian elements.
+        const Vector6d testParticleStateAfterStartUp = convertCartesianToKeplerianElements(
+                    testParticle->getCurrentState( ),
+                    testParticleCase->centralBodyGravitationalParameter );
 
-//         // Compute orbital period of test particle [s].
-//         const double orbitalPeriodOfTestParticle = computeKeplerOrbitalPeriod(
-//                     testParticleStateAfterStartUp( semiMajorAxisIndex ),
-//                     testParticleCase->centralBodyGravitationalParameter );
+        // Compute orbital period of perturbed body [s].
+        const double orbitalPeriodOfPerturbedBody = computeKeplerOrbitalPeriod(
+                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                        semiMajorAxisIndex ),
+                    testParticleCase->centralBodyGravitationalParameter );
 
-//         // Compute synodic period of test particle's motion with respect to perturbed body [s].
-//         const double synodicPeriod = computeSynodicPeriod(
-//                     orbitalPeriodOfPerturbedBody, orbitalPeriodOfTestParticle );
+        // Compute orbital period of test particle [s].
+        const double orbitalPeriodOfTestParticle = computeKeplerOrbitalPeriod(
+                    testParticleStateAfterStartUp( semiMajorAxisIndex ),
+                    testParticleCase->centralBodyGravitationalParameter );
 
-//         // Compute perturbed body's initial energy.
-//         const double perturbedBodyInitialEnergy = computeKeplerEnergy(
-//                     testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                         semiMajorAxisIndex ),
-//                     testParticleCase->centralBodyGravitationalParameter );
+        // Compute synodic period of test particle's motion with respect to perturbed body [s].
+        const double synodicPeriod = computeSynodicPeriod(
+                    orbitalPeriodOfPerturbedBody, orbitalPeriodOfTestParticle );
 
-//         // Compute perturbed body's initial angular momentum.
-//         const double perturbedBodyInitialAngularMomentum = computeKeplerAngularMomentum(
-//                     testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                         semiMajorAxisIndex ),
-//                     testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                         eccentricityIndex ),
-//                     testParticleCase->centralBodyGravitationalParameter );
+        // Compute perturbed body's initial energy.
+        const double perturbedBodyInitialEnergy = computeKeplerEnergy(
+                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                        semiMajorAxisIndex ),
+                    testParticleCase->centralBodyGravitationalParameter );
 
-//         ///////////////////////////////////////////////////////////////////////////
+        // Compute perturbed body's initial angular momentum.
+        const double perturbedBodyInitialAngularMomentum = computeKeplerAngularMomentum(
+                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                        semiMajorAxisIndex ),
+                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                        eccentricityIndex ),
+                    testParticleCase->centralBodyGravitationalParameter );
 
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
-//         // Numerically integrate system to TPlusSimulationAndSynodicPeriod.
+        ///////////////////////////////////////////////////////////////////////////
 
-//         // Set the next step size, depending on whether the start-up integration was performed.
-//         double nextStepSize = 0.0;
+        // Numerically integrate system to TPlusSimulationAndSynodicPeriod.
 
-//         // Check if the start-up integration period was performed. If so, se the next step for the
-//         // numerical integrator based on the internally computed value.
-//         if ( isStartup )
-//         {
-//             nextStepSize = integrator->getNextStepSize( );
-//         }
+        // Set the next step size, depending on whether the start-up integration was performed.
+        double nextStepSize = 0.0;
 
-//         // Else, set it to the initial step size specified in the case data.
-//         else
-//         {
-//             nextStepSize = testParticleCase->initialStepSize;
-//         }
+        // Check if the start-up integration period was performed. If so, set the next step for the
+        // numerical integrator based on the internally computed value.
+        if ( isStartup )
+        {
+            nextStepSize = integrator->getNextStepSize( );
+        }
 
-//         propagateSystemAndGenerateKickTable(
-//             perturbedBody, testParticle, testParticleCase, integrator, 
-//             synodicPeriod, nextStepSize, iteratorInputTable->simulationNumber );        
+        // Else, set it to the initial step size specified in the case data.
+        else
+        {
+            nextStepSize = testParticleCase->initialStepSize;
+        }
 
-//         ///////////////////////////////////////////////////////////////////////////
+        // Propagate test-particle-perturbed-body system and retrieve table of kicks experienced by
+        // the test particle.
+        propagateSystem(
+            perturbedBody, testParticle, testParticleCase, integrator, 
+            synodicPeriod, nextStepSize, outputInterval, iteratorInputTable->simulationId );        
+
+        ///////////////////////////////////////////////////////////////////////////
 
 //         ///////////////////////////////////////////////////////////////////////////
 
@@ -778,8 +787,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
 // //         /////////////////////////////////////////////////////////////////////////
 
-//         iteratorInputTable++;
-//     }
+        iteratorInputTable++;
+    }
 
     return 0;
 }

@@ -6,6 +6,8 @@
  *    Changelog
  *      YYMMDD    Author            Comment
  *      130705    K. Kumar          File created.
+ *      130717    K. Kumar          Updated getRungeKuttaCoefficients() to use enum for coefficient 
+ *                                  set.
  *
  *    References
  *
@@ -17,8 +19,6 @@
 #include <iostream>
 #include <stdexcept>
  
-#include <boost/algorithm/string/predicate.hpp>
-
 #include "StochasticMigration/Basics/basics.h"
 
 namespace stochastic_migration
@@ -27,9 +27,10 @@ namespace basics
 {
 
 using namespace tudat::numerical_integrators;
+using namespace database;
 
 //! Get Runge-Kutta integrator coefficient set.
-RungeKuttaCoefficients getRungeKuttaCoefficients( const std::string& coefficientSet )
+RungeKuttaCoefficients getRungeKuttaCoefficients( const NumericalIntegratorType coefficientSet )
 {
     // Declare Runge-Kutta coefficients.
     RungeKuttaCoefficients rungeKuttaCoefficients;
@@ -37,14 +38,14 @@ RungeKuttaCoefficients getRungeKuttaCoefficients( const std::string& coefficient
     // Set output message.
     std::cout << "Runge-Kutta coefficient set                               ";
 
-    if ( boost::iequals( coefficientSet, "DOPRI853" ) )
+    if ( coefficientSet == DOPRI853 )
     {
         rungeKuttaCoefficients = RungeKuttaCoefficients::get(
                     RungeKuttaCoefficients::rungeKutta87DormandPrince );
         std::cout << "Dormand Prince 8(7)" << std::endl;
     }
 
-    else if ( boost::iequals( coefficientSet, "RKF78" ) )
+    else if ( coefficientSet == RKF78 )
     {
         rungeKuttaCoefficients = RungeKuttaCoefficients::get(
                     RungeKuttaCoefficients::rungeKuttaFehlberg78 );
@@ -58,7 +59,6 @@ RungeKuttaCoefficients getRungeKuttaCoefficients( const std::string& coefficient
 
     return rungeKuttaCoefficients;
 }
-
 
 } // namespace basics
 } // namespace stochastic_migration

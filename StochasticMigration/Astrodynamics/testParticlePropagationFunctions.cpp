@@ -61,13 +61,13 @@ namespace astrodynamics
 //         const database::TestParticleCasePointer testParticleCase,
 //         const tudat::numerical_integrators::
 //             RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator )
-void propagateSystemAndGenerateKickTable(
-        const assist::astrodynamics::BodyPointer perturbedBody,
-        const assist::astrodynamics::BodyPointer testParticle,
-        const database::TestParticleCasePointer testParticleCase,
-        const tudat::numerical_integrators::
-            RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator, 
-        const double synodicPeriod, const double nextStepSize, const int i )
+void propagateSystem( const assist::astrodynamics::BodyPointer perturbedBody,
+                      const assist::astrodynamics::BodyPointer testParticle,
+                      const database::TestParticleCasePointer testParticleCase,
+                      const tudat::numerical_integrators::
+                        RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator, 
+                      const double synodicPeriod, const double nextStepSize,
+                      const double outputInterval, const int i )
 {
     // TEMP
     PropagationDataPointTable dataPointsAll;
@@ -76,7 +76,7 @@ void propagateSystemAndGenerateKickTable(
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
     // Set time shift (this is the amount of time by which all the epochs have to be shifted
-    // so that the kicks lie in the range [0.0, randomWalkSimulationDuration]).
+    // so that the kicks lie in the range [0.0, randomWalkSimulationPeriod]).
     const double timeShift = -( numericalIntegrator->getCurrentIndependentVariable( ) 
                                 + synodicPeriod );
 
@@ -131,8 +131,8 @@ void propagateSystemAndGenerateKickTable(
 
     // Integrate until the end of the simulation period and detect local maxima and minima.
     while ( numericalIntegrator->getCurrentIndependentVariable( )
-            < testParticleCase->startUpIntegrationDuration
-            + testParticleCase->randomWalkSimulationDuration + 2.0 * synodicPeriod )
+            < testParticleCase->startUpIntegrationPeriod
+            + testParticleCase->randomWalkSimulationPeriod + 2.0 * synodicPeriod )
     {
         // Compute mutual distance between test particle and perturbed body.
         mutualDistance = ( perturbedBody->getCurrentPosition( ) 
@@ -223,10 +223,10 @@ void propagateSystemAndGenerateKickTable(
     }
 
     // Check if the epoch of the last conjunction event is beyond the random walk simulation 
-    // window [0, randomWalkSimulationDuration].
+    // window [0, randomWalkSimulationPeriod].
     // If so, delete the last conjunction event and the last opposition event.
     // Repeat until the last epoch is within the window.
-    while ( conjunctionEvents.rbegin( )->epoch > testParticleCase->randomWalkSimulationDuration )
+    while ( conjunctionEvents.rbegin( )->epoch > testParticleCase->randomWalkSimulationPeriod )
     {
         // Set iterator to last element in table of conjunction events.
         PropagationDataPointTable::iterator iteratorLastElement = conjunctionEvents.end( );
@@ -244,7 +244,7 @@ void propagateSystemAndGenerateKickTable(
     }
 
     // Check if the epoch of the first conjunction event is before the random walk simulation 
-    // window [0.0, randomWalkSimulationDuration].
+    // window [0.0, randomWalkSimulationPeriod].
     // If so, delete the first conjunction event and the first opposition event.
     // Repeat until the first epoch is within the window.
     while ( conjunctionEvents.begin( )->epoch < 0.0 )
@@ -268,7 +268,7 @@ void propagateSystemAndGenerateKickTable(
           it != dataPointsAll.end( );
           it++ )
     {
-        if ( it->epoch > testParticleCase->outputInterval * counter - synodicPeriod )
+        if ( it->epoch > outputInterval * counter - synodicPeriod )
         {
             file << std::setprecision( std::numeric_limits< double >::digits10 )
                  << it->epoch << "," << it->mutualDistance << std::endl;

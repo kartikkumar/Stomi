@@ -129,9 +129,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a55e12d192550a46002843b2789a3a94e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1astrodynamics.html#a55e12d192550a46002843b2789a3a94e">operator==</a> (const <a class="el" href="structstochastic__migration_1_1astrodynamics_1_1_propagation_data_point.html">PropagationDataPoint</a> &amp;propagationDataPoint1, const <a class="el" href="structstochastic__migration_1_1astrodynamics_1_1_propagation_data_point.html">PropagationDataPoint</a> &amp;propagationDataPoint2)</td></tr>
 <tr class="memdesc:a55e12d192550a46002843b2789a3a94e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overload == operator.  <a href="#a55e12d192550a46002843b2789a3a94e">More...</a><br/></td></tr>
 <tr class="separator:a55e12d192550a46002843b2789a3a94e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9e4fe0cd4abfdd4e04f98c0a9c80184"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1astrodynamics.html#af9e4fe0cd4abfdd4e04f98c0a9c80184">propagateSystemAndGenerateKickTable</a> (const assist::astrodynamics::BodyPointer perturbedBody, const assist::astrodynamics::BodyPointer testParticle, const <a class="el" href="namespacestochastic__migration_1_1database.html#aec08dc84745f791faf0a7f515677efa7">database::TestParticleCasePointer</a> testParticleCase, const tudat::numerical_integrators::RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator, const double synodicPeriod, const double nextStepSize, const int i)</td></tr>
-<tr class="memdesc:af9e4fe0cd4abfdd4e04f98c0a9c80184"><td class="mdescLeft">&#160;</td><td class="mdescRight">Propagate test-particle-perturbed-body system and generate test particle kick table.  <a href="#af9e4fe0cd4abfdd4e04f98c0a9c80184">More...</a><br/></td></tr>
-<tr class="separator:af9e4fe0cd4abfdd4e04f98c0a9c80184"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a332994eeca93290b0abfc9c1324ab611"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacestochastic__migration_1_1astrodynamics.html#a332994eeca93290b0abfc9c1324ab611">propagateSystem</a> (const assist::astrodynamics::BodyPointer perturbedBody, const assist::astrodynamics::BodyPointer testParticle, const <a class="el" href="namespacestochastic__migration_1_1database.html#aec08dc84745f791faf0a7f515677efa7">database::TestParticleCasePointer</a> testParticleCase, const tudat::numerical_integrators::RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator, const double synodicPeriod, const double nextStepSize, const double outputInterval, const int i)</td></tr>
+<tr class="memdesc:a332994eeca93290b0abfc9c1324ab611"><td class="mdescLeft">&#160;</td><td class="mdescRight">Propagate test-particle-perturbed-body system.  <a href="#a332994eeca93290b0abfc9c1324ab611">More...</a><br/></td></tr>
+<tr class="separator:a332994eeca93290b0abfc9c1324ab611"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
 <a class="anchor" id="ad5794d4c8f400e6705492ce48a2fc171"></a>
@@ -243,7 +243,7 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="test_particle_propagation_functions_8h_source.html#l00048">48</a> of file <a class="el" href="test_particle_propagation_functions_8h_source.html">testParticlePropagationFunctions.h</a>.</p>
+<p>Definition at line <a class="el" href="test_particle_propagation_functions_8h_source.html#l00049">49</a> of file <a class="el" href="test_particle_propagation_functions_8h_source.html">testParticlePropagationFunctions.h</a>.</p>
 
 </div>
 </div>
@@ -363,12 +363,12 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af9e4fe0cd4abfdd4e04f98c0a9c80184"></a>
+<a class="anchor" id="a332994eeca93290b0abfc9c1324ab611"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void stochastic_migration::astrodynamics::propagateSystemAndGenerateKickTable </td>
+          <td class="memname">void stochastic_migration::astrodynamics::propagateSystem </td>
           <td>(</td>
           <td class="paramtype">const assist::astrodynamics::BodyPointer&#160;</td>
           <td class="paramname"><em>perturbedBody</em>, </td>
@@ -406,6 +406,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>outputInterval</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>i</em>&#160;</td>
         </tr>
@@ -416,7 +422,7 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Propagates system of test particle, perturbed body, orbiting the specified central body forward in time using the numerical integrator provided. </p>
+<p>Propagates system of test particle, and perturbed body, orbiting the specified central body, forward in time using the numerical integrator provided. The function returns a populated kick table. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">perturbedBody</td><td>Shared-pointer to perturbed body. </td></tr>
@@ -433,7 +439,7 @@ Functions</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 17 2013 15:52:07 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 17 2013 16:46:23 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>

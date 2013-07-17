@@ -35,7 +35,8 @@ namespace stochastic_migration
 namespace astrodynamics
 {
 
-inline bool checkIfMaximum( const double currentValue, const double previousValue, const double nextValue )
+inline bool checkIfMaximum( 
+    const double currentValue, const double previousValue, const double nextValue )
 {
     if ( currentValue > previousValue && currentValue > nextValue )        
     {
@@ -45,7 +46,8 @@ inline bool checkIfMaximum( const double currentValue, const double previousValu
     return false;
 }
 
-inline bool checkIfMinimum( const double currentValue, const double previousValue, const double nextValue )
+inline bool checkIfMinimum( 
+    const double currentValue, const double previousValue, const double nextValue )
 {
     if ( currentValue < previousValue && currentValue < nextValue )        
     {
@@ -55,10 +57,11 @@ inline bool checkIfMinimum( const double currentValue, const double previousValu
     return false;
 }
 
-//! Propagate test-particle-perturbed-body system and generate test particle kick table.
+//! Propagate test-particle-perturbed-body system.
 /*!
-* Propagates system of test particle, perturbed body, orbiting the specified central body forward
-* in time using the numerical integrator provided.
+* Propagates system of test particle, and perturbed body, orbiting the specified central body, 
+* forward in time using the numerical integrator provided. The function returns a populated kick
+* table.
 * \param perturbedBody Shared-pointer to perturbed body.
 * \param testParticle Shared-pointer to perturbed test particle.
 * \param testParticleCase TestParticleCase object containing all of the simulation case data.
@@ -71,13 +74,13 @@ inline bool checkIfMinimum( const double currentValue, const double previousValu
 //         const database::TestParticleCasePointer testParticleCase,
 //         const tudat::numerical_integrators::
 //                 RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator );
-void propagateSystemAndGenerateKickTable(
-        const assist::astrodynamics::BodyPointer perturbedBody,
-        const assist::astrodynamics::BodyPointer testParticle,
-        const database::TestParticleCasePointer testParticleCase,
-        const tudat::numerical_integrators::
-                RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator, 
-        const double synodicPeriod, const double nextStepSize, const int i );
+void propagateSystem( const assist::astrodynamics::BodyPointer perturbedBody,
+                      const assist::astrodynamics::BodyPointer testParticle,
+                      const database::TestParticleCasePointer testParticleCase,
+                      const tudat::numerical_integrators::
+                        RungeKuttaVariableStepSizeIntegratorXdPointer numericalIntegrator, 
+                      const double synodicPeriod, const double nextStepSize, 
+                      const double outputInterval, const int i );
 
 } // namespace astrodynamics
 } // namespace stochastic_migration

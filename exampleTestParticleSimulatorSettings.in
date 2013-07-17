@@ -71,9 +71,10 @@ DB                  : /Users/kartikkumar/Desktop/testDatabase.db
 
 # Set the simulations to execute.
 # This parameter sets the simulations to execute, based on the simulation IDs in the input table in
-# the database. To list multiple simulation IDs, simply list the numbers, separated by spaces.
+# the database. To list multiple simulation IDs, simply list the numbers, separated by spaces. An
+# example of a list of simulation numbers is provided.
 # The default setting is to run all incomplete simulations extracted from the database.
-# SIMULATIONS         : ALL
+# SIMULATIONS         : 1 4 9
 
 # Set the database table names.
 # The following parameters can be used to override the default names for the test particle tables

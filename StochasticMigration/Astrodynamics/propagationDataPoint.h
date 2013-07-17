@@ -11,7 +11,7 @@
  *    References
  *
  *    Notes
- *
+ *      The PropagationDataPoint data struct needs to be unit tested.
  */
 
 #include <iostream>
