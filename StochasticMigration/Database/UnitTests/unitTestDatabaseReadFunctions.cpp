@@ -54,93 +54,92 @@ namespace unit_tests
 
 BOOST_AUTO_TEST_SUITE( test_database_read_functions )
 
-// //! Test implementation of function to get test particle case data from SQLite3 database.
-// BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
-// {
-//     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
-//     using namespace tudat::basic_mathematics::mathematical_constants;
-//     using namespace basics;
-//     using namespace database;
+//! Test implementation of function to get test particle case data from SQLite3 database.
+BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
+{
+    using namespace tudat::basic_astrodynamics::orbital_element_conversions;
+    using namespace tudat::basic_mathematics::mathematical_constants;
+    using namespace basics;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleCase.sqlite";
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseTestParticleCase.sqlite";
 
-//     // Retrieve test particle case data.
-//     const TestParticleCasePointer testParticleCase 
-//         = getTestParticleCase( absolutePathToTestDatabase, "test_case", "test_particle_case" );
+    // Retrieve test particle case data.
+    const TestParticleCasePointer testParticleCase 
+        = getTestParticleCase( absolutePathToTestDatabase, "test_case", "test_particle_case" );
 
-//     // Check that the values read from the database are correct.
-//     BOOST_CHECK_EQUAL( testParticleCase->caseId, 1 );
-//     BOOST_CHECK_EQUAL( testParticleCase->caseName, "test_case" );
-//     BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationDuration, 1577880000.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->synodicPeriodLimit, 1577880000.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->outputInterval, 14400.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->startUpIntegrationDuration, 0.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->conjunctionEventDetectionDistance, 3.0e7 );
-//     BOOST_CHECK_EQUAL( testParticleCase->oppositionEventDetectionDistance, 1.5e8 );
-//     BOOST_CHECK_EQUAL( testParticleCase->centralBodyGravitationalParameter, 5.793966e15 );
-//     BOOST_CHECK_EQUAL( testParticleCase->centralBodyEquatorialRadius, 0.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->centralBodyJ2GravityCoefficient, 0.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->semiMajorAxisDistributionLimit, 1500000.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionMean, 0.0 );
-//     BOOST_CHECK_SMALL( testParticleCase->eccentricityDistributionAngle - ( PI / 4.0 ), 1.0e-15 );    
-//     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionFullWidthHalfMaximum, 0.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionMean, 0.0 );
-//     BOOST_CHECK_SMALL( testParticleCase->inclinationDistributionAngle - ( PI / 4.0 ), 1.0e-15 );    
-//     BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionFullWidthHalfMaximum, 0.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyRadius, 12000.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyBulkDensity, 1500.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                            semiMajorAxisIndex ), 97736000.0 );
-//     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                            eccentricityIndex ), 0.00254 );
-//     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                            inclinationIndex ), 0.00244346095279206 );
-//     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                            argumentOfPeriapsisIndex ), 0.330903954202613 );
-//     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                            longitudeOfAscendingNodeIndex ), 4.39704289113435 );
-//     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-//                            trueAnomalyIndex ), 6.18747145100022 );
-//     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorType, "DOPRI853" );
-//     BOOST_CHECK_EQUAL( testParticleCase->initialStepSize, 60.0 ); 
-//     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorRelativeTolerance, 1.0e-12 );
-//     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorAbsoluteTolerance, 1.0e-15 );
-// }
+    // Check that the values read from the database are correct.
+    BOOST_CHECK_EQUAL( testParticleCase->caseId, 1 );
+    BOOST_CHECK_EQUAL( testParticleCase->caseName, "test_case" );
+    BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationDuration, 1577880000.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->centralBodyGravitationalParameter, 5.793966e15 );
+    BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyRadius, 12000.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyBulkDensity, 1500.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                           semiMajorAxisIndex ), 97736000.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                           eccentricityIndex ), 0.00254 );
+    BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                           inclinationIndex ), 0.00244346095279206 );
+    BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                           argumentOfPeriapsisIndex ), 0.330903954202613 );
+    BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                           longitudeOfAscendingNodeIndex ), 4.39704289113435 );
+    BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
+                           trueAnomalyIndex ), 6.18747145100022 );
+    BOOST_CHECK_EQUAL( testParticleCase->semiMajorAxisDistributionLimit, 1016598.4241361 );
+    BOOST_CHECK_EQUAL( testParticleCase->synodicPeriodMaximum, 1577880000.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->startUpIntegrationDuration, 0.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->centralBodyJ2GravityCoefficient, 0.0 );    
+    BOOST_CHECK_EQUAL( testParticleCase->centralBodyEquatorialRadius, 0.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->conjunctionEventDetectionDistance, 48868000.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->oppositionEventDetectionDistance, 146604000.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionMean, 0.0 );
+    BOOST_CHECK_SMALL( testParticleCase->eccentricityDistributionAngle - ( PI / 4.0 ), 1.0e-15 );    
+    BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionFullWidthHalfMaximum, 0.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionMean, 0.0 );
+    BOOST_CHECK_SMALL( testParticleCase->inclinationDistributionAngle - ( PI / 4.0 ), 1.0e-15 );    
+    BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionFullWidthHalfMaximum, 0.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorType, DOPRI853 );
+    BOOST_CHECK_EQUAL( testParticleCase->initialStepSize, 60.0 ); 
+    BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorRelativeTolerance, 1.0e-12 );
+    BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorAbsoluteTolerance, 1.0e-15 );
+}
 
-// //! Test run-time error in case of multiple identical test particle cases defined in SQLite3 
-// //! database.
-// BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
-// {
-//     using namespace basics;
-//     using namespace database;
+//! Test run-time error in case of multiple identical test particle cases defined in SQLite3 
+//! database.
+BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
+{
+    using namespace basics;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase
-//             = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleCaseMultipleError.sqlite";
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseTestParticleCaseMultipleError.sqlite";
 
-//     // Try to retrieve case data.
-//     bool isExtraRowPresent = false;
+    // Try to retrieve case data.
+    bool isExtraRowPresent = false;
 
-//     try
-//     {
-//         // Retrieve test particle case data.
-//         const TestParticleCasePointer testParticleCase
-//                 = getTestParticleCase( absolutePathToTestDatabase,
-//                                        "test_case", "test_particle_case" );
-//     }
+    try
+    {
+        // Retrieve test particle case data.
+        const TestParticleCasePointer testParticleCase
+                = getTestParticleCase( absolutePathToTestDatabase,
+                                       "test_case", "test_particle_case" );
+    }
 
-//     // Catch expected run-time error.
-//     catch( std::runtime_error& )
-//     {
-//         isExtraRowPresent = true;
-//     }
+    // Catch expected run-time error.
+    catch( std::runtime_error& )
+    {
+        isExtraRowPresent = true;
+    }
 
-//     // Check that the expected run-time error was thrown.
-//     BOOST_CHECK( isExtraRowPresent );
-// }
+    // Check that the expected run-time error was thrown.
+    BOOST_CHECK( isExtraRowPresent );
+}
 
 // //! Test implementation of function to get incomplete simulations from test particle input table in
 // //! SQLite3 database for a given case ID.

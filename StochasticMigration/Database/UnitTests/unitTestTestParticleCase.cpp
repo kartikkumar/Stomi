@@ -7,6 +7,8 @@
  *      YYMMDD    Author            Comment
  *      130329    K. Kumar          File created.
  *      130704    K. Kumar          Updated tests based on revised table schema.
+ *      130717    K. Kumar          Updated tests based on revised table schema. 
+ *                                  Removed outputInterval unit test.
  *
  *    References
  *
@@ -42,8 +44,6 @@ namespace unit_tests
 using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 using namespace tudat::basic_mathematics::mathematical_constants;
 
-using namespace database;
-
 //! Test fixture used to test the TestParticleCase struct.
 struct TestParticleCaseFixture
 {
@@ -75,7 +75,7 @@ public:
           inclinationDistributionMean( 1.0e-3 ),
           inclinationDistributionAngle( PI / 4.0 ),          
           inclinationDistributionFullWidthHalfMaximum( 1.0e-4 ),          
-          numericalIntegratorType( DOPRI853 ),
+          numericalIntegratorType( "DOPRI853" ),
           initialStepSize( 60.0 ),          
           numericalIntegratorRelativeTolerance( 1.0e-12 ),
           numericalIntegratorAbsoluteTolerance( 1.0e-15 )
@@ -86,96 +86,96 @@ public:
     // Required parameters.
 
     //! Case ID.
-    const int caseId;
+    int caseId;
 
     //! Case name.
-    const std::string caseName;
+    std::string caseName;
 
     //! Random walk simulation duration [s].
-    const double randomWalkSimulationDuration;
+    double randomWalkSimulationDuration;
 
     //! Central body gravitational parameter [m^3 s^-2].
-    const double centralBodyGravitationalParameter;
+    double centralBodyGravitationalParameter;
 
     //! Perturbed body radius [m].
-    const double perturbedBodyRadius;
+    double perturbedBodyRadius;
 
     //! Perturbed body bulk density [kg m^-3].
-    const double perturbedBodyBulkDensity;
+    double perturbedBodyBulkDensity;
 
     //! Perturbed body state in Keplerian elements at T0.
-    const tudat::basic_mathematics::Vector6d perturbedBodyStateInKeplerianElementsAtT0;
+    tudat::basic_mathematics::Vector6d perturbedBodyStateInKeplerianElementsAtT0;
 
     //! Limits on maximum semi-major axis values wrt perturbed body [m].
-    const double semiMajorAxisDistributionLimit;
+    double semiMajorAxisDistributionLimit;
 
     // Optional parameters.
 
     //! Maximum synodic period permitted [s].
-    const double synodicPeriodMaximum;
+    double synodicPeriodMaximum;
 
     //! Startup integration duration [s].
-    const double startUpIntegrationDuration;
+    double startUpIntegrationDuration;
 
     //! Central body J2 gravity field coefficient.
-    const double centralBodyJ2GravityCoefficient;
+    double centralBodyJ2GravityCoefficient;
 
     //! Central body equatorial radius [m].
-    const double centralBodyEquatorialRadius;
+    double centralBodyEquatorialRadius;
 
     //! Mutual distance used to detect start and end of conjunction events [m].
-    const double conjunctionEventDetectionDistance;
+    double conjunctionEventDetectionDistance;
 
     //! Distance used to detect start and end of opposition events [m].
-    const double oppositionEventDetectionDistance;
+    double oppositionEventDetectionDistance;
 
     //! Mean eccentricity value for distribution.
-    const double eccentricityDistributionMean;
+    double eccentricityDistributionMean;
 
     //! Angle between vector components of eccentricity distribution [rad].
-    const double eccentricityDistributionAngle;
+    double eccentricityDistributionAngle;
 
     //! FWHM eccentricity value for distribution.
-    const double eccentricityDistributionFullWidthHalfMaximum;
+    double eccentricityDistributionFullWidthHalfMaximum;
 
     //! Mean inclination value for distribution [rad].
-    const double inclinationDistributionMean;
+    double inclinationDistributionMean;
 
     //! Angle between vector components of inclination distribution [rad].
-    const double inclinationDistributionAngle;
+    double inclinationDistributionAngle;
 
     //! FWHM inclination value for distribution [rad].
-    const double inclinationDistributionFullWidthHalfMaximum;
+    double inclinationDistributionFullWidthHalfMaximum;
 
     //! Numerical integrator type.
-    NumericalIntegratorType numericalIntegratorType;
+    std::string numericalIntegratorType;
 
     //! Initial step size for numerical integrator.
-    const double initialStepSize;
+    double initialStepSize;
 
     //! Relative tolerance for numerical integrator.
-    const double numericalIntegratorRelativeTolerance;
+    double numericalIntegratorRelativeTolerance;
 
     //! Absolute tolerance for numerical integrator.
-    const double numericalIntegratorAbsoluteTolerance;
+    double numericalIntegratorAbsoluteTolerance;
 
-    // //! Get test particle case created from specified parameters.
-    // database::TestParticleCasePointer getTestParticleCase( )
-    // {
-    //     return boost::make_shared< database::TestParticleCase >(
-    //         database::TestParticleCase( 
-    //             caseId, caseName, randomWalkSimulationDuration, centralBodyGravitationalParameter,
-    //             perturbedBodyRadius, perturbedBodyBulkDensity, 
-    //             perturbedBodyStateInKeplerianElementsAtT0, semiMajorAxisDistributionLimit, 
-    //             synodicPeriodMaximum, startUpIntegrationDuration, centralBodyJ2GravityCoefficient, 
-    //             centralBodyEquatorialRadius, conjunctionEventDetectionDistance, 
-    //             oppositionEventDetectionDistance, eccentricityDistributionMean, 
-    //             eccentricityDistributionAngle, eccentricityDistributionFullWidthHalfMaximum, 
-    //             inclinationDistributionMean, inclinationDistributionAngle,
-    //             inclinationDistributionFullWidthHalfMaximum, numericalIntegratorType, 
-    //             initialStepSize, numericalIntegratorRelativeTolerance,
-    //             numericalIntegratorAbsoluteTolerance ) );
-    // }
+    //! Get test particle case created from specified parameters.
+    database::TestParticleCasePointer getTestParticleCase( )
+    {
+        return boost::make_shared< database::TestParticleCase >(
+            database::TestParticleCase( 
+                caseId, caseName, randomWalkSimulationDuration, centralBodyGravitationalParameter,
+                perturbedBodyRadius, perturbedBodyBulkDensity, 
+                perturbedBodyStateInKeplerianElementsAtT0, semiMajorAxisDistributionLimit, 
+                synodicPeriodMaximum, startUpIntegrationDuration, centralBodyJ2GravityCoefficient, 
+                centralBodyEquatorialRadius, conjunctionEventDetectionDistance, 
+                oppositionEventDetectionDistance, eccentricityDistributionMean, 
+                eccentricityDistributionAngle, eccentricityDistributionFullWidthHalfMaximum, 
+                inclinationDistributionMean, inclinationDistributionAngle,
+                inclinationDistributionFullWidthHalfMaximum, numericalIntegratorType, 
+                initialStepSize, numericalIntegratorRelativeTolerance,
+                numericalIntegratorAbsoluteTolerance ) );
+    }
 
 protected:
 
@@ -184,630 +184,648 @@ private:
 
 BOOST_FIXTURE_TEST_SUITE( test_test_particle_case, TestParticleCaseFixture )
 
-// //! Test correct construction of test particle case.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseStructContruction )
-// {
-//     // Create test particle case.
-//     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
-
-//     // Check that the test particle case created contains all the data as required.
-//     BOOST_CHECK_EQUAL( testParticleCase->caseId, caseId );    
-//     BOOST_CHECK_EQUAL( testParticleCase->caseName, caseName );      
-//     BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationDuration, 
-//                        randomWalkSimulationDuration );
-//     BOOST_CHECK_EQUAL( testParticleCase->synodicPeriodLimit, synodicPeriodLimit );
-//     BOOST_CHECK_EQUAL( testParticleCase->outputInterval, outputInterval );
-//     BOOST_CHECK_EQUAL( testParticleCase->startUpIntegrationDuration, startUpIntegrationDuration );
-//     BOOST_CHECK_EQUAL( testParticleCase->conjunctionEventDetectionDistance, 
-//                        conjunctionEventDetectionDistance );
-//     BOOST_CHECK_EQUAL( testParticleCase->oppositionEventDetectionDistance, 
-//                        oppositionEventDetectionDistance );
-//     BOOST_CHECK_EQUAL( testParticleCase->centralBodyGravitationalParameter, 
-//                        centralBodyGravitationalParameter );
-//     BOOST_CHECK_EQUAL( testParticleCase->centralBodyJ2GravityCoefficient, 
-//                        centralBodyJ2GravityCoefficient );
-//     BOOST_CHECK_EQUAL( testParticleCase->centralBodyEquatorialRadius, 
-//                        centralBodyEquatorialRadius );
-//     BOOST_CHECK_EQUAL( testParticleCase->semiMajorAxisDistributionLimit, 
-//                        semiMajorAxisDistributionLimit );
-//     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionMean, 
-//                        eccentricityDistributionMean );
-//     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionAngle, 
-//                        eccentricityDistributionAngle );
-//     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionFullWidthHalfMaximum,
-//                        eccentricityDistributionFullWidthHalfMaximum );
-//     BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionMean, 
-//                        inclinationDistributionMean );
-//     BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionAngle, 
-//                        inclinationDistributionAngle );
-//     BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionFullWidthHalfMaximum,
-//                        inclinationDistributionFullWidthHalfMaximum );
-//     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyRadius, perturbedBodyRadius );
-//     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyBulkDensity, perturbedBodyBulkDensity );    
-
-//     {
-//         TUDAT_CHECK_MATRIX_BASE( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0,
-//                                  perturbedBodyStateInKeplerianElementsAtT0 )
-//                 BOOST_CHECK_EQUAL(
-//                     testParticleCase->perturbedBodyStateInKeplerianElementsAtT0.coeff( row, col ),
-//                     perturbedBodyStateInKeplerianElementsAtT0.coeff( row, col ) );
-//     }
-
-//     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorType, numericalIntegratorType );
-//     BOOST_CHECK_EQUAL( testParticleCase->initialStepSize, initialStepSize );    
-//     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorRelativeTolerance, 
-//                        numericalIntegratorRelativeTolerance );
-//     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorAbsoluteTolerance, 
-//                        numericalIntegratorAbsoluteTolerance );
-// }
-
-// //! Test initialization of test particle case ID with non-positive number.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseIdNonPositiveNumberError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
-
-//     // Set case ID to invalid (non-positive) number.
-//     caseId = -1;
-
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
-
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
-
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
-
-// //! Test initialization of test particle case with non-positive random walk simulation duration.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveRandomWalkSimulationDurationError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
-
-//     // Set random walk duration to invalid (non-positive) value.
-//     randomWalkSimulationDuration = -1.0;
-
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
-
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
-
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
-
-// //! Test initialization of test particle case with non-positive synodic period limit.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveSynodicPeriodLimitError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
-
-//     // Set synodic period limit to invalid (non-positive) value.
-//     synodicPeriodLimit = -1.0;
+//! Test correct construction of test particle case.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseStructContruction )
+{
+    using namespace database;
+
+    // Create test particle case.
+    database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
+
+    // Check that the test particle case created contains all the data as required.
+    BOOST_CHECK_EQUAL( testParticleCase->caseId, caseId );    
+    BOOST_CHECK_EQUAL( testParticleCase->caseName, caseName );      
+    BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationDuration, 
+                       randomWalkSimulationDuration );
+    BOOST_CHECK_EQUAL( testParticleCase->centralBodyGravitationalParameter, 
+                       centralBodyGravitationalParameter );
+    BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyRadius, perturbedBodyRadius );
+    BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyBulkDensity, perturbedBodyBulkDensity );  
+    {
+        TUDAT_CHECK_MATRIX_BASE( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0,
+                                 perturbedBodyStateInKeplerianElementsAtT0 )
+                BOOST_CHECK_EQUAL(
+                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0.coeff( row, col ),
+                    perturbedBodyStateInKeplerianElementsAtT0.coeff( row, col ) );
+    }
+    BOOST_CHECK_EQUAL( testParticleCase->semiMajorAxisDistributionLimit, 
+                       semiMajorAxisDistributionLimit );
+    BOOST_CHECK_EQUAL( testParticleCase->synodicPeriodMaximum, synodicPeriodMaximum );
+    BOOST_CHECK_EQUAL( testParticleCase->startUpIntegrationDuration, startUpIntegrationDuration );
+    BOOST_CHECK_EQUAL( testParticleCase->centralBodyJ2GravityCoefficient, 
+                       centralBodyJ2GravityCoefficient );
+    BOOST_CHECK_EQUAL( testParticleCase->centralBodyEquatorialRadius, 
+                       centralBodyEquatorialRadius );
+    BOOST_CHECK_EQUAL( testParticleCase->conjunctionEventDetectionDistance, 
+                       conjunctionEventDetectionDistance );
+    BOOST_CHECK_EQUAL( testParticleCase->oppositionEventDetectionDistance, 
+                       oppositionEventDetectionDistance );
+    BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionMean, 
+                       eccentricityDistributionMean );
+    BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionAngle, 
+                       eccentricityDistributionAngle );
+    BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionFullWidthHalfMaximum,
+                       eccentricityDistributionFullWidthHalfMaximum );
+    BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionMean, 
+                       inclinationDistributionMean );
+    BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionAngle, 
+                       inclinationDistributionAngle );
+    BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionFullWidthHalfMaximum,
+                       inclinationDistributionFullWidthHalfMaximum );
+    BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorType, DOPRI853 );
+    BOOST_CHECK_EQUAL( testParticleCase->initialStepSize, initialStepSize );    
+    BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorRelativeTolerance, 
+                       numericalIntegratorRelativeTolerance );
+    BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorAbsoluteTolerance, 
+                       numericalIntegratorAbsoluteTolerance );
+}
+
+//! Test initialization of test particle case ID with non-positive number.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseIdNonPositiveNumberError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
+
+    // Set case ID to invalid (non-positive) number.
+    caseId = -1;
+
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
+
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
+
+//! Test initialization of test particle case with empty name
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNameEmpty )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
+
+    // Set case name to empty string.
+    caseName = "";
+
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
+
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
+
+//! Test initialization of test particle case with non-positive random walk simulation duration.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveRandomWalkSimulationDurationError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
+
+    // Set random walk duration to invalid (non-positive) value.
+    randomWalkSimulationDuration = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive output interval.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveOutputIntervalError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive central body gravitational 
+//! parameter.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveCentralBodyGravitationalParameterError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set output interval to invalid (non-positive) value.
-//     outputInterval = -1.0;
+    // Set central body gravitational parameter to invalid (non-positive) value.
+    centralBodyGravitationalParameter = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive start-up integration duration.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveStartUpIntegrationDurationError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive perturbed body radius.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivePerturbedBodyRadiusError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set start-up integration duration to invalid (non-positive) value.
-//     startUpIntegrationDuration = -1.0;
+    // Set perturbed body radius to invalid (non-positive) value.
+    perturbedBodyRadius = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive conjunction event detection. 
-// //! distance.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveConjunctionEventDetectionDistanceError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive perturbed body bulk density.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivePerturbedBodyBulkDensityError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set conjunction event detection distance to invalid (non-positive) value.
-//     conjunctionEventDetectionDistance = -1.0;
+    // Set perturbed body bulk density to invalid (non-positive) value.
+    perturbedBodyBulkDensity = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive opposition event detection.
-// //! distance.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveOppositionEventDetectionDistanceError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive perturbed body initial semi-major 
+//! axis.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivePerturbedBodyInitialSemiMajorAxisError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set opposition event detection distance to invalid (non-positive) value.
-//     oppositionEventDetectionDistance = -1.0;
+    // Set perturbed body initial semi-major axis to invalid (non-positive) value.
+    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive central body gravitational 
-// //! parameter.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveCentralBodyGravitationalParameterError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-elliptical perturbed body initial
+//! eccentricity axis.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivePerturbedBodyInitialEccentricityError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set central body gravitational parameter to invalid (non-positive) value.
-//     centralBodyGravitationalParameter = -1.0;
+    // Set perturbed body initial eccentricity to invalid (non-elliptical) value.
+    perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive central body J2 gravity 
-// //! coefficient. 
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveCentralBodyJ2GravityCoefficientError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive perturbed body initial inclination
+//! axis.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivePerturbedBodyInitialInclinationError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set central body J2 gravity coefficient to invalid (non-positive) value.
-//     centralBodyJ2GravityCoefficient = -1.0;
+    // Set perturbed body initial inclination to invalid (non-positive) value.
+    perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive central body equatorial radius.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveCentralBodyEquatorialRadiusError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive semi-major axis distribution limit.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveSemiMajorAxisDistributionLimitError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set central body equatorial radius to invalid (non-positive) value.
-//     centralBodyEquatorialRadius = -1.0;
+    // Set semi-major axis distribution limit to invalid (non-positive) value.
+    semiMajorAxisDistributionLimit = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive semi-major axis distribution limit.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveSemiMajorAxisDistributionLimitError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive synodic period limit.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivesynodicPeriodMaximumError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set semi-major axis distribution limit to invalid (non-positive) value.
-//     semiMajorAxisDistributionLimit = -1.0;
+    // Set synodic period limit to invalid (non-positive) value.
+    synodicPeriodMaximum = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive eccentricity distribution mean.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionMeanError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive start-up integration duration.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveStartUpIntegrationDurationError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set eccentricity distribution mean to invalid (non-positive) value.
-//     eccentricityDistributionMean = -1.0;
+    // Set start-up integration duration to invalid (non-positive) value.
+    startUpIntegrationDuration = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive eccentricity distribution angle.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionAngleError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive central body J2 gravity 
+//! coefficient. 
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveCentralBodyJ2GravityCoefficientError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set eccentricity distribution angle to invalid (non-positive) value.
-//     eccentricityDistributionAngle = -1.0;
+    // Set central body J2 gravity coefficient to invalid (non-positive) value.
+    centralBodyJ2GravityCoefficient = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive eccentricity distribution FWHM .
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionFWHMError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive central body equatorial radius.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveCentralBodyEquatorialRadiusError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set eccentricity distribution FWHM to invalid (non-positive) value.
-//     eccentricityDistributionFullWidthHalfMaximum = -1.0;
+    // Set central body equatorial radius to invalid (non-positive) value.
+    centralBodyEquatorialRadius = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive inclination distribution mean.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationDistributionMeanError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive conjunction event detection. 
+//! distance.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveConjunctionEventDetectionDistanceError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set inclination distribution mean to invalid (non-positive) value.
-//     inclinationDistributionMean = -1.0;
+    // Set conjunction event detection distance to invalid (non-positive) value.
+    conjunctionEventDetectionDistance = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive inclination distribution angle.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationDistributionAngleError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive opposition event detection.
+//! distance.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveOppositionEventDetectionDistanceError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set inclination distribution angle to invalid (non-positive) value.
-//     inclinationDistributionAngle = -1.0;
+    // Set opposition event detection distance to invalid (non-positive) value.
+    oppositionEventDetectionDistance = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive inclination distribution FWHM.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationDistributionFWHMError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive eccentricity distribution mean.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionMeanError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set inclination distribution FWHM to invalid (non-positive) value.
-//     inclinationDistributionFullWidthHalfMaximum = -1.0;
+    // Set eccentricity distribution mean to invalid (non-positive) value.
+    eccentricityDistributionMean = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive perturbed body radius.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivePerturbedBodyRadiusError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive eccentricity distribution angle.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionAngleError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set perturbed body radius to invalid (non-positive) value.
-//     perturbedBodyRadius = -1.0;
+    // Set eccentricity distribution angle to invalid (non-positive) value.
+    eccentricityDistributionAngle = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive perturbed body bulk density.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivePerturbedBodyBulkDensityError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive eccentricity distribution FWHM .
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionFWHMError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set perturbed body bulk density to invalid (non-positive) value.
-//     perturbedBodyBulkDensity = -1.0;
+    // Set eccentricity distribution FWHM to invalid (non-positive) value.
+    eccentricityDistributionFullWidthHalfMaximum = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive perturbed body initial semi-major 
-// //! axis.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivePerturbedBodyInitialSemiMajorAxisError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive inclination distribution mean.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationDistributionMeanError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set perturbed body initial semi-major axis to invalid (non-positive) value.
-//     perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) = -1.0;
+    // Set inclination distribution mean to invalid (non-positive) value.
+    inclinationDistributionMean = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-elliptical perturbed body initial
-// //! eccentricity axis.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivePerturbedBodyInitialEccentricityError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive inclination distribution angle.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationDistributionAngleError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set perturbed body initial eccentricity to invalid (non-elliptical) value.
-//     perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) = -1.0;
+    // Set inclination distribution angle to invalid (non-positive) value.
+    inclinationDistributionAngle = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive perturbed body initial inclination
-// //! axis.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivePerturbedBodyInitialInclinationError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive inclination distribution FWHM.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationDistributionFWHMError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set perturbed body initial inclination to invalid (non-positive) value.
-//     perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) = -1.0;
+    // Set inclination distribution FWHM to invalid (non-positive) value.
+    inclinationDistributionFullWidthHalfMaximum = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with empty numerical integrator type.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseEmptyNumericalIntegratorTypeError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with empty numerical integrator type.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseEmptyNumericalIntegratorTypeError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set numerical integrator type to invalid (non-positive) value.
-//     numericalIntegratorType = "";
+    // Set numerical integrator type to empty string;
+    numericalIntegratorType = "";
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive numerical integrator relative 
-// //! tolerance.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveNumericalIntegratorRelativeToleranceError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-existent numerical integrator type.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonExistentNumericalIntegratorTypeError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set numerical integrator relative tolerance to invalid (non-positive) value.
-//     numericalIntegratorRelativeTolerance = -1.0;
+    // Set numerical integrator type to non-existent type.
+    numericalIntegratorType = "Non-existent integrator";
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test initialization of test particle case with non-positive numerical integrator absolute 
-// //! tolerance.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveNumericalIntegratorAbsoluteToleranceError )
-// {
-//     // Set flag to indicate if error is thrown to false.
-//     bool isError = false;
+//! Test initialization of test particle case with non-positive numerical integrator relative 
+//! tolerance.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveNumericalIntegratorRelativeToleranceError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Set numerical integrator absolute tolerance to invalid (non-positive) value.
-//     numericalIntegratorAbsoluteTolerance = -1.0;
+    // Set numerical integrator relative tolerance to invalid (non-positive) value.
+    numericalIntegratorRelativeTolerance = -1.0;
 
-//     // Try to create test particle case.
-//     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Catch expected run-time error.
-//     catch ( std::runtime_error& error ) { isError = true; }
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     // Check that construction of test particle case failed.
-//     BOOST_CHECK( isError );
-// }
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-// //! Test comparison of TestParticleCase pointers using overloaded == operator.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseEqualComparison )
-// {
-//     // Create TestParticleCase pointers.
-//     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
-//     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
+//! Test initialization of test particle case with non-positive numerical integrator absolute 
+//! tolerance.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveNumericalIntegratorAbsoluteToleranceError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
 
-//     // Check that operator is overloaded correctly.
-//     BOOST_CHECK( *testParticleCase == *testParticleCase2 );
-// }
+    // Set numerical integrator absolute tolerance to invalid (non-positive) value.
+    numericalIntegratorAbsoluteTolerance = -1.0;
 
-// //! Test comparison of TestParticleCase pointers using overloaded != operator.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseNonEqualComparison )
-// {
-//     using namespace assist::basics::operator_overload_functions;
+    // Try to create test particle case.
+    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
 
-//     // Create TestParticleCase pointers.
-//     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
 
-//     caseId = 2;
-//     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
+    // Check that construction of test particle case failed.
+    BOOST_CHECK( isError );
+}
 
-//     // Check that operator is overloaded correctly.
-//     BOOST_CHECK( *testParticleCase != *testParticleCase2 );
-// }
+//! Test comparison of TestParticleCase pointers using overloaded == operator.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseEqualComparison )
+{
+    // Create TestParticleCase pointers.
+    database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
+    database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
-// //! Test comparison of TestParticleCase pointers using overloaded < operator.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseLessThanComparison )
-// {
-//     // Create TestParticleCase pointers.
-//     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *testParticleCase == *testParticleCase2 );
+}
 
-//     caseId = 2;
-//     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
+//! Test comparison of TestParticleCase pointers using overloaded != operator.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonEqualComparison )
+{
+    using namespace assist::basics::operator_overload_functions;
 
-//     // Check that operator is overloaded correctly.
-//     BOOST_CHECK( *testParticleCase < *testParticleCase2 );
-// }
+    // Create TestParticleCase pointers.
+    database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-// //! Test comparison of TestParticleCase pointers using overloaded > operator.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseGreaterThanComparison )
-// {
-//     using namespace assist::basics::operator_overload_functions;
+    caseId = 2;
+    database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
-//     // Create TestParticleCase pointers.
-//     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *testParticleCase != *testParticleCase2 );
+}
 
-//     caseId = 2;
-//     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
+//! Test comparison of TestParticleCase pointers using overloaded < operator.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseLessThanComparison )
+{
+    // Create TestParticleCase pointers.
+    database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-//     // Check that operator is overloaded correctly.
-//     BOOST_CHECK( *testParticleCase2 > *testParticleCase );
-// }
+    caseId = 2;
+    database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
-// //! Test comparison of TestParticleCase pointers using overloaded <= operator.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseLessThanOrEqualComparison )
-// {
-//     using namespace assist::basics::operator_overload_functions;
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *testParticleCase < *testParticleCase2 );
+}
 
-//     // Create TestParticleCase pointers.
-//     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
+//! Test comparison of TestParticleCase pointers using overloaded > operator.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseGreaterThanComparison )
+{
+    using namespace assist::basics::operator_overload_functions;
 
-//     caseId = 2;
-//     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
+    // Create TestParticleCase pointers.
+    database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-//     // Check that operator is overloaded correctly.
-//     BOOST_CHECK( *testParticleCase <= *testParticleCase2 );
-// }
+    caseId = 2;
+    database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
-// //! Test comparison of TestParticleCase pointers using overloaded >= operator.
-// BOOST_AUTO_TEST_CASE( testTestParticleCaseGreaterThanOrEqualComparison )
-// {
-//     using namespace assist::basics::operator_overload_functions;
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *testParticleCase2 > *testParticleCase );
+}
 
-//     // Create TestParticleCase pointers.
-//     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
+//! Test comparison of TestParticleCase pointers using overloaded <= operator.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseLessThanOrEqualComparison )
+{
+    using namespace assist::basics::operator_overload_functions;
 
-//     caseId = 2;
-//     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
+    // Create TestParticleCase pointers.
+    database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-//     // Check that operator is overloaded correctly.
-//     BOOST_CHECK( *testParticleCase2 >= *testParticleCase );
-// }
+    caseId = 2;
+    database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
+
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *testParticleCase <= *testParticleCase2 );
+}
+
+//! Test comparison of TestParticleCase pointers using overloaded >= operator.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseGreaterThanOrEqualComparison )
+{
+    using namespace assist::basics::operator_overload_functions;
+
+    // Create TestParticleCase pointers.
+    database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
+
+    caseId = 2;
+    database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
+
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *testParticleCase2 >= *testParticleCase );
+}
 
 BOOST_AUTO_TEST_SUITE_END( )
 
