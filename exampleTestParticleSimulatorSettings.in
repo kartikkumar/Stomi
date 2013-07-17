@@ -52,12 +52,22 @@ DB                  : /Users/kartikkumar/Desktop/testDatabase.db
 # OUTPUT              : database
 
 # Set the file output directory.
-# This parameter should only be set in case the OUTPUT parameter is set to "file". With this 
-# parameter, the absolute path to the output directory can be specified, where the output files 
-# generated are stored.
+# This parameter should only be set in case the OUTPUT parameter is set to "file". The parameter 
+# will be ignored if OUTPUT is set to "database".
+# With this parameter, the absolute path to the output directory can be specified, where the output  
+# files generated are stored.
 # The default directory for the output files is the root directory of the Stochastic Migration
 # project.
 # FILEOUTPUTDIR       : rootdir
+
+# Set the output interval.
+# This parameter should only be set in case the OUTPUT parameter is set to "file". The parameter 
+# will be ignored if OUTPUT is set to "database".
+# With this parameter, the output intervals giving the spacing of the data written to file can be
+# specified. 
+# The default for the output interval is 3600.0 s.
+# UNIT: s
+# TOUTPUT             : 3600.0
 
 # Set the simulations to execute.
 # This parameter sets the simulations to execute, based on the simulation IDs in the input table in
@@ -81,3 +91,12 @@ DB                  : /Users/kartikkumar/Desktop/testDatabase.db
 # By default, the values of the parameters are extracted from the test particle case table in the
 # database. By uncommenting any of these parameters, individual case settings can be overriden.
 # TRANDOM             :
+# GRAVPARAM           :
+# RPERTURBED          :
+# RHOPERTURBED        :
+# SMA0                :
+# ECC0                :
+# INC0                :
+# AOP0                :
+# LAN0                :
+# TRAN0               :

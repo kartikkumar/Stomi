@@ -207,7 +207,7 @@ TestParticleInputTable getSelectedTestParticleInputTable(
 
 // //! Get test particle kick table.
 // TestParticleKickTable getTestParticleKickTable(
-//         const std::string& databaseAbsolutePath, const double randomWalkDuration,
+//         const std::string& databaseAbsolutePath, const double randomWalkPeriod,
 //         const TestParticleSimulationNumbersAndMassRatios&
 //         testParticleSimulationNumbersAndMassRatios,
 //         const std::string& testParticleKickTableName )
@@ -237,7 +237,7 @@ TestParticleInputTable getSelectedTestParticleInputTable(
 
 //     testParticleKickQuery << testParticleSimulationsOneButLastIterator->first
 //                          << ") AND \"conjunctionEpoch\" > 0.0 AND \"conjunctionEpoch\" <= "
-//                          << randomWalkDuration << ";";
+//                          << randomWalkPeriod << ";";
 
 //     // Populate vector of test particle simulation numbers.
 //     std::vector< unsigned int > testParticleSimulationNumbers;

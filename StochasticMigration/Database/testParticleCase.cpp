@@ -44,7 +44,7 @@ TestParticleCase::TestParticleCase(
     // Required parameters.
     const int aCaseId,
     const std::string aCaseName,
-    const double aRandomWalkSimulationDuration,
+    const double aRandomWalkSimulationPeriod,
     const double aCentralBodyGravitationalParameter,
     const double aPerturbedBodyRadius,
     const double aPerturbedBodyBulkDensity,
@@ -52,7 +52,7 @@ TestParticleCase::TestParticleCase(
     const double aSemiMajorAxisDistributionLimit,
     // Optional parameters.
     const double aSynodicPeriodMaximum,
-    const double aStartUpIntegrationDuration,
+    const double aStartUpIntegrationPeriod,
     const double aCentralBodyJ2GravityCoefficient,
     const double aCentralBodyEquatorialRadius,            
     const double aConjunctionEventDetectionDistance,
@@ -69,8 +69,8 @@ TestParticleCase::TestParticleCase(
     const double aNumericalIntegratorAbsoluteTolerance )
         : caseId( checkPositive( aCaseId, "Case ID" ) ),
           caseName( aCaseName ),
-          randomWalkSimulationDuration( 
-            checkPositive( aRandomWalkSimulationDuration, "Random walk duration [s]" ) ),
+          randomWalkSimulationPeriod( 
+            checkPositive( aRandomWalkSimulationPeriod, "Random walk period [s]" ) ),
           centralBodyGravitationalParameter( 
             checkPositive( aCentralBodyGravitationalParameter, 
                            "Central body gravitational parameter [m^3 s^-2]" ) ),
@@ -92,8 +92,8 @@ TestParticleCase::TestParticleCase(
                            "Semi-major axis distribution limit [m]" ) ),
           synodicPeriodMaximum( 
             checkPositive( aSynodicPeriodMaximum, "Synodic period limit [s]" ) ),
-          startUpIntegrationDuration( 
-            checkPositive( aStartUpIntegrationDuration, "Startup integration duration [s]" ) ),
+          startUpIntegrationPeriod( 
+            checkPositive( aStartUpIntegrationPeriod, "Startup integration period [s]" ) ),
           centralBodyJ2GravityCoefficient( 
             checkGreaterThan( aCentralBodyJ2GravityCoefficient, 
                               "Central body J2 gravity coefficient [-]", NEGATIVE_ZERO ) ),
@@ -167,8 +167,8 @@ bool operator==( const TestParticleCase& testParticleCase1,
 {
     return ( testParticleCase1.caseId == testParticleCase2.caseId
              && testParticleCase1.caseName == testParticleCase2.caseName
-             && testParticleCase1.randomWalkSimulationDuration
-             == testParticleCase2.randomWalkSimulationDuration
+             && testParticleCase1.randomWalkSimulationPeriod
+             == testParticleCase2.randomWalkSimulationPeriod
              && testParticleCase1.centralBodyGravitationalParameter
              == testParticleCase2.centralBodyGravitationalParameter
              && testParticleCase1.perturbedBodyRadius == testParticleCase2.perturbedBodyRadius
@@ -179,8 +179,8 @@ bool operator==( const TestParticleCase& testParticleCase1,
              && testParticleCase1.semiMajorAxisDistributionLimit 
              == testParticleCase2.semiMajorAxisDistributionLimit
              && testParticleCase1.synodicPeriodMaximum == testParticleCase2.synodicPeriodMaximum
-             && testParticleCase1.startUpIntegrationDuration
-             == testParticleCase2.startUpIntegrationDuration
+             && testParticleCase1.startUpIntegrationPeriod
+             == testParticleCase2.startUpIntegrationPeriod
              && testParticleCase1.centralBodyJ2GravityCoefficient
              == testParticleCase2.centralBodyJ2GravityCoefficient
              && testParticleCase1.centralBodyEquatorialRadius
@@ -236,9 +236,9 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
 
     outputStream << "Case ID: " << testParticleCase.caseId << endl;
     outputStream << "Case: " << testParticleCase.caseName << endl;    
-    outputStream << "Random walk simulation duration [Jyr]: "
+    outputStream << "Random walk simulation period [Jyr]: "
                  << convertSecondsToJulianYears( 
-                        testParticleCase.randomWalkSimulationDuration ) << endl;
+                        testParticleCase.randomWalkSimulationPeriod ) << endl;
     outputStream << "Central body gravitational parameter [m^3 s^-2]: "
                  << testParticleCase.centralBodyGravitationalParameter << endl;
     outputStream << "Semi-major axis distribution limit [m]: "
@@ -281,8 +281,8 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
     outputStream << "Synodic period maximum [Jyr]: "
                  << convertSecondsToJulianYears( testParticleCase.synodicPeriodMaximum )
                  << endl;
-    outputStream << "Startup integration duration [Jyr]: "
-                 << convertSecondsToJulianYears( testParticleCase.startUpIntegrationDuration )
+    outputStream << "Startup integration period [Jyr]: "
+                 << convertSecondsToJulianYears( testParticleCase.startUpIntegrationPeriod )
                  << endl;
     outputStream << "Central body J2 gravity coefficient: "
                  << testParticleCase.centralBodyJ2GravityCoefficient << endl;

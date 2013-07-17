@@ -18,6 +18,7 @@
  *      120629    K. Kumar          Updated propagation loop to used fixed output interval.
  *      120808    K. Kumar          Updated to new dictionary-based input file system.
  *      120830    K. Kumar          Cleaned up code; implemented composite state derivative model.
+ *      130717    K. Kumar          Updated and cleaned up the input deck.
  *
  *    References
  *      Kumar, K., de Pater, I., Showalter, M.R. In prep, 2013.
@@ -184,6 +185,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << "File output directory                                     "
          << fileOutputDirectory << endl;
 
+    const double outputInterval = extractParameterValue< double >(
+            parsedData->begin( ), parsedData->end( ),
+            findEntry( dictionary, "OUTPUTINTERVAL" ), 3600.0 );
+    cout << "Output interval                                           " 
+         << outputInterval << " s" << endl;     
+
     const string simulationsToExecute = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "SIMULATIONSTOEXECUTE" ), "ALL" );
@@ -215,213 +222,218 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // extracted from the input file, to ensure that none of these parameters are used globally
     // elsewhere in this file.
     {
-        // const TestParticleCasePointer caseDataFromDatabase = getTestParticleCase(
-        //         databasePath, caseName, testParticleCaseTableName );
+        const TestParticleCasePointer caseDataFromDatabase = getTestParticleCase(
+                databasePath, caseName, testParticleCaseTableName );
 
+        // Check if any case parameters are overwritten by user input.
+        const double randomWalkSimulationPeriod = extractParameterValue< double >(
+            parsedData->begin( ), parsedData->end( ),
+            findEntry( dictionary, "RANDOMWALKSIMULATIONPERIOD" ),
+            caseDataFromDatabase->randomWalkSimulationPeriod, &convertJulianYearsToSeconds );
+        cout << "Random walk simulation period                             " 
+             << randomWalkSimulationPeriod / JULIAN_YEAR << " yrs" << endl;
+
+        const double centralBodyGravitationalParameter = extractParameterValue< double >(
+            parsedData->begin( ), parsedData->end( ),
+            findEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER" ),
+            caseDataFromDatabase->centralBodyGravitationalParameter );
+        cout << "Central body gravitational parameter                      " 
+             << centralBodyGravitationalParameter << " m^3 s^-2" << endl;  
+
+        const double perturbedBodyRadius = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "PERTURBEDBODYRADIUS" ),
+                    caseDataFromDatabase->perturbedBodyRadius, 
+                    &convertKilometersToMeters< double > );
+        cout << "Perturbed body radius                                     " 
+             << convertMetersToKilometers( perturbedBodyRadius ) << " km" << endl;
+
+        const double perturbedBodyBulkDensity = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "PERTURBEDBODYBULKDENSITY" ),
+                    caseDataFromDatabase->perturbedBodyBulkDensity );
+        cout << "Perturbed body bulk density                               " 
+             << perturbedBodyBulkDensity << " kg m^-3" << endl;                
+
+        Vector6d perturbedBodyStateInKeplerianElementsAtT0( 6 );
+
+        perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) 
+                = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0" ),
+                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                        semiMajorAxisIndex ),
+                    &convertKilometersToMeters< double > );
+        cout << "Perturbed body semi-major axis at TO                      "
+             << convertMetersToKilometers( 
+                    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) ) 
+             << " km" << endl;
+
+        perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) 
+                = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0" ), 
+                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                        eccentricityIndex ) );
+        cout << "Perturbed body eccentricity at TO                         "
+             << perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) << endl;
+
+        perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) 
+                = extractParameterValue< double >( 
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0" ),
+                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                        inclinationIndex ),
+                     &convertDegreesToRadians< double > );
+        cout << "Perturbed body inclination at TO                          "
+             << convertRadiansToDegrees( 
+                    perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) ) 
+             << " deg" << endl;
+
+        perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex )
+                = extractParameterValue< double >( 
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0" ),
+                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                        argumentOfPeriapsisIndex ),
+                    &convertDegreesToRadians< double > );
+        cout << "Perturbed body argument of periapsis at TO                "
+             << convertRadiansToDegrees( 
+                    perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex ) ) 
+             << " deg" << endl;
+
+        perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex )
+                = extractParameterValue< double >( 
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0" ),
+                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                        longitudeOfAscendingNodeIndex ),
+                    &convertDegreesToRadians< double > );
+        cout << "Perturbed body longitude of ascending node at TO          "
+             << convertRadiansToDegrees( 
+                   perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) ) 
+             << " deg" << endl;
+
+        perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) 
+                = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0" ),
+                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0(
+                        trueAnomalyIndex ),
+                     &convertDegreesToRadians< double > );
+        cout << "Perturbed body true anomaly at TO                         "
+             << convertRadiansToDegrees( 
+                   perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) ) 
+             << " deg" << endl;
+
+        const double synodicPeriodMaximum = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "SYNODICPERIODMAXIMUM" ),
+                    caseDataFromDatabase->synodicPeriodMaximum, &convertJulianYearsToSeconds );
+        cout << "Synodic period limit                                      " 
+             << synodicPeriodMaximum / JULIAN_YEAR << " yrs" << endl;
+
+        const double startUpIntegrationPeriod = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "STARTUPINTEGRATIONPERIOD" ),
+                    caseDataFromDatabase->startUpIntegrationPeriod, 
+                    &convertJulianYearsToSeconds );
+        cout << "Start-up integration duration                             " 
+             << startUpIntegrationPeriod / JULIAN_YEAR << " yrs" << endl;
+
+        const double centralBodyJ2GravityCoefficient = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT" ), 
+                    caseDataFromDatabase->centralBodyJ2GravityCoefficient );
+        cout << "Central body J2 gravity coefficient                       "
+             << centralBodyJ2GravityCoefficient << endl;
+
+        const double centralBodyEquatorialRadius = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "CENTRALBODYEQUATORIALRADIUS" ),
+                    caseDataFromDatabase->centralBodyEquatorialRadius );
+        cout << "Central body equatorial radius                            "
+             << convertMetersToKilometers( centralBodyEquatorialRadius ) << " km" << endl;    
+
+        const double conjunctionEventDetectionDistance = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE" ), 
+                    caseDataFromDatabase->conjunctionEventDetectionDistance );
+        cout << "Conjunction event detection distance                      " 
+             << convertMetersToKilometers( conjunctionEventDetectionDistance ) << " km" << endl;
+
+        const double oppositionEventDetectionDistance = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE" ),
+                    caseDataFromDatabase->oppositionEventDetectionDistance );
+        cout << "Opposition event detection distance                       " 
+             << convertMetersToKilometers( oppositionEventDetectionDistance ) << " km" << endl;
+
+        string defaultNumericalIntegratorType;
+
+        if ( caseDataFromDatabase->numericalIntegratorType == DOPRI853 )
+        {
+            defaultNumericalIntegratorType = "DOPRI853";
+        }
+
+        else if ( caseDataFromDatabase->numericalIntegratorType == RKF78 )
+        {
+            defaultNumericalIntegratorType = "RKF78";
+        }
+
+        string numericalIntegratorType = extractParameterValue< string >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "NUMERICALINTEGRATORTYPE" ), 
+                    defaultNumericalIntegratorType );
+        cout << "Numerical integrator type                                 "
+             << numericalIntegratorType << endl;
+
+        const double initialStepSize = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "INITIALSTEPSIZE" ), 
+                    caseDataFromDatabase->initialStepSize );
+        cout << "Initial step size                                         "
+             << initialStepSize << " s" << endl;
+
+        const double numericalIntegratorRelativeTolerance = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE" ),
+                    caseDataFromDatabase->numericalIntegratorRelativeTolerance );
+        cout << "Numerical integrator relative tolerance                   " 
+             << numericalIntegratorRelativeTolerance << endl;
+
+        const double numericalIntegratorAbsoluteTolerance = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "RUNGEKUTTAABSOLUTEERRORTOLERANCE" ), 
+                    caseDataFromDatabase->numericalIntegratorAbsoluteTolerance );
+        cout << "Numerical integrator absolute tolerance                   " 
+             << numericalIntegratorAbsoluteTolerance << endl;             
+
+    // Store case data with possible overwritten data.
+    testParticleCase = make_shared< TestParticleCase >(
+        TestParticleCase( 
+            caseDataFromDatabase->caseId, caseName, randomWalkSimulationPeriod, 
+            centralBodyGravitationalParameter, perturbedBodyRadius, perturbedBodyBulkDensity, 
+            perturbedBodyStateInKeplerianElementsAtT0, 
+            caseDataFromDatabase->semiMajorAxisDistributionLimit,
+            synodicPeriodMaximum, startUpIntegrationPeriod, centralBodyJ2GravityCoefficient, 
+            centralBodyEquatorialRadius, conjunctionEventDetectionDistance, 
+            oppositionEventDetectionDistance, caseDataFromDatabase->eccentricityDistributionMean, 
+            caseDataFromDatabase->eccentricityDistributionAngle,
+            caseDataFromDatabase->eccentricityDistributionFullWidthHalfMaximum,
+            caseDataFromDatabase->inclinationDistributionMean, 
+            caseDataFromDatabase->inclinationDistributionAngle,
+            caseDataFromDatabase->inclinationDistributionFullWidthHalfMaximum, 
+            numericalIntegratorType, initialStepSize, numericalIntegratorRelativeTolerance,
+            numericalIntegratorRelativeTolerance ) );             
     }
-    
-//     // Check if any case parameters are overwritten by user input.
-//     const double randomWalkSimulationDuration = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "RANDOMWALKSIMULATIONDURATION" ),
-//                 caseDataFromDatabase->randomWalkSimulationDuration, &convertJulianYearsToSeconds );
-//     cout << "Random walk simulation duration                           " 
-//          << randomWalkSimulationDuration / JULIAN_YEAR << " yrs" << endl;
 
-//     const double synodicPeriodLimit = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "SYNODICPERIODLIMIT" ),
-//                 caseDataFromDatabase->synodicPeriodLimit, &convertJulianYearsToSeconds );
-//     cout << "Synodic period limit                                      " 
-//          << synodicPeriodLimit / JULIAN_YEAR << " yrs" << endl;
+    // Check that all required parameters have been set.
+    checkRequiredParameters( dictionary );
 
-//     const double outputInterval = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "OUTPUTINTERVAL" ),
-//                 caseDataFromDatabase->outputInterval, &convertHoursToSeconds< double > );
-//     cout << "Output interval                                           " 
-//          << convertSecondsToHours( outputInterval ) << " hrs" << endl;
+    ///////////////////////////////////////////////////////////////////////////
 
-//     const double startUpIntegrationDuration = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "STARTUPINTEGRATIONDURATION" ),
-//                 caseDataFromDatabase->startUpIntegrationDuration, &convertJulianYearsToSeconds );
-//     cout << "Start-up integration duration                             " 
-//          << startUpIntegrationDuration / JULIAN_YEAR << " yrs" << endl;
-
-//     const double conjunctionEventDetectionDistance = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE" ), 
-//                 caseDataFromDatabase->conjunctionEventDetectionDistance );
-//     cout << "Conjunction event detection distance                      " 
-//          << convertMetersToKilometers( conjunctionEventDetectionDistance ) << " km" << endl;
-
-//     const double oppositionEventDetectionDistance = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE" ),
-//                 caseDataFromDatabase->oppositionEventDetectionDistance );
-//     cout << "Opposition event detection distance                       " 
-//          << convertMetersToKilometers( oppositionEventDetectionDistance ) << " km" << endl;
-
-//     const double centralBodyGravitationalParameter = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER" ),
-//                 caseDataFromDatabase->centralBodyGravitationalParameter );
-//     cout << "Central body gravitational parameter                      " 
-//          << centralBodyGravitationalParameter << " m^3 s^-2" << endl;
-
-//     const double centralBodyJ2GravityCoefficient = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT" ), 
-//                 caseDataFromDatabase->centralBodyJ2GravityCoefficient );
-//     cout << "Central body J2 gravity coefficient                       "
-//          << centralBodyJ2GravityCoefficient << endl;
-
-//     const double centralBodyEquatorialRadius = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "CENTRALBODYEQUATORIALRADIUS" ),
-//                 caseDataFromDatabase->centralBodyEquatorialRadius );
-//     cout << "Central body equatorial radius                            "
-//          << convertMetersToKilometers( centralBodyEquatorialRadius ) << " km" << endl;
-
-//     const double perturbedBodyRadius = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "PERTURBEDBODYRADIUS" ),
-//                 caseDataFromDatabase->perturbedBodyRadius, &convertKilometersToMeters< double > );
-//     cout << "Perturbed body radius                                     " 
-//          << convertMetersToKilometers( perturbedBodyRadius ) << " km" << endl;
-
-//     const double perturbedBodyBulkDensity = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "PERTURBEDBODYBULKDENSITY" ),
-//                 caseDataFromDatabase->perturbedBodyBulkDensity );
-//     cout << "Perturbed body bulk density                               " 
-//          << perturbedBodyBulkDensity << " kg m^-3" << endl;
-
-//     Vector6d perturbedBodyStateInKeplerianElementsAtT0( 6 );
-
-//     perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) 
-//             = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0" ),
-//                 caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
-//                     semiMajorAxisIndex ),
-//                 &convertKilometersToMeters< double > );
-//     cout << "Perturbed body semi-major axis at TO                      "
-//          << convertMetersToKilometers( 
-//                 perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) ) 
-//          << " km" << endl;
-
-//     perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) 
-//             = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0" ), 
-//                 caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
-//                     eccentricityIndex ) );
-//     cout << "Perturbed body eccentricity at TO                         "
-//          << perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) << endl;
-
-//     perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) 
-//             = extractParameterValue< double >( 
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0" ),
-//                 caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
-//                     inclinationIndex ),
-//                  &convertDegreesToRadians< double > );
-//     cout << "Perturbed body inclination at TO                          "
-//          << convertRadiansToDegrees( 
-//                 perturbedBodyStateInKeplerianElementsAtT0( inclinationIndex ) ) 
-//          << " deg" << endl;
-
-//     perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex )
-//             = extractParameterValue< double >( 
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0" ),
-//                 caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
-//                     argumentOfPeriapsisIndex ),
-//                 &convertDegreesToRadians< double > );
-//     cout << "Perturbed body argument of periapsis at TO                "
-//          << convertRadiansToDegrees( 
-//                 perturbedBodyStateInKeplerianElementsAtT0( argumentOfPeriapsisIndex ) ) 
-//          << " deg" << endl;
-
-//     perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex )
-//             = extractParameterValue< double >( 
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0" ),
-//                 caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
-//                     longitudeOfAscendingNodeIndex ),
-//                 &convertDegreesToRadians< double > );
-//     cout << "Perturbed body longitude of ascending node at TO          "
-//          << convertRadiansToDegrees( 
-//                perturbedBodyStateInKeplerianElementsAtT0( longitudeOfAscendingNodeIndex ) ) 
-//          << " deg" << endl;
-
-//     perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) 
-//             = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0" ),
-//                 caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0(
-//                     trueAnomalyIndex ),
-//                  &convertDegreesToRadians< double > );
-//     cout << "Perturbed body true anomaly at TO                         "
-//          << convertRadiansToDegrees( 
-//                perturbedBodyStateInKeplerianElementsAtT0( trueAnomalyIndex ) ) 
-//          << " deg" << endl;
-
-//     const string numericalIntegratorType = extractParameterValue< string >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "NUMERICALINTEGRATORTYPE" ),
-//                 caseDataFromDatabase->numericalIntegratorType );
-//     cout << "Numerical integrator type                                 "
-//          << numericalIntegratorType << endl;
-
-//     const double initialStepSize = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "INITIALSTEPSIZE" ), 
-//                 caseDataFromDatabase->initialStepSize );
-//     cout << "Initial step size                                         "
-//          << initialStepSize << " s" << endl;
-
-//     const double numericalIntegratorRelativeTolerance = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE" ),
-//                 caseDataFromDatabase->numericalIntegratorRelativeTolerance );
-//     cout << "Numerical integrator relative tolerance                   " 
-//          << numericalIntegratorRelativeTolerance << endl;
-
-//     const double numericalIntegratorAbsoluteTolerance = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "RUNGEKUTTAABSOLUTEERRORTOLERANCE" ), 
-//                 caseDataFromDatabase->numericalIntegratorAbsoluteTolerance );
-//     cout << "Numerical integrator absolute tolerance                   " 
-//          << numericalIntegratorAbsoluteTolerance << endl;
-
-//     // Store case data with possible overwritten data.
-//     TestParticleCasePointer testParticleCase = make_shared< TestParticleCase >(
-//         TestParticleCase( 
-//             caseDataFromDatabase->caseId, caseDataFromDatabase->caseName, 
-//             randomWalkSimulationDuration, synodicPeriodLimit, outputInterval, 
-//             startUpIntegrationDuration, conjunctionEventDetectionDistance, 
-//             oppositionEventDetectionDistance, centralBodyGravitationalParameter,
-//             centralBodyJ2GravityCoefficient, centralBodyEquatorialRadius, 
-//             caseDataFromDatabase->semiMajorAxisDistributionLimit,
-//             caseDataFromDatabase->eccentricityDistributionMean, 
-//             caseDataFromDatabase->eccentricityDistributionAngle,
-//             caseDataFromDatabase->eccentricityDistributionFullWidthHalfMaximum,
-//             caseDataFromDatabase->inclinationDistributionMean, 
-//             caseDataFromDatabase->inclinationDistributionAngle,
-//             caseDataFromDatabase->inclinationDistributionFullWidthHalfMaximum, 
-//             perturbedBodyRadius, perturbedBodyBulkDensity, 
-//             perturbedBodyStateInKeplerianElementsAtT0, numericalIntegratorType, initialStepSize,
-//             numericalIntegratorRelativeTolerance, numericalIntegratorRelativeTolerance ) );
-
-//     // Check that all required parameters have been set.
-//     checkRequiredParameters( dictionary );
-
-//     ///////////////////////////////////////////////////////////////////////////
-
-//     ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
 //     // Compute derived parameters.
 
@@ -652,7 +664,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //         // Numerically integrate motion of test particle up to end of start-up period.
 //         bool isStartup = false;
 //         while ( integrator->getCurrentIndependentVariable( ) 
-//                 < testParticleCase->startUpIntegrationDuration )
+//                 < testParticleCase->startUpIntegrationPeriod )
 //         {
 //             isStartup = true;
 //             integrator->performIntegrationStep( testParticleCase->initialStepSize );
@@ -755,7 +767,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 // // //                // Propagate system and write output generated to files.
 // // //                propagateSystemAndGenerateFileOutput(
 // // //                            simulationDuration, synodicPeriod, outputInterval, initialStepSize,
-// // //                            startUpIntegrationDuration, integratorCopy, mab, testParticle,
+// // //                            startUpIntegrationPeriod, integratorCopy, mab, testParticle,
 // // //                            caseNumber, testParticleInputTable.at( i ).simulationNumber, outputDirectory,
 // // //                            std::numeric_limits< double >::digits10,
 // // //                            kickTable, testParticleCase->uranusGravitationalParameter );

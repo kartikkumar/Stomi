@@ -140,11 +140,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="comment">// Set Eigen macro to correctly align class with fixed-size vectorizable types.</span></div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    EIGEN_MAKE_ALIGNED_OPERATOR_NEW</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a853211d8a139208c5b2a44920d7e95d6" title="Constructor taking all case data as input. ">TestParticleCase</a>(</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a5c6aad6b02be06d1f28402c7a399fac3" title="Constructor taking all case data as input. ">TestParticleCase</a>(</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            <span class="comment">// Required parameters.</span></div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">int</span> aCaseId,</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keyword">const</span> std::string aCaseName,</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aRandomWalkSimulationDuration,</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aRandomWalkSimulationPeriod,</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aCentralBodyGravitationalParameter,</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aPerturbedBodyRadius,</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aPerturbedBodyBulkDensity,</div>
@@ -152,7 +152,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aSemiMajorAxisDistributionLimit,</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="comment">// Optional parameters.</span></div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aSynodicPeriodMaximum,</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aStartUpIntegrationDuration,</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aStartUpIntegrationPeriod,</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aCentralBodyJ2GravityCoefficient,</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aCentralBodyEquatorialRadius,            </div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> aConjunctionEventDetectionDistance,</div>
@@ -174,7 +174,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
 <div class="line"><a name="l00094"></a><span class="lineno"><a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a6003b00e874f64637f0869788e7dbd87">   94</a></span>&#160;    <span class="keyword">const</span> std::string <a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a6003b00e874f64637f0869788e7dbd87" title="Case name. ">caseName</a>;</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00097"></a><span class="lineno"><a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#aeb1bc213df7758eeb14a18f72a1383a4">   97</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#aeb1bc213df7758eeb14a18f72a1383a4" title="Random walk simulation duration [s]. ">randomWalkSimulationDuration</a>;</div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a85b64ab50a6fdf54dc3d0d7d4df171ee">   97</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a85b64ab50a6fdf54dc3d0d7d4df171ee" title="Random walk simulation period [s]. ">randomWalkSimulationPeriod</a>;</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
 <div class="line"><a name="l00100"></a><span class="lineno"><a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a1a667c16e573d6c9494a6a66c3fee723">  100</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a1a667c16e573d6c9494a6a66c3fee723" title="Central body gravitational parameter [m^3 s^-2]. ">centralBodyGravitationalParameter</a>;</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
@@ -190,7 +190,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
 <div class="line"><a name="l00117"></a><span class="lineno"><a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#ac6f2debf5fa1cddce8baa2d623f66a0d">  117</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#ac6f2debf5fa1cddce8baa2d623f66a0d" title="Maximum synodic period permitted [s]. ">synodicPeriodMaximum</a>;</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
-<div class="line"><a name="l00120"></a><span class="lineno"><a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a9a90f5141695469e03ce9d7d667256ff">  120</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#a9a90f5141695469e03ce9d7d667256ff" title="Startup integration duration [s]. ">startUpIntegrationDuration</a>;</div>
+<div class="line"><a name="l00120"></a><span class="lineno"><a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#ac56a43c97cecea435e0be858ae0b8853">  120</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#ac56a43c97cecea435e0be858ae0b8853" title="Startup integration period [s]. ">startUpIntegrationPeriod</a>;</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
 <div class="line"><a name="l00123"></a><span class="lineno"><a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#af1bc171c30d6d370a40a31ccabbce263">  123</a></span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> <a class="code" href="structstochastic__migration_1_1database_1_1_test_particle_case.html#af1bc171c30d6d370a40a31ccabbce263" title="Central body J2 gravity field coefficient. ">centralBodyJ2GravityCoefficient</a>;</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
@@ -243,7 +243,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jul 15 2013 18:51:25 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 17 2013 15:52:07 for Stochastic Migration by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.4
 </small></address>

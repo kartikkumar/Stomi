@@ -56,7 +56,7 @@ public:
     TestParticleCaseFixture( )
         : caseId( 1 ),
           caseName( "test_case" ),
-          randomWalkSimulationDuration( 1.2345e6 ),
+          randomWalkSimulationPeriod( 1.2345e6 ),
           centralBodyGravitationalParameter( 2.345e10 ),
           perturbedBodyRadius( 2.345e6 ),
           perturbedBodyBulkDensity( 3.45e7 ),
@@ -64,7 +64,7 @@ public:
               ( Eigen::VectorXd( 6 ) << 1234.5, 0.55, 0.975, 1.234, 4.567, 3.456 ).finished( ) ),
           semiMajorAxisDistributionLimit( 1000.0e3 ),
           synodicPeriodMaximum( 1.23e4 ),
-          startUpIntegrationDuration( 0.0 ),
+          startUpIntegrationPeriod( 0.0 ),
           centralBodyJ2GravityCoefficient( 0.0 ),
           centralBodyEquatorialRadius( 0.0 ),
           conjunctionEventDetectionDistance( 1.234e5 ),
@@ -91,8 +91,8 @@ public:
     //! Case name.
     std::string caseName;
 
-    //! Random walk simulation duration [s].
-    double randomWalkSimulationDuration;
+    //! Random walk simulation period [s].
+    double randomWalkSimulationPeriod;
 
     //! Central body gravitational parameter [m^3 s^-2].
     double centralBodyGravitationalParameter;
@@ -114,8 +114,8 @@ public:
     //! Maximum synodic period permitted [s].
     double synodicPeriodMaximum;
 
-    //! Startup integration duration [s].
-    double startUpIntegrationDuration;
+    //! Startup integration period [s].
+    double startUpIntegrationPeriod;
 
     //! Central body J2 gravity field coefficient.
     double centralBodyJ2GravityCoefficient;
@@ -164,10 +164,10 @@ public:
     {
         return boost::make_shared< database::TestParticleCase >(
             database::TestParticleCase( 
-                caseId, caseName, randomWalkSimulationDuration, centralBodyGravitationalParameter,
+                caseId, caseName, randomWalkSimulationPeriod, centralBodyGravitationalParameter,
                 perturbedBodyRadius, perturbedBodyBulkDensity, 
                 perturbedBodyStateInKeplerianElementsAtT0, semiMajorAxisDistributionLimit, 
-                synodicPeriodMaximum, startUpIntegrationDuration, centralBodyJ2GravityCoefficient, 
+                synodicPeriodMaximum, startUpIntegrationPeriod, centralBodyJ2GravityCoefficient, 
                 centralBodyEquatorialRadius, conjunctionEventDetectionDistance, 
                 oppositionEventDetectionDistance, eccentricityDistributionMean, 
                 eccentricityDistributionAngle, eccentricityDistributionFullWidthHalfMaximum, 
@@ -195,8 +195,8 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseStructContruction )
     // Check that the test particle case created contains all the data as required.
     BOOST_CHECK_EQUAL( testParticleCase->caseId, caseId );    
     BOOST_CHECK_EQUAL( testParticleCase->caseName, caseName );      
-    BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationDuration, 
-                       randomWalkSimulationDuration );
+    BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationPeriod, 
+                       randomWalkSimulationPeriod );
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyGravitationalParameter, 
                        centralBodyGravitationalParameter );
     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyRadius, perturbedBodyRadius );
@@ -211,7 +211,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseStructContruction )
     BOOST_CHECK_EQUAL( testParticleCase->semiMajorAxisDistributionLimit, 
                        semiMajorAxisDistributionLimit );
     BOOST_CHECK_EQUAL( testParticleCase->synodicPeriodMaximum, synodicPeriodMaximum );
-    BOOST_CHECK_EQUAL( testParticleCase->startUpIntegrationDuration, startUpIntegrationDuration );
+    BOOST_CHECK_EQUAL( testParticleCase->startUpIntegrationPeriod, startUpIntegrationPeriod );
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyJ2GravityCoefficient, 
                        centralBodyJ2GravityCoefficient );
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyEquatorialRadius, 
@@ -278,14 +278,14 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseNameEmpty )
     BOOST_CHECK( isError );
 }
 
-//! Test initialization of test particle case with non-positive random walk simulation duration.
-BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveRandomWalkSimulationDurationError )
+//! Test initialization of test particle case with non-positive random walk simulation period.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveRandomWalkSimulationPeriodError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set random walk duration to invalid (non-positive) value.
-    randomWalkSimulationDuration = -1.0;
+    // Set random walk period to invalid (non-positive) value.
+    randomWalkSimulationPeriod = -1.0;
 
     // Try to create test particle case.
     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
@@ -453,14 +453,14 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositivesynodicPeriodMaximumError )
     BOOST_CHECK( isError );
 }
 
-//! Test initialization of test particle case with non-positive start-up integration duration.
-BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveStartUpIntegrationDurationError )
+//! Test initialization of test particle case with non-positive start-up integration period.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveStartUpIntegrationPeriodError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set start-up integration duration to invalid (non-positive) value.
-    startUpIntegrationDuration = -1.0;
+    // Set start-up integration period to invalid (non-positive) value.
+    startUpIntegrationPeriod = -1.0;
 
     // Try to create test particle case.
     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }

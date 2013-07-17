@@ -61,7 +61,7 @@ public:
             // Required parameters.
             const int aCaseId,
             const std::string aCaseName,
-            const double aRandomWalkSimulationDuration,
+            const double aRandomWalkSimulationPeriod,
             const double aCentralBodyGravitationalParameter,
             const double aPerturbedBodyRadius,
             const double aPerturbedBodyBulkDensity,
@@ -69,7 +69,7 @@ public:
             const double aSemiMajorAxisDistributionLimit,
             // Optional parameters.
             const double aSynodicPeriodMaximum,
-            const double aStartUpIntegrationDuration,
+            const double aStartUpIntegrationPeriod,
             const double aCentralBodyJ2GravityCoefficient,
             const double aCentralBodyEquatorialRadius,            
             const double aConjunctionEventDetectionDistance,
@@ -93,8 +93,8 @@ public:
     //! Case name.
     const std::string caseName;
 
-    //! Random walk simulation duration [s].
-    const double randomWalkSimulationDuration;
+    //! Random walk simulation period [s].
+    const double randomWalkSimulationPeriod;
 
     //! Central body gravitational parameter [m^3 s^-2].
     const double centralBodyGravitationalParameter;
@@ -116,8 +116,8 @@ public:
     //! Maximum synodic period permitted [s].
     const double synodicPeriodMaximum;
 
-    //! Startup integration duration [s].
-    const double startUpIntegrationDuration;
+    //! Startup integration period [s].
+    const double startUpIntegrationPeriod;
 
     //! Central body J2 gravity field coefficient.
     const double centralBodyJ2GravityCoefficient;

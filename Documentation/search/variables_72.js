@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['randomwalksimulationduration',['randomWalkSimulationDuration',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#aeb1bc213df7758eeb14a18f72a1383a4',1,'stochastic_migration::database::TestParticleCase']]]
+  ['randomwalksimulationperiod',['randomWalkSimulationPeriod',['../structstochastic__migration_1_1database_1_1_test_particle_case.html#a85b64ab50a6fdf54dc3d0d7d4df171ee',1,'stochastic_migration::database::TestParticleCase']]]
 ];

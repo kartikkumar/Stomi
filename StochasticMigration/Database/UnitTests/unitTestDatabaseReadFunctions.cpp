@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
     // Check that the values read from the database are correct.
     BOOST_CHECK_EQUAL( testParticleCase->caseId, 1 );
     BOOST_CHECK_EQUAL( testParticleCase->caseName, "test_case" );
-    BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationDuration, 1577880000.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationPeriod, 1577880000.0 );
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyGravitationalParameter, 5.793966e15 );
     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyRadius, 12000.0 );
     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyBulkDensity, 1500.0 );
@@ -91,7 +91,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
                            trueAnomalyIndex ), 6.18747145100022 );
     BOOST_CHECK_EQUAL( testParticleCase->semiMajorAxisDistributionLimit, 1016598.4241361 );
     BOOST_CHECK_EQUAL( testParticleCase->synodicPeriodMaximum, 1577880000.0 );
-    BOOST_CHECK_EQUAL( testParticleCase->startUpIntegrationDuration, 0.0 );
+    BOOST_CHECK_EQUAL( testParticleCase->startUpIntegrationPeriod, 0.0 );
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyJ2GravityCoefficient, 0.0 );    
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyEquatorialRadius, 0.0 );
     BOOST_CHECK_EQUAL( testParticleCase->conjunctionEventDetectionDistance, 48868000.0 );
@@ -331,8 +331,8 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
 //             + "/Database/UnitTests/testDatabaseTestParticleKickTable.db";
 
-//     // Set random walk simulation duration [s].
-//     const double randomWalkSimulationDuration = 1577880000.0;
+//     // Set random walk simulation period [s].
+//     const double randomWalkSimulationPeriod = 1577880000.0;
 
 //     // Set vector of selected test particle simulation numbers.
 //     const TestParticleSimulationNumbersAndMassRatios testParticleSimulationNumbersAndMassRatios
@@ -340,7 +340,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 
 //     // Retrieve table of test particle kick data.
 //     const TestParticleKickTable testParticleKickTable = getTestParticleKickTable(
-//                 absolutePathToTestDatabase, randomWalkSimulationDuration,
+//                 absolutePathToTestDatabase, randomWalkSimulationPeriod,
 //                 testParticleSimulationNumbersAndMassRatios );
 
 //     // Read in table of test particle kick data from test data file.
@@ -364,7 +364,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 //                                     testDataTestParticleKickTable( i, 2 ), 1.0e-14 );
 //         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionDistance,
 //                                     testDataTestParticleKickTable( i, 3 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionDuration,
+//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionPeriod,
 //                                     testDataTestParticleKickTable( i, 4 ), 1.0e-14 );
 //         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionEpoch,
 //                                     testDataTestParticleKickTable( i, 5 ), 1.0e-14 );
@@ -412,8 +412,8 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
 //             + "/Database/UnitTests/testDatabaseTestParticleKickTable.db";
 
-//     // Set random walk simulation duration [s].
-//     const double randomWalkSimulationDuration = 1577880000.0;
+//     // Set random walk simulation period [s].
+//     const double randomWalkSimulationPeriod = 1577880000.0;
 
 //     // Set vector of selected test particle simulation numbers.
 //     const TestParticleSimulationNumbersAndMassRatios testParticleSimulationNumbersAndMassRatios
@@ -426,7 +426,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 //     {
 //         // Retrieve kick data for test particle simulations.
 //         const TestParticleKickTable testParticleKickTable = getTestParticleKickTable(
-//                     absolutePathToTestDatabase, randomWalkSimulationDuration,
+//                     absolutePathToTestDatabase, randomWalkSimulationPeriod,
 //                     testParticleSimulationNumbersAndMassRatios );
 //     }
 
