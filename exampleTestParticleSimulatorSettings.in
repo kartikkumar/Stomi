@@ -1,0 +1,83 @@
+#
+#    Copyright (c) 2010-2013, Delft University of Technology
+#    All rights reserved.
+#    See COPYING for license details.
+#
+#    This is an example input file for the Test Particle Simulator application provided with the 
+#    Stochastic Migration project. 
+#
+#    All lines preceded by the '#' character are interpreted as comments.
+#    Each line must contain only a single parameter/value pair, separated by a ':' character.
+#
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# REQUIRED PARAMETERS
+#
+# These parameters must be specified for the application to be executed.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# Set the name for the case.
+# The value of this parameter is interpreted as a string. This case must already exist in the 
+# database. To populate a new case, use the Database Generator application.
+CASE                :  test_case
+
+# Set the absolute path to the database.
+# The database must already exist. It can be created and populated using the Database Generator
+# application.
+DB                  : /Users/kartikkumar/Desktop/testDatabase.db 
+
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#
+# OPTIONAL PARAMETERS
+#
+# If these parameter are not uncommented and given specified values, default values are assumed.
+# DO NOT uncomment the DEFAULT and UNIT lines; they are simply comment lines.
+#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# Set the number of parallel threads to run the application on.
+# This parameters sets the number of parallel threads to spawn using OpenMP, to run the 
+# application. The test particle simulations are parallelized over the number of threads specified.
+# By default, the application runs on a single thread.
+# THREADS             : 30 
+
+# Set the output mode for the simulations.
+# This parameter sets whether the output should be stored in the database or written to file.
+# By default, output is written to the database. To switch this to file, simply pass the parameter
+# as "file" (without quotation marks).
+# OUTPUT              : database
+
+# Set the file output directory.
+# This parameter should only be set in case the OUTPUT parameter is set to "file". With this 
+# parameter, the absolute path to the output directory can be specified, where the output files 
+# generated are stored.
+# The default directory for the output files is the root directory of the Stochastic Migration
+# project.
+# FILEOUTPUTDIR       : rootdir
+
+# Set the simulations to execute.
+# This parameter sets the simulations to execute, based on the simulation IDs in the input table in
+# the database. To list multiple simulation IDs, simply list the numbers, separated by spaces.
+# The default setting is to run all incomplete simulations extracted from the database.
+# SIMULATIONS         : ALL
+
+# Set the database table names.
+# The following parameters can be used to override the default names for the test particle tables
+# in the database. For descriptions of these tables, take a look at the 
+# "exampleDatabaseGeneratorSettings.in" input file. Uncomment any of these parameters to override
+# the default table names.
+# TPCASE              : test_particle_case
+# TPINPUT             : test_particle_input
+# TPKICk              : test_particle_kick
+
+# Override case data.
+# The following settings can be used to overwrite the test particle case parameters stored in the 
+# database. Descriptions of these parameters can be found in the 
+# "exampleDatabaseGeneratorSettings.in" input file.
+# By default, the values of the parameters are extracted from the test particle case table in the
+# database. By uncommenting any of these parameters, individual case settings can be overriden.
+# TRANDOM             :
