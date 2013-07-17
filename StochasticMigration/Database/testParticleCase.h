@@ -11,6 +11,7 @@
  *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration";
  *                                  renamed file.
  *      130704    K. Kumar          Updated class contents based on revised table schema.
+ *      130715    K. Kumar          Updated class contents based on revised table schema.
  *
  *    References
  *      sbi. C++ Operator Overloading, Stack Overflow,
@@ -40,6 +41,8 @@ namespace stochastic_migration
 namespace database
 {
 
+ enum NumericalIntegratorType { DOPRI853, RKF78 };   
+
 //! Data struct that contains all of the case information for a set of test particle simulations.
 /*!
  * This data struct contains all of the case information for a set of test particle simulations,
@@ -55,31 +58,34 @@ public:
 
     //! Constructor taking all case data as input.
     TestParticleCase(
+            // Required parameters.
             const int aCaseId,
             const std::string aCaseName,
             const double aRandomWalkSimulationDuration,
-            const double aSynodicPeriodLimit,
-            const double anOutputInterval,
+            const double aCentralBodyGravitationalParameter,
+            const double aPerturbedBodyRadius,
+            const double aPerturbedBodyBulkDensity,
+            const tudat::basic_mathematics::Vector6d& aPerturbedBodyStateInKeplerianElementsAtT0,
+            const double aSemiMajorAxisDistributionLimit,
+            // Optional parameters.
+            const double aSynodicPeriodMaximum,
             const double aStartUpIntegrationDuration,
+            const double aCentralBodyJ2GravityCoefficient,
+            const double aCentralBodyEquatorialRadius,            
             const double aConjunctionEventDetectionDistance,
             const double anOppositionEventDetectionDistance,
-            const double aCentralBodyGravitationalParameter,
-            const double aCentralBodyJ2GravityCoefficient,
-            const double aCentralBodyEquatorialRadius,
-            const double aSemiMajorAxisDistributionLimit,
             const double anEccentricityDistributionMean,
             const double anEccentricityDistributionAngle,
             const double anEccentricityDistributionFullWidthHalfMaximum,
             const double anInclinationDistributionMean,
             const double anInclinationDistributionAngle,
             const double anInclinationDistributionFullWidthHalfMaximum,
-            const double aPerturbedBodyRadius,
-            const double aPerturbedBodyBulkDensity,
-            const tudat::basic_mathematics::Vector6d& aPerturbedBodyStateInKeplerianElementsAtT0,
             const std::string& aNumericalIntegratorType,
             const double anInitialStepSize,
             const double aNumericalIntegratorRelativeTolerance,
             const double aNumericalIntegratorAbsoluteTolerance );
+
+    // Required parameters.
 
     //! Case ID.
     const int caseId;
@@ -88,25 +94,30 @@ public:
     const std::string caseName;
 
     //! Random walk simulation duration [s].
-    const  double randomWalkSimulationDuration;
-
-    //! Synodic period limit [s].
-    const double synodicPeriodLimit;
-
-    //! Output interval, determining output frequency for data files [s].
-    const double outputInterval;
-
-    //! Startup integration duration [s].
-    const double startUpIntegrationDuration;
-
-    //! Mutual distance used to detect start and end of conjunction events [m].
-    const double conjunctionEventDetectionDistance;
-
-    //! Distance used to detect start and end of opposition events [m].
-    const double oppositionEventDetectionDistance;
+    const double randomWalkSimulationDuration;
 
     //! Central body gravitational parameter [m^3 s^-2].
     const double centralBodyGravitationalParameter;
+
+    //! Perturbed body radius [m].
+    const double perturbedBodyRadius;
+
+    //! Perturbed body bulk density [kg m^-3].
+    const double perturbedBodyBulkDensity;
+
+    //! Perturbed body state in Keplerian elements at T0.
+    const tudat::basic_mathematics::Vector6d perturbedBodyStateInKeplerianElementsAtT0;
+
+    //! Limits on maximum semi-major axis values wrt perturbed body [m].
+    const double semiMajorAxisDistributionLimit;
+
+    // Optional parameters.
+
+    //! Maximum synodic period permitted [s].
+    const double synodicPeriodMaximum;
+
+    //! Startup integration duration [s].
+    const double startUpIntegrationDuration;
 
     //! Central body J2 gravity field coefficient.
     const double centralBodyJ2GravityCoefficient;
@@ -114,8 +125,11 @@ public:
     //! Central body equatorial radius [m].
     const double centralBodyEquatorialRadius;
 
-    //! Limits on maximum semi-major axis values wrt perturbed body [m].
-    const double semiMajorAxisDistributionLimit;
+    //! Mutual distance used to detect start and end of conjunction events [m].
+    const double conjunctionEventDetectionDistance;
+
+    //! Distance used to detect start and end of opposition events [m].
+    const double oppositionEventDetectionDistance;
 
     //! Mean eccentricity value for distribution.
     const double eccentricityDistributionMean;
@@ -135,17 +149,8 @@ public:
     //! FWHM inclination value for distribution [rad].
     const double inclinationDistributionFullWidthHalfMaximum;
 
-    //! Perturbed body radius [m].
-    const double perturbedBodyRadius;
-
-    //! Perturbed body bulk density [kg m^-3].
-    const double perturbedBodyBulkDensity;
-
-    //! Perturbed body state in Keplerian elements at T0.
-    const tudat::basic_mathematics::Vector6d perturbedBodyStateInKeplerianElementsAtT0;
-
     //! Numerical integrator type.
-    const std::string numericalIntegratorType;
+    NumericalIntegratorType numericalIntegratorType;
 
     //! Initial step size for numerical integrator.
     const double initialStepSize;

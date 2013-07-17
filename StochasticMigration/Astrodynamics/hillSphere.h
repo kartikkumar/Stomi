@@ -13,6 +13,7 @@
  *
  *    Notes
  *      The ConvertHillRadiiToMeters needs to be unit tested.
+ *      Should be migrated to the Assist project.
  *
  */
 

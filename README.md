@@ -3,6 +3,14 @@ Stochastic Migration
 
 A stochastic migration toolbox that treats the gravitational N-body problem as a superposition of multiple 3-body problems and a random walk model.
 
+This toolbox can be used to study the stochastic migration of a massive body, orbiting a central body, due to the gravitational interactions with a ring of low-mass perturbers. 
+
+Possible applications include:
+- Studying migration of Neptune due to interactions with the Kuiper belt
+- Studying migration of Ceres and Vesta due to interactions with the Main Asteroid belt
+- Studying migration of late-stage protoplanets due to scattering interactions with minor bodies
+- Studying migration of exoplanets embedded in ring of low-mass bodies 
+
 This toolbox is written iuusing the following open-source libraries:
 
 - Eigen (http://eigen.tuxfamily.org/)

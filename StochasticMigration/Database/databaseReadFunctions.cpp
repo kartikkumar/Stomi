@@ -70,17 +70,16 @@ TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolute
     const TestParticleCasePointer testParticleCase = boost::make_shared< TestParticleCase >(
         TestParticleCase( query.getColumn( 0 ), query.getColumn( 1 ), query.getColumn( 2 ),  
                           query.getColumn( 3 ), query.getColumn( 4 ), query.getColumn( 5 ),
-                          query.getColumn( 6 ), query.getColumn( 7 ), query.getColumn( 8 ), 
-                          query.getColumn( 9 ), query.getColumn( 10 ), query.getColumn( 11 ),
+                          ( Eigen::VectorXd( 6 ) << 
+                                query.getColumn( 6 ), query.getColumn( 7 ),
+                                query.getColumn( 8 ), query.getColumn( 9 ), 
+                                query.getColumn( 10 ), query.getColumn( 11 ) ).finished( ),                          
                           query.getColumn( 12 ), query.getColumn( 13 ), query.getColumn( 14 ), 
                           query.getColumn( 15 ), query.getColumn( 16 ), query.getColumn( 17 ),
-                          query.getColumn( 18 ), query.getColumn( 19 ),
-                          ( Eigen::VectorXd( 6 ) << 
-                                query.getColumn( 20 ), query.getColumn( 21 ),
-                                query.getColumn( 22 ), query.getColumn( 23 ), 
-                                query.getColumn( 24 ), query.getColumn( 25 ) ).finished( ),
-                          query.getColumn( 26 ), query.getColumn( 27 ), query.getColumn( 28 ), 
-                          query.getColumn( 29 ) ) );
+                          query.getColumn( 18 ), query.getColumn( 19 ), query.getColumn( 20 ), 
+                          query.getColumn( 21 ), query.getColumn( 22 ), query.getColumn( 23 ),
+                          query.getColumn( 24 ), query.getColumn( 25 ), query.getColumn( 26 ), 
+                          query.getColumn( 27 ), query.getColumn( 28 ) ) );
 
     // Throw an error if there are multiple rows present in the table.
     if ( query.executeStep( ) )

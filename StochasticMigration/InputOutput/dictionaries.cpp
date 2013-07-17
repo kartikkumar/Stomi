@@ -92,18 +92,25 @@ DictionaryPointer getTestParticleSimulatorDictionary( )
     // Retrieve dictionary for database generator.
     DictionaryPointer dictionary = make_shared< Dictionary >( );
 
-    // Add additional entries for test particle simulator.
-    addEntry( dictionary, "APPLICATIONMODE",                       0, 0, list_of( "MODE" ) );
-    addEntry( dictionary, "DATABASE",                              1, 0, list_of( "DB" ) );
+    // Add required parameters.
     addEntry( dictionary, "CASE",                                  1, 0 );
+    addEntry( dictionary, "DATABASE",                              1, 0, list_of( "DB" ) );
+
+    // Add optional parameters.
     addEntry( dictionary, "NUMBEROFTHREADS",                       0, 0, list_of( "THREADS" ) );
-    addEntry( dictionary, "FILEOUTPUTDIRECTORY",                   0, 0, list_of( "OUTPUTDIR" ) );
+    addEntry( dictionary, "OUTPUTMODE",                            0, 0, list_of( "OUTPUT" ) );
+    addEntry( dictionary, "FILEOUTPUTDIRECTORY",                   0, 0, 
+                list_of( "FILEOUTPUTDIR" ) );
     addEntry( dictionary, "SIMULATIONSTOEXECUTE",                  0, 0, 
                 list_of( "SIMULATIONS" ) );
     addEntry( dictionary, "TESTPARTICLECASETABLENAME",             0, 0 );
     addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            0, 0 );
-    addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             0, 0 );  
-    addEntry( dictionary, "RANDOMWALKSIMULATIONDURATION",          0, 0 ); 
+    addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             0, 0 );
+    addEntry( dictionary, "RANDOMWALKSIMULATIONPERIoD",            0, 0 ); 
+
+
+
+  
     addEntry( dictionary, "SYNODICPERIODLIMIT",                    0, 0 );
     addEntry( dictionary, "OUTPUTINTERVAL",                        0, 0 );
     addEntry( dictionary, "STARTUPINTEGRATIONDURATION",            0, 0, list_of( "STARTUP" ) );

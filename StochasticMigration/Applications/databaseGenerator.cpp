@@ -248,7 +248,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     const double semiMajorAxisDistributionLimit = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "SEMIMAJORAXISDISTRIBUTIONLIMIT" ), TUDAT_NAN,
-                ConvertHillRadiiToKilometers( 
+                ConvertHillRadiiToMeters( 
                     centralBodyGravitationalParameter, 
                     perturbedBodyGravitationalParameter,
                     perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) ) );
@@ -702,7 +702,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         std::ostringstream testParticleInputTableCreate;
         testParticleInputTableCreate
             << "CREATE TABLE IF NOT EXISTS " << testParticleInputTableName << " ("
-            << "\"testParticleSimulation\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"simulationId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             << "\"caseId\" INTEGER NOT NULL,"
             << "\"completed\" INTEGER NOT NULL,"
             << "\"semiMajorAxis\" REAL NOT NULL,"
@@ -866,7 +866,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         testParticleKickTableCreate
             << "CREATE TABLE IF NOT EXISTS " << testParticleKickTableName << " ("
             << "\"kickId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            << "\"testParticleSimulationId\" INTEGER NOT NULL,"
+            << "\"simulationId\" INTEGER NOT NULL,"
             << "\"conjunctionEpoch\" REAL NOT NULL,"
             << "\"conjunctionDistance\" REAL NOT NULL,"
             << "\"conjunctionDuration\" REAL NOT NULL,"
@@ -921,7 +921,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         std::ostringstream randomWalkMonteCarloRunTableCreate;
         randomWalkMonteCarloRunTableCreate
             << "CREATE TABLE IF NOT EXISTS " << randomWalkMonteCarloRunTableName << " ("
-            << "\"monteCarloRun\" INTEGER PRIMARY KEY NOT NULL,"
+            << "\"monteCarloRunId\" INTEGER PRIMARY KEY NOT NULL,"
             << "\"perturberPopulation\" INTEGER NOT NULL,"
             << "\"massDistributionType\" TEXT NOT NULL,"
             << "\"massDistributionParameter1\" REAL NOT NULL,"
@@ -970,8 +970,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         std::ostringstream randomWalkPerturberTableCreate;
         randomWalkPerturberTableCreate
             << "CREATE TABLE IF NOT EXISTS " << randomWalkPerturberTableName << " ("
-            << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            << "\"monteCarloRun\" INTEGER NOT NULL,"
+            << "\"perturberId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"monteCarloRunId\" INTEGER NOT NULL,"
             << "\"testParticleSimulationId\" INTEGER NOT NULL,"
             << "\"massFactor\" REAL NOT NULL);";
 
@@ -1014,7 +1014,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         std::ostringstream randomWalkOutputTableCreate;
         randomWalkOutputTableCreate
             << "CREATE TABLE IF NOT EXISTS " << randomWalkOutputTableName << " ("
-            << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"outputId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             << "\"monteCarloRunId\" INTEGER NOT NULL,"
             << "\"maximumEccentricityChange\" REAL NOT NULL,"
             << "\"maximumLongitudeResidualChange\" REAL NOT NULL,"

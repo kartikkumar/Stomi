@@ -15,7 +15,7 @@
 #
 # REQUIRED PARAMETERS
 #
-# These parameters must be specified for the Database Generator application to be executed.
+# These parameters must be specified for the to be executed.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -97,15 +97,15 @@ SMALIMIT            : 30.0
 # perturbed body).
 # In other words, by setting this limit, the minimum difference in semi-major axes between the test
 # particle and perturbed body is also set.
-# UNIT              : yrs
-# TSYNODICMAX       : TRANDOM
+# UNIT                : yrs
+# TSYNODICMAX         : TRANDOM
 
 # Set start-up integration period.
 # This is the integration period that precedes the random walk simulation period. By setting this 
 # parameter, the test particle will be propagated by the specified time period first, before the 
 # propagation for the random walk period.
-# UNIT              : yrs
-# TSTARTUP          : 0.0
+# UNIT                : yrs
+# TSTARTUP            : 0.0
 
 # Set J2 gravity coefficient and equatorial radius of the central body.
 # These parameters describe the oblateness of the central body, as per the standard spherical 
@@ -114,9 +114,9 @@ SMALIMIT            : 30.0
 # Both these parameters must be set, for the oblateness of the central body to be accounted for.
 # The default setting is that the central body is perfectly spherical, meaning that these 
 # parameters do not need to be set.
-# UNIT              : J2 -> -, RCENTRAL -> m
-# J2                : 0.0
-# RCENTRAL          : 0.0
+# UNIT                : J2 -> -, RCENTRAL -> m
+# J2                  : 0.0
+# RCENTRAL            : 0.0
 
 # Set the distances used for detection of conjunction and opposition events.
 # These parameters set the distances used in the algorithm in the Test Particle Simulator to detect
@@ -127,9 +127,9 @@ SMALIMIT            : 30.0
 # and that INC0 is small.
 # This default values of these parameters have been obtained through experimentation, thus it might 
 # be prudent to play around with the values for difference simulation scenarios.
-# UNIT              : m
-# DCONJUNCTION      : 25% of 2 * SMA0
-# DOPPOSITION       : 75% of 2 * SMA0
+# UNIT                : m
+# DCONJUNCTION        : 25% of 2 * SMA0
+# DOPPOSITION         : 75% of 2 * SMA0
 
 # Set the parameters of the distibution of initial eccentricities for the test particles.
 # The following parameters describe the distribution of eccentricities that the test particles
@@ -144,10 +144,10 @@ SMALIMIT            : 30.0
 # uniformly distributed. 
 # With the default settings the test particles are all placed on circular orbits.
 # All three parameters have default values, which can be overwritten.
-# UNIT              : ECCMEAN -> -, ECCANGLE -> deg, ECCFWHM -> -
-# ECCMEAN           : 0.0
-# ECCANGLE          : 90.0
-# ECCFWHM           : 0.0 
+# UNIT                : ECCMEAN -> -, ECCANGLE -> deg, ECCFWHM -> -
+# ECCMEAN             : 0.0
+# ECCANGLE            : 90.0
+# ECCFWHM             : 0.0 
 
 # Set the parameters of the distibution of initial inclinations for the test particles.
 # The following parameters describe the distribution of inclinations that the test particles
@@ -162,10 +162,10 @@ SMALIMIT            : 30.0
 # case uniformly distributed. 
 # With the default settings the test particles are all placed on equatorial orbits.
 # All three parameters have default values, which can be overwritten.
-# UNIT              : INCMEAN -> -, INCANGLE -> deg, INCFWHM -> -
-# INCMEAN           : 0.0
-# INCANGLE          : 90.0
-# INCFWHM           : 0.0
+# UNIT                : INCMEAN -> -, INCANGLE -> deg, INCFWHM -> -
+# INCMEAN             : 0.0
+# INCANGLE            : 90.0
+# INCFWHM             : 0.0
 
 # Set the numerical integrator and its parameters.
 # The following parameters set the numerical integrator used for the test particle simulations,
@@ -177,20 +177,20 @@ SMALIMIT            : 30.0
 # The default values for the relative and absolute tolerance for error control are 10^-12 and
 # 10^-15 respectively, which are common settings for RKF-type schemes. It might be important to
 # play around with these values for different simulation scenarios. 
-# UNIT              : INTEGRATOR -> -; STEPESIZE -> s, RELTOL -> -, ABSTOL -> -
-# INTEGRATOR        : DOPRI853
-# STEPSIZE          : 60.0
-# RELTOL            : 10.0e-12
-# ABSTOL            : 10.0e-15
+# UNIT                : INTEGRATOR -> -; STEPESIZE -> s, RELTOL -> -, ABSTOL -> -
+# INTEGRATOR          : DOPRI853
+# STEPSIZE            : 60.0
+# RELTOL              : 10.0e-12
+# ABSTOL              : 10.0e-15
 
 # Set the names of the database tables.
 # The following parameters can be used to change the default names for the database tables.
 # All the test particle and random walk simulation data is stored in an SQLite database,
 # with these table names.
 # In general, it should not be necessary to change these table names.
-# TPCASE            : test_particle_case
-# TPINPUT           : test_particle_input
-# TPKICk            : test_particle_kick
-# RWMC              : random_walk_monte_carlo_runs
-# RWPERTURB         : random_walk_perturbers
-# RWOUTPUT          : random_walk_output
+# TPCASE              : test_particle_case
+# TPINPUT             : test_particle_input
+# TPKICk              : test_particle_kick
+# RWMC                : random_walk_monte_carlo_runs
+# RWPERTURB           : random_walk_perturbers
+# RWOUTPUT            : random_walk_output
