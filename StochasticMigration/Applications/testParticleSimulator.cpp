@@ -28,6 +28,8 @@
  */
 
 #include <cmath>
+#include <fstream> 
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include <string>
@@ -68,7 +70,8 @@
 #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaVariableStepSizeIntegrator.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-#include "StochasticMigration/Astrodynamics/testParticlePropagationFunctions.h"
+#include "StochasticMigration/Applications/testParticleSimulator.h"
+#include "StochasticMigration/Astrodynamics/propagationDataPoint.h"
 #include "StochasticMigration/Basics/basics.h"
 #include "StochasticMigration/Database/databaseReadFunctions.h"
 #include "StochasticMigration/Database/testParticleCase.h"
@@ -524,7 +527,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     iteratorInputTable = testParticleInputTable.begin( );
 
 #pragma omp parallel for num_threads( numberOfThreads ) schedule( static, 1 )
-    for ( unsigned int i = 0; i < 3; i++ )
+    for ( unsigned int i = 0; i < testParticleInputTable.size( ); i++ )
     {
 
 #pragma omp critical( outputToConsole )
@@ -741,9 +744,319 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Propagate test-particle-perturbed-body system and retrieve table of kicks experienced by
         // the test particle.
-        propagateSystem(
-            perturbedBody, testParticle, testParticleCase, integrator, 
-            synodicPeriod, nextStepSize, outputInterval, iteratorInputTable->simulationId );        
+
+        // Set time shift (this is the amount of time by which all the epochs have to be shifted
+        // so that the kicks lie in the range [0.0, randomWalkSimulationPeriod]).
+        const double timeShift = -( integrator->getCurrentIndependentVariable( ) + synodicPeriod );
+
+        // Compute mutual distance between test particle and perturbed body [m].
+        double mutualDistance = ( perturbedBody->getCurrentPosition( ) 
+                - testParticle->getCurrentPosition( ) ).norm( );
+
+        // Integrate until the first opposition event is detected.
+        while ( mutualDistance < testParticleCase->oppositionEventDetectionDistance )
+        {
+            // Integrate one step forwards.
+            integrator->performIntegrationStep( nextStepSize );
+
+            // Compute mutual distance based on new test particle and perturbed body states.
+            mutualDistance = ( perturbedBody->getCurrentPosition( ) 
+                - testParticle->getCurrentPosition( ) ).norm( );  
+
+            // Update next step size.
+            nextStepSize = integrator->getNextStepSize( );  
+        }        
+
+        // The following data point tables are used for the main algorithm used to search for 
+        // conjunction and opposition events (Kumar et al, 2013).
+
+        // Create a table of propagation data points.
+        PropagationDataPointTable dataPoints;
+
+        // Create data point table iterators.
+        PropagationDataPointTable::iterator iteratorDataPoint = dataPoints.begin( );
+        PropagationDataPointTable::iterator iteratorExtremumDataPoint = dataPoints.begin( );
+
+        // Create a tables of opposition (global maxima) and conjunction events (global minima).
+        PropagationDataPointTable oppositionEvents;
+        PropagationDataPointTable conjunctionEvents;
+
+        // The following data point tables and iterators are used for the backup algorithm used to 
+        // search for  conjunction and opposition events (Kumar et al, 2013). All variables used in 
+        // the context sof the backup method exclusively contain the "Backup" suffix.
+
+        // Set data point iterators to current, previous, and next.
+        PropagationDataPointTable::iterator iteratorCurrentDataPoint = dataPoints.begin( );
+        PropagationDataPointTable::iterator iteratorPreviousDataPoint = dataPoints.begin( );
+        PropagationDataPointTable::iterator iteratorNextDataPoint = dataPoints.begin( );
+
+        // Create a tables of local maxima and minima.
+        PropagationDataPointTable localMaximaBackup;
+        PropagationDataPointTable localMinimaBackup;
+
+        // Create a tables of opposition (global maxima) and conjunction events (global minima) for the
+        // backup search algorithm.
+        PropagationDataPointTable oppositionEventsBackup;
+        PropagationDataPointTable conjunctionEventsBackup;        
+
+        // Setup output files.
+        std::ostringstream mutualDistanceHistoryOutputFilename;
+        mutualDistanceHistoryOutputFilename << "/Users/kartikkumar/Desktop/mutualDistanceHistory" 
+                                            << iteratorInputTable->simulationId << ".csv";
+        std::ofstream mutualDistanceHistoryFile( mutualDistanceHistoryOutputFilename.str( ).c_str( ) );
+        mutualDistanceHistoryFile << "t,d" << std::endl;
+        // mutualDistanceHistoryFile << "# [s], [m]" << std::endl;
+
+        // std::ostringstream oppositionEvents
+
+        // // Set output counter.
+        // unsigned int outputCounter = 0;        
+
+        // // Set flag indicating if an opposition event has been detected to true.
+        // bool isOppositionEventDetected = true;
+
+        // // Integrate until the end of the simulation period and detect local maxima and minima.
+        // while ( integrator->getCurrentIndependentVariable( )
+        //         < testParticleCase->startUpIntegrationPeriod
+        //         + testParticleCase->randomWalkSimulationPeriod + 2.0 * synodicPeriod )
+        // {
+        //     // Add current data point to table.
+        //     dataPoints.insert( PropagationDataPoint( 
+        //         testParticle->getCurrentTime( ) + timeShift,
+        //         mutualDistance,
+        //         convertCartesianToKeplerianElements( 
+        //             testParticle->getCurrentState( ),
+        //             testParticleCase->centralBodyGravitationalParameter ),
+        //         convertCartesianToKeplerianElements( 
+        //             perturbedBody->getCurrentState( ),
+        //             testParticleCase->centralBodyGravitationalParameter ) ) );
+
+        //     if ( iteratorDataPoint->epoch > outputInterval * outputCounter - synodicPeriod )
+        //     {
+        //         mutualDistanceHistoryFile 
+        //              << std::setprecision( std::numeric_limits< double >::digits10 )
+        //              << iteratorDataPoint->epoch << "," 
+        //              << iteratorDataPoint->mutualDistance << std::endl;
+
+        //         outputCounter++;
+                
+        //         if ( dataPoints.size( ) > 1 )
+        //         {
+        //             iteratorDataPoint++;
+        //         }
+        //     }                     
+
+        //     // Compute mutual distance between test particle and perturbed body.
+        //     mutualDistance = ( perturbedBody->getCurrentPosition( ) 
+        //         - testParticle->getCurrentPosition( ) ).norm( );
+
+        //     // Check if the current event detected is an opposition event.
+        //     if ( isOppositionEventDetected )
+        //     {
+        //         // Check if end of opposition event is detected (i.e., start of conjunction event).
+        //         if ( mutualDistance < testParticleCase->conjunctionEventDetectionDistance )
+        //         {
+        //             // Set flag to false.
+        //             isOppositionEventDetected = false;
+
+        //             // Find data point at opposition event.
+        //             iteratorExtremumDataPoint = std::max_element( 
+        //                 dataPoints.begin( ), dataPoints.end( ), compareMutualDistances );
+
+        //             // Add opposition event to table.
+        //             oppositionEvents.insert( PropagationDataPoint( *iteratorExtremumDataPoint ) );
+
+        //             // Clear table of data points.
+        //             dataPoints.clear( );
+
+        //             // Add current data point to table.
+        //             dataPoints.insert( PropagationDataPoint( 
+        //                 testParticle->getCurrentTime( ) + timeShift,
+        //                 mutualDistance,
+        //                 convertCartesianToKeplerianElements( 
+        //                     testParticle->getCurrentState( ),
+        //                     testParticleCase->centralBodyGravitationalParameter ),
+        //                 convertCartesianToKeplerianElements( 
+        //                     perturbedBody->getCurrentState( ),
+        //                     testParticleCase->centralBodyGravitationalParameter ) ) );                    
+
+        //             // Reset data point table iterator.
+        //             iteratorDataPoint = dataPoints.begin( );
+        //         }
+        //     }
+
+        //     // Else, the current event must be a conjunction event.
+        //     else
+        //     {
+        //         // Check if end of conjunction event is detected (i.e., start of opposition event).
+        //         if ( mutualDistance > testParticleCase->conjunctionEventDetectionDistance )
+        //         {
+        //             // Set flag to true.
+        //             isOppositionEventDetected = true;
+
+        //             // Find data point at conjunctiion event.
+        //             iteratorExtremumDataPoint = std::min_element( 
+        //                 dataPoints.begin( ), dataPoints.end( ), compareMutualDistances );
+
+        //             // Add conjunction event to table.
+        //             conjunctionEvents.insert( PropagationDataPoint( *iteratorExtremumDataPoint ) );
+
+        //             // Clear table of data points.
+        //             dataPoints.clear( );
+
+        //             // Add current data point to table.
+        //             dataPoints.insert( PropagationDataPoint( 
+        //                 testParticle->getCurrentTime( ) + timeShift,
+        //                 mutualDistance,
+        //                 convertCartesianToKeplerianElements( 
+        //                     testParticle->getCurrentState( ),
+        //                     testParticleCase->centralBodyGravitationalParameter ),
+        //                 convertCartesianToKeplerianElements( 
+        //                     perturbedBody->getCurrentState( ),
+        //                     testParticleCase->centralBodyGravitationalParameter ) ) );                    
+
+        //             // Reset data point table iterator.
+        //             iteratorDataPoint = dataPoints.begin( );
+        //         }            
+        //     }
+
+        //     // if ( dataPoints.size( ) == 1 )
+        //     // {
+        //     //     // Reset data point iterators.
+        //     //     iteratorPreviousDataPoint = dataPoints.begin( );
+        //     //     iteratorCurrentDataPoint = dataPoints.begin( );
+        //     //     iteratorNextDataPoint = dataPoints.begin( );
+        //     // }
+
+        //     // else if ( dataPoints.size( ) > 2 )
+        //     // {
+        //         // std::cout << iteratorPreviousDataPoint->epoch << ", " 
+        //         //           << iteratorCurrentDataPoint->epoch << ", "
+        //         //           << iteratorNextDataPoint->epoch << std::endl;
+        //     // }
+
+        //     // Integrate one step forward and store data in table.
+        //     integrator->performIntegrationStep( nextStepSize );
+
+        //     // Update next step size.
+        //     nextStepSize = integrator->getNextStepSize( );
+
+        //     // // Advance data point iterators.
+        //     // iteratorPreviousDataPoint = iteratorCurrentDataPoint;
+        //     // iteratorCurrentDataPoint = iteratorNextDataPoint;
+        //     // iteratorNextDataPoint++;
+        // }            
+      
+        // // Check if there is a problem with the detection algorithm by checking if iether the list
+        // // of conjunction of opposition events is empty.
+        // // In case this is true, emit a warning message and skip the current simulation.
+        // if ( conjunctionEvents.size( ) == 0 || oppositionEvents.size( ) == 0 ) 
+        // {
+        //      std::cerr << "WARNING: Zero conjunction or opposition events were detected!"
+        //                << std::endl;
+        //      std::cerr << "Skipping simulation ... " << std::endl;
+
+        //      continue;
+        // }      
+
+        // // Check if epoch of last conjunction event is greater than that of the last opposition event.
+        // // If so, remove from the table.
+        // if ( conjunctionEvents.rbegin( )->epoch > oppositionEvents.rbegin( )->epoch )
+        // {
+        //     // Set iterator to last element in table of conjunction events.
+        //     PropagationDataPointTable::iterator iteratorLastElement = conjunctionEvents.end( );
+        //     iteratorLastElement--;
+
+        //     // Erase last element.
+        //     conjunctionEvents.erase( iteratorLastElement );
+        // }
+
+        // // Check if the epoch of the last conjunction event is beyond the random walk simulation 
+        // // window [0, randomWalkSimulationPeriod].
+        // // If so, delete the last conjunction event and the last opposition event.
+        // // Repeat until the last epoch is within the window.
+        // while ( conjunctionEvents.rbegin( )->epoch > testParticleCase->randomWalkSimulationPeriod )
+        // {
+        //     // Set iterator to last element in table of conjunction events.
+        //     PropagationDataPointTable::iterator iteratorLastElement = conjunctionEvents.end( );
+        //     iteratorLastElement--;
+
+        //     // Erase last element.
+        //     conjunctionEvents.erase( iteratorLastElement );
+
+        //     // Set iterator to last element in table of opposition events.
+        //     iteratorLastElement = oppositionEvents.end( );
+        //     iteratorLastElement--;
+
+        //     // Erase last element.
+        //     oppositionEvents.erase( iteratorLastElement );
+        // }
+
+        // // Check if the epoch of the first conjunction event is before the random walk simulation 
+        // // window [0.0, randomWalkSimulationPeriod].
+        // // If so, delete the first conjunction event and the first opposition event.
+        // // Repeat until the first epoch is within the window.
+        // while ( conjunctionEvents.begin( )->epoch < 0.0 )
+        // {
+        //     // Erase first element.
+        //     conjunctionEvents.erase( conjunctionEvents.begin( ) );
+
+        //     // Erase last element.
+        //     oppositionEvents.erase( oppositionEvents.begin( ) );
+        // }    
+
+        // Close output files.
+        mutualDistanceHistoryFile.close( );
+
+
+
+        // int counter = 0;
+
+        // for ( PropagationDataPointTable::iterator it = dataPointsAll.begin( );
+        //       it != dataPointsAll.end( );
+        //       it++ )
+        // {
+        //     if ( it->epoch > outputInterval * counter - synodicPeriod )
+        //     {
+        //         file << std::setprecision( std::numeric_limits< double >::digits10 )
+        //              << it->epoch << "," << it->mutualDistance << std::endl;
+        //         counter++;
+        //     }
+        // }
+
+        // file.close( );
+
+        // std::ostringstream fileName2;
+        // fileName2 << "/Users/kartikkumar/Desktop/opposition" << i << ".csv";
+        // std::ofstream file2( fileName2.str( ).c_str( ) );
+
+        // file2 << "t,d" << std::endl;
+
+        // for ( PropagationDataPointTable::iterator it = oppositionEvents.begin( );
+        //       it != oppositionEvents.end( );
+        //       it++ )
+        // {
+        //     file2 << std::setprecision( std::numeric_limits< double >::digits10 )
+        //           << it->epoch << "," << it->mutualDistance << std::endl;
+        // }
+
+        // file2.close( );
+
+        // std::ostringstream fileName3;
+        // fileName3 << "/Users/kartikkumar/Desktop/conjunction" << i << ".csv";
+        // std::ofstream file3( fileName3.str( ).c_str( ) );
+
+        // file3 << "t,d" << std::endl;
+
+        // for ( PropagationDataPointTable::iterator it = conjunctionEvents.begin( );
+        //       it != conjunctionEvents.end( );
+        //       it++ )
+        // {
+        //     file3 << std::setprecision( std::numeric_limits< double >::digits10 )
+        //           << it->epoch << "," << it->mutualDistance << std::endl;
+        // }
+
+        // file3.close( );
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -787,7 +1100,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
 // //         /////////////////////////////////////////////////////////////////////////
 
-        iteratorInputTable++;
+        if ( testParticleInputTable.size( ) > 1 )
+        {
+            iteratorInputTable++;
+        }
     }
 
     return 0;

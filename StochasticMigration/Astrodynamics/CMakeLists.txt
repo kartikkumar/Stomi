@@ -17,14 +17,12 @@
 # Set source files.
 set(ASTRODYNAMICS_SOURCES
   "${SRCROOT}${ASTRODYNAMICSDIR}/propagationDataPoint.cpp"
-  "${SRCROOT}${ASTRODYNAMICSDIR}/testParticlePropagationFunctions.cpp"
 )
 
 # Set header files.
 set(ASTRODYNAMICS_HEADERS
   "${SRCROOT}${ASTRODYNAMICSDIR}/hillSphere.h"
   "${SRCROOT}${ASTRODYNAMICSDIR}/propagationDataPoint.h"
-  "${SRCROOT}${ASTRODYNAMICSDIR}/testParticlePropagationFunctions.h"
 )
 
 # Add static library.

@@ -22,12 +22,12 @@
 # Set the name for the case.
 # The value of this parameter is interpreted as a string. This case must already exist in the 
 # database. To populate a new case, use the Database Generator application.
-CASE                :  test_case
+CASE                : 
 
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator
 # application.
-DB                  : /Users/kartikkumar/Desktop/testDatabase.db 
+DB                  :
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -43,7 +43,7 @@ DB                  : /Users/kartikkumar/Desktop/testDatabase.db
 # This parameters sets the number of parallel threads to spawn using OpenMP, to run the 
 # application. The test particle simulations are parallelized over the number of threads specified.
 # By default, the application runs on a single thread.
-# THREADS             : 30 
+# THREADS             : 1
 
 # Set the output mode for the simulations.
 # This parameter sets whether the output should be stored in the database or written to file.
