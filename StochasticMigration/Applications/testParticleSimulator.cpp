@@ -40,6 +40,7 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/assign/list_of.hpp>
 #include <boost/bind.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -96,6 +97,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using boost::assign::list_of;
     using boost::bind;
     using boost::iequals;
+    using namespace boost::filesystem;
     using boost::make_shared;
     using boost::shared_ptr;
 
@@ -781,8 +783,16 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Check if output mode is set to "file".
         // If so, open output files and write header content.
+        // Check if the output directory exists: if not, create it.
         if ( iequals( outputMode, "file" ) )
         {
+            // Check if output directory exists.
+            if ( !exists( fileOutputDirectory ) )
+            {
+               std::cerr << "Directory does not exist. Will be created." << std::endl;
+               create_directories( fileOutputDirectory );
+            }
+
             std::ostringstream mutualDistanceFilename;
             mutualDistanceFilename << fileOutputDirectory << "simulation" 
                                    << iteratorInputTable->simulationId << "_mutualDistance.csv";            
@@ -1059,50 +1069,48 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         if ( iequals( outputMode, "file" ) )
         {
             // Set up and populate opposition events output file.
-            std::ostringstream oppositionEventsOutputFilename;
-            oppositionEventsOutputFilename << fileOutputDirectory << "simulation" 
-                                           << iteratorInputTable->simulationId 
-                                           << "_oppositionEvents.csv";
-            std::ofstream oppositionEventsOutputFile( 
-                oppositionEventsOutputFilename.str( ).c_str( ) );
-            oppositionEventsOutputFile << "epoch,mutualDistance" << std::endl;
-            oppositionEventsOutputFile << "# [s],[m]" << std::endl;        
+            std::ostringstream oppositionEventsFilename;
+            oppositionEventsFilename << fileOutputDirectory << "simulation" 
+                                     << iteratorInputTable->simulationId 
+                                     << "_oppositionEvents.csv";
+            std::ofstream oppositionEventsFile( oppositionEventsFilename.str( ).c_str( ) );
+            oppositionEventsFile << "epoch,mutualDistance" << std::endl;
+            oppositionEventsFile << "# [s],[m]" << std::endl;        
 
             for ( PropagationDataPointTable::iterator iteratorOppositionEvents 
                   = oppositionEvents.begin( );
                   iteratorOppositionEvents != oppositionEvents.end( );
                   iteratorOppositionEvents++ )
             {
-                oppositionEventsOutputFile 
+                oppositionEventsFile 
                     << std::setprecision( std::numeric_limits< double >::digits10 )
                     << iteratorOppositionEvents->epoch << "," 
                     << iteratorOppositionEvents->mutualDistance << std::endl;
             }
 
-            oppositionEventsOutputFile.close( );
+            oppositionEventsFile.close( );
 
             // Set up and populate conjunction events output file.
-            std::ostringstream conjunctionEventsOutputFilename;
-            conjunctionEventsOutputFilename << fileOutputDirectory << "simulation" 
-                                            << iteratorInputTable->simulationId 
-                                            << "_conjunctionEvents.csv";
-            std::ofstream conjunctionEventsOutputFile( 
-                conjunctionEventsOutputFilename.str( ).c_str( ) );
-            conjunctionEventsOutputFile << "epoch,mutualDistance" << std::endl;
-            conjunctionEventsOutputFile << "# [s],[m]" << std::endl;        
+            std::ostringstream conjunctionEventsFilename;
+            conjunctionEventsFilename << fileOutputDirectory << "simulation" 
+                                      << iteratorInputTable->simulationId 
+                                      << "_conjunctionEvents.csv";
+            std::ofstream conjunctionEventsFile( conjunctionEventsFilename.str( ).c_str( ) );
+            conjunctionEventsFile << "epoch,mutualDistance" << std::endl;
+            conjunctionEventsFile << "# [s],[m]" << std::endl;        
 
             for ( PropagationDataPointTable::iterator iteratorConjunctionEvents 
                   = conjunctionEvents.begin( );
                   iteratorConjunctionEvents != conjunctionEvents.end( );
                   iteratorConjunctionEvents++ )
             {
-                conjunctionEventsOutputFile 
+                conjunctionEventsFile 
                     << std::setprecision( std::numeric_limits< double >::digits10 )
                     << iteratorConjunctionEvents->epoch << "," 
                     << iteratorConjunctionEvents->mutualDistance << std::endl;
             }
 
-            conjunctionEventsOutputFile.close( );
+            conjunctionEventsFile.close( );
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -1125,13 +1133,68 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
               iteratorConjunctionEvents != conjunctionEvents.end( );
               iteratorConjunctionEvents++ )
         {
-            // kickTable( new TestParticleKick( 
-            //     0, iteratorInputTable->simulationId, iteratorConjunctionEvents->epoch, 
-            //     iteratorConjunctionEvents->mutualDistance, iteratorOppositionEventBefore->epoch,
-            //     iteratorOppositionEventBefore->mutualDistance,    ) )
+            // Add new test particle kick to table.
+            kickTable.insert( new TestParticleKick( 
+                0, iteratorInputTable->simulationId, 
+                iteratorConjunctionEvents->epoch, iteratorConjunctionEvents->mutualDistance,  
+                iteratorOppositionEventBefore->epoch,
+                iteratorOppositionEventBefore->mutualDistance,
+                iteratorOppositionEventBefore->testParticleStateInKeplerianElements( 
+                    semiMajorAxisIndex ),  
+                iteratorOppositionEventBefore->testParticleStateInKeplerianElements( 
+                    eccentricityIndex ),
+                iteratorOppositionEventBefore->testParticleStateInKeplerianElements(
+                    inclinationIndex ),
+                iteratorOppositionEventAfter->epoch,
+                iteratorOppositionEventAfter->mutualDistance,
+                iteratorOppositionEventAfter->testParticleStateInKeplerianElements( 
+                    semiMajorAxisIndex ),  
+                iteratorOppositionEventAfter->testParticleStateInKeplerianElements( 
+                    eccentricityIndex ),
+                iteratorOppositionEventAfter->testParticleStateInKeplerianElements(
+                    inclinationIndex ) ) );
 
+            // Advance iterators.
+            iteratorOppositionEventBefore = iteratorOppositionEventAfter;
+            iteratorOppositionEventAfter++;
         }
 
+        // Write kick table to database or file based on OUTPUTMODE parameter value.
+        if ( iequals( outputMode, "file" ) )
+        {
+            std::ostringstream kickTableFilename;
+            kickTableFilename << fileOutputDirectory << "simulation" 
+                              << iteratorInputTable->simulationId << "_kickTable.csv";
+            std::ofstream kickTableFile( kickTableFilename.str( ).c_str( ) );
+            kickTableFile << "conjunctionEpoch,conjunnctionDistance,preConjunctionEpoch,"
+                          << "preConjunctionDistance,preConjunctionSemiMajorAxis,"
+                          << "preConjunctionEccentricity,preConjunctionInclination," 
+                          << "postConjunctionEpoch,postConjunctionDistance,"
+                          << "postConjunctionSemiMajorAxis,postConjunctionEccentricity,"
+                          << "postConjunctionInclination" << std::endl;
+            kickTableFile << "# [s],[m],[s],[m],[m],[-],[rad],[s],[m],[m],[-],[rad]" << std::endl;        
+
+            for ( TestParticleKickTable::iterator iteratorKickTable = kickTable.begin( );
+                  iteratorKickTable != kickTable.end( );
+                  iteratorKickTable++ )
+            {
+                kickTableFile << std::setprecision( std::numeric_limits< double >::digits10 )
+                              << iteratorKickTable->conjunctionEpoch << "," 
+                              << iteratorKickTable->conjunctionDistance << ","
+                              << iteratorKickTable->preConjunctionEpoch << ","
+                              << iteratorKickTable->preConjunctionDistance << ","
+                              << iteratorKickTable->preConjunctionSemiMajorAxis << ","
+                              << iteratorKickTable->preConjunctionEccentricity << ","
+                              << iteratorKickTable->preConjunctionInclination << ","
+                              << iteratorKickTable->postConjunctionEpoch << ","
+                              << iteratorKickTable->postConjunctionDistance << ","
+                              << iteratorKickTable->postConjunctionSemiMajorAxis << ","
+                              << iteratorKickTable->postConjunctionEccentricity << ","
+                              << iteratorKickTable->postConjunctionInclination << std::endl;
+            }
+
+            kickTableFile.close( );
+        }
 
         ///////////////////////////////////////////////////////////////////////////
 
