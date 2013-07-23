@@ -772,20 +772,66 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         PropagationDataPointTable oppositionEvents;
         PropagationDataPointTable conjunctionEvents; 
 
-        // Set up mutual distance history output file.
-        std::ostringstream mutualDistanceHistoryOutputFilename;
-        mutualDistanceHistoryOutputFilename << fileOutputDirectory << "simulation" 
-                                            << iteratorInputTable->simulationId 
-                                            << "_mutualDistance.csv";
-        std::ofstream mutualDistanceHistoryFile;
+        // Set up output files.
+        std::ofstream mutualDistanceFile;
+        std::ofstream keplerianElementsFile;
+        std::ofstream cartesianElementsFile;
+        std::ofstream keplerianElementsPerturbedBodyFile;
+        std::ofstream cartesianElementsPerturbedBodyFile;            
 
         // Check if output mode is set to "file".
-        // If so, set up output files containing mutual distance data.
+        // If so, open output files and write header content.
         if ( iequals( outputMode, "file" ) )
         {
-            mutualDistanceHistoryFile.open( mutualDistanceHistoryOutputFilename.str( ).c_str( ) );
-            mutualDistanceHistoryFile << "t,d" << std::endl;
-            mutualDistanceHistoryFile << "# [s], [m]" << std::endl;
+            std::ostringstream mutualDistanceFilename;
+            mutualDistanceFilename << fileOutputDirectory << "simulation" 
+                                   << iteratorInputTable->simulationId << "_mutualDistance.csv";            
+            mutualDistanceFile.open( mutualDistanceFilename.str( ).c_str( ) );
+            mutualDistanceFile << "epoch,mutualDistance" << std::endl;
+            mutualDistanceFile << "# [s],[m]" << std::endl;
+
+            std::ostringstream keplerianElementsFilename;
+            keplerianElementsFilename << fileOutputDirectory << "simulation" 
+                                      << iteratorInputTable->simulationId 
+                                      << "_keplerianElements.csv";
+            keplerianElementsFile.open( keplerianElementsFilename.str( ).c_str( ) );
+            keplerianElementsFile << "epoch,semiMajorAxis,eccentricity,inclination,"
+                                  << "argumentofPeriapsis,longitudeOfAscendingNode,trueAnomaly"
+                                  << std::endl;
+            keplerianElementsFile << "# [s],[m],[-],[deg],[deg],[deg],[deg]" << std::endl;
+
+            std::ostringstream cartesianElementsFilename;
+            cartesianElementsFilename << fileOutputDirectory << "simulation" 
+                                      << iteratorInputTable->simulationId 
+                                      << "_cartesianElements.csv";
+            cartesianElementsFile.open( cartesianElementsFilename.str( ).c_str( ) );
+            cartesianElementsFile << "epoch,xPosition,yPosition,zPosition,"
+                                  << "xVelocity,yVelocity,zVelocity"
+                                  << std::endl;
+            cartesianElementsFile << "# [s],[m],[m],[m],[m s^-1],[m s^-1],[m s^-1]" << std::endl;     
+
+            std::ostringstream keplerianElementsPerturbedBodyFilename;
+            keplerianElementsPerturbedBodyFilename << fileOutputDirectory << "simulation" 
+                                                   << iteratorInputTable->simulationId 
+                                                   << "_keplerianElementsPerturbedBody.csv";
+            keplerianElementsPerturbedBodyFile.open( 
+                keplerianElementsPerturbedBodyFilename.str( ).c_str( ) );
+            keplerianElementsPerturbedBodyFile << "epoch,semiMajorAxis,eccentricity,inclination,"
+                                  << "argumentofPeriapsis,longitudeOfAscendingNode,trueAnomaly"
+                                  << std::endl;
+            keplerianElementsPerturbedBodyFile << "# [s],[m],[-],[deg],[deg],[deg],[deg]" 
+                                               << std::endl;
+
+            std::ostringstream cartesianElementsPerturbedBodyFilename;
+            cartesianElementsPerturbedBodyFilename << fileOutputDirectory << "simulation" 
+                                                   << iteratorInputTable->simulationId 
+                                                   << "_cartesianElementsPerturbedBody.csv";
+            cartesianElementsPerturbedBodyFile.open( 
+                cartesianElementsPerturbedBodyFilename.str( ).c_str( ) );
+            cartesianElementsPerturbedBodyFilename << "epoch,xPosition,yPosition,zPosition,"
+                                                   << "xVelocity,yVelocity,zVelocity" << std::endl;
+            cartesianElementsPerturbedBodyFilename 
+                << "# [s],[m],[m],[m],[m s^-1],[m s^-1],[m s^-1]" << std::endl;                                               
         }
 
         // Set output counter.
@@ -870,27 +916,83 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             }
 
             // Check if output mode is set to "file".
-            // If so, write mutual distance to file.
+            // If so, write mutual distance and Keplerian elements to file.
             if ( iequals( outputMode, "file" ) )
             {
                 // Only write data points that are spaced by more than specified by the 
                 // outputInterval variable.
                 if ( iteratorDataPoint->epoch > outputInterval * outputCounter - synodicPeriod )
                 {
-                    mutualDistanceHistoryFile 
+                    mutualDistanceFile 
                          << std::setprecision( std::numeric_limits< double >::digits10 )
                          << iteratorDataPoint->epoch << "," 
                          << iteratorDataPoint->mutualDistance << std::endl;
+
+                    keplerianElementsFile 
+                         << std::setprecision( std::numeric_limits< double >::digits10 )
+                         << iteratorDataPoint->epoch << "," 
+                         << iteratorDataPoint->testParticleStateInKeplerianElements( 
+                                semiMajorAxisIndex ) << ","
+                         << iteratorDataPoint->testParticleStateInKeplerianElements( 
+                                eccentricityIndex ) << ","
+                         << iteratorDataPoint->testParticleStateInKeplerianElements( 
+                                inclinationIndex ) << ","
+                         << iteratorDataPoint->testParticleStateInKeplerianElements( 
+                                argumentOfPeriapsisIndex ) << ","
+                         << iteratorDataPoint->testParticleStateInKeplerianElements( 
+                                longitudeOfAscendingNodeIndex ) << ","
+                         << iteratorDataPoint->testParticleStateInKeplerianElements( 
+                                trueAnomalyIndex ) << std::endl; 
+
+                    cartesianElementsFile 
+                         << std::setprecision( std::numeric_limits< double >::digits10 )
+                         << iteratorDataPoint->epoch << "," 
+                         << testParticle->getCurrentState( )( xPositionIndex ) << ","
+                         << testParticle->getCurrentState( )( yPositionIndex ) << ","
+                         << testParticle->getCurrentState( )( zPositionIndex ) << ","
+                         << testParticle->getCurrentState( )( xVelocityIndex ) << ","
+                         << testParticle->getCurrentState( )( yVelocityIndex ) << ","
+                         << testParticle->getCurrentState( )( zVelocityIndex ) << std::endl;                                            
+
+                    keplerianElementsPerturbedBodyFile 
+                         << std::setprecision( std::numeric_limits< double >::digits10 )
+                         << iteratorDataPoint->epoch << "," 
+                         << iteratorDataPoint->perturbedBodyStateInKeplerianElements( 
+                                semiMajorAxisIndex ) << ","
+                         << iteratorDataPoint->perturbedBodyStateInKeplerianElements( 
+                                eccentricityIndex ) << ","
+                         << iteratorDataPoint->perturbedBodyStateInKeplerianElements( 
+                                inclinationIndex ) << ","
+                         << iteratorDataPoint->perturbedBodyStateInKeplerianElements( 
+                                argumentOfPeriapsisIndex ) << ","
+                         << iteratorDataPoint->perturbedBodyStateInKeplerianElements( 
+                                longitudeOfAscendingNodeIndex ) << ","
+                         << iteratorDataPoint->perturbedBodyStateInKeplerianElements( 
+                                trueAnomalyIndex ) << std::endl;        
+
+                    cartesianElementsPerturbedBodyFile 
+                         << std::setprecision( std::numeric_limits< double >::digits10 )
+                         << iteratorDataPoint->epoch << "," 
+                         << testParticle->getCurrentState( )( xPositionIndex ) << ","
+                         << testParticle->getCurrentState( )( yPositionIndex ) << ","
+                         << testParticle->getCurrentState( )( zPositionIndex ) << ","
+                         << testParticle->getCurrentState( )( xVelocityIndex ) << ","
+                         << testParticle->getCurrentState( )( yVelocityIndex ) << ","
+                         << testParticle->getCurrentState( )( zVelocityIndex ) << std::endl; 
 
                     outputCounter++;
                 }               
             }
         }         
 
-        // Close mutual distance history output file if output mode is set to "file".
+        // Close output files if output mode is set to "file".
         if ( iequals( outputMode, "file" ) )
         {
-            mutualDistanceHistoryFile.close( ); 
+            mutualDistanceFile.close( ); 
+            keplerianElementsFile.close( );
+            cartesianElementsFile.close( );
+            keplerianElementsPerturbedBodyFile.close( );
+            cartesianElementsPerturbedBodyFile.close( );               
         }
       
         // Check if there is a problem with the detection algorithm by checking if iether the list
@@ -963,8 +1065,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                                            << "_oppositionEvents.csv";
             std::ofstream oppositionEventsOutputFile( 
                 oppositionEventsOutputFilename.str( ).c_str( ) );
-            oppositionEventsOutputFile << "t,d" << std::endl;
-            oppositionEventsOutputFile << "# [s], [m]" << std::endl;        
+            oppositionEventsOutputFile << "epoch,mutualDistance" << std::endl;
+            oppositionEventsOutputFile << "# [s],[m]" << std::endl;        
 
             for ( PropagationDataPointTable::iterator iteratorOppositionEvents 
                   = oppositionEvents.begin( );
@@ -986,8 +1088,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                                             << "_conjunctionEvents.csv";
             std::ofstream conjunctionEventsOutputFile( 
                 conjunctionEventsOutputFilename.str( ).c_str( ) );
-            conjunctionEventsOutputFile << "t,d" << std::endl;
-            conjunctionEventsOutputFile << "# [s], [m]" << std::endl;        
+            conjunctionEventsOutputFile << "epoch,mutualDistance" << std::endl;
+            conjunctionEventsOutputFile << "# [s],[m]" << std::endl;        
 
             for ( PropagationDataPointTable::iterator iteratorConjunctionEvents 
                   = conjunctionEvents.begin( );
@@ -1018,16 +1120,17 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             = oppositionEvents.begin( );
         iteratorOppositionEventAfter++;    
 
-        // for ( PropagationDataPointTable::iterator iteratorConjunctionEvents 
-        //       = conjunctionEvents.begin( );
-        //       iteratorConjunctionEvents != conjunctionEvents.end( );
-        //       iteratorConjunctionEvents++ )
-        // {
-        //     kickTable( new TestParticleKick( 
-        //         0, iteratorInputTable->simulationId, iteratorConjunctionEvents->epoch, 
-        //         iteratorConjunctionEvents->mutualDistance,  ) )
+        for ( PropagationDataPointTable::iterator iteratorConjunctionEvents 
+              = conjunctionEvents.begin( );
+              iteratorConjunctionEvents != conjunctionEvents.end( );
+              iteratorConjunctionEvents++ )
+        {
+            // kickTable( new TestParticleKick( 
+            //     0, iteratorInputTable->simulationId, iteratorConjunctionEvents->epoch, 
+            //     iteratorConjunctionEvents->mutualDistance, iteratorOppositionEventBefore->epoch,
+            //     iteratorOppositionEventBefore->mutualDistance,    ) )
 
-        // }
+        }
 
 
         ///////////////////////////////////////////////////////////////////////////
