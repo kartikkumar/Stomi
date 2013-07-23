@@ -184,7 +184,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     const string fileOutputDirectory = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "FILEOUTPUTDIRECTORY" ), "ROOTDIR" );
+                findEntry( dictionary, "FILEOUTPUTDIRECTORY" ), "" );
     cout << "File output directory                                     "
          << fileOutputDirectory << endl;
 
@@ -725,22 +725,17 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         ///////////////////////////////////////////////////////////////////////////
 
         // Numerically integrate system to TPlusSimulationAndSynodicPeriod.
+        // Write output to file if the OUTPUTMODE variable is set to "file".
 
         // Set the next step size, depending on whether the start-up integration was performed.
         double nextStepSize = 0.0;
 
         // Check if the start-up integration period was performed. If so, set the next step for the
         // numerical integrator based on the internally computed value.
-        if ( isStartup )
-        {
-            nextStepSize = integrator->getNextStepSize( );
-        }
+        if ( isStartup ) { nextStepSize = integrator->getNextStepSize( ); }
 
         // Else, set it to the initial step size specified in the case data.
-        else
-        {
-            nextStepSize = testParticleCase->initialStepSize;
-        }
+        else { nextStepSize = testParticleCase->initialStepSize; }
 
         // Propagate test-particle-perturbed-body system and retrieve table of kicks experienced by
         // the test particle.
@@ -767,300 +762,277 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             nextStepSize = integrator->getNextStepSize( );  
         }        
 
-        // The following data point tables are used for the main algorithm used to search for 
-        // conjunction and opposition events (Kumar et al, 2013).
-
         // Create a table of propagation data points.
         PropagationDataPointTable dataPoints;
 
-        // Create data point table iterators.
-        PropagationDataPointTable::iterator iteratorDataPoint = dataPoints.begin( );
-        PropagationDataPointTable::iterator iteratorExtremumDataPoint = dataPoints.begin( );
+        // Set data point table iterator.
+        PropagationDataPointTable::iterator iteratorDataPoint;                   
 
-        // Create a tables of opposition (global maxima) and conjunction events (global minima).
+        // Create tables of opposition and conjunction events.
         PropagationDataPointTable oppositionEvents;
-        PropagationDataPointTable conjunctionEvents;
+        PropagationDataPointTable conjunctionEvents; 
 
-        // The following data point tables and iterators are used for the backup algorithm used to 
-        // search for  conjunction and opposition events (Kumar et al, 2013). All variables used in 
-        // the context sof the backup method exclusively contain the "Backup" suffix.
-
-        // Set data point iterators to current, previous, and next.
-        PropagationDataPointTable::iterator iteratorCurrentDataPoint = dataPoints.begin( );
-        PropagationDataPointTable::iterator iteratorPreviousDataPoint = dataPoints.begin( );
-        PropagationDataPointTable::iterator iteratorNextDataPoint = dataPoints.begin( );
-
-        // Create a tables of local maxima and minima.
-        PropagationDataPointTable localMaximaBackup;
-        PropagationDataPointTable localMinimaBackup;
-
-        // Create a tables of opposition (global maxima) and conjunction events (global minima) for the
-        // backup search algorithm.
-        PropagationDataPointTable oppositionEventsBackup;
-        PropagationDataPointTable conjunctionEventsBackup;        
-
-        // Setup output files.
+        // Set up mutual distance history output file.
         std::ostringstream mutualDistanceHistoryOutputFilename;
-        mutualDistanceHistoryOutputFilename << "/Users/kartikkumar/Desktop/mutualDistanceHistory" 
-                                            << iteratorInputTable->simulationId << ".csv";
-        std::ofstream mutualDistanceHistoryFile( mutualDistanceHistoryOutputFilename.str( ).c_str( ) );
-        mutualDistanceHistoryFile << "t,d" << std::endl;
-        // mutualDistanceHistoryFile << "# [s], [m]" << std::endl;
+        mutualDistanceHistoryOutputFilename << fileOutputDirectory << "simulation" 
+                                            << iteratorInputTable->simulationId 
+                                            << "_mutualDistance.csv";
+        std::ofstream mutualDistanceHistoryFile;
 
-        // std::ostringstream oppositionEvents
+        // Check if output mode is set to "file".
+        // If so, set up output files containing mutual distance data.
+        if ( iequals( outputMode, "file" ) )
+        {
+            mutualDistanceHistoryFile.open( mutualDistanceHistoryOutputFilename.str( ).c_str( ) );
+            mutualDistanceHistoryFile << "t,d" << std::endl;
+            mutualDistanceHistoryFile << "# [s], [m]" << std::endl;
+        }
 
-        // // Set output counter.
-        // unsigned int outputCounter = 0;        
+        // Set output counter.
+        unsigned int outputCounter = 0;        
 
-        // // Set flag indicating if an opposition event has been detected to true.
-        // bool isOppositionEventDetected = true;
+        // Set flag indicating if an opposition event has been detected to true.
+        bool isOppositionEventDetected = true;
 
-        // // Integrate until the end of the simulation period and detect local maxima and minima.
-        // while ( integrator->getCurrentIndependentVariable( )
-        //         < testParticleCase->startUpIntegrationPeriod
-        //         + testParticleCase->randomWalkSimulationPeriod + 2.0 * synodicPeriod )
-        // {
-        //     // Add current data point to table.
-        //     dataPoints.insert( PropagationDataPoint( 
-        //         testParticle->getCurrentTime( ) + timeShift,
-        //         mutualDistance,
-        //         convertCartesianToKeplerianElements( 
-        //             testParticle->getCurrentState( ),
-        //             testParticleCase->centralBodyGravitationalParameter ),
-        //         convertCartesianToKeplerianElements( 
-        //             perturbedBody->getCurrentState( ),
-        //             testParticleCase->centralBodyGravitationalParameter ) ) );
+        // Integrate until the end of the simulation period and detect local maxima and minima.
+        while ( integrator->getCurrentIndependentVariable( )
+                < testParticleCase->startUpIntegrationPeriod
+                + testParticleCase->randomWalkSimulationPeriod + 2.0 * synodicPeriod )
+        {            
+            // Check if the current event detected is an opposition event and the end of opposition
+            // event is detected (i.e., start of conjunction event).
+            if ( isOppositionEventDetected 
+                 && mutualDistance < testParticleCase->conjunctionEventDetectionDistance )
+            {
+                // Set flag to false.
+                isOppositionEventDetected = false;
 
-        //     if ( iteratorDataPoint->epoch > outputInterval * outputCounter - synodicPeriod )
-        //     {
-        //         mutualDistanceHistoryFile 
-        //              << std::setprecision( std::numeric_limits< double >::digits10 )
-        //              << iteratorDataPoint->epoch << "," 
-        //              << iteratorDataPoint->mutualDistance << std::endl;
+                // Find data point at opposition event.
+                iteratorDataPoint = std::max_element( 
+                    dataPoints.begin( ), dataPoints.end( ), compareMutualDistances );
 
-        //         outputCounter++;
-                
-        //         if ( dataPoints.size( ) > 1 )
-        //         {
-        //             iteratorDataPoint++;
-        //         }
-        //     }                     
+                // Add opposition event to table.
+                oppositionEvents.insert( PropagationDataPoint( *iteratorDataPoint ) );
 
-        //     // Compute mutual distance between test particle and perturbed body.
-        //     mutualDistance = ( perturbedBody->getCurrentPosition( ) 
-        //         - testParticle->getCurrentPosition( ) ).norm( );
+                // Clear all data points from table.
+                dataPoints.clear( );    
+            }
 
-        //     // Check if the current event detected is an opposition event.
-        //     if ( isOppositionEventDetected )
-        //     {
-        //         // Check if end of opposition event is detected (i.e., start of conjunction event).
-        //         if ( mutualDistance < testParticleCase->conjunctionEventDetectionDistance )
-        //         {
-        //             // Set flag to false.
-        //             isOppositionEventDetected = false;
+            // Else, the current event must be a conjunction event. Check if end of conjunction 
+            // event is detected (i.e., start of opposition event).
+            else if ( !isOppositionEventDetected
+                      && mutualDistance > testParticleCase->oppositionEventDetectionDistance )
+            {
+                // Set flag to true.
+                isOppositionEventDetected = true;
 
-        //             // Find data point at opposition event.
-        //             iteratorExtremumDataPoint = std::max_element( 
-        //                 dataPoints.begin( ), dataPoints.end( ), compareMutualDistances );
+                // Find data point at conjunctiion event.
+                iteratorDataPoint = std::min_element( 
+                    dataPoints.begin( ), dataPoints.end( ), compareMutualDistances );
 
-        //             // Add opposition event to table.
-        //             oppositionEvents.insert( PropagationDataPoint( *iteratorExtremumDataPoint ) );
+                // Add conjunction event to table.
+                conjunctionEvents.insert( PropagationDataPoint( *iteratorDataPoint ) );            
 
-        //             // Clear table of data points.
-        //             dataPoints.clear( );
+                // Clear all data points from table.
+                dataPoints.clear( );     
+            }
 
-        //             // Add current data point to table.
-        //             dataPoints.insert( PropagationDataPoint( 
-        //                 testParticle->getCurrentTime( ) + timeShift,
-        //                 mutualDistance,
-        //                 convertCartesianToKeplerianElements( 
-        //                     testParticle->getCurrentState( ),
-        //                     testParticleCase->centralBodyGravitationalParameter ),
-        //                 convertCartesianToKeplerianElements( 
-        //                     perturbedBody->getCurrentState( ),
-        //                     testParticleCase->centralBodyGravitationalParameter ) ) );                    
+            // Integrate one step forward and store data in table.
+            integrator->performIntegrationStep( nextStepSize );
 
-        //             // Reset data point table iterator.
-        //             iteratorDataPoint = dataPoints.begin( );
-        //         }
-        //     }
+            // Update next step size.
+            nextStepSize = integrator->getNextStepSize( );
 
-        //     // Else, the current event must be a conjunction event.
-        //     else
-        //     {
-        //         // Check if end of conjunction event is detected (i.e., start of opposition event).
-        //         if ( mutualDistance > testParticleCase->conjunctionEventDetectionDistance )
-        //         {
-        //             // Set flag to true.
-        //             isOppositionEventDetected = true;
+            // Compute mutual distance between test particle and perturbed body.
+            mutualDistance = ( perturbedBody->getCurrentPosition( ) 
+                - testParticle->getCurrentPosition( ) ).norm( );
 
-        //             // Find data point at conjunctiion event.
-        //             iteratorExtremumDataPoint = std::min_element( 
-        //                 dataPoints.begin( ), dataPoints.end( ), compareMutualDistances );
+            // Add current data point to table.
+            dataPoints.insert( PropagationDataPoint( 
+                testParticle->getCurrentTime( ) + timeShift,
+                mutualDistance,
+                convertCartesianToKeplerianElements( 
+                    testParticle->getCurrentState( ),
+                    testParticleCase->centralBodyGravitationalParameter ),
+                convertCartesianToKeplerianElements( 
+                    perturbedBody->getCurrentState( ),
+                    testParticleCase->centralBodyGravitationalParameter ) ) );
 
-        //             // Add conjunction event to table.
-        //             conjunctionEvents.insert( PropagationDataPoint( *iteratorExtremumDataPoint ) );
+            // Advance data point iterator.
+            if ( dataPoints.size( ) == 1 )
+            {
+                iteratorDataPoint = dataPoints.begin( );
+            }
 
-        //             // Clear table of data points.
-        //             dataPoints.clear( );
+            else
+            {
+                iteratorDataPoint++;
+            }
 
-        //             // Add current data point to table.
-        //             dataPoints.insert( PropagationDataPoint( 
-        //                 testParticle->getCurrentTime( ) + timeShift,
-        //                 mutualDistance,
-        //                 convertCartesianToKeplerianElements( 
-        //                     testParticle->getCurrentState( ),
-        //                     testParticleCase->centralBodyGravitationalParameter ),
-        //                 convertCartesianToKeplerianElements( 
-        //                     perturbedBody->getCurrentState( ),
-        //                     testParticleCase->centralBodyGravitationalParameter ) ) );                    
+            // Check if output mode is set to "file".
+            // If so, write mutual distance to file.
+            if ( iequals( outputMode, "file" ) )
+            {
+                // Only write data points that are spaced by more than specified by the 
+                // outputInterval variable.
+                if ( iteratorDataPoint->epoch > outputInterval * outputCounter - synodicPeriod )
+                {
+                    mutualDistanceHistoryFile 
+                         << std::setprecision( std::numeric_limits< double >::digits10 )
+                         << iteratorDataPoint->epoch << "," 
+                         << iteratorDataPoint->mutualDistance << std::endl;
 
-        //             // Reset data point table iterator.
-        //             iteratorDataPoint = dataPoints.begin( );
-        //         }            
-        //     }
+                    outputCounter++;
+                }               
+            }
+        }         
 
-        //     // if ( dataPoints.size( ) == 1 )
-        //     // {
-        //     //     // Reset data point iterators.
-        //     //     iteratorPreviousDataPoint = dataPoints.begin( );
-        //     //     iteratorCurrentDataPoint = dataPoints.begin( );
-        //     //     iteratorNextDataPoint = dataPoints.begin( );
-        //     // }
-
-        //     // else if ( dataPoints.size( ) > 2 )
-        //     // {
-        //         // std::cout << iteratorPreviousDataPoint->epoch << ", " 
-        //         //           << iteratorCurrentDataPoint->epoch << ", "
-        //         //           << iteratorNextDataPoint->epoch << std::endl;
-        //     // }
-
-        //     // Integrate one step forward and store data in table.
-        //     integrator->performIntegrationStep( nextStepSize );
-
-        //     // Update next step size.
-        //     nextStepSize = integrator->getNextStepSize( );
-
-        //     // // Advance data point iterators.
-        //     // iteratorPreviousDataPoint = iteratorCurrentDataPoint;
-        //     // iteratorCurrentDataPoint = iteratorNextDataPoint;
-        //     // iteratorNextDataPoint++;
-        // }            
+        // Close mutual distance history output file if output mode is set to "file".
+        if ( iequals( outputMode, "file" ) )
+        {
+            mutualDistanceHistoryFile.close( ); 
+        }
       
-        // // Check if there is a problem with the detection algorithm by checking if iether the list
-        // // of conjunction of opposition events is empty.
-        // // In case this is true, emit a warning message and skip the current simulation.
-        // if ( conjunctionEvents.size( ) == 0 || oppositionEvents.size( ) == 0 ) 
-        // {
-        //      std::cerr << "WARNING: Zero conjunction or opposition events were detected!"
-        //                << std::endl;
-        //      std::cerr << "Skipping simulation ... " << std::endl;
+        // Check if there is a problem with the detection algorithm by checking if iether the list
+        // of conjunction of opposition events is empty.
+        // In case this is true, emit a warning message and skip the current simulation.
+        if ( conjunctionEvents.size( ) == 0 || oppositionEvents.size( ) == 0 ) 
+        {
+             std::cerr << "WARNING: Zero conjunction or opposition events were detected!"
+                       << std::endl;
+             std::cerr << "Skipping simulation ... " << std::endl;
 
-        //      continue;
-        // }      
+             continue;
+        }      
 
-        // // Check if epoch of last conjunction event is greater than that of the last opposition event.
-        // // If so, remove from the table.
-        // if ( conjunctionEvents.rbegin( )->epoch > oppositionEvents.rbegin( )->epoch )
-        // {
-        //     // Set iterator to last element in table of conjunction events.
-        //     PropagationDataPointTable::iterator iteratorLastElement = conjunctionEvents.end( );
-        //     iteratorLastElement--;
+        // Check if epoch of last conjunction event is greater than that of the last opposition 
+        // event.
+        // If so, remove from the table.
+        if ( conjunctionEvents.rbegin( )->epoch > oppositionEvents.rbegin( )->epoch )
+        {
+            // Set iterator to last element in table of conjunction events.
+            PropagationDataPointTable::iterator iteratorLastElement = conjunctionEvents.end( );
+            iteratorLastElement--;
 
-        //     // Erase last element.
-        //     conjunctionEvents.erase( iteratorLastElement );
-        // }
+            // Erase last element.
+            conjunctionEvents.erase( iteratorLastElement );
+        }
 
-        // // Check if the epoch of the last conjunction event is beyond the random walk simulation 
-        // // window [0, randomWalkSimulationPeriod].
-        // // If so, delete the last conjunction event and the last opposition event.
-        // // Repeat until the last epoch is within the window.
-        // while ( conjunctionEvents.rbegin( )->epoch > testParticleCase->randomWalkSimulationPeriod )
-        // {
-        //     // Set iterator to last element in table of conjunction events.
-        //     PropagationDataPointTable::iterator iteratorLastElement = conjunctionEvents.end( );
-        //     iteratorLastElement--;
+        // Check if the epoch of the last conjunction event is beyond the random walk simulation 
+        // window [0, randomWalkSimulationPeriod].
+        // If so, delete the last conjunction event and the last opposition event.
+        // Repeat until the last conjunction epoch is within the window.
+        while ( conjunctionEvents.rbegin( )->epoch > testParticleCase->randomWalkSimulationPeriod )
+        {
+            // Set iterator to last element in table of conjunction events.
+            PropagationDataPointTable::iterator iteratorLastElement = conjunctionEvents.end( );
+            iteratorLastElement--;
 
-        //     // Erase last element.
-        //     conjunctionEvents.erase( iteratorLastElement );
+            // Erase last element.
+            conjunctionEvents.erase( iteratorLastElement );
 
-        //     // Set iterator to last element in table of opposition events.
-        //     iteratorLastElement = oppositionEvents.end( );
-        //     iteratorLastElement--;
+            // Set iterator to last element in table of opposition events.
+            iteratorLastElement = oppositionEvents.end( );
+            iteratorLastElement--;
 
-        //     // Erase last element.
-        //     oppositionEvents.erase( iteratorLastElement );
-        // }
+            // Erase last element.
+            oppositionEvents.erase( iteratorLastElement );
+        }
 
-        // // Check if the epoch of the first conjunction event is before the random walk simulation 
-        // // window [0.0, randomWalkSimulationPeriod].
-        // // If so, delete the first conjunction event and the first opposition event.
-        // // Repeat until the first epoch is within the window.
-        // while ( conjunctionEvents.begin( )->epoch < 0.0 )
-        // {
-        //     // Erase first element.
-        //     conjunctionEvents.erase( conjunctionEvents.begin( ) );
+        // Check if the epoch of the first conjunction event is before the random walk simulation 
+        // window [0.0, randomWalkSimulationPeriod].
+        // If so, delete the first conjunction event and the first opposition event.
+        // Repeat until the first epoch is within the window.
+        while ( conjunctionEvents.begin( )->epoch < 0.0 )
+        {
+            // Erase first element.
+            conjunctionEvents.erase( conjunctionEvents.begin( ) );
 
-        //     // Erase last element.
-        //     oppositionEvents.erase( oppositionEvents.begin( ) );
-        // }    
+            // Erase last element.
+            oppositionEvents.erase( oppositionEvents.begin( ) );
+        }    
 
-        // Close output files.
-        mutualDistanceHistoryFile.close( );
+        // Check if output mode is set to "file".
+        // If so, generate output files containing opposition and conjunction event data.
+        if ( iequals( outputMode, "file" ) )
+        {
+            // Set up and populate opposition events output file.
+            std::ostringstream oppositionEventsOutputFilename;
+            oppositionEventsOutputFilename << fileOutputDirectory << "simulation" 
+                                           << iteratorInputTable->simulationId 
+                                           << "_oppositionEvents.csv";
+            std::ofstream oppositionEventsOutputFile( 
+                oppositionEventsOutputFilename.str( ).c_str( ) );
+            oppositionEventsOutputFile << "t,d" << std::endl;
+            oppositionEventsOutputFile << "# [s], [m]" << std::endl;        
 
+            for ( PropagationDataPointTable::iterator iteratorOppositionEvents 
+                  = oppositionEvents.begin( );
+                  iteratorOppositionEvents != oppositionEvents.end( );
+                  iteratorOppositionEvents++ )
+            {
+                oppositionEventsOutputFile 
+                    << std::setprecision( std::numeric_limits< double >::digits10 )
+                    << iteratorOppositionEvents->epoch << "," 
+                    << iteratorOppositionEvents->mutualDistance << std::endl;
+            }
 
+            oppositionEventsOutputFile.close( );
 
-        // int counter = 0;
+            // Set up and populate conjunction events output file.
+            std::ostringstream conjunctionEventsOutputFilename;
+            conjunctionEventsOutputFilename << fileOutputDirectory << "simulation" 
+                                            << iteratorInputTable->simulationId 
+                                            << "_conjunctionEvents.csv";
+            std::ofstream conjunctionEventsOutputFile( 
+                conjunctionEventsOutputFilename.str( ).c_str( ) );
+            conjunctionEventsOutputFile << "t,d" << std::endl;
+            conjunctionEventsOutputFile << "# [s], [m]" << std::endl;        
 
-        // for ( PropagationDataPointTable::iterator it = dataPointsAll.begin( );
-        //       it != dataPointsAll.end( );
-        //       it++ )
-        // {
-        //     if ( it->epoch > outputInterval * counter - synodicPeriod )
-        //     {
-        //         file << std::setprecision( std::numeric_limits< double >::digits10 )
-        //              << it->epoch << "," << it->mutualDistance << std::endl;
-        //         counter++;
-        //     }
-        // }
+            for ( PropagationDataPointTable::iterator iteratorConjunctionEvents 
+                  = conjunctionEvents.begin( );
+                  iteratorConjunctionEvents != conjunctionEvents.end( );
+                  iteratorConjunctionEvents++ )
+            {
+                conjunctionEventsOutputFile 
+                    << std::setprecision( std::numeric_limits< double >::digits10 )
+                    << iteratorConjunctionEvents->epoch << "," 
+                    << iteratorConjunctionEvents->mutualDistance << std::endl;
+            }
 
-        // file.close( );
-
-        // std::ostringstream fileName2;
-        // fileName2 << "/Users/kartikkumar/Desktop/opposition" << i << ".csv";
-        // std::ofstream file2( fileName2.str( ).c_str( ) );
-
-        // file2 << "t,d" << std::endl;
-
-        // for ( PropagationDataPointTable::iterator it = oppositionEvents.begin( );
-        //       it != oppositionEvents.end( );
-        //       it++ )
-        // {
-        //     file2 << std::setprecision( std::numeric_limits< double >::digits10 )
-        //           << it->epoch << "," << it->mutualDistance << std::endl;
-        // }
-
-        // file2.close( );
-
-        // std::ostringstream fileName3;
-        // fileName3 << "/Users/kartikkumar/Desktop/conjunction" << i << ".csv";
-        // std::ofstream file3( fileName3.str( ).c_str( ) );
-
-        // file3 << "t,d" << std::endl;
-
-        // for ( PropagationDataPointTable::iterator it = conjunctionEvents.begin( );
-        //       it != conjunctionEvents.end( );
-        //       it++ )
-        // {
-        //     file3 << std::setprecision( std::numeric_limits< double >::digits10 )
-        //           << it->epoch << "," << it->mutualDistance << std::endl;
-        // }
-
-        // file3.close( );
+            conjunctionEventsOutputFile.close( );
+        }
 
         ///////////////////////////////////////////////////////////////////////////
 
-//         ///////////////////////////////////////////////////////////////////////////
+        // Generate kick table from conjunction and opposition events.
+
+        // Declare kick table.
+        TestParticleKickTable kickTable;
+
+        // Loop through tables of conjunction and opposition events to generate entries in kick 
+        // table.
+        PropagationDataPointTable::iterator iteratorOppositionEventBefore 
+            = oppositionEvents.begin( );
+        PropagationDataPointTable::iterator iteratorOppositionEventAfter 
+            = oppositionEvents.begin( );
+        iteratorOppositionEventAfter++;    
+
+        // for ( PropagationDataPointTable::iterator iteratorConjunctionEvents 
+        //       = conjunctionEvents.begin( );
+        //       iteratorConjunctionEvents != conjunctionEvents.end( );
+        //       iteratorConjunctionEvents++ )
+        // {
+        //     kickTable( new TestParticleKick( 
+        //         0, iteratorInputTable->simulationId, iteratorConjunctionEvents->epoch, 
+        //         iteratorConjunctionEvents->mutualDistance,  ) )
+
+        // }
+
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////////////////////
 
 // // //        // Save output. To avoid locking of the database, this section is thread-critical, so will
 // // //        // be executed one-by-one by multiple threads.
@@ -1098,7 +1070,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
 // //         cout << endl;
 
-// //         /////////////////////////////////////////////////////////////////////////
+//         /////////////////////////////////////////////////////////////////////////
 
         if ( testParticleInputTable.size( ) > 1 )
         {

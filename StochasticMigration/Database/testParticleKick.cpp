@@ -41,7 +41,6 @@ TestParticleKick::TestParticleKick( const int aKickId,
                                     const int aSimulationNumber,
                                     const double aConjunctionEpoch,
                                     const double aConjunctionDistance,
-                                    const double aConjunctionDuration,
                                     const double aPreConjunctionEpoch,
                                     const double aPreConjunctionDistance,
                                     const double aPreConjunctionSemiMajorAxis,
@@ -51,18 +50,11 @@ TestParticleKick::TestParticleKick( const int aKickId,
                                     const double aPostConjunctionDistance,
                                     const double aPostConjunctionSemiMajorAxis,
                                     const double aPostConjunctionEccentricity,
-                                    const double aPostConjunctionInclination,
-                                    const double aTisserandParameterRelativeError,
-                                    const double aPerturbedBodyEnergyRelativeError,
-                                    const double aPerturbedBodyAngularMomentumRelativeError )
+                                    const double aPostConjunctionInclination )
     : kickId( checkPositive( aKickId, "Kick ID" ) ),
       simulationNumber( checkPositive( aSimulationNumber, "Simulation number" ) ),
       conjunctionEpoch( checkPositive( aConjunctionEpoch, "Conjunction epoch" ) ),
       conjunctionDistance( checkPositive( aConjunctionDistance, "Conjunction distance [m]" ) ),
-      conjunctionDuration( checkLessThan( 
-                            checkPositive( aConjunctionDuration, "Conjunction duration [s]" ),
-                            "Conjunction duration [s]", 
-                            aPostConjunctionEpoch - aPreConjunctionEpoch ) ),
       preConjunctionEpoch( checkLessThan( aPreConjunctionEpoch, "Pre-conjunction epoch [s]",
                                           conjunctionEpoch ) ),
       preConjunctionDistance( 
@@ -85,10 +77,7 @@ TestParticleKick::TestParticleKick( const int aKickId,
       postConjunctionEccentricity( checkInRange( aPostConjunctionEccentricity,
                                                  "Post-conjunction eccentricity [-]", 0.0, 1.0 ) ),
       postConjunctionInclination( checkPositive( aPostConjunctionInclination,
-                                                 "Post-conjunction inclination [rad]" ) ),
-      tisserandParameterRelativeError( aTisserandParameterRelativeError ),
-      perturbedBodyEnergyRelativeError( aPerturbedBodyEnergyRelativeError ),
-      perturbedBodyAngularMomentumRelativeError( aPerturbedBodyAngularMomentumRelativeError )
+                                                 "Post-conjunction inclination [rad]" ) )
 
 { }
 
@@ -100,7 +89,6 @@ bool operator==( const TestParticleKick& testParticleKick1,
              && testParticleKick1.simulationNumber == testParticleKick2.simulationNumber
              && testParticleKick1.conjunctionEpoch == testParticleKick2.conjunctionEpoch
              && testParticleKick1.conjunctionDistance == testParticleKick2.conjunctionDistance
-             && testParticleKick1.conjunctionDuration == testParticleKick2.conjunctionDuration
              && testParticleKick1.preConjunctionEpoch == testParticleKick2.preConjunctionEpoch
              && testParticleKick1.preConjunctionDistance
              == testParticleKick2.preConjunctionDistance
@@ -118,13 +106,7 @@ bool operator==( const TestParticleKick& testParticleKick1,
              && testParticleKick1.postConjunctionEccentricity
              == testParticleKick2.postConjunctionEccentricity
              && testParticleKick1.postConjunctionInclination
-             == testParticleKick2.postConjunctionInclination
-             && testParticleKick1.tisserandParameterRelativeError
-             == testParticleKick2.tisserandParameterRelativeError
-             && testParticleKick1.perturbedBodyEnergyRelativeError
-             == testParticleKick2.perturbedBodyEnergyRelativeError
-             && testParticleKick1.perturbedBodyAngularMomentumRelativeError
-             == testParticleKick2.perturbedBodyAngularMomentumRelativeError );
+             == testParticleKick2.postConjunctionInclination );
 }
 
 //! Overload < operator.
@@ -150,9 +132,6 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleKick& te
                  << convertSecondsToJulianYears( testParticleKick.conjunctionEpoch ) << std::endl;
     outputStream << "Conjunction distance [m]: "
                  << testParticleKick.conjunctionDistance << std::endl;
-    outputStream << "Conjunction duration [Jdays]: "
-                 << convertSecondsToJulianYears( testParticleKick.conjunctionDuration )
-                 << std::endl;
     outputStream << "Pre-conjunction epoch (since start) [Jyr]: "
                  << convertSecondsToJulianYears( testParticleKick.preConjunctionEpoch )
                  << std::endl;
@@ -176,13 +155,7 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleKick& te
                  << testParticleKick.postConjunctionEccentricity << std::endl;
     outputStream << "Post-conjunction inclination [deg]: "
                  << convertRadiansToDegrees( testParticleKick.postConjunctionInclination )
-                 << std::endl;
-    outputStream << "Tisserand parameter relative error [-]: "
-                 << testParticleKick.tisserandParameterRelativeError << std::endl;
-    outputStream << "Perturbed body energy relative error [-]: "
-                 << testParticleKick.perturbedBodyEnergyRelativeError << std::endl;
-    outputStream << "Perturbed body angular momentum relative error [-]: "
-                 << testParticleKick.perturbedBodyAngularMomentumRelativeError << std::endl;                                                
+                 << std::endl;                                              
 
     // Return output stream.
     return outputStream;

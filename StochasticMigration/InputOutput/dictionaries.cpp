@@ -125,9 +125,9 @@ DictionaryPointer getTestParticleSimulatorDictionary( )
     addEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT",       0, 0, list_of( "J2" ) );
     addEntry( dictionary, "CENTRALBODYEQUATORIALRADIUS",           0, 0, list_of( "RCENTRAL" ) );
     addEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE",     0, 0, 
-                list_of( "DCONJUNCTION ") );
+                list_of( "DCONJUNCTION") );
     addEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE",      0, 0,
-                list_of( "DOPPOSITION ") );
+                list_of( "DOPPOSITION") );
     addEntry( dictionary, "NUMERICALINTEGRATORTYPE",               0, 0, list_of( "INTEGRATOR" ) );
     addEntry( dictionary, "INITIALSTEPSIZE",                       0, 0, list_of( "STEPSIZE0" ) );
     addEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE",      0, 0, list_of( "RELTOL" ) );

@@ -61,13 +61,10 @@ public:
           postConjunctionDistance( 987.65e8 ),
           postConjunctionSemiMajorAxis( 112244.55 ),
           postConjunctionEccentricity( 0.567 ),
-          postConjunctionInclination( 1.345 ),
-          tisserandParameterRelativeError( 0.123456 ),
-          perturbedBodyEnergyRelativeError( 0.654321 ),
-          perturbedBodyAngularMomentumRelativeError( -0.123456 )
+          postConjunctionInclination( 1.345 )
     { }
 
-    // //! Declare parameters of test particle kick.
+    //! Declare parameters of test particle kick.
 
     //! Unique id for kick in database.
     int kickId;
@@ -80,9 +77,6 @@ public:
 
     //! Conjunction distance [m].
     double conjunctionDistance;
-
-    //! Conjunction duration [s].
-    double conjunctionDuration;
 
     //! Pre-Conjunction (opposition) epoch [s].
     double preConjunctionEpoch;
@@ -114,28 +108,16 @@ public:
     //! Post-Conjunction inclination of test particle [rad].
     double postConjunctionInclination;
 
-    //! Tisserand parameter relative error [-].
-    double tisserandParameterRelativeError;
-
-    //! Perturbed body energy relative error [-].
-    double perturbedBodyEnergyRelativeError;
-
-    //! Perturbed body angular momentum relative error.
-    double perturbedBodyAngularMomentumRelativeError;
-
     //! Get test particle kick created from specified parameters.
     database::TestParticleKickPointer getTestParticleKick( )
     {
         return boost::make_shared< database::TestParticleKick >(
                     database::TestParticleKick(
                         kickId, simulationNumber, conjunctionEpoch, conjunctionDistance,
-                        conjunctionDuration, preConjunctionEpoch, preConjunctionDistance,
-                        preConjunctionSemiMajorAxis, preConjunctionEccentricity,
-                        preConjunctionInclination, postConjunctionEpoch, postConjunctionDistance,
-                        postConjunctionSemiMajorAxis, postConjunctionEccentricity,
-                        postConjunctionInclination, tisserandParameterRelativeError,
-                        perturbedBodyEnergyRelativeError, 
-                        perturbedBodyAngularMomentumRelativeError ) );
+                        preConjunctionEpoch, preConjunctionDistance, preConjunctionSemiMajorAxis,
+                        preConjunctionEccentricity, preConjunctionInclination, 
+                        postConjunctionEpoch, postConjunctionDistance,postConjunctionSemiMajorAxis,
+                        postConjunctionEccentricity, postConjunctionInclination ) );
     }
 
 protected:
@@ -163,7 +145,6 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickStructContruction )
     BOOST_CHECK_EQUAL( testParticleKick->simulationNumber, simulationNumber );
     BOOST_CHECK_EQUAL( testParticleKick->conjunctionEpoch, conjunctionEpoch );
     BOOST_CHECK_EQUAL( testParticleKick->conjunctionDistance, conjunctionDistance );
-    BOOST_CHECK_EQUAL( testParticleKick->conjunctionDuration, conjunctionDuration );
     BOOST_CHECK_EQUAL( testParticleKick->preConjunctionEpoch, preConjunctionEpoch );
     BOOST_CHECK_EQUAL( testParticleKick->preConjunctionDistance, preConjunctionDistance );
     BOOST_CHECK_EQUAL( testParticleKick->preConjunctionSemiMajorAxis,
@@ -176,13 +157,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickStructContruction )
                        postConjunctionSemiMajorAxis );
     BOOST_CHECK_EQUAL( testParticleKick->postConjunctionEccentricity,
                        postConjunctionEccentricity );
-    BOOST_CHECK_EQUAL( testParticleKick->postConjunctionInclination, postConjunctionInclination );
-    BOOST_CHECK_EQUAL( testParticleKick->tisserandParameterRelativeError, 
-                       tisserandParameterRelativeError );
-    BOOST_CHECK_EQUAL( testParticleKick->perturbedBodyEnergyRelativeError, 
-                       perturbedBodyEnergyRelativeError );
-    BOOST_CHECK_EQUAL( testParticleKick->perturbedBodyAngularMomentumRelativeError, 
-                       perturbedBodyAngularMomentumRelativeError );                           
+    BOOST_CHECK_EQUAL( testParticleKick->postConjunctionInclination, postConjunctionInclination );                         
 }
 
 //! Test initialization of test particle kick with non-positive kick ID.
@@ -250,46 +225,6 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNegativeConjunctionDistanceError )
 
     // Set conjunction distance to invalid (negative) number.
     conjunctionDistance = -1.0;
-
-    // Try to create test particle kick.
-    try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
-
-    // Catch expected run-time error.
-    catch ( std::runtime_error& error ) { isError = true; }
-
-    // Check that construction of test particle kick failed.
-    BOOST_CHECK( isError );
-}
-
-//! Test initialization of test particle kick with negative conjunction duration.
-BOOST_AUTO_TEST_CASE( testTestParticleKickNegativeConjunctionDurationError )
-{
-    // Set flag to indicate if error is thrown to false.
-    bool isError = false;
-
-    // Set conjunction duration to invalid (negative) number.
-    conjunctionDuration = -1.0;
-
-    // Try to create test particle kick.
-    try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
-
-    // Catch expected run-time error.
-    catch ( std::runtime_error& error ) { isError = true; }
-
-    // Check that construction of test particle kick failed.
-    BOOST_CHECK( isError );
-}
-
-//! Test initialization of test particle kick with conjunction duration greater than
-//! post-conjunction - pre-conjunction epochs.
-BOOST_AUTO_TEST_CASE( testTestParticleKickConjunctionDurationGreaterThanPostMinusPreError )
-{
-    // Set flag to indicate if error is thrown to false.
-    bool isError = false;
-
-    // Set conjunction duration to value less than post-conjunction duration - pre-conjunction
-    // duration.
-    conjunctionDistance = 999.e9;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }

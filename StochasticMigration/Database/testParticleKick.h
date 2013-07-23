@@ -59,7 +59,6 @@ public:
                       const int aSimulationNumber,
                       const double aConjunctionEpoch,
                       const double aConjunctionDistance,
-                      const double aConjunctionDuration,
                       const double aPreConjunctionEpoch,
                       const double aPreConjunctionDistance,
                       const double aPreConjunctionSemiMajorAxis,
@@ -69,10 +68,7 @@ public:
                       const double aPostConjunctionDistance,
                       const double aPostConjunctionSemiMajorAxis,
                       const double aPostConjunctionEccentricity,
-                      const double aPostConjunctionInclination,
-                      const double aTisserandParameterRelativeError,
-                      const double aPerturbedBodyEnergyRelativeError,
-                      const double aPerturbedBodyAngularMomentumRelativeError );
+                      const double aPostConjunctionInclination );
 
     //! Unique id for kick in database.
     const int kickId;
@@ -85,9 +81,6 @@ public:
 
     //! Conjunction distance [m].
     const double conjunctionDistance;
-
-    //! Conjunction duration [s].
-    const double conjunctionDuration;
 
     //! Pre-Conjunction (opposition) epoch [s].
     const double preConjunctionEpoch;
@@ -118,15 +111,6 @@ public:
 
     //! Post-Conjunction inclination of test particle [rad].
     const double postConjunctionInclination;
-
-    //! Tisserand parameter relative error [-].
-    const double tisserandParameterRelativeError;
-
-    //! Perturbed body energy relative error [-].
-    const double perturbedBodyEnergyRelativeError;
-
-    //! Perturbed body angular momentum relative error.
-    const double perturbedBodyAngularMomentumRelativeError;
 
 protected:
 private:

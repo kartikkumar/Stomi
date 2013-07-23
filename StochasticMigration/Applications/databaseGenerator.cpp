@@ -869,7 +869,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"simulationId\" INTEGER NOT NULL,"
             << "\"conjunctionEpoch\" REAL NOT NULL,"
             << "\"conjunctionDistance\" REAL NOT NULL,"
-            << "\"conjunctionDuration\" REAL NOT NULL,"
             << "\"preConjunctionEpoch\" REAL NOT NULL,"
             << "\"preconjunctionEventDetectionDistance\" REAL NOT NULL,"
             << "\"preConjunctionSemiMajorAxis\" REAL NOT NULL,"
