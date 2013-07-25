@@ -848,7 +848,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     }
 
     // Commit transaction.
-    testParticleInputTableTransaction.commit();
+    testParticleInputTableTransaction.commit( );
 
     ///////////////////////////////////////////////////////////////////////////
     

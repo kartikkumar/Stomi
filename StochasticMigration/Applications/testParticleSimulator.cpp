@@ -73,10 +73,10 @@
 #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaVariableStepSizeIntegrator.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-#include "StochasticMigration/Applications/testParticleSimulator.h"
 #include "StochasticMigration/Astrodynamics/propagationDataPoint.h"
 #include "StochasticMigration/Basics/basics.h"
 #include "StochasticMigration/Database/databaseReadFunctions.h"
+#include "StochasticMigration/Database/databaseWriteFunctions.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
 #include "StochasticMigration/Database/testParticleKick.h"
@@ -1196,7 +1196,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             // executed one-by-one by multiple threads.
 #pragma omp critical( writeKickTableToDatabase )
             {
-
+                // Write kick table to database.
+                populateTestParticleKickTable( databasePath, kickTable, 
+                    testParticleKickTableName, testParticleInputTableName );
             }
         }
 
