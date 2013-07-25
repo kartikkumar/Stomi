@@ -19,6 +19,8 @@
  *      120808    K. Kumar          Updated to new dictionary-based input file system.
  *      120830    K. Kumar          Cleaned up code; implemented composite state derivative model.
  *      130717    K. Kumar          Updated and cleaned up the input deck.
+ *      130723    K. Kumar          Added code to write data to output files. Added section to 
+ *                                  write kick table to database.
  *
  *    References
  *      Kumar, K., de Pater, I., Showalter, M.R. In prep, 2013.
@@ -708,20 +710,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         const double synodicPeriod = computeSynodicPeriod(
                     orbitalPeriodOfPerturbedBody, orbitalPeriodOfTestParticle );
 
-        // Compute perturbed body's initial energy.
-        const double perturbedBodyInitialEnergy = computeKeplerEnergy(
-                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-                        semiMajorAxisIndex ),
-                    testParticleCase->centralBodyGravitationalParameter );
-
-        // Compute perturbed body's initial angular momentum.
-        const double perturbedBodyInitialAngularMomentum = computeKeplerAngularMomentum(
-                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-                        semiMajorAxisIndex ),
-                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
-                        eccentricityIndex ),
-                    testParticleCase->centralBodyGravitationalParameter );
-
         ///////////////////////////////////////////////////////////////////////////
 
         ///////////////////////////////////////////////////////////////////////////
@@ -1160,8 +1148,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         }
 
         // Write kick table to database or file based on OUTPUTMODE parameter value.
+
+        // Check if output mode is set to "file".
         if ( iequals( outputMode, "file" ) )
         {
+            // Set up kick table output file.
             std::ostringstream kickTableFilename;
             kickTableFilename << fileOutputDirectory << "simulation" 
                               << iteratorInputTable->simulationId << "_kickTable.csv";
@@ -1174,6 +1165,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                           << "postConjunctionInclination" << std::endl;
             kickTableFile << "# [s],[m],[s],[m],[m],[-],[rad],[s],[m],[m],[-],[rad]" << std::endl;        
 
+            // Loop through kick table and write data to file.
             for ( TestParticleKickTable::iterator iteratorKickTable = kickTable.begin( );
                   iteratorKickTable != kickTable.end( );
                   iteratorKickTable++ )
@@ -1193,56 +1185,34 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                               << iteratorKickTable->postConjunctionInclination << std::endl;
             }
 
+            // Close output file.
             kickTableFile.close( );
+        }
+
+        // Else, check if output mdoe is set to "database".
+        else if ( iequals( outputMode, "file" ) )
+        {
+            // To avoid locking of the database, this section is thread-critical, so will be 
+            // executed one-by-one by multiple threads.
+#pragma omp critical( writeKickTableToDatabase )
+            {
+
+            }
         }
 
         ///////////////////////////////////////////////////////////////////////////
 
-        ///////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
 
-// // //        // Save output. To avoid locking of the database, this section is thread-critical, so will
-// // //        // be executed one-by-one by multiple threads.
-
-// // //#pragma omp critical( writeToDatabase )
-// // //        {
-// // //            // Check if output should be written to database or to files.
-// // //            if ( outputDirectory.empty( ) )
-// // //            {
-// // //                // Populate kick table in database.
-// // //                mab_simulations::database_functions::populateKickTable(
-// // //                            databasePath, testParticleInputTable.at( i ).simulationNumber,
-// // //                            kickTable, perturbedBodyEnergyError, perturbedBodyAngularMomentumError );
-// // //            }
-
-// // //            // If file output is required, re-integrate the system and generate file output at
-// // //            // fixed output intervals defined by the user.
-// // //            else
-// // //            {
-// // //                // Update time and state stored in Mab and test particle bodies to
-// // //                // TMinusSynodicPeriod.
-// // //                dataUpdater->updateTimeAndCompositeState(
-// // //                            integratorCopy->getCurrentIndependentVariable( ),
-// // //                            integratorCopy->getCurrentState( ) );
-
-// // //                // Propagate system and write output generated to files.
-// // //                propagateSystemAndGenerateFileOutput(
-// // //                            simulationDuration, synodicPeriod, outputInterval, initialStepSize,
-// // //                            startUpIntegrationPeriod, integratorCopy, mab, testParticle,
-// // //                            caseNumber, testParticleInputTable.at( i ).simulationNumber, outputDirectory,
-// // //                            std::numeric_limits< double >::digits10,
-// // //                            kickTable, testParticleCase->uranusGravitationalParameter );
-// // //            }
-// // //        }
-
-// //         cout << endl;
-
-//         /////////////////////////////////////////////////////////////////////////
-
+        // Check if tha test particle input table has more than one entry.
+        // If so, increment the iterator to the table.
         if ( testParticleInputTable.size( ) > 1 )
         {
             iteratorInputTable++;
         }
+
+        /////////////////////////////////////////////////////////////////////////
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
