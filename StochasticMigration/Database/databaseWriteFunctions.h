@@ -30,11 +30,13 @@ namespace database
 /*!
  * Populates table of test particle kicks in SQLite database.
  * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param simulationNumber Simulation number associated with kick table.
  * \param kickTable Table containing kick data as set of pointers to TestParticleKick objects.
  * \param testParticleKickTableName String name of test particle kick table in database.
  * \param testParticleInputTableName String name of test particle input table in database.
  */
 void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
+                                    const int simulationNumber,
                                     const TestParticleKickTable& kickTable,
                                     const std::string& testParticleKickTableName, 
                                     const std::string& testParticleInputTableName );

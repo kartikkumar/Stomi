@@ -53,12 +53,15 @@ target_link_libraries(test_DatabaseReadFunctions
                       ${SQLITE3_LIBRARY}  
                       ${Boost_LIBRARIES})
 
-# add_executable(test_DatabaseWriteFunctions 
-#                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseWriteFunctions.cpp")
-# setup_unit_test_target(test_DatabaseWriteFunctions "${SRCROOT}${DATABASEDIR}")
-# target_link_libraries(test_DatabaseWriteFunctions stochastic_migration_database 
-#                       stochastic_migration_basics ${SQLITECPP_LIBRARY} ${TUDAT_CORE_LIBRARIES}
-#                       ${SQLITE3_LIBRARY} ${Boost_LIBRARIES})
+add_executable(test_DatabaseWriteFunctions 
+               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseWriteFunctions.cpp")
+setup_unit_test_target(test_DatabaseWriteFunctions "${SRCROOT}${DATABASEDIR}")
+target_link_libraries(test_DatabaseWriteFunctions 
+                      stochastic_migration_database stochastic_migration_basics 
+                      ${TUDAT_CORE_LIBRARIES}
+                      ${SQLITECPP_LIBRARY} 
+                      ${SQLITE3_LIBRARY} 
+                      ${Boost_LIBRARIES})
 
 # add_executable(test_RandomWalkMonteCarloRun
 #                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestRandomWalkMonteCarloRun.cpp")

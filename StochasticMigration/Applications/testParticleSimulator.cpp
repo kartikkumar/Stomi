@@ -715,7 +715,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         ///////////////////////////////////////////////////////////////////////////
 
         // Numerically integrate system to TPlusSimulationAndSynodicPeriod.
-        // Write output to file if the OUTPUTMODE variable is set to "file".
+        // Write output to file if the OUTPUTMODE variable is set to "FILE".
 
         // Set the next step size, depending on whether the start-up integration was performed.
         double nextStepSize = 0.0;
@@ -769,10 +769,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         std::ofstream keplerianElementsPerturbedBodyFile;
         std::ofstream cartesianElementsPerturbedBodyFile;            
 
-        // Check if output mode is set to "file".
+        // Check if output mode is set to "FILE".
         // If so, open output files and write header content.
         // Check if the output directory exists: if not, create it.
-        if ( iequals( outputMode, "file" ) )
+        if ( iequals( outputMode, "FILE" ) )
         {
             // Check if output directory exists.
             if ( !exists( fileOutputDirectory ) )
@@ -913,9 +913,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 iteratorDataPoint++;
             }
 
-            // Check if output mode is set to "file".
+            // Check if output mode is set to "FILE".
             // If so, write mutual distance and Keplerian elements to file.
-            if ( iequals( outputMode, "file" ) )
+            if ( iequals( outputMode, "FILE" ) )
             {
                 // Only write data points that are spaced by more than specified by the 
                 // outputInterval variable.
@@ -983,8 +983,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             }
         }         
 
-        // Close output files if output mode is set to "file".
-        if ( iequals( outputMode, "file" ) )
+        // Close output files if output mode is set to "FILE".
+        if ( iequals( outputMode, "FILE" ) )
         {
             mutualDistanceFile.close( ); 
             keplerianElementsFile.close( );
@@ -1052,9 +1052,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             oppositionEvents.erase( oppositionEvents.begin( ) );
         }    
 
-        // Check if output mode is set to "file".
+        // Check if output mode is set to "FILE".
         // If so, generate output files containing opposition and conjunction event data.
-        if ( iequals( outputMode, "file" ) )
+        if ( iequals( outputMode, "FILE" ) )
         {
             // Set up and populate opposition events output file.
             std::ostringstream oppositionEventsFilename;
@@ -1149,15 +1149,15 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Write kick table to database or file based on OUTPUTMODE parameter value.
 
-        // Check if output mode is set to "file".
-        if ( iequals( outputMode, "file" ) )
+        // Check if output mode is set to "FILE".
+        if ( iequals( outputMode, "FILE" ) )
         {
             // Set up kick table output file.
             std::ostringstream kickTableFilename;
             kickTableFilename << fileOutputDirectory << "simulation" 
                               << iteratorInputTable->simulationId << "_kickTable.csv";
             std::ofstream kickTableFile( kickTableFilename.str( ).c_str( ) );
-            kickTableFile << "conjunctionEpoch,conjunnctionDistance,preConjunctionEpoch,"
+            kickTableFile << "conjunctionEpoch,conjunctionDistance,preConjunctionEpoch,"
                           << "preConjunctionDistance,preConjunctionSemiMajorAxis,"
                           << "preConjunctionEccentricity,preConjunctionInclination," 
                           << "postConjunctionEpoch,postConjunctionDistance,"
@@ -1189,16 +1189,16 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             kickTableFile.close( );
         }
 
-        // Else, check if output mdoe is set to "database".
-        else if ( iequals( outputMode, "file" ) )
+        // Else, check if output mdoe is set to "DATABASE".
+        else if ( iequals( outputMode, "DATABASE" ) )
         {
             // To avoid locking of the database, this section is thread-critical, so will be 
             // executed one-by-one by multiple threads.
 #pragma omp critical( writeKickTableToDatabase )
             {
                 // Write kick table to database.
-                populateTestParticleKickTable( databasePath, kickTable, 
-                    testParticleKickTableName, testParticleInputTableName );
+                populateTestParticleKickTable( databasePath, iteratorInputTable->simulationId, 
+                    kickTable, testParticleKickTableName, testParticleInputTableName );
             }
         }
 
@@ -1206,7 +1206,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         /////////////////////////////////////////////////////////////////////////
 
-        // Check if tha test particle input table has more than one entry.
+        // Check if the test particle input table has more than one entry.
         // If so, increment the iterator to the table.
         if ( testParticleInputTable.size( ) > 1 )
         {

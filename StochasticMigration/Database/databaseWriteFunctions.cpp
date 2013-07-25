@@ -20,11 +20,7 @@
 
 #include <iostream>
 #include <sstream>
-
-// #include <sqlite3.h>
-
-// #include <boost/make_shared.hpp>
-
+ 
 #include <SQLiteC++.h> 
 
 #include "StochasticMigration/Database/databaseWriteFunctions.h"
@@ -38,6 +34,7 @@ namespace database
 
 //! Populate test particle kick table.
 void populateTestParticleKickTable( const std::string& databaseAbsolutePath, 
+                                    const int simulationNumber,
                                     const TestParticleKickTable& kickTable,
                                     const std::string& testParticleKickTableName, 
                                     const std::string& testParticleInputTableName )
@@ -48,8 +45,8 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
     // Set up update statement for test particle input table.
     std::ostringstream inputTableUpdate;
     inputTableUpdate << "UPDATE " << testParticleInputTableName << " SET \"completed\" = " 
-                     << isCompleted << " WHERE \"simulation\" = " 
-                     << kickTable.begin( )->simulationNumber << ";" << std::endl;
+                     << isCompleted << " WHERE \"simulationId\" = " << simulationNumber << ";" 
+                     << std::endl;
 
     // Open database in write mode.          
     SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READWRITE );    
@@ -75,9 +72,9 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
         // Set up insert statement for test particle kick table.
         std::ostringstream kickTableInsert;
         kickTableInsert << "INSERT INTO " << testParticleKickTableName << " "
-                        << "VALUES (0, :simulationId, :conjunctionEpoch, :conjunctionDistance, "
+                        << "VALUES (NULL, :simulationId, :conjunctionEpoch, :conjunctionDistance, "
                         << ":preConjunctionEpoch, :preConjunctionDistance, "
-                        << ":preConjunctionSemiMajorAxis, preConjunctionEccentricity, "
+                        << ":preConjunctionSemiMajorAxis, :preConjunctionEccentricity, "
                         << ":preConjunctionInclination, :postConjunctionEpoch, "
                         << ":postConjunctionDistance, :postConjunctionSemiMajorAxis, "
                         << ":postConjunctionEccentricity, :postConjunctionInclination);";
@@ -90,7 +87,6 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
               iteratorKickTable != kickTable.end( ); 
               iteratorKickTable++ )
         {
-
             // Bind values to prepared SQLite statement.
             kickTableInsertQuery.bind( ":simulationId", iteratorKickTable->simulationNumber );
             kickTableInsertQuery.bind( ":conjunctionEpoch", iteratorKickTable->conjunctionEpoch );

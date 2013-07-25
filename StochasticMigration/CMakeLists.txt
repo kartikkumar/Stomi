@@ -287,12 +287,6 @@ foreach(CURRENT_SUBDIR ${SUBDIRS})
 add_subdirectory("${SRCROOT}${CURRENT_SUBDIR}")
 endforeach(CURRENT_SUBDIR)
 
-# Add sandbox.
-add_executable(sandbox "${SRCROOT}/Applications/sandbox.cpp")
-setup_executable_target(sandbox "${SRCROOT}")
-target_link_libraries(sandbox ${SQLITECPP_LIBRARY} ${SQLITE3_LIBRARY} 
-                      ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
-
 # Add SQLite database generator for stochastic migration simulations.
 add_executable(databaseGenerator "${SRCROOT}/Applications/databaseGenerator.cpp")
 setup_executable_target(databaseGenerator "${SRCROOT}")
