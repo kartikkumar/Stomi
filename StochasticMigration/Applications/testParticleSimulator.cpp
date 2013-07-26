@@ -529,6 +529,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
          << std::endl;
     cout << endl;
 
+#pragma omp parallel num_threads( numberOfThreads )
+    {
     for ( TestParticleInputTable::iterator iteratorInputTable = testParticleInputTable.begin( );
           iteratorInputTable != testParticleInputTable.end( );
           iteratorInputTable++ )
@@ -1203,6 +1205,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         } // #pragma omp task
     } // outer for-loop
+    } // #pragma omp parallel
 
     return EXIT_SUCCESS;
 }
