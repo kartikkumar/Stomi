@@ -525,19 +525,19 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Execute simulation loop.
     cout << "Starting simulation loop ... " << endl;
+    cout << testParticleInputTable.size( ) + 1 << " simulations queued for execution ..." 
+         << std::endl;
     cout << endl;
 
-    TestParticleInputTable::iterator iteratorInputTable;
-    iteratorInputTable = testParticleInputTable.begin( );
-
-#pragma omp parallel for num_threads( numberOfThreads ) schedule( static, 1 )
-    for ( unsigned int i = 0; i < testParticleInputTable.size( ); i++ )
+    for ( TestParticleInputTable::iterator iteratorInputTable = testParticleInputTable.begin( );
+          iteratorInputTable != testParticleInputTable.end( );
+          iteratorInputTable++ )
     {
-
+#pragma omp task
+        {
 #pragma omp critical( outputToConsole )
         {
-            cout << "Run " << i + 1 << " / " << testParticleInputTable.size( )
-                 << " (simulation ID: " << iteratorInputTable->simulationId << ")"
+            cout << "simulation ID: " << iteratorInputTable->simulationId
                  << " on thread " << omp_get_thread_num( ) + 1
                  << " / " << omp_get_num_threads( ) << endl;
         }
@@ -993,16 +993,13 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             cartesianElementsPerturbedBodyFile.close( );               
         }
       
-        // Check if there is a problem with the detection algorithm by checking if iether the list
+        // Check if there is a problem with the detection algorithm by checking if either the list
         // of conjunction of opposition events is empty.
         // In case this is true, emit a warning message and skip the current simulation.
         if ( conjunctionEvents.size( ) == 0 || oppositionEvents.size( ) == 0 ) 
         {
              std::cerr << "WARNING: Zero conjunction or opposition events were detected!"
                        << std::endl;
-             std::cerr << "Skipping simulation ... " << std::endl;
-
-             continue;
         }      
 
         // Check if epoch of last conjunction event is greater than that of the last opposition 
@@ -1204,17 +1201,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         ///////////////////////////////////////////////////////////////////////////
 
-        /////////////////////////////////////////////////////////////////////////
-
-        // Check if the test particle input table has more than one entry.
-        // If so, increment the iterator to the table.
-        if ( testParticleInputTable.size( ) > 1 )
-        {
-            iteratorInputTable++;
-        }
-
-        /////////////////////////////////////////////////////////////////////////
-    }
+        } // #pragma omp task
+    } // outer for-loop
 
     return EXIT_SUCCESS;
 }
