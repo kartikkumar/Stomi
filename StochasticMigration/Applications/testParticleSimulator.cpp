@@ -21,6 +21,7 @@
  *      130717    K. Kumar          Updated and cleaned up the input deck.
  *      130723    K. Kumar          Added code to write data to output files. Added section to 
  *                                  write kick table to database.
+ *      130725    K. Kumar          Created workaround for OpenMP to work with iterators.
  *
  *    References
  *      Kumar, K., de Pater, I., Showalter, M.R. In prep, 2013.
@@ -29,6 +30,7 @@
  *
  */
 
+#include <algorithm>
 #include <cmath>
 #include <fstream> 
 #include <iomanip>
@@ -89,6 +91,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     ///////////////////////////////////////////////////////////////////////////
 
     // Declare using-statements and type definitions.
+    using std::advance;
     using std::cout;
     using std::endl;
     using std::fabs;
@@ -525,24 +528,31 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Execute simulation loop.
     cout << "Starting simulation loop ... " << endl;
-    cout << testParticleInputTable.size( ) + 1 << " simulations queued for execution ..." 
+    cout << testParticleInputTable.size( ) << " simulations queued for execution ..." 
          << std::endl;
     cout << endl;
 
-#pragma omp parallel num_threads( numberOfThreads )
+#pragma omp parallel for num_threads( numberOfThreads )
+    for ( unsigned int i = 0; i < testParticleInputTable.size( ); i++ )
     {
-    for ( TestParticleInputTable::iterator iteratorInputTable = testParticleInputTable.begin( );
-          iteratorInputTable != testParticleInputTable.end( );
-          iteratorInputTable++ )
-    {
-#pragma omp task
-        {
+        ///////////////////////////////////////////////////////////////////////////
+
+        // Set input table iterator and emit output message.
+
+        // Set input table iterator for current simulation wrt to start of input table and counter.
+        TestParticleInputTable::iterator iteratorInputTable = testParticleInputTable.begin( );
+        advance( iteratorInputTable, i );
+
+        // Emit output message.
 #pragma omp critical( outputToConsole )
         {
-            cout << "simulation ID: " << iteratorInputTable->simulationId
+            cout << "Run " << i + 1 << " / " << testParticleInputTable.size( )
+                 << " (simulation ID: " << iteratorInputTable->simulationId << ")"
                  << " on thread " << omp_get_thread_num( ) + 1
                  << " / " << omp_get_num_threads( ) << endl;
         }
+
+        ///////////////////////////////////////////////////////////////////////////
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -1202,10 +1212,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         }
 
         ///////////////////////////////////////////////////////////////////////////
-
-        } // #pragma omp task
     } // outer for-loop
-    } // #pragma omp parallel
 
+    // If program is successfully completed, return 0.
     return EXIT_SUCCESS;
 }
