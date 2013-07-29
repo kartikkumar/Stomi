@@ -89,7 +89,7 @@ SMALIMIT            : 30.0
 # OPTIONAL PARAMETERS
 #
 # If these parameter are not uncommented and given specified values, default values are assumed.
-# DO NOT uncomment the DEFAULT and UNIT lines; they are simply comment lines.
+# DO NOT uncomment the UNIT lines; they are simply comment lines.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

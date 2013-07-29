@@ -315,12 +315,14 @@ target_link_libraries(testParticleSimulator
                       ${SQLITE3_LIBRARY} 
                       ${Boost_LIBRARIES})
 
-## Add Mab random walk application (uses openmp).
-#add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
-#setup_executable_target(randomWalkSimulator "${SRCROOT}")
-#target_link_libraries(randomWalkSimulator mab_database mab_input_output mab_simulation_includes tudat_basic_astrodynamics tudat_gravitation tudat_statistics tudat_numerical_integrators tudat_input_output ${SQLITE3_LIBRARY} ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
-
-## Add verification random walk simulator (uses openmp).
-#add_executable(randomWalkCheckSimulator "${SRCROOT}/Applications/randomWalkCheckSimulator.cpp")
-#setup_executable_target(randomWalkCheckSimulator "${SRCROOT}")
-#target_link_libraries(randomWalkCheckSimulator mab_database mab_input_output mab_simulation_includes tudat_basic_astrodynamics tudat_root_finding_methods tudat_gravitation tudat_statistics tudat_numerical_integrators ${SQLITE3_LIBRARY} ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
+# Add Mab random walk application (uses openmp).
+add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
+setup_executable_target(randomWalkSimulator "${SRCROOT}")
+target_link_libraries(randomWalkSimulator
+                      stochastic_migration_input_output
+                      assist_input_output
+                      tudat_input_output
+                      ${TUDAT_CORE_LIBRARIES} 
+                      ${SQLITECPP_LIBRARY} 
+                      ${SQLITE3_LIBRARY} 
+                      ${Boost_LIBRARIES})

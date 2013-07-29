@@ -90,7 +90,7 @@ DictionaryPointer getDatabaseGeneratorDictionary( )
 //! Get dictionary for testParticleSimulator application.
 DictionaryPointer getTestParticleSimulatorDictionary( )
 {
-    // Retrieve dictionary for database generator.
+    // Retrieve dictionary for test particle simulator.
     DictionaryPointer dictionary = make_shared< Dictionary >( );
 
     // Add required parameters.
@@ -121,7 +121,7 @@ DictionaryPointer getTestParticleSimulatorDictionary( )
                 0, 0, list_of( "LAN0" ) );
     addEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0",          0, 0, list_of( "TRAN0" ) ); 
     addEntry( dictionary, "SYNODICPERIODMAXIMUM",                  0, 0, 
-        list_of( "TSYNODICMAX" ) );
+                list_of( "TSYNODICMAX" ) );
     addEntry( dictionary, "STARTUPINTEGRATIONPERIOD",              0, 0, list_of( "TSTARTUP" ) );
     addEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT",       0, 0, list_of( "J2" ) );
     addEntry( dictionary, "CENTRALBODYEQUATORIALRADIUS",           0, 0, list_of( "RCENTRAL" ) );
@@ -140,18 +140,29 @@ DictionaryPointer getTestParticleSimulatorDictionary( )
 //! Get dictionary for randomWalkSimulator application.
 DictionaryPointer getRandomWalkSimulatorDictionary( )
 {
+    // Retrieve dictionary for random walk simulator.
     DictionaryPointer dictionary = make_shared< Dictionary >( );
 
-    addEntry( dictionary, "DATABASE",                         1, 0, list_of( "DB" ) );
-    addEntry( dictionary, "NUMBEROFTHREADS",                  0, 0, list_of( "THREADS" ) );
-    addEntry( dictionary, "OUTPUTDIRECTORY",                  0, 0 );
-    addEntry( dictionary, "MONTECARLOPOPULATION",             1, 0, list_of( "MCPOP" ) );
-    addEntry( dictionary, "PERTURBERPOPULATION",              0, 0, list_of( "PERTURBERPOP" ) );
-    addEntry( dictionary, "MASSDISTRIBUTIONTYPE",             0, 0, list_of( "MASSDIST" ) );
-    addEntry( dictionary, "MASSDISTRIBUTIONPARAMETERS",       0, 0, list_of( "MASSDISTPARAM" ) );
-    addEntry( dictionary, "OBSERVATIONPERIOD",                0, 0, list_of( "POBS" ) );
-    addEntry( dictionary, "EPOCHWINDOWSIZE",                  0, 0  );
-    addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",             0, 0, list_of( "NUMEPOCHS" ) );
+    // Add required parameters.
+    addEntry( dictionary, "CASE",                                  1, 0 );
+    addEntry( dictionary, "DATABASE",                              1, 0, list_of( "DB" ) );
+    addEntry( dictionary, "MONTECARLOPOPULATION",                  1, 0, list_of( "MCPOP" ) );
+    addEntry( dictionary, "PERTURBERDENSITY",                      1, 0, 
+                list_of( "RHOPERTURBER" ) );    
+    addEntry( dictionary, "PERTURBERRINGMASS",                     1, 0, 
+                list_of( "MPERTURBERRING" ) );        
+
+    // Add optional parameters.
+    addEntry( dictionary, "NUMBEROFTHREADS",                       0, 0, list_of( "THREADS" ) );
+    addEntry( dictionary, "OUTPUTMODE",                            0, 0, list_of( "OUTPUT" ) );
+    addEntry( dictionary, "FILEOUTPUTDIRECTORY",                   0, 0, 
+                list_of( "FILEOUTPUTDIR" ) );
+
+    // addEntry( dictionary, "MASSDISTRIBUTIONTYPE",             0, 0, list_of( "MASSDIST" ) );
+    // addEntry( dictionary, "MASSDISTRIBUTIONPARAMETERS",       0, 0, list_of( "MASSDISTPARAM" ) );
+    // addEntry( dictionary, "OBSERVATIONPERIOD",                0, 0, list_of( "POBS" ) );
+    // addEntry( dictionary, "EPOCHWINDOWSIZE",                  0, 0  );
+    // addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",             0, 0, list_of( "NUMEPOCHS" ) );
 
     return dictionary;
 }

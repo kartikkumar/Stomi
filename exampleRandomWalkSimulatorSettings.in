@@ -4,7 +4,7 @@
 #    All rights reserved.
 #    See http://bit.ly/12SHPLR for license details.
 #
-#    This is an example input file for the Test Particle Simulator application provided with the 
+#    This is an example input file for the Random Walk Simulator application provided with the 
 #    Stochastic Migration project. 
 #
 #    All lines preceded by the '#' character are interpreted as comments.
@@ -23,13 +23,34 @@
 # Set the name for the case.
 # The value of this parameter is interpreted as a string. This case must already exist in the 
 # database. To populate a new case, use the Database Generator application.
-CASE                : 
+CASE                :
 
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator
 # application.
 DB                  :
 
+# Set the size of the Monte Carlo population.
+# This parameter sets the number of Monte Carlo trials to execute.
+MCPOP               :
+
+# Set the perturber density.
+# This parameter sets the density of perturbers in the vicinity of the perturbed body. The
+# perturber density is translated to a set of perturbers randomly selected within the semi-major 
+# axis bounds, either side of the perturbed body's nominal semi-major axis, as used in the test 
+# particle simulations. 
+# The perturbed density is expressed in terms of the perturbed body's Hill radius. Note that this
+# density can be fractional.
+# UNIT              : # of perturbers per R_Hill
+RHOPERTURBER        : 
+
+# Set the perturber ring mass.
+# This parameter sets the total perturber ring mass in the vicinity of the perturbed body. This 
+# total ring mass is translated into a equal mass per perturber, with the perturbers in the ring
+# being distributed based on the the density specified by RHOPERTURBER. The total perturber ring
+# mass is expressed in terms of the perturbed body's mass.
+# UNIT              : M_PERTURBED
+MPERTURBERRING      :
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -42,7 +63,7 @@ DB                  :
 
 # Set the number of parallel threads to run the application on.
 # This parameters sets the number of parallel threads to spawn using OpenMP, to run the 
-# application. The test particle simulations are parallelized over the number of threads specified.
+# application. The random walk simulations are parallelized over the number of threads specified.
 # By default, the application runs on a single thread.
 # THREADS             : 1
 
@@ -60,45 +81,3 @@ DB                  :
 # The default directory for the output files is the root directory of the Stochastic Migration
 # project.
 # FILEOUTPUTDIR       : rootdir
-
-# Set the output interval.
-# This parameter should only be set in case the OUTPUT parameter is set to "file". The parameter 
-# will be ignored if OUTPUT is set to "database".
-# With this parameter, the output intervals giving the spacing of the data written to file can be
-# specified. 
-# The default for the output interval is 3600.0 s.
-# UNIT: s
-# TOUTPUT             : 3600.0
-
-# Set the simulations to execute.
-# This parameter sets the simulations to execute, based on the simulation IDs in the input table in
-# the database. To list multiple simulation IDs, simply list the numbers, separated by spaces. An
-# example of a list of simulation numbers is provided.
-# The default setting is to run all incomplete simulations extracted from the database.
-# SIMULATIONS         : 1 4 9
-
-# Set the database table names.
-# The following parameters can be used to override the default names for the test particle tables
-# in the database. For descriptions of these tables, take a look at the 
-# "exampleDatabaseGeneratorSettings.in" input file. Uncomment any of these parameters to override
-# the default table names.
-# TPCASE              : test_particle_case
-# TPINPUT             : test_particle_input
-# TPKICk              : test_particle_kick
-
-# Override case data.
-# The following settings can be used to overwrite the test particle case parameters stored in the 
-# database. Descriptions of these parameters can be found in the 
-# "exampleDatabaseGeneratorSettings.in" input file.
-# By default, the values of the parameters are extracted from the test particle case table in the
-# database. By uncommenting any of these parameters, individual case settings can be overriden.
-# TRANDOM             :
-# GRAVPARAM           :
-# RPERTURBED          :
-# RHOPERTURBED        :
-# SMA0                :
-# ECC0                :
-# INC0                :
-# AOP0                :
-# LAN0                :
-# TRAN0               :
