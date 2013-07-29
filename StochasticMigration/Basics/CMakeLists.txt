@@ -1,7 +1,8 @@
  #
  #    Copyright (c) 2010-2013, Delft University of Technology
+ #    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  #    All rights reserved.
- #    See COPYING for license details.
+ #    See http://bit.ly/12SHPLR for license details.
  #
  #    Changelog
  #      YYMMDD    Author            Comment
