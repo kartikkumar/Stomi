@@ -9,8 +9,15 @@ project.
   
 '''
 
-# Import necessary packages.
+################################################################################################### 
+# Import Python packages and modules
+###################################################################################################
+
+# Import necessary external packages.
 import math
+
+###################################################################################################
+
 
 ###################################################################################################
 # Define unit conversion constants
@@ -22,8 +29,11 @@ meterInKilometers = 0.001
 # Set radians-in-degrees.
 radiansInDegrees = 180.0 / math.pi
 
-# Set seconds-in-Julian-days
+# Set seconds-in-Julian-days.
 secondsInJulianDays = 1.0 / ( 24.0 * 3600.0 )
+
+# Set Julian-year-in-seconds.
+julianYear = 365.25*24.0*3600.0
 
 ###################################################################################################
 
@@ -32,7 +42,7 @@ secondsInJulianDays = 1.0 / ( 24.0 * 3600.0 )
 # Define physical constants
 ###################################################################################################
 
-# Universal gravitational constant [m^3 kg^-1 s^-2].
+# Set universal gravitational constant [m^3 kg^-1 s^-2].
 universalGravitationalConstant = 6.67259e-11
 
 ###################################################################################################
