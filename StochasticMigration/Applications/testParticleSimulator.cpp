@@ -529,8 +529,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Execute simulation loop.
     cout << "Starting simulation loop ... " << endl;
-    cout << testParticleInputTable.size( ) << " simulations queued for execution ..." 
-         << std::endl;
+    cout << testParticleInputTable.size( ) << " simulations queued for execution ..." << endl;
     cout << endl;
 
 #pragma omp parallel for num_threads( numberOfThreads )
@@ -547,10 +546,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Emit output message.
 #pragma omp critical( outputToConsole )
         {
-            cout << "Run " << i + 1 << " / " << testParticleInputTable.size( )
-                 << " (simulation ID: " << iteratorInputTable->simulationId << ")"
-                 << " on thread " << omp_get_thread_num( ) + 1
-                 << " / " << omp_get_num_threads( ) << endl;
+            cout << "Simulation ID " << iteratorInputTable->simulationId << " on thread "
+                 << omp_get_thread_num( ) + 1 << " / " << omp_get_num_threads( ) << endl;
         }
 
         ///////////////////////////////////////////////////////////////////////////

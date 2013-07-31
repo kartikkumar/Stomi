@@ -151,18 +151,21 @@ DictionaryPointer getRandomWalkSimulatorDictionary( )
                 list_of( "RHOPERTURBER" ) );    
     addEntry( dictionary, "PERTURBERRINGMASS",                     1, 0, 
                 list_of( "MPERTURBERRING" ) );        
+    addEntry( dictionary, "OBSERVATIONPERIOD",                     1, 0, list_of( "POBS" ) );
+    addEntry( dictionary, "EPOCHWINDOWSIZE",                       1, 0, list_of( "EPOCHSIZE" ) );
+    addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",                  1, 0, list_of( "NUMEPOCHS" ) );    
 
     // Add optional parameters.
     addEntry( dictionary, "NUMBEROFTHREADS",                       0, 0, list_of( "THREADS" ) );
     addEntry( dictionary, "OUTPUTMODE",                            0, 0, list_of( "OUTPUT" ) );
     addEntry( dictionary, "FILEOUTPUTDIRECTORY",                   0, 0, 
                 list_of( "FILEOUTPUTDIR" ) );
-
-    // addEntry( dictionary, "MASSDISTRIBUTIONTYPE",             0, 0, list_of( "MASSDIST" ) );
-    // addEntry( dictionary, "MASSDISTRIBUTIONPARAMETERS",       0, 0, list_of( "MASSDISTPARAM" ) );
-    // addEntry( dictionary, "OBSERVATIONPERIOD",                0, 0, list_of( "POBS" ) );
-    // addEntry( dictionary, "EPOCHWINDOWSIZE",                  0, 0  );
-    // addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",             0, 0, list_of( "NUMEPOCHS" ) );
+    addEntry( dictionary, "TESTPARTICLECASETABLENAME",             0, 0, list_of( "TPCASE" ) );
+    addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            0, 0, list_of( "TPINPUT" ) );
+    addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             0, 0, list_of( "TPKICK" ) );
+    addEntry( dictionary, "RANDOMWALKMONTECARLORUNTABLENAME",      0, 0, list_of( "RWMC" ) );
+    addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          0, 0, list_of( "RWPERTURB" ) );
+    addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             0, 0, list_of( "RWOUTPUT" ) );    
 
     return dictionary;
 }

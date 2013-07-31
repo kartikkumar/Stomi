@@ -41,6 +41,9 @@ MCPOP               :
 # particle simulations. 
 # The perturbed density is expressed in terms of the perturbed body's Hill radius. Note that this
 # density can be fractional.
+# IMPORTANT: The total number of perturbers used in a simulation must not exceed the maximum
+# number of available test particle simulations for the specified case. The available test
+# particle simulations are fetched from the input table in the SQLite database.
 # UNIT              : # of perturbers per R_Hill
 RHOPERTURBER        : 
 
@@ -51,6 +54,24 @@ RHOPERTURBER        :
 # mass is expressed in terms of the perturbed body's mass.
 # UNIT              : M_PERTURBED
 MPERTURBERRING      :
+
+# Set the observation period.
+# This parameter sets the length of the observation period for the metrics used to track the 
+# random walk of the perturbed body. This should correspond to any real observations made.
+# UNIT              : yrs
+POBS                :
+
+# Set the number of epochs.
+# This parameter sets the number of epochs at which the observation metrics are given within the
+# observation period. These epochs are equally spaced in time, within the observation period.
+NUMEPOCHS           :
+
+# Set the epoch window size.
+# This parameter sets the size of the window about a given epoch within the observation period, 
+# used to average the variation of the perturbed body's orbital elements. 
+# UNIT              : days
+EPOCHSIZE           :
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -81,3 +102,15 @@ MPERTURBERRING      :
 # The default directory for the output files is the root directory of the Stochastic Migration
 # project.
 # FILEOUTPUTDIR       : rootdir
+
+# Set the database table names.
+# The following parameters can be used to override the default names for the test particle tables
+# in the database. For descriptions of these tables, take a look at the 
+# "exampleDatabaseGeneratorSettings.in" input file. Uncomment any of these parameters to override
+# the default table names.
+# TPCASE              : test_particle_case
+# TPINPUT             : test_particle_input
+# TPKICk              : test_particle_kick
+# RWMC                : random_walk_monte_carlo_runs
+# RWPERTURB           : random_walk_perturbers
+# RWOUTPUT            : random_walk_output

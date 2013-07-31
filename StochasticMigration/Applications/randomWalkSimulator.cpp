@@ -21,15 +21,16 @@
  */
 
 // #include <algorithm>
+#include <cmath>
 // #include <ctime>
 // #include <iomanip>
 #include <iostream>
 // #include <iterator>
-// #include <limits>
-// #include <stdexcept>
+#include <limits>
+#include <stdexcept>
 #include <string>
 // #include <sstream>
-// #include <vector>
+#include <vector>
 
 // #include <omp.h>
 
@@ -37,14 +38,14 @@
 // #include <boost/algorithm/string/split.hpp>
 // #include <boost/exception/all.hpp>
 // #include <boost/lexical_cast.hpp>
-// #include <boost/random/mersenne_twister.hpp>
-// #include <boost/random/exponential_distribution.hpp>
-// #include <boost/random/uniform_real_distribution.hpp>
-// #include <boost/random/uniform_int_distribution.hpp>
-// #include <boost/random/variate_generator.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <boost/random/uniform_int_distribution.hpp>
+#include <boost/random/variate_generator.hpp>
 
 // #include <sqlite3.h>
 
+#include <Assist/Astrodynamics/unitConversions.h>
+#include <Assist/Basics/basics.h>
 #include <Assist/InputOutput/basicInputOutput.h>
 
 // #include <Tudat/InputOutput/basicInputOutput.h>
@@ -55,6 +56,8 @@
 // #include <Tudat/Mathematics/Statistics/simpleLinearRegression.h>
 
 // #include <TudatCore/Astrodynamics/BasicAstrodynamics/physicalConstants.h>
+ #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
+#include <TudatCore/Mathematics/BasicMathematics/basicMathematicsFunctions.h>
 
 // #include "AuxilliaryFiles/commonTypedefs.h"
 // #include "AuxilliaryFiles/randomWalkFunctions.h"
@@ -63,6 +66,10 @@
 // #include "Database/databaseFunctions.h"
 
 // #include "InputOutput/basicInputOutput.h"
+#include "StochasticMigration/Astrodynamics/hillSphere.h"
+#include "StochasticMigration/Database/databaseReadFunctions.h" 
+#include "StochasticMigration/Database/testParticleCase.h"
+#include "StochasticMigration/Database/testParticleInput.h"
 #include "StochasticMigration/InputOutput/dictionaries.h"
 
 //! Execute random walk simulations.
@@ -72,9 +79,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using std::endl;
     using std::string;
 //     using std::generate;
-//     using std::runtime_error;
+    using std::runtime_error;
 
-//     using namespace boost::random;
+    using namespace boost::random;
 //     using boost::enable_error_info;
 //     using boost::is_any_of;
 //     using boost::lexical_cast;
@@ -83,9 +90,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //     using boost::throw_exception;
 //     using boost::variate_generator;
 
+    using namespace assist::astrodynamics;
+    using namespace assist::basics;
     using namespace assist::input_output;
 
-//     using namespace tudat::basic_astrodynamics::physical_constants;
+    using namespace tudat::basic_astrodynamics::orbital_element_conversions;
+    using namespace tudat::basic_mathematics;
     using namespace tudat::input_output;
     using namespace tudat::input_output::dictionary;
     using namespace tudat::input_output::field_types::general;
@@ -93,7 +103,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //     using namespace tudat::statistics;
 
 //     using namespace stochastic_migration::common_typedefs;
-//     using namespace stochastic_migration::database;
+    using namespace stochastic_migration::astrodynamics;
+    using namespace stochastic_migration::database;
 //     using namespace stochastic_migration::database_functions;
     using namespace stochastic_migration::input_output;
 //     using namespace stochastic_migration::random_walk_functions;
@@ -146,13 +157,33 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBERDENSITY" ) );    
     cout << "Perturber density                                         "
-         << perturberDensity << endl;                         
+         << perturberDensity << " perturbers per R_Hill" << endl;                         
 
     const double perturberRingMass = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBERRINGMASS" ) );    
     cout << "Perturber ring mass                                       "
-         << perturberRingMass << endl;                       
+         << perturberRingMass << " M_PerturbedBody" << endl;    
+
+    const double observationPeriod = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "OBSERVATIONPERIOD" ),
+                TUDAT_NAN, &convertJulianYearsToSeconds );
+    cout << "Observation period                                        "
+         << convertSecondsToJulianYears( observationPeriod ) << " yrs" << endl; 
+
+    const unsigned int numberOfEpochWindows = extractParameterValue< unsigned int >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "NUMBEROFEPOCHWINDOWS" ) );    
+    cout << "Number of epoch windows                                   "
+         << numberOfEpochWindows << endl;                                                 
+
+    const double epochWindowSize = extractParameterValue< double >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "EPOCHWINDOWSIZE" ),
+                TUDAT_NAN, &convertJulianDaysToSeconds  );
+    cout << "Epoch window size                                         "
+         << convertSecondsToJulianDays( epochWindowSize ) << " days" << endl;     
 
     // Extract optional parameters. 
     const int numberOfThreads = extractParameterValue< int >(
@@ -173,144 +204,197 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << "File output directory                                     "
          << fileOutputDirectory << endl;
 
-//     const double observationPeriod = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "OBSERVATIONPERIOD" ),
-//                 convertJulianYearsToSeconds( 3.0 ), &convertJulianYearsToSeconds );
+    const string testParticleCaseTableName = extractParameterValue< string >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "TESTPARTICLECASETABLENAME" ), "test_particle_case" );
+    cout << "Test particle case table                                  "
+         << testParticleCaseTableName << endl;
 
-//     const double epochWindowSize = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "EPOCHWINDOWSIZE" ),
-//                 convertJulianDaysToSeconds( 90.0 ), &convertJulianDaysToSeconds  );
+    const string testParticleInputTableName = extractParameterValue< string >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "TESTPARTICLEINPUTTABLENAME" ), "test_particle_input" );
+    cout << "Test particle input table                                 "
+         << testParticleInputTableName << endl;
 
-//     const unsigned int numberOfEpochWindows = extractParameterValue< unsigned int >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "NUMBEROFEPOCHWINDOWS" ), 4 );
+    const string testParticleKickTableName = extractParameterValue< string >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "TESTPARTICLEKICKTABLENAME" ), "test_particle_kicks" );
+    cout << "Test particle kick table                                  "
+         << testParticleKickTableName << endl; 
 
-//     // Compute epoch window spacing.
-//     const double epochWindowSpacing = observationPeriod / ( numberOfEpochWindows - 1 );
+    const string randomWalkMonteCarloRunTableName = extractParameterValue< string >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "RANDOMWALKMONTECARLORUNTABLENAME" ),
+                "random_walk_monte_carlo_runs" );
+    cout << "Random walk Monte Carlo run table                         "
+              << randomWalkMonteCarloRunTableName << endl;
 
-// //    // DEBUG.
-// //    std::cout << "Database: " << databasePath << std::endl;
-// //    std::cout << "Threads: " << numberOfThreads << std::endl;
-// //    std::cout << "Monte Carlo: "<< monteCarloPopulation << std::endl;
-// //    std::cout << "Perturbers: " << perturberPopulation << std::endl;
-// //    std::cout << "Mass distribution type: " << massDistributionType << std::endl;
-// //    std::cout << "Mass distribution parameters: " << massDistributionParameters.at( 0 );
-// //    if ( massDistributionParameters.size( ) == 2 )
-// //        std::cout << ", " << massDistributionParameters.at( 1 ) << std::endl;
-// //    else
-// //        std::cout << std::endl;
-// //    std::cout << "Observation period: " << observationPeriod / JULIAN_YEAR << std::endl;
-// //    std::cout << "Epoch window size: " << epochWindowSize / JULIAN_DAY << std::endl;
-// //    std::cout << "Number of epoch windows: " << numberOfEpochWindows << std::endl;
-// //    std::cout << "Epoch window spacing: " << epochWindowSpacing / JULIAN_YEAR << std::endl;
+    const string randomWalkPerturberTableName = extractParameterValue< string >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME" ),
+                "random_walk_perturbers" );
+    cout << "Random walk perturber table                               "
+              << randomWalkPerturberTableName << endl;
 
-//     // Retrieve and store case data.
-//     const CaseDataRow caseData = getCaseData( databasePath );
-
-// //    // DEBUG.
-// //    std::cout << caseData << std::endl;
-
-// //    // Set output data precision.
-// //    const int outputDataPrecision = std::numeric_limits< double >::digits10;
+    const string randomWalkOutputTableName = extractParameterValue< string >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME" ), "random_walk_output" );
+    cout << "Random walk output table                                  "
+              << randomWalkOutputTableName << endl;                 
 
     // Check that all required parameters have been set.
     checkRequiredParameters( dictionary );
 
     ///////////////////////////////////////////////////////////////////////////
 
-//     ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
-//     // Query completed test particle simulations in database.
+    // Fetch test particle input table.
 
-//     // Get input table from database.
-//     const InputTable inputTable = getInputTable( databasePath, true );
+    cout << endl;
+    cout << "****************************************************************************" << endl;
+    cout << "Database operations" << endl;
+    cout << "****************************************************************************" << endl;
+    cout << endl;
 
-//     // Declare vector of completed simulation numbers.
-//     SimulationNumbers completedSimulationNumbers;
+    // Generate output message.
+    cout << "Fetching test particle case data from database ..." << endl;   
 
-//     // Store list of completed simulation numbers from input table.
-//     for ( unsigned int i = 0; i < inputTable.size( ); i++ )
-//     {
-//         completedSimulationNumbers.push_back( inputTable.at( i ).simulationNumber );
-//     }
+    // Retrieve and store case data.
+    const TestParticleCasePointer caseData = getTestParticleCase( 
+        databasePath, caseName, testParticleCaseTableName ); 
 
-// //    // DEBUG.
-// //    for ( unsigned int i = 0; i < completedSimulationNumbers.size( ); i++ )
-// //        std::cout << completedSimulationNumbers.at( i ) << std::endl;
+    // Generate output message to indicate that case data was fetched successfully.
+    cout << "Test particle case data fetched successfully from database!" << endl;   
 
-//     ///////////////////////////////////////////////////////////////////////////
+    // Generate output message.
+    cout << "Fetching test particle input data from database ..." << endl;   
 
-//     ///////////////////////////////////////////////////////////////////////////
+    // Get entire test particle input table from database. Only test particle simulations that 
+    // are complete are fetched for the given case ID.
+    const TestParticleInputTable inputTable = getCompleteTestParticleInputTable(
+                databasePath, caseData->caseId, testParticleInputTableName, true );    
 
-//     // Create required random number generators.
+    // Generate output message to indicate that input table was fetched successfully.
+    cout << "Test particle input data (" << inputTable.size( )
+         << " rows) fetched successfully from database!" << endl;    
 
-//     // Define a random number generator and initialize it with a reproducible
-//     // seed (current cpu time).
-//     mt19937 randomNumbergenerator( std::time( 0 ) );
+    ///////////////////////////////////////////////////////////////////////////
 
-//     // Define an uniform random number distribution for simulation numbers.
-//     uniform_int_distribution< > simulationNumberDistribution(
-//                 1, completedSimulationNumbers.size( ) );
+    ///////////////////////////////////////////////////////////////////////////
 
-//     // Define variate generator for simulation numbers using the random number
-//     // generator and uniform distribution of simulation numbers.
-//     variate_generator< mt19937&, uniform_int_distribution< > > generatorSimulationNumber(
-//                 randomNumbergenerator, simulationNumberDistribution );
+    // Compute derived parameters.
 
-//     // Define an exponential random number distribution for power-law scaling mass factors.
-//     const double dohnanyiPowerLawIndex = 1.837;
-//     exponential_distribution< > massFactorPowerLawDistribution( dohnanyiPowerLawIndex );
+    cout << endl;
+    cout << "****************************************************************************" << endl;
+    cout << "Derived parameters" << endl;
+    cout << "****************************************************************************" << endl;
+    cout << endl;
 
-//     // Define variate generator for mass factors using the random number
-//     // generator and uniform distribution of mass factors.
-//     variate_generator< mt19937&, exponential_distribution< > > generatePowerLawMassFactors(
-//                 randomNumbergenerator, massFactorPowerLawDistribution );
+    // Compute epoch window spacing [s].
+    const double epochWindowSpacing = observationPeriod / ( numberOfEpochWindows - 1 );
+    cout << "Epoch window spacing                                      " 
+         << convertSecondsToJulianDays( epochWindowSpacing ) << " days" << endl;
 
-//     // Define an uniform random number distribution to select a random observation period during
-//     // random walk simulation duration.
-//     uniform_real_distribution< > observationPeriodDistribution(
-//                 epochWindowSize / 2.0, caseData.randomWalkSimulationDuration - observationPeriod
-//                 - epochWindowSize / 2.0 );
+    // Compute mass of perturbed body [kg].
+    const double perturbedBodyMass = computeMassOfSphere(
+                caseData->perturbedBodyRadius, caseData->perturbedBodyBulkDensity );
+    cout << "Perturbed body mass                                       " 
+         << perturbedBodyMass << " kg" << endl;
 
-//     // Define variate generator for observation period start epoch.
-//     variate_generator< mt19937&, uniform_real_distribution< > > generatorObservationPeriodEpoch(
-//                 randomNumbergenerator, observationPeriodDistribution );
+    // Compute perturbed body's gravitational parameter [m^3 s^-2].
+    const double perturbedBodyGravitationalParameter
+            = computeGravitationalParameter( perturbedBodyMass );
+    cout << "Perturbed body gravitational parameter                    " 
+         << perturbedBodyGravitationalParameter << " m^3 s^-2" << endl;
+         
+    // Compute perturber population using density and semi-major axis distribution limits.
+    // Note, in the floor() function, adding 0.5 is a workaround for the fact that there is no
+    // round() function in C++03 (it is available in C++11).
+    ConvertHillRadiiToMeters convertHillRadiiToMeters( 
+        caseData->centralBodyGravitationalParameter, perturbedBodyGravitationalParameter, 
+        caseData->perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
+    const double perturberDensityInMeters = perturberDensity / convertHillRadiiToMeters( 1.0 );
+    const unsigned int perturberPopulation = std::floor( 
+        2.0 * caseData->semiMajorAxisDistributionLimit *  perturberDensityInMeters + 0.5 );
+    cout << "Perturber population                                      " 
+         << perturberPopulation << endl;
 
-//     ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
-//     ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
-//     // Execute Monte Carlo simulation.
+    // Create required random number generators.
 
-//     // Loop over Monte Carlo population size.
-// #pragma omp parallel for num_threads( numberOfThreads ) schedule( static, 1 )
-//     for ( unsigned int monteCarloIndividual = 0; monteCarloIndividual < monteCarloPopulation;
-//           monteCarloIndividual++ )
-//     {
+    // Define a random number generator and initialize it with a reproducible seed (current cpu
+    // time).
+    GlobalRandomNumberGeneratorType randomNumberGenerator = getGlobalRandomNumberGenerator( );
 
-// #pragma omp critical( outputToConsole )
-//         {
-//             std::cout << "Simulation " << monteCarloIndividual + 1 << " / " << monteCarloPopulation
-//                       << " on thread " << omp_get_thread_num( ) + 1
-//                       << " / " <<  omp_get_num_threads( ) << std::endl;
-//         }
+    // Define an uniform random number distribution for test particle simulation ID indices in 
+    // input table.
+    uniform_int_distribution< > simulationIdIndexDistribution( 1, inputTable.size( ) );
 
-//         ///////////////////////////////////////////////////////////////////////////
+    // Define variate generator for simulation ID indices using the random number
+    // generator and uniform distribution of simulation ID indices in input table.
+    variate_generator< GlobalRandomNumberGeneratorType&, uniform_int_distribution< > > 
+    generatorSimulationNumber( randomNumberGenerator, simulationIdIndexDistribution );
 
-//         // Declare selected simulation numbers.
-//         SimulationNumbers selectedSimulationNumbers;
+    // Define an uniform random number distribution to select a random observation period during
+    // random walk simulation period.
+    uniform_real_distribution< > observationPeriodDistribution(
+                epochWindowSize / 2.0, 
+                caseData->randomWalkSimulationPeriod - observationPeriod - epochWindowSize / 2.0 );
 
-//         // If desired perturber population is greater than number of completed simulations, throw
-//         // a runtime error.
-//         if ( perturberPopulation > static_cast< int >( completedSimulationNumbers.size( ) ) )
-//         {
-//             throw_exception(
-//                         enable_error_info(
-//                             runtime_error(
-//                                 "Perturber population > # completed simulations" ) ) );
-//         }
+    // Define variate generator for the first epoch in the observation period.
+    variate_generator< GlobalRandomNumberGeneratorType&, uniform_real_distribution< > > 
+    generatorObservationPeriodStartEpoch( randomNumberGenerator, observationPeriodDistribution );
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Execute Monte Carlo simulation.
+
+    cout << endl;
+    cout << "****************************************************************************" << endl;
+    cout << "Simulation loop" << endl;
+    cout << "****************************************************************************" << endl;
+    cout << endl;
+
+    // Execute simulation loop.
+    cout << "Starting simulation loop ... " << endl;
+    cout << monteCarloPopulation << " Monte Carlo simulations queued for execution ..." << endl;
+    cout << endl;    
+
+    // Loop over Monte Carlo population size.
+#pragma omp parallel for num_threads( numberOfThreads )
+    for ( unsigned int monteCarloIndividual = 0; monteCarloIndividual < monteCarloPopulation;
+          monteCarloIndividual++ )
+    {
+        ///////////////////////////////////////////////////////////////////////////
+
+        // Emit output message.
+#pragma omp critical( outputToConsole )
+        {
+            cout << "Simulation " << monteCarloIndividual + 1 << " / " << monteCarloPopulation
+                 << " on thread " << omp_get_thread_num( ) + 1 << " / " <<  omp_get_num_threads( )
+                 << endl;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        // Declare selected simulation ID indices (test particle simulation indices in input 
+        // table retrieved from database).
+        std::vector< unsigned int > selectedSimulationIdIndices;
+
+        // If desired perturber population is greater than number of completed simulations fetched,
+        // from the database input table, throw a run-time error.
+        if ( perturberPopulation > inputTable.size( ) )
+        {
+            throw runtime_error( "ERROR: Perturber population > # completed simulations" );
+        }
 
 //         // Else, if the desired perturber population is set to -1, select all completed simulations.
 //         else if ( perturberPopulation == -1 )
@@ -668,9 +752,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //         }
 
 //         ///////////////////////////////////////////////////////////////////
-//     }
+    }
 
-//     ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
     return 0;
 }

@@ -319,8 +319,9 @@ target_link_libraries(testParticleSimulator
 add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
 setup_executable_target(randomWalkSimulator "${SRCROOT}")
 target_link_libraries(randomWalkSimulator
+                      stochastic_migration_astrodynamics stochastic_migration_database 
                       stochastic_migration_input_output
-                      assist_input_output
+                      assist_astrodynamics assist_basics assist_input_output
                       tudat_input_output
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 
