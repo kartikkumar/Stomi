@@ -22,6 +22,8 @@
  *      130329    K. Kumar          Updated typedef for test particle kick table to boost ptr_set.
  *      130708    K. Kumar          Added kick ID, Tisserance parameter, and energy & angular 
  *                                  momentum relative errors; removed mass ratio.
+ *      130917    K. Kumar          Added full pre- and post-conjunction states in Keplerian 
+ *                                  elements.
  *
  *    References
  *      sbi. C++ Operator Overloading, Stack Overflow,
@@ -40,6 +42,8 @@
 
 #include <boost/ptr_container/ptr_set.hpp>
 #include <boost/shared_ptr.hpp>
+
+#include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
 namespace stochastic_migration
 {
@@ -62,14 +66,12 @@ public:
                       const double aConjunctionDistance,
                       const double aPreConjunctionEpoch,
                       const double aPreConjunctionDistance,
-                      const double aPreConjunctionSemiMajorAxis,
-                      const double aPreConjunctionEccentricity,
-                      const double aPreConjunctionInclination,
+                      const tudat::basic_mathematics::Vector6d 
+                              aPreConjunctionStateInKeplerianElements,
                       const double aPostConjunctionEpoch,
                       const double aPostConjunctionDistance,
-                      const double aPostConjunctionSemiMajorAxis,
-                      const double aPostConjunctionEccentricity,
-                      const double aPostConjunctionInclination );
+                      const tudat::basic_mathematics::Vector6d 
+                              aPostConjunctionStateInKeplerianElements );
 
     //! Unique id for kick in database.
     const int kickId;
@@ -83,35 +85,23 @@ public:
     //! Conjunction distance [m].
     const double conjunctionDistance;
 
-    //! Pre-Conjunction (opposition) epoch [s].
+    //! Pre-conjunction (opposition) epoch [s].
     const double preConjunctionEpoch;
 
-    //! Pre-Conjunction (opposition) distance [m].
+    //! Pre-conjunction (opposition) distance [m].
     const double preConjunctionDistance;
 
-    //! Pre-Conjunction semi-major axis of test particle [m].
-    const double preConjunctionSemiMajorAxis;
+    //! Pre-conjunction state in Keplerian elements.
+    const tudat::basic_mathematics::Vector6d preConjunctionStateInKeplerianElements;
 
-    //! Pre-Conjunction eccentricity of test particle [-].
-    const double preConjunctionEccentricity;
-
-    //! Pre-Conjunction inclination of test particle [rad].
-    const double preConjunctionInclination;
-
-    //! Post-Conjunction (opposition) epoch [s].
+    //! Post-conjunction (opposition) epoch [s].
     const double postConjunctionEpoch;
 
-    //! Post-Conjunction (opposition) distance [m].
+    //! Post-conjunction (opposition) distance [m].
     const double postConjunctionDistance;
 
-    //! Post-Conjunction semi-major axis of test particle [m].
-    const double postConjunctionSemiMajorAxis;
-
-    //! Post-Conjunction eccentricity of test particle [-].
-    const double postConjunctionEccentricity;
-
-    //! Post-Conjunction inclination of test particle [rad].
-    const double postConjunctionInclination;
+    //! Post-conjunction state in Keplerian elements.
+    const tudat::basic_mathematics::Vector6d postConjunctionStateInKeplerianElements;
 
 protected:
 private:

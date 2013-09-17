@@ -12,7 +12,8 @@
  *      130330    K. Kumar          Updated function to populate kick table.
  *      130725    K. Kumar          Updated function to populate kick table using SQLiteCpp 
  *                                  library. Updated function to reflect database schema.
- *
+ *      130917    K. Kumar          Updated function to populate kick table using new table schema.
+b *
  *    References
  *
  *    Notes
@@ -24,6 +25,8 @@
  
 #include <SQLiteC++.h> 
 
+#include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
+
 #include "StochasticMigration/Database/databaseWriteFunctions.h"
 
 namespace stochastic_migration
@@ -31,7 +34,7 @@ namespace stochastic_migration
 namespace database
 {
 
-// using namespace assist::database;
+using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
 //! Populate test particle kick table.
 void populateTestParticleKickTable( const std::string& databaseAbsolutePath, 
@@ -76,9 +79,12 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
                         << "VALUES (NULL, :simulationId, :conjunctionEpoch, :conjunctionDistance, "
                         << ":preConjunctionEpoch, :preConjunctionDistance, "
                         << ":preConjunctionSemiMajorAxis, :preConjunctionEccentricity, "
-                        << ":preConjunctionInclination, :postConjunctionEpoch, "
-                        << ":postConjunctionDistance, :postConjunctionSemiMajorAxis, "
-                        << ":postConjunctionEccentricity, :postConjunctionInclination);";
+                        << ":preConjunctionInclination, :preConjunctionArgumentOfPeriapsis, "
+                        << ":preConjunctionLongitudeOfAscendingNode, :preConjunctionTrueAnomaly, "
+                        << ":postConjunctionEpoch, :postConjunctionDistance, "
+                        << ":postConjunctionSemiMajorAxis, :postConjunctionEccentricity, "
+                        << ":postConjunctionInclination, :postConjunctionArgumentOfPeriapsis, "
+                        << ":postConjunctionLongitudeOfAscendingNode, :postConjunctionTrueAnomaly);";
 
         // Compile a SQL query.
         SQLite::Statement kickTableInsertQuery( database, kickTableInsert.str( ).c_str( ) );
@@ -98,21 +104,37 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
             kickTableInsertQuery.bind( ":preConjunctionDistance", 
                 iteratorKickTable->preConjunctionDistance );
             kickTableInsertQuery.bind( ":preConjunctionSemiMajorAxis", 
-                iteratorKickTable->preConjunctionSemiMajorAxis );
+                iteratorKickTable->preConjunctionStateInKeplerianElements( semiMajorAxisIndex ) );
             kickTableInsertQuery.bind( ":preConjunctionEccentricity", 
-                iteratorKickTable->preConjunctionEccentricity );
+                iteratorKickTable->preConjunctionStateInKeplerianElements( eccentricityIndex ) );
             kickTableInsertQuery.bind( ":preConjunctionInclination", 
-                iteratorKickTable->preConjunctionInclination );
+                iteratorKickTable->preConjunctionStateInKeplerianElements( inclinationIndex ) );
+            kickTableInsertQuery.bind( ":preConjunctionArgumentOfPeriapsis", 
+                iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                    argumentOfPeriapsisIndex ) );
+            kickTableInsertQuery.bind( ":preConjunctionLongitudeOfAscendingNode", 
+                iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                    longitudeOfAscendingNodeIndex ) );
+            kickTableInsertQuery.bind( ":preConjunctionTrueAnomaly", 
+                iteratorKickTable->preConjunctionStateInKeplerianElements( trueAnomalyIndex ) );                                            
             kickTableInsertQuery.bind( ":postConjunctionEpoch", 
                 iteratorKickTable->postConjunctionEpoch );
             kickTableInsertQuery.bind( ":postConjunctionDistance", 
                 iteratorKickTable->postConjunctionDistance );
             kickTableInsertQuery.bind( ":postConjunctionSemiMajorAxis", 
-                iteratorKickTable->postConjunctionSemiMajorAxis );
+                iteratorKickTable->postConjunctionStateInKeplerianElements( semiMajorAxisIndex ) );
             kickTableInsertQuery.bind( ":postConjunctionEccentricity", 
-                iteratorKickTable->postConjunctionEccentricity );
+                iteratorKickTable->postConjunctionStateInKeplerianElements( eccentricityIndex ) );
             kickTableInsertQuery.bind( ":postConjunctionInclination", 
-                iteratorKickTable->postConjunctionInclination );
+                iteratorKickTable->postConjunctionStateInKeplerianElements( inclinationIndex ) );
+            kickTableInsertQuery.bind( ":postConjunctionArgumentOfPeriapsis", 
+                iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                    argumentOfPeriapsisIndex ) );
+            kickTableInsertQuery.bind( ":postConjunctionLongitudeOfAscendingNode", 
+                iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                    longitudeOfAscendingNodeIndex ) );
+            kickTableInsertQuery.bind( ":postConjunctionTrueAnomaly", 
+                iteratorKickTable->preConjunctionStateInKeplerianElements( trueAnomalyIndex ) );     
 
             // Execute insert query.
             kickTableInsertQuery.exec( );

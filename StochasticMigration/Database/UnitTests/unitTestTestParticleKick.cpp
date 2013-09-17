@@ -17,6 +17,7 @@
  *                                  correctly.
  *      130709    K. Kumar          Updated tests to new TestParticleKick definition; re-organized
  *                                  tests.
+ *      130917    K. Kumar          Updated tests to new TestParticleKick definition.
  *
  *    References
  *
@@ -33,6 +34,13 @@
 #include <boost/ptr_container/ptr_set.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include <Eigen/Core>
+
+#include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
+#include <TudatCore/Basics/testMacros.h>
+
+#include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
+
 #include <Assist/Basics/operatorOverloadFunctions.h>
 
 #include "StochasticMigration/Database/testParticleKick.h"
@@ -41,6 +49,9 @@ namespace stochastic_migration
 {
 namespace unit_tests
 {
+
+using namespace tudat::basic_astrodynamics::orbital_element_conversions;
+using tudat::basic_mathematics::Vector6d;
 
 //! Test fixture used to test the TestParticleKick struct.
 struct TestParticleKickFixture
@@ -55,14 +66,12 @@ public:
           conjunctionDistance( 2.0e7 ),
           preConjunctionEpoch( 5.67e2 ),
           preConjunctionDistance( 789.54e8 ),
-          preConjunctionSemiMajorAxis( 112233.44 ),
-          preConjunctionEccentricity( 0.456 ),
-          preConjunctionInclination( 1.234 ),
+          preConjunctionStateInKeplerianElements( 
+           ( Eigen::VectorXd( 6 ) << 112233.44, 0.456, 1.234, 2.345, 3.456, 4.567 ).finished( ) ),
           postConjunctionEpoch( 9.87e5 ),
           postConjunctionDistance( 987.65e8 ),
-          postConjunctionSemiMajorAxis( 112244.55 ),
-          postConjunctionEccentricity( 0.567 ),
-          postConjunctionInclination( 1.345 )
+          postConjunctionStateInKeplerianElements( 
+           ( Eigen::VectorXd( 6 ) << 112244.55, 0.567, 1.345, 5.432, 6.543, 1.654 ).finished( ) )
     { }
 
     //! Declare parameters of test particle kick.
@@ -85,14 +94,8 @@ public:
     //! Pre-Conjunction (opposition) distance [m].
     double preConjunctionDistance;
 
-    //! Pre-Conjunction semi-major axis of test particle [m].
-    double preConjunctionSemiMajorAxis;
-
-    //! Pre-Conjunction eccentricity of test particle [-].
-    double preConjunctionEccentricity;
-
-    //! Pre-Conjunction inclination of test particle [rad].
-    double preConjunctionInclination;
+    //! Pre-Conjunction state of test particle in Keplerian elements.
+    Vector6d preConjunctionStateInKeplerianElements;
 
     //! Post-Conjunction (opposition) epoch [s].
     double postConjunctionEpoch;
@@ -100,14 +103,8 @@ public:
     //! Post-Conjunction (opposition) distance [m].
     double postConjunctionDistance;
 
-    //! Post-Conjunction semi-major axis of test particle [m].
-    double postConjunctionSemiMajorAxis;
-
-    //! Post-Conjunction eccentricity of test particle [-].
-    double postConjunctionEccentricity;
-
-    //! Post-Conjunction inclination of test particle [rad].
-    double postConjunctionInclination;
+    //! Post-Conjunction state of test particle in Keplerian elements.
+    Vector6d postConjunctionStateInKeplerianElements;
 
     //! Get test particle kick created from specified parameters.
     database::TestParticleKickPointer getTestParticleKick( )
@@ -115,10 +112,10 @@ public:
         return boost::make_shared< database::TestParticleKick >(
                     database::TestParticleKick(
                         kickId, simulationNumber, conjunctionEpoch, conjunctionDistance,
-                        preConjunctionEpoch, preConjunctionDistance, preConjunctionSemiMajorAxis,
-                        preConjunctionEccentricity, preConjunctionInclination, 
-                        postConjunctionEpoch, postConjunctionDistance,postConjunctionSemiMajorAxis,
-                        postConjunctionEccentricity, postConjunctionInclination ) );
+                        preConjunctionEpoch, preConjunctionDistance, 
+                        preConjunctionStateInKeplerianElements,
+                        postConjunctionEpoch, postConjunctionDistance,
+                        postConjunctionStateInKeplerianElements ) );
     }
 
 protected:
@@ -148,17 +145,22 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickStructContruction )
     BOOST_CHECK_EQUAL( testParticleKick->conjunctionDistance, conjunctionDistance );
     BOOST_CHECK_EQUAL( testParticleKick->preConjunctionEpoch, preConjunctionEpoch );
     BOOST_CHECK_EQUAL( testParticleKick->preConjunctionDistance, preConjunctionDistance );
-    BOOST_CHECK_EQUAL( testParticleKick->preConjunctionSemiMajorAxis,
-                       preConjunctionSemiMajorAxis );
-    BOOST_CHECK_EQUAL( testParticleKick->preConjunctionEccentricity, preConjunctionEccentricity );
-    BOOST_CHECK_EQUAL( testParticleKick->preConjunctionInclination, preConjunctionInclination );
+    {
+        TUDAT_CHECK_MATRIX_BASE( testParticleKick->preConjunctionStateInKeplerianElements,
+                                 preConjunctionStateInKeplerianElements )
+                BOOST_CHECK_EQUAL(
+                    testParticleKick->preConjunctionStateInKeplerianElements.coeff( row, col ),
+                    preConjunctionStateInKeplerianElements.coeff( row, col ) );
+    }
     BOOST_CHECK_EQUAL( testParticleKick->postConjunctionEpoch, postConjunctionEpoch );
     BOOST_CHECK_EQUAL( testParticleKick->postConjunctionDistance, postConjunctionDistance );
-    BOOST_CHECK_EQUAL( testParticleKick->postConjunctionSemiMajorAxis,
-                       postConjunctionSemiMajorAxis );
-    BOOST_CHECK_EQUAL( testParticleKick->postConjunctionEccentricity,
-                       postConjunctionEccentricity );
-    BOOST_CHECK_EQUAL( testParticleKick->postConjunctionInclination, postConjunctionInclination );                         
+    {
+        TUDAT_CHECK_MATRIX_BASE( testParticleKick->postConjunctionStateInKeplerianElements,
+                                 postConjunctionStateInKeplerianElements )
+                BOOST_CHECK_EQUAL(
+                    testParticleKick->postConjunctionStateInKeplerianElements.coeff( row, col ),
+                    postConjunctionStateInKeplerianElements.coeff( row, col ) );
+    }                       
 }
 
 //! Test initialization of test particle kick with non-positive kick ID.
@@ -302,7 +304,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNegativePreConjunctionSemiMajorAxisErr
     bool isError = false;
 
     // Set pre-conjunction semi-major axis to invalid (negative) number.
-    preConjunctionSemiMajorAxis = -1.0;
+    preConjunctionStateInKeplerianElements( semiMajorAxisIndex ) = -1.0;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
@@ -321,7 +323,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNegativePreConjunctionEccentricityErro
     bool isError = false;
 
     // Set pre-conjunction eccentricity to invalid (negative) number.
-    preConjunctionEccentricity = -1.0;
+    preConjunctionStateInKeplerianElements( eccentricityIndex ) = -1.0;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
@@ -340,7 +342,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickGreaterThanOnePreConjunctionEccentrici
     bool isError = false;
 
     // Set pre-conjunction eccentricity to invalid (greater than 1.0) number.
-    preConjunctionEccentricity = 1.1;
+    preConjunctionStateInKeplerianElements( eccentricityIndex ) = 1.1;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
@@ -359,7 +361,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNegativePreConjunctionInclinationError
     bool isError = false;
 
     // Set pre-conjunction eccentricity to invalid (negative) number.
-    preConjunctionInclination = -1.0;
+    preConjunctionStateInKeplerianElements( inclinationIndex ) = -1.0;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
@@ -436,7 +438,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNegativePostConjunctionSemiMajorAxisEr
     bool isError = false;
 
     // Set post-conjunction semi-major axis to invalid (negative) number.
-    postConjunctionSemiMajorAxis = -1.0;
+    postConjunctionStateInKeplerianElements( semiMajorAxisIndex ) = -1.0;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
@@ -455,7 +457,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNegativePostConjunctionEccentricityErr
     bool isError = false;
 
     // Set post-conjunction eccentricity to invalid (negative) number.
-    postConjunctionEccentricity = -1.0;
+    postConjunctionStateInKeplerianElements( eccentricityIndex ) = -1.0;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
@@ -474,7 +476,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickGreaterThanOnePostConjunctionEccentric
     bool isError = false;
 
     // Set post-conjunction eccentricity to invalid (greater than 1.0) number.
-    postConjunctionEccentricity = 1.1;
+    postConjunctionStateInKeplerianElements( eccentricityIndex ) = 1.1;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
@@ -493,7 +495,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNegativePostConjunctionInclinationErro
     bool isError = false;
 
     // Set post-conjunction eccentricity to invalid (negative) number.
-    postConjunctionInclination = -1.0;
+    postConjunctionStateInKeplerianElements( inclinationIndex ) = -1.0;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }

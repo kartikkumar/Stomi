@@ -23,6 +23,7 @@
  *      130723    K. Kumar          Added code to write data to output files. Added section to 
  *                                  write kick table to database.
  *      130725    K. Kumar          Created workaround for OpenMP to work with iterators.
+ *      130917    K. Kumar          Updated code to reflect changes to TestParticleKick struct.
  *
  *    References
  *      Kumar, K., de Pater, I., Showalter, M.R. In prep, 2013.
@@ -1134,20 +1135,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 iteratorConjunctionEvents->epoch, iteratorConjunctionEvents->mutualDistance,  
                 iteratorOppositionEventBefore->epoch,
                 iteratorOppositionEventBefore->mutualDistance,
-                iteratorOppositionEventBefore->testParticleStateInKeplerianElements( 
-                    semiMajorAxisIndex ),  
-                iteratorOppositionEventBefore->testParticleStateInKeplerianElements( 
-                    eccentricityIndex ),
-                iteratorOppositionEventBefore->testParticleStateInKeplerianElements(
-                    inclinationIndex ),
+                iteratorOppositionEventBefore->testParticleStateInKeplerianElements,
                 iteratorOppositionEventAfter->epoch,
                 iteratorOppositionEventAfter->mutualDistance,
-                iteratorOppositionEventAfter->testParticleStateInKeplerianElements( 
-                    semiMajorAxisIndex ),  
-                iteratorOppositionEventAfter->testParticleStateInKeplerianElements( 
-                    eccentricityIndex ),
-                iteratorOppositionEventAfter->testParticleStateInKeplerianElements(
-                    inclinationIndex ) ) );
+                iteratorOppositionEventAfter->testParticleStateInKeplerianElements ) );
 
             // Advance iterators.
             iteratorOppositionEventBefore = iteratorOppositionEventAfter;
@@ -1167,10 +1158,15 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             kickTableFile << "conjunctionEpoch,conjunctionDistance,preConjunctionEpoch,"
                           << "preConjunctionDistance,preConjunctionSemiMajorAxis,"
                           << "preConjunctionEccentricity,preConjunctionInclination," 
+                          << "preConjunctionArgumentOfPeriapsis, "
+                          << "preConjunctionLongitudeOfAscendingNode,preConjunctionTrueAnomaly, "
                           << "postConjunctionEpoch,postConjunctionDistance,"
                           << "postConjunctionSemiMajorAxis,postConjunctionEccentricity,"
-                          << "postConjunctionInclination" << std::endl;
-            kickTableFile << "# [s],[m],[s],[m],[m],[-],[rad],[s],[m],[m],[-],[rad]" << std::endl;        
+                          << "postConjunctionInclination,postConjunctionArgumentOfPeriapsis, "
+                          << "postConjunctionLongitudeOfAscendingNode,postConjunctionTrueAnomaly, "
+                          << std::endl;
+            kickTableFile << "# [s],[m],[s],[m],[m],[-],[rad],[rad],[rad],[rad], "
+                          << "[s],[m],[m],[-],[rad],[rad],[rad],[rad]" << std::endl;        
 
             // Loop through kick table and write data to file.
             for ( TestParticleKickTable::iterator iteratorKickTable = kickTable.begin( );
@@ -1182,14 +1178,32 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                               << iteratorKickTable->conjunctionDistance << ","
                               << iteratorKickTable->preConjunctionEpoch << ","
                               << iteratorKickTable->preConjunctionDistance << ","
-                              << iteratorKickTable->preConjunctionSemiMajorAxis << ","
-                              << iteratorKickTable->preConjunctionEccentricity << ","
-                              << iteratorKickTable->preConjunctionInclination << ","
+                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                                        semiMajorAxisIndex ) << ","
+                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                                        eccentricityIndex ) << ","
+                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                                        inclinationIndex ) << ","
+                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                                        argumentOfPeriapsisIndex ) << ","
+                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                                        longitudeOfAscendingNodeIndex ) << ","
+                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                                        trueAnomalyIndex ) << ","                                                                                                                                                                                                      
                               << iteratorKickTable->postConjunctionEpoch << ","
                               << iteratorKickTable->postConjunctionDistance << ","
-                              << iteratorKickTable->postConjunctionSemiMajorAxis << ","
-                              << iteratorKickTable->postConjunctionEccentricity << ","
-                              << iteratorKickTable->postConjunctionInclination << std::endl;
+                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                                        semiMajorAxisIndex ) << ","
+                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                                        eccentricityIndex ) << ","
+                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                                        inclinationIndex ) << ","
+                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                                        argumentOfPeriapsisIndex ) << ","
+                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                                        longitudeOfAscendingNodeIndex ) << ","
+                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                                        trueAnomalyIndex ) << std::endl;
             }
 
             // Close output file.

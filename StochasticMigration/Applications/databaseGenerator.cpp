@@ -27,6 +27,7 @@
  *      130715    K. Kumar          Updated test particle case table schema, split input parameters
  *                                  into required and optional categories, changed input for 
  *                                  SMALIMIT to Hill radii.
+ *      130916    K. Kumar          Updated test particle kick table schema to include angles.
  *
  *    References
  *      Kumar, K., de Pater, I., Showalter, M.R. In prep, 2013.
@@ -875,11 +876,17 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"preConjunctionSemiMajorAxis\" REAL NOT NULL,"
             << "\"preConjunctionEccentricity\" REAL NOT NULL,"
             << "\"preConjunctionInclination\" REAL NOT NULL,"
+            << "\"preConjunctionArgumentOfPeriapsis\" REAL NOT NULL,"
+            << "\"preConjunctionLongitudeOfAscendingNode\" REAL NOT NULL,"
+            << "\"preConjunctionTrueAnomaly\" REAL NOT NULL,"
             << "\"postConjunctionEpoch\" REAL NOT NULL,"
             << "\"postConjunctionDistance\" REAL NOT NULL,"            
             << "\"postConjunctionSemiMajorAxis\" REAL NOT NULL,"
             << "\"postConjunctionEccentricity\" REAL NOT NULL,"
-            << "\"postConjunctionInclination\" REAL NOT NULL);";
+            << "\"postConjunctionInclination\" REAL NOT NULL,"
+            << "\"postConjunctionArgumentOfPeriapsis\" REAL NOT NULL,"
+            << "\"postConjunctionLongitudeOfAscendingNode\" REAL NOT NULL,"
+            << "\"postConjunctionTrueAnomaly\" REAL NOT NULL)";
 
         // Execute command to create table.
         database.exec( testParticleKickTableCreate.str( ).c_str( ) );

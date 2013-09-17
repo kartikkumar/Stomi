@@ -15,12 +15,16 @@
  *                                  comparison functions in Assist for checks in constructor.
  *      130708    K. Kumar          Added kick ID, Tisserance parameter, and energy & angular 
  *                                  momentum relative errors; removed mass ratio.
+ *      130917    K. Kumar          Added full pre- and post-conjunction states in Keplerian 
+ *                                  elements.
  *
  *    References
  *
  *    Notes
  *
  */
+
+#include <Eigen/Core>
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/unitConversions.h>
@@ -36,6 +40,7 @@ namespace database
 {
 
 using namespace assist::basics;
+using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
 //! Default constructor, taking input values for all elements of kick.
 TestParticleKick::TestParticleKick( const int aKickId,
@@ -44,14 +49,12 @@ TestParticleKick::TestParticleKick( const int aKickId,
                                     const double aConjunctionDistance,
                                     const double aPreConjunctionEpoch,
                                     const double aPreConjunctionDistance,
-                                    const double aPreConjunctionSemiMajorAxis,
-                                    const double aPreConjunctionEccentricity,
-                                    const double aPreConjunctionInclination,
+                                    const tudat::basic_mathematics::Vector6d 
+                                            aPreConjunctionStateInKeplerianElements,
                                     const double aPostConjunctionEpoch,
                                     const double aPostConjunctionDistance,
-                                    const double aPostConjunctionSemiMajorAxis,
-                                    const double aPostConjunctionEccentricity,
-                                    const double aPostConjunctionInclination )
+                                    const tudat::basic_mathematics::Vector6d 
+                                            aPostConjunctionStateInKeplerianElements )
     : kickId( checkPositive( aKickId, "Kick ID" ) ),
       simulationNumber( checkPositive( aSimulationNumber, "Simulation number" ) ),
       conjunctionEpoch( checkPositive( aConjunctionEpoch, "Conjunction epoch" ) ),
@@ -61,25 +64,30 @@ TestParticleKick::TestParticleKick( const int aKickId,
       preConjunctionDistance( 
         checkGreaterThan( checkPositive( aPreConjunctionDistance, "Pre-conjunction distance [m]" ),
                           "Pre-conjunction distance [m]", conjunctionDistance ) ),
-      preConjunctionSemiMajorAxis( 
-        checkPositive( aPreConjunctionSemiMajorAxis, "Pre-conjunction semi-major axis [m]" ) ),
-      preConjunctionEccentricity( checkInRange( aPreConjunctionEccentricity,
-                                                "Pre-conjunction eccentricity [-]", 0.0, 1.0 ) ),
-      preConjunctionInclination( checkPositive( aPreConjunctionInclination,
-                                                "Pre-conjunction inclination [rad]" ) ),
+      preConjunctionStateInKeplerianElements( 
+        ( Eigen::VectorXd( 6 ) 
+            << checkPositive( aPreConjunctionStateInKeplerianElements( semiMajorAxisIndex ),
+                              "Pre-conjunction semi-major axis [m]" ),
+               checkInRange( aPreConjunctionStateInKeplerianElements( eccentricityIndex ),
+                              "Pre-conjunction eccentricity [-]", 0.0, 1.0 ),
+               checkPositive( aPreConjunctionStateInKeplerianElements( inclinationIndex ),
+                              "Pre-conjunction inclination [rad]" ),
+               aPreConjunctionStateInKeplerianElements.segment( 3, 3 ) ).finished( ) ),
       postConjunctionEpoch( checkGreaterThan( aPostConjunctionEpoch, "Post-conjunction epoch [s]",
                                               conjunctionEpoch ) ),
       postConjunctionDistance( checkGreaterThan(
                                  checkPositive( aPostConjunctionDistance, 
                                                 "Post-conjunction distance [m]" ),
                                  "Post-conjunction distance [m]", conjunctionDistance ) ),
-      postConjunctionSemiMajorAxis( checkPositive( aPostConjunctionSemiMajorAxis,
-                                                   "Post-conjunction semi-major axis [m]" ) ),
-      postConjunctionEccentricity( checkInRange( aPostConjunctionEccentricity,
-                                                 "Post-conjunction eccentricity [-]", 0.0, 1.0 ) ),
-      postConjunctionInclination( checkPositive( aPostConjunctionInclination,
-                                                 "Post-conjunction inclination [rad]" ) )
-
+      postConjunctionStateInKeplerianElements( 
+        ( Eigen::VectorXd( 6 ) 
+            << checkPositive( aPostConjunctionStateInKeplerianElements( semiMajorAxisIndex ),
+                              "Post-conjunction semi-major axis [m]" ),
+               checkInRange( aPostConjunctionStateInKeplerianElements( eccentricityIndex ),
+                              "Post-conjunction eccentricity [-]", 0.0, 1.0 ),
+               checkPositive( aPostConjunctionStateInKeplerianElements( inclinationIndex ),
+                              "Post-conjunction inclination [rad]" ),
+               aPostConjunctionStateInKeplerianElements.segment( 3, 3 ) ).finished( ) )
 { }
 
 //! Overload == operator.
@@ -93,21 +101,13 @@ bool operator==( const TestParticleKick& testParticleKick1,
              && testParticleKick1.preConjunctionEpoch == testParticleKick2.preConjunctionEpoch
              && testParticleKick1.preConjunctionDistance
              == testParticleKick2.preConjunctionDistance
-             && testParticleKick1.preConjunctionSemiMajorAxis
-             == testParticleKick2.preConjunctionSemiMajorAxis
-             && testParticleKick1.preConjunctionEccentricity
-             == testParticleKick2.preConjunctionEccentricity
-             && testParticleKick1.preConjunctionInclination
-             == testParticleKick2.preConjunctionInclination
+             && testParticleKick1.preConjunctionStateInKeplerianElements
+             == testParticleKick2.preConjunctionStateInKeplerianElements
              && testParticleKick1.postConjunctionEpoch == testParticleKick2.postConjunctionEpoch
              && testParticleKick1.postConjunctionDistance
              == testParticleKick2.postConjunctionDistance
-             && testParticleKick1.postConjunctionSemiMajorAxis
-             == testParticleKick2.postConjunctionSemiMajorAxis
-             && testParticleKick1.postConjunctionEccentricity
-             == testParticleKick2.postConjunctionEccentricity
-             && testParticleKick1.postConjunctionInclination
-             == testParticleKick2.postConjunctionInclination );
+             && testParticleKick1.postConjunctionStateInKeplerianElements
+             == testParticleKick2.postConjunctionStateInKeplerianElements );
 }
 
 //! Overload < operator.
@@ -120,43 +120,74 @@ bool operator<( const TestParticleKick& testParticleKick1,
 //! Overload << operator.
 std::ostream& operator<<( std::ostream& outputStream, const TestParticleKick& testParticleKick )
 {
+    using std::endl;
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
     using namespace tudat::basic_astrodynamics::unit_conversions;
     using namespace assist::astrodynamics;
 
     // Write contents of TestParticleKickPointer object to output stream.
     outputStream << "Test particle kick ID: "
-                 << testParticleKick.kickId << std::endl;
+                 << testParticleKick.kickId << endl;
     outputStream << "Test particle simulation number: "
-                 << testParticleKick.simulationNumber << std::endl;
+                 << testParticleKick.simulationNumber << endl;
     outputStream << "Conjunction epoch (since start) [Jyr]: "
-                 << convertSecondsToJulianYears( testParticleKick.conjunctionEpoch ) << std::endl;
+                 << convertSecondsToJulianYears( testParticleKick.conjunctionEpoch ) << endl;
     outputStream << "Conjunction distance [m]: "
-                 << testParticleKick.conjunctionDistance << std::endl;
+                 << testParticleKick.conjunctionDistance << endl;
     outputStream << "Pre-conjunction epoch (since start) [Jyr]: "
                  << convertSecondsToJulianYears( testParticleKick.preConjunctionEpoch )
-                 << std::endl;
+                 << endl;
     outputStream << "Pre-conjunction distance [m]: "
-                 << testParticleKick.preConjunctionDistance << std::endl;
-    outputStream << "Pre-conjunction semi-major axis [m]: "
-                 << testParticleKick.preConjunctionSemiMajorAxis << std::endl;
-    outputStream << "Pre-conjunction eccentricity [-]: "
-                 << testParticleKick.preConjunctionEccentricity << std::endl;
-    outputStream << "Pre-conjunction inclination [deg]: "
-                 << convertRadiansToDegrees( testParticleKick.preConjunctionInclination )
-                 << std::endl;
+                 << testParticleKick.preConjunctionDistance << endl;
+    outputStream << "Pre-conjunction semi-major axis at T0 [m]: "
+                 << testParticleKick.preConjunctionStateInKeplerianElements( 
+                        semiMajorAxisIndex ) << endl;
+    outputStream << "Pre-conjunction eccentricity at T0 [-]: "
+                 << testParticleKick.preConjunctionStateInKeplerianElements( eccentricityIndex )
+                 << endl;
+    outputStream << "Pre-conjunction inclination at T0 [deg]: "
+                 << convertRadiansToDegrees(
+                        testParticleKick.preConjunctionStateInKeplerianElements(
+                            inclinationIndex ) ) << endl;
+    outputStream << "Pre-conjunction argument of periapsis at T0 [deg]: "
+                 << convertRadiansToDegrees(
+                        testParticleKick.preConjunctionStateInKeplerianElements(
+                            argumentOfPeriapsisIndex ) ) << endl;
+    outputStream << "Pre-conjunction longitude of ascending node at T0 [deg]: "
+                 << convertRadiansToDegrees(
+                        testParticleKick.preConjunctionStateInKeplerianElements(
+                            longitudeOfAscendingNodeIndex ) ) << endl;
+    outputStream << "Pre-conjunction true anomaly at T0 [deg]: "
+                 << convertRadiansToDegrees(
+                        testParticleKick.preConjunctionStateInKeplerianElements(
+                            trueAnomalyIndex ) ) << endl;  
     outputStream << "Post-conjunction epoch (since start) [Jyr]: "
                  << convertSecondsToJulianYears( testParticleKick.postConjunctionEpoch )
-                 << std::endl;
+                 << endl;
     outputStream << "Post-conjunction distance [m]: "
-                 << testParticleKick.postConjunctionDistance << std::endl;
-    outputStream << "Post-conjunction semi-major axis [m]: "
-                 << testParticleKick.postConjunctionSemiMajorAxis << std::endl;
-    outputStream << "Post-conjunction eccentricity [-]: "
-                 << testParticleKick.postConjunctionEccentricity << std::endl;
-    outputStream << "Post-conjunction inclination [deg]: "
-                 << convertRadiansToDegrees( testParticleKick.postConjunctionInclination )
-                 << std::endl;                                              
+                 << testParticleKick.postConjunctionDistance << endl;
+    outputStream << "Post-conjunction semi-major axis at T0 [m]: "
+                 << testParticleKick.postConjunctionStateInKeplerianElements( 
+                        semiMajorAxisIndex ) << endl;
+    outputStream << "Post-conjunction eccentricity at T0 [-]: "
+                 << testParticleKick.postConjunctionStateInKeplerianElements( eccentricityIndex )
+                 << endl;
+    outputStream << "Post-conjunction inclination at T0 [deg]: "
+                 << convertRadiansToDegrees(
+                        testParticleKick.postConjunctionStateInKeplerianElements(
+                            inclinationIndex ) ) << endl;
+    outputStream << "Post-conjunction argument of periapsis at T0 [deg]: "
+                 << convertRadiansToDegrees(
+                        testParticleKick.postConjunctionStateInKeplerianElements(
+                            argumentOfPeriapsisIndex ) ) << endl;
+    outputStream << "Post-conjunction longitude of ascending node at T0 [deg]: "
+                 << convertRadiansToDegrees(
+                        testParticleKick.postConjunctionStateInKeplerianElements(
+                            longitudeOfAscendingNodeIndex ) ) << endl;
+    outputStream << "Post-conjunction true anomaly at T0 [deg]: "
+                 << convertRadiansToDegrees(
+                        testParticleKick.postConjunctionStateInKeplerianElements(
+                            trueAnomalyIndex ) ) << endl;                                          
 
     // Return output stream.
     return outputStream;

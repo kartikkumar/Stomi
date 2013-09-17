@@ -20,7 +20,7 @@
  *
  */
 
-// #include <algorithm>
+#include <algorithm>
 #include <cmath>
 // #include <ctime>
 // #include <iomanip>
@@ -77,8 +77,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 {
     using std::cout;
     using std::endl;
+    using std::generate;
     using std::string;
-//     using std::generate;
     using std::runtime_error;
 
     using namespace boost::random;
@@ -316,7 +316,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         caseData->perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
     const double perturberDensityInMeters = perturberDensity / convertHillRadiiToMeters( 1.0 );
     const unsigned int perturberPopulation = std::floor( 
-        2.0 * caseData->semiMajorAxisDistributionLimit *  perturberDensityInMeters + 0.5 );
+        2.0 * caseData->semiMajorAxisDistributionLimit * perturberDensityInMeters + 0.5 );
     cout << "Perturber population                                      " 
          << perturberPopulation << endl;
 
@@ -337,7 +337,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Define variate generator for simulation ID indices using the random number
     // generator and uniform distribution of simulation ID indices in input table.
     variate_generator< GlobalRandomNumberGeneratorType&, uniform_int_distribution< > > 
-    generatorSimulationNumber( randomNumberGenerator, simulationIdIndexDistribution );
+    generatorSimulationIdIndex( randomNumberGenerator, simulationIdIndexDistribution );
 
     // Define an uniform random number distribution to select a random observation period during
     // random walk simulation period.
@@ -396,43 +396,40 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             throw runtime_error( "ERROR: Perturber population > # completed simulations" );
         }
 
-//         // Else, if the desired perturber population is set to -1, select all completed simulations.
-//         else if ( perturberPopulation == -1 )
-//         {
-//             selectedSimulationNumbers = completedSimulationNumbers;
-//         }
+        // Else, populate the vector of selected simulation numbers, ensuring that all values are
+        // unique.
+        else
+        {
+            // Resize the vector of selected simulation numbers.
+            selectedSimulationIdIndices.resize( perturberPopulation );
 
-//         // Else, populate the vector of selected simulation numbers, ensuring that all values are
-//         // unique.
-//         else
-//         {
-//             // Resize the vector of selected simulation numbers.
-//             selectedSimulationNumbers.resize( perturberPopulation );
+            // Generate vector of randomly selected simulation numbers.
+            generate( selectedSimulationIdIndices.begin( ), selectedSimulationIdIndices.end( ),
+                      generatorSimulationIdIndex );
 
-//             // Generate vector of randomly selected simulation numbers.
-//             generate( selectedSimulationNumbers.begin( ), selectedSimulationNumbers.end( ),
-//                       generatorSimulationNumber );
+            // Check if the simulation numbers are unique, and if not, generate new random number.
+            for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
+            {
+                for ( unsigned int j = 0; j < selectedSimulationIdIndices.size( ); j++ )
+                {
+                    // If inner and outer loop point to the same element, skip.
+                    if ( i == j )
+                    {
+                        continue;
+                    }
 
-//             // Check if the simulation numbers are unique, and if not, generate new random number.
-//             for ( unsigned int i = 0; i < selectedSimulationNumbers.size( ); i++ )
-//             {
-//                 for ( unsigned int j = 0; j < selectedSimulationNumbers.size( ); j++ )
-//                 {
-//                     if ( i == j )
-//                     {
-//                         continue;
-//                     }
-
-//                     else if ( selectedSimulationNumbers.at( j )
-//                               == selectedSimulationNumbers.at( i ) )
-//                     {
-//                         selectedSimulationNumbers.at( j ) = generatorSimulationNumber( );
-//                         i = 0;
-//                         break;
-//                     }
-//                 }
-//             }
-//         }
+                    // Else, check if the elements are equal, and if they are generate a new 
+                    // simulation ID index and restart looping.
+                    else if ( selectedSimulationIdIndices.at( j ) 
+                              == selectedSimulationIdIndices.at( i ) )
+                    {
+                        selectedSimulationIdIndices.at( j ) = generatorSimulationIdIndex( );
+                        i = 0;
+                        break;
+                    }
+                }
+            }
+        }
 
 //         // Declare map of mass factors.
 //         MassFactors massFactors;
@@ -442,9 +439,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //         if ( !massDistributionType.compare( "EQUAL" ) )
 //         {
 //             // Fill map of equal mass factors.
-//             for ( unsigned int i = 0; i < selectedSimulationNumbers.size( ); i++ )
+//             for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
 //             {
-//                 massFactors[ selectedSimulationNumbers.at( i ) ]
+//                 massFactors[ selectedSimulationIdIndices.at( i ) ]
 //                         = massDistributionParameters.at( 0 );
 //             }
 //         }
@@ -453,7 +450,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //         else if ( !massDistributionType.compare( "POWERLAW" ) )
 //         {
 //             // Fill map of power-law distributed mass factors.
-//             for ( unsigned int i = 0; i < selectedSimulationNumbers.size( ); i++ )
+//             for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
 //             {
 //                 double powerLawMassFactor = generatePowerLawMassFactors( );
 
@@ -462,7 +459,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //                     powerLawMassFactor = generatePowerLawMassFactors( );
 //                 }
 
-//                 massFactors[ selectedSimulationNumbers.at( i ) ]
+//                 massFactors[ selectedSimulationIdIndices.at( i ) ]
 //                         = powerLawMassFactor / dohnanyiPowerLawIndex;
 //             }
 //         }
@@ -488,7 +485,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //         {
 //             aggregateKickTable = getAggregateKickTable(
 //                         databasePath, caseData.randomWalkSimulationDuration,
-//                         selectedSimulationNumbers, massFactors );
+//                         selectedSimulationIdIndices, massFactors );
 //         }
 
 //         ///////////////////////////////////////////////////////////////////////////
@@ -744,7 +741,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 // #pragma omp critical( accessDatabase )
 //         {
 //             // Populate kick table in database.
-//             populateRandomWalkTable( databasePath, selectedSimulationNumbers, massFactors,
+//             populateRandomWalkTable( databasePath, selectedSimulationIdIndices, massFactors,
 //                                      massDistributionType, massDistributionParameters,
 //                                      observationPeriod, epochWindowSize, numberOfEpochWindows,
 //                                      maximumEccentricityChange, maximumLongitudeResidualChange,
