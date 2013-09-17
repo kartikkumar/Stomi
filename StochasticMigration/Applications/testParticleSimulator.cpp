@@ -193,7 +193,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     const string fileOutputDirectory = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "FILEOUTPUTDIRECTORY" ), "" );
+                findEntry( dictionary, "FILEOUTPUTDIRECTORY" ), "" ) + "/";
     cout << "File output directory                                     "
          << fileOutputDirectory << endl;
 
