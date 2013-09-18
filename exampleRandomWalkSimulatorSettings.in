@@ -23,16 +23,16 @@
 # Set the name for the case.
 # The value of this parameter is interpreted as a string. This case must already exist in the 
 # database. To populate a new case, use the Database Generator application.
-CASE                :
+CASE                : 
 
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator
 # application.
-DB                  :
+DB                  : 
 
 # Set the size of the Monte Carlo population.
 # This parameter sets the number of Monte Carlo trials to execute.
-MCPOP               :
+MCPOP               : 
 
 # Set the perturber density.
 # This parameter sets the density of perturbers in the vicinity of the perturbed body. The

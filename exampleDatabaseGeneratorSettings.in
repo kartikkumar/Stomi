@@ -22,57 +22,56 @@
 
 # Set the name for the case.
 # The value of this parameter is interpreted as a string.
-CASE                :  test_case
 
 # Set the absolute path to the database.
 # If the file doesn't exist, it will be created.
-DB                  : /Users/kartikkumar/Desktop/testDatabase.db 
+DB                  : 
 
 # Set number of simulations to populate database with.
-POPULATION          : 100
+POPULATION          :
 
 # Set duration of random walk simulations.
 # UNIT              : yrs
-TRANDOM             : 50.0
+TRANDOM             : 
 
 # Set gravitational parameter of central body.
 # UNIT              : m^3 s^-2
-GRAVPARAM           : 5.793966e15
+GRAVPARAM           : 
 
 # Set radius of perturbed body.
 # The perturbed body is taken to be a sphere with radius specified by the value given below.
 # UNIT              : m
-RPERTURBED          : 12.0e3
+RPERTURBED          : 
 
 # Set bulk (mean) density of perturbed body.
 # The perturbed body is assumed to have homogeneous mass distribution.
 # UNIT              : kg m^-3
-RHOPERTURBED        : 1500.0
+RHOPERTURBED        : 
 
 # Set semi-major axis of perturbed body at time T0 (start of random walk simulation period).
 # UNIT              : m
-SMA0                : 9.7736e7    
+SMA0                :     
 
 # Set eccentricity of perturbed body at time T0 (start of random walk simulation period).
 # UNIT              : -
-ECC0                : 0.00254
+ECC0                :
 
 # Set inclination of perturbed body at time T0 (start of random walk simulation period).
 # UNIT              : deg
-INC0                : 0.14
+INC0                :
 
 # Set argument of periapsis of perturbed body at time T0 (start of random walk simulation period).
 # UNIT              : deg
-AOP0                : 18.9594
+AOP0                :
 
 # Set longitude of ascending node of perturbed body at time T0 (start of random walk simulation 
 # period).
 # UNIT              : deg
-LAN0                : 251.932
+LAN0                :
 
 # Set true anomaly of perturbed body at time T0 (start of random walk simulation period).
 # UNIT              : deg
-TRAN0               : 354.516
+TRAN0               :
 
 # Set limits of uniform distribution for test particle semi-major axes.
 # Test particles are seeded with semi-major axes from an uniform distribution, centered at the
@@ -82,7 +81,7 @@ TRAN0               : 354.516
 # The limit is specified in terms of Hill radii of the perturbed body, which is converted to 
 # kilometers to seed the semi-major axes of the test particles.
 # UNIT              : R_HILL
-SMALIMIT            : 30.0  
+SMALIMIT            : 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #
@@ -136,19 +135,19 @@ SMALIMIT            : 30.0
 # The following parameters describe the distribution of eccentricities that the test particles
 # are seeded with. 
 # The Full-Width Half-Maximum is equivalent to 2 * sqrt( 2 * ln( 2 ) ) * sigma,
-# in the case of a normal distribution for the magnitude of the eccentricities (sigma = standard
-# deviation).
+# in the case of a normal distribution for the x- and y-components of the eccentricities (sigma 
+# = standard deviation).
 # The angle parameter sets the angle between the eccentricity vector components, which
-# are generated randomly using a Rayleigh distribution. By default, the angle is 90 deg, which 
+# are generated randomly using a normal distributions. By default, the angle is 90 deg, which 
 # means that the components are orthogonal and the distribution of the magnitude of the
-# eccentricities is normal. The associated angle, the argument of periapsis, is in this case 
-# uniformly distributed. 
+# eccentricities follows the Rayleigh distribution. The associated angle, the argument of  
+# periapsis, is in this case uniformly distributed. 
 # With the default settings the test particles are all placed on circular orbits.
 # All three parameters have default values, which can be overwritten.
 # UNIT                : ECCMEAN -> -, ECCANGLE -> deg, ECCFWHM -> -
 # ECCMEAN             : 0.0
 # ECCANGLE            : 90.0
-# ECCFWHM             : 0.0 
+# ECCFWHM             : 1.0e-3 
 
 # Set the parameters of the distibution of initial inclinations for the test particles.
 # The following parameters describe the distribution of inclinations that the test particles
@@ -157,16 +156,16 @@ SMALIMIT            : 30.0
 # in the case of a normal distribution for the magnitude of the inclinations (sigma = standard
 # deviation).
 # The angle parameter sets the angle between the inclinations vector components, which
-# are generated randomly using a Rayleigh distribution. By default, the angle is 90 deg, which 
+# are generated randomly using normal distributions. By default, the angle is 90 deg, which 
 # means that the components are orthogonal and the distribution of the magnitude of the
-# inclinations is normal. The associated angle, the longitude of the ascending node, is in this  
-# case uniformly distributed. 
+# inclinations follows the Rayleigh distribution. The associated angle, the longitude of the   
+# ascending node, is in this case uniformly distributed. 
 # With the default settings the test particles are all placed on equatorial orbits.
 # All three parameters have default values, which can be overwritten.
-# UNIT                : INCMEAN -> -, INCANGLE -> deg, INCFWHM -> -
+# UNIT                : INCMEAN -> deg, INCANGLE -> deg, INCFWHM -> deg
 # INCMEAN             : 0.0
 # INCANGLE            : 90.0
-# INCFWHM             : 0.0
+# INCFWHM             : 0.057295779513082325
 
 # Set the numerical integrator and its parameters.
 # The following parameters set the numerical integrator used for the test particle simulations,
@@ -181,8 +180,8 @@ SMALIMIT            : 30.0
 # UNIT                : INTEGRATOR -> -; STEPESIZE -> s, RELTOL -> -, ABSTOL -> -
 # INTEGRATOR          : DOPRI853
 # STEPSIZE            : 60.0
-# RELTOL              : 10.0e-12
-# ABSTOL              : 10.0e-15
+# RELTOL              : 1.0e-12
+# ABSTOL              : 1.0e-7
 
 # Set the names of the database tables.
 # The following parameters can be used to change the default names for the database tables.

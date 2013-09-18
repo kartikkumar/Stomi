@@ -23,12 +23,12 @@
 # Set the name for the case.
 # The value of this parameter is interpreted as a string. This case must already exist in the 
 # database. To populate a new case, use the Database Generator application.
-CASE                : 
+CASE                :  
 
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator
 # application.
-DB                  :
+DB                  : 
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -75,7 +75,7 @@ DB                  :
 # the database. To list multiple simulation IDs, simply list the numbers, separated by spaces. An
 # example of a list of simulation numbers is provided.
 # The default setting is to run all incomplete simulations extracted from the database.
-# SIMULATIONS         : 1 4 9
+# SIMULATIONS         : 1 2 3 4 5
 
 # Set the database table names.
 # The following parameters can be used to override the default names for the test particle tables

@@ -22,7 +22,6 @@
 
 #include <algorithm>
 #include <cmath>
-// #include <ctime>
 // #include <iomanip>
 #include <iostream>
 // #include <iterator>
@@ -70,6 +69,7 @@
 #include "StochasticMigration/Database/databaseReadFunctions.h" 
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
+#include "StochasticMigration/Database/testParticleKick.h"
 #include "StochasticMigration/InputOutput/dictionaries.h"
 
 //! Execute random walk simulations.
@@ -385,9 +385,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         ///////////////////////////////////////////////////////////////////////////
 
-        // Declare selected simulation ID indices (test particle simulation indices in input 
-        // table retrieved from database).
-        std::vector< unsigned int > selectedSimulationIdIndices;
+        // Select simulation ID indices (test particle simulation indices in input 
+        // table retrieved from database) and assign mass ratios.
+        TestParticleSimulationIdsAndMassRatios selectedSimulationIdsAndMassRatios;
+
+        selectedSimulationIdsAndMassRatios[ 1 ] = 0.5;        selectedSimulationIdsAndMassRatios[ 1 ] = 0.5;
+
 
         // If desired perturber population is greater than number of completed simulations fetched,
         // from the database input table, throw a run-time error.
@@ -396,39 +399,38 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             throw runtime_error( "ERROR: Perturber population > # completed simulations" );
         }
 
-        // Else, populate the vector of selected simulation numbers, ensuring that all values are
-        // unique.
+        // Else, populate the map of selected simulation numbers, ensuring that all IDs are unique.
         else
         {
-            // Resize the vector of selected simulation numbers.
-            selectedSimulationIdIndices.resize( perturberPopulation );
+        //     // Resize the vector of selected simulation numbers.
+        //     selectedSimulationIdIndices.resize( perturberPopulation );
 
-            // Generate vector of randomly selected simulation numbers.
-            generate( selectedSimulationIdIndices.begin( ), selectedSimulationIdIndices.end( ),
-                      generatorSimulationIdIndex );
+        //     // Generate vector of randomly selected simulation numbers.
+        //     generate( selectedSimulationIdIndices.begin( ), selectedSimulationIdIndices.end( ),
+        //               generatorSimulationIdIndex );
 
-            // Check if the simulation numbers are unique, and if not, generate new random number.
-            for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
-            {
-                for ( unsigned int j = 0; j < selectedSimulationIdIndices.size( ); j++ )
-                {
-                    // If inner and outer loop point to the same element, skip.
-                    if ( i == j )
-                    {
-                        continue;
-                    }
+        //     // Check if the simulation numbers are unique, and if not, generate new random number.
+        //     for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
+        //     {
+        //         for ( unsigned int j = 0; j < selectedSimulationIdIndices.size( ); j++ )
+        //         {
+        //             // If inner and outer loop point to the same element, skip.
+        //             if ( i == j )
+        //             {
+        //                 continue;
+        //             }
 
-                    // Else, check if the elements are equal, and if they are generate a new 
-                    // simulation ID index and restart looping.
-                    else if ( selectedSimulationIdIndices.at( j ) 
-                              == selectedSimulationIdIndices.at( i ) )
-                    {
-                        selectedSimulationIdIndices.at( j ) = generatorSimulationIdIndex( );
-                        i = 0;
-                        break;
-                    }
-                }
-            }
+        //             // Else, check if the elements are equal, and if they are generate a new 
+        //             // simulation ID index and restart looping.
+        //             else if ( selectedSimulationIdIndices.at( j ) 
+        //                       == selectedSimulationIdIndices.at( i ) )
+        //             {
+        //                 selectedSimulationIdIndices.at( j ) = generatorSimulationIdIndex( );
+        //                 i = 0;
+        //                 break;
+        //             }
+        //         }
+        //     }
         }
 
 //         // Declare map of mass factors.
@@ -748,10 +750,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //                                      maximumInclinationChange );
 //         }
 
-//         ///////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
-    return 0;
+    return EXIT_SUCCESS;
 }

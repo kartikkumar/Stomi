@@ -309,7 +309,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     const double eccentricityDistributionAngle = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "ECCENTRICITYDISTRIBUTIONANGLE" ), PI / 4.0,
+                findEntry( dictionary, "ECCENTRICITYDISTRIBUTIONANGLE" ), PI / 2.0,
                 &convertDegreesToRadians< double > );
     std::cout << "Eccentricity distribution angle                           " 
               << convertRadiansToDegrees( eccentricityDistributionAngle ) << " deg" << std::endl;
@@ -329,7 +329,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     const double inclinationDistributionAngle = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "INCLINATIONDISTRIBUTIONANGLE" ), PI / 4.0,
+                findEntry( dictionary, "INCLINATIONDISTRIBUTIONANGLE" ), PI / 2.0,
                 &convertDegreesToRadians< double > );
     std::cout << "Inclination distribution angle                            " 
               << convertRadiansToDegrees( inclinationDistributionAngle ) << " deg" << std::endl;
@@ -441,12 +441,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Define normal random number distributions for test particle components of eccentricity
     // vector (h_e = e*cos( AoP ), k_e = e*sin( AoP ) ).
     normal_distribution< > distributionOfXComponentOfEccentricityVector(
-                eccentricityDistributionMean * std::cos( eccentricityDistributionAngle ),
+                eccentricityDistributionMean * std::cos( eccentricityDistributionAngle / 2.0 ),
                 convertFullWidthHalfMaximumToStandardDeviation( 
                     eccentricityDistributionFullWidthHalfMaxmimum ) );
 
     normal_distribution< > distributionOfYComponentOfEccentricityVector(
-                eccentricityDistributionMean * std::sin( eccentricityDistributionAngle ),
+                eccentricityDistributionMean * std::sin( eccentricityDistributionAngle / 2.0 ),
                 convertFullWidthHalfMaximumToStandardDeviation( 
                     eccentricityDistributionFullWidthHalfMaxmimum ) );
 
@@ -463,12 +463,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Define normal random number distributions for test particle components of inclination
     // vector (h_i = i*cos( RAAN ), k_i = i*sin( RAAN ) ).
     normal_distribution< > distributionOfXComponentOfInclinationVector(
-                inclinationDistributionMean * std::cos( inclinationDistributionAngle ),
+                inclinationDistributionMean * std::cos( inclinationDistributionAngle / 2.0 ),
                 convertFullWidthHalfMaximumToStandardDeviation( 
                     inclinationDistributionFullWidthHalfMaxmimum ) );
 
     normal_distribution< > distributionOfYComponentOfInclinationVector(
-                inclinationDistributionMean * std::sin( inclinationDistributionAngle ),
+                inclinationDistributionMean * std::sin( inclinationDistributionAngle / 2.0 ),
                 convertFullWidthHalfMaximumToStandardDeviation( 
                     inclinationDistributionFullWidthHalfMaxmimum ) );
 
