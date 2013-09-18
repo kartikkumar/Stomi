@@ -38,7 +38,7 @@ using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
 //! Populate test particle kick table.
 void populateTestParticleKickTable( const std::string& databaseAbsolutePath, 
-                                    const int simulationNumber,
+                                    const int simulationId,
                                     const TestParticleKickTable& kickTable,
                                     const std::string& testParticleKickTableName, 
                                     const std::string& testParticleInputTableName )
@@ -49,7 +49,7 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
     // Set up update statement for test particle input table.
     std::ostringstream inputTableUpdate;
     inputTableUpdate << "UPDATE " << testParticleInputTableName << " SET \"completed\" = " 
-                     << isCompleted << " WHERE \"simulationId\" = " << simulationNumber << ";" 
+                     << isCompleted << " WHERE \"simulationId\" = " << simulationId << ";" 
                      << std::endl;
 
     // Open database in write mode.          
@@ -95,7 +95,7 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
               iteratorKickTable++ )
         {
             // Bind values to prepared SQLite statement.
-            kickTableInsertQuery.bind( ":simulationId", iteratorKickTable->simulationNumber );
+            kickTableInsertQuery.bind( ":simulationId", iteratorKickTable->simulationId );
             kickTableInsertQuery.bind( ":conjunctionEpoch", iteratorKickTable->conjunctionEpoch );
             kickTableInsertQuery.bind( ":conjunctionDistance", 
                 iteratorKickTable->conjunctionDistance );
@@ -151,8 +151,8 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
 // //! Populate random walk Monte Carlo run and output tables.
 // void populateRandomWalkRunAndOutputTables(
 //         const std::string& databaseAbsolutePath,
-//         const TestParticleSimulationNumbersAndMassFactors&
-//         testParticleSimulationNumbersAndMassFactors,
+//         const TestParticlesimulationIdsAndMassFactors&
+//         testParticlesimulationIdsAndMassFactors,
 //         const std::string& massDistributionType,
 //         const std::vector< double > massDistributionParameters, const double observationPeriod,
 //         const double epochWindowSize, const int numberOfEpochWindows,
@@ -198,7 +198,7 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
 // //    std::stringstream randomWalkRunInsert;
 // //    randomWalkRunInsert << "INSERT INTO random_walk_runs VALUES (\""
 // //                        << rowCountRandomWalkRuns << "\",\""
-// //                        << selectedSimulationNumbers.size( )
+// //                        << selectedsimulationIds.size( )
 // //                        << "\",\"" << massDistributionType << "\",\""
 // //                        << massDistributionParameters.at( 0 );
 

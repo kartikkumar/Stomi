@@ -61,7 +61,7 @@ public:
     //! Constructor initializing valid parameters.
     TestParticleKickFixture( )
         : kickId( 1 ),
-          simulationNumber( 1 ),
+          simulationId( 1 ),
           conjunctionEpoch( 1.23e4 ),
           conjunctionDistance( 2.0e7 ),
           preConjunctionEpoch( 5.67e2 ),
@@ -79,8 +79,8 @@ public:
     //! Unique id for kick in database.
     int kickId;
 
-    //! Simulation number.
-    int simulationNumber;
+    //! Simulation ID.
+    int simulationId;
 
     //! Conjunction epoch [s].
     double conjunctionEpoch;
@@ -111,7 +111,7 @@ public:
     {
         return boost::make_shared< database::TestParticleKick >(
                     database::TestParticleKick(
-                        kickId, simulationNumber, conjunctionEpoch, conjunctionDistance,
+                        kickId, simulationId, conjunctionEpoch, conjunctionDistance,
                         preConjunctionEpoch, preConjunctionDistance, 
                         preConjunctionStateInKeplerianElements,
                         postConjunctionEpoch, postConjunctionDistance,
@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickStructContruction )
 
     // Check that the test particle kick created contains all the data as required.
     BOOST_CHECK_EQUAL( testParticleKick->kickId, kickId );    
-    BOOST_CHECK_EQUAL( testParticleKick->simulationNumber, simulationNumber );
+    BOOST_CHECK_EQUAL( testParticleKick->simulationId, simulationId );
     BOOST_CHECK_EQUAL( testParticleKick->conjunctionEpoch, conjunctionEpoch );
     BOOST_CHECK_EQUAL( testParticleKick->conjunctionDistance, conjunctionDistance );
     BOOST_CHECK_EQUAL( testParticleKick->preConjunctionEpoch, preConjunctionEpoch );
@@ -182,14 +182,14 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNonPositiveKickIdError )
     BOOST_CHECK( isError );
 }
 
-//! Test initialization of test particle kick with non-positive simulation number.
-BOOST_AUTO_TEST_CASE( testTestParticleKickNonPositiveSimulationNumberError )
+//! Test initialization of test particle kick with non-positive simulation ID.
+BOOST_AUTO_TEST_CASE( testTestParticleKickNonPositivesimulationIdError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set simulation number to invalid (non-positive) number.
-    simulationNumber = -1;
+    // Set simulation ID to invalid (non-positive) number.
+    simulationId = -1;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
@@ -526,7 +526,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNonEqualComparison )
     // Create TestParticleKick pointers.
     database::TestParticleKickPointer testParticleKick = getTestParticleKick( );
 
-    simulationNumber = 2;
+    simulationId = 2;
     database::TestParticleKickPointer testParticleKick2 = getTestParticleKick( );
 
     // Check that operator is overloaded correctly.

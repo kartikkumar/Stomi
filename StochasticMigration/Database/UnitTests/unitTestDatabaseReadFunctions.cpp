@@ -16,6 +16,7 @@
  *      130218    K. Kumar          Updated "encounter" to "conjunction".
  *      130329    K. Kumar          Updated unit tests to use pointers to data structs.
  *      130704    K. Kumar          Updated tests based on revised case and input table schemas.
+ *      130918    K. Kumar          Uncommented and updated tests for kick table.
  *
  *    References
  *
@@ -46,7 +47,7 @@
 // #include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
-// #include "StochasticMigration/Database/testParticleKick.h"
+#include "StochasticMigration/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {
@@ -318,128 +319,142 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNonExistentSimulation
     BOOST_CHECK( isRunTimeErrorThrown );
 }
 
-// //! Test implementation of function to get selected test particle kick data from SQLite3 database.
-// BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionSpecificSimulations )
-// {
-//     using boost::assign::map_list_of;
+//! Test implementation of function to get selected test particle kick data from SQLite3 database.
+BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionSpecificSimulations )
+{
+    using boost::assign::list_of;
 
-//     using tudat::input_output::readMatrixFromFile;
+    using namespace tudat::basic_astrodynamics::orbital_element_conversions;
+    using tudat::input_output::readMatrixFromFile;
 
-//     using namespace basics;
-//     using namespace database;
+    using namespace basics;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleKickTable.sqlite";
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseTestParticleKickTable.sqlite";
 
-//     // Set random walk simulation period [s].
-//     const double randomWalkSimulationPeriod = 1577880000.0;
+    // Set random walk simulation period [s].
+    const double randomWalkSimulationPeriod = 1577880000.0;
 
-//     // Set vector of selected test particle simulation numbers.
-//     const TestParticlesimulationIdsAndMassRatios testParticlesimulationIdsAndMassRatios
-//             = map_list_of( 1, 0.1 )( 5, 0.2 )( 9, 0.05 );
+    // Set vector of selected test particle simulation numbers.
+    const std::vector< int > selectedSimulationIds = list_of( 1 )( 5 )( 9 );
 
-//     // Retrieve table of test particle kick data.
-//     const TestParticleKickTable testParticleKickTable = getTestParticleKickTable(
-//                 absolutePathToTestDatabase, randomWalkSimulationPeriod,
-//                 testParticlesimulationIdsAndMassRatios );
+    // Retrieve table of test particle kick data.
+    const TestParticleKickTable testParticleKickTable = getTestParticleKickTable(
+                absolutePathToTestDatabase, randomWalkSimulationPeriod,
+                selectedSimulationIds, "test_particle_kicks" );
 
-//     // Read in table of test particle kick data from test data file.
-//     const Eigen::MatrixXd testDataTestParticleKickTable
-//             = readMatrixFromFile( getStochasticMigrationRootPath( )
-//                                   + "/Database/UnitTests/testDataTestParticleKickTable.csv" );
+    // Read in table of test particle kick data from test data file.
+    const Eigen::MatrixXd testDataTestParticleKickTable
+            = readMatrixFromFile( 
+                getStochasticMigrationRootPath( )
+                + "/Database/UnitTests/testDataSelectedTestParticleKickTable.csv" );
 
-//     // Set iterator to map of test particle simulation numbers and mass ratios to beginning.
-//     TestParticlesimulationIdsAndMassRatios::const_iterator
-//             iteratorTestParticlesimulationIdsAndMassRatios;
+    // Check that the kick data table retrieved matches the test data.
+    unsigned int i = 0;
 
-//     // Check that the test particle kick table retrieved matches the test data.
-//     unsigned int i = 0;
+    for ( TestParticleKickTable::iterator iteratorKickTable = testParticleKickTable.begin( );
+          iteratorKickTable != testParticleKickTable.end( ); iteratorKickTable++ )
+    {
+        BOOST_CHECK_EQUAL( iteratorKickTable->simulationId,
+                           testDataTestParticleKickTable( i, 1 ) );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionEpoch,
+                                    testDataTestParticleKickTable( i, 2 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionDistance,
+                                    testDataTestParticleKickTable( i, 3 ), 1.0e-14 );
 
-//     for ( TestParticleKickTable::iterator iteratorKickTable = testParticleKickTable.begin( );
-//           iteratorKickTable != testParticleKickTable.end( ); iteratorKickTable++ )
-//     {
-//         BOOST_CHECK_EQUAL( iteratorKickTable->simulationId,
-//                            testDataTestParticleKickTable( i, 1 ) );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionEpoch,
-//                                     testDataTestParticleKickTable( i, 2 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionDistance,
-//                                     testDataTestParticleKickTable( i, 3 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionPeriod,
-//                                     testDataTestParticleKickTable( i, 4 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionEpoch,
-//                                     testDataTestParticleKickTable( i, 5 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionDistance,
-//                                     testDataTestParticleKickTable( i, 6 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionSemiMajorAxis,
-//                                     testDataTestParticleKickTable( i, 7 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionEccentricity,
-//                                     testDataTestParticleKickTable( i, 8 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionInclination,
-//                                     testDataTestParticleKickTable( i, 9 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionEpoch,
-//                                     testDataTestParticleKickTable( i, 10 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionDistance,
-//                                     testDataTestParticleKickTable( i, 11 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionSemiMajorAxis,
-//                                     testDataTestParticleKickTable( i, 12 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionEccentricity,
-//                                     testDataTestParticleKickTable( i, 13 ), 1.0e-14 );
-//         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionInclination,
-//                                     testDataTestParticleKickTable( i, 14 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionEpoch,
+                                    testDataTestParticleKickTable( i, 4 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionDistance,
+                                    testDataTestParticleKickTable( i, 5 ), 1.0e-14 );
 
-//         // Find the test particle simulation number corresponding to the current row in map.
-//         iteratorTestParticlesimulationIdsAndMassRatios
-//                 = testParticlesimulationIdsAndMassRatios.find(
-//                     iteratorKickTable->simulationId );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                        semiMajorAxisIndex ),
+                                    testDataTestParticleKickTable( i, 6 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                        eccentricityIndex ),
+                                    testDataTestParticleKickTable( i, 7 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                        inclinationIndex ),
+                                    testDataTestParticleKickTable( i, 8 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                        argumentOfPeriapsisIndex ),
+                                    testDataTestParticleKickTable( i, 9 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                        longitudeOfAscendingNodeIndex ),
+                                    testDataTestParticleKickTable( i, 10 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                        trueAnomalyIndex ),
+                                    testDataTestParticleKickTable( i, 11 ), 1.0e-14 );
 
-//         BOOST_CHECK_EQUAL( iteratorKickTable->massRatio,
-//                            iteratorTestParticlesimulationIdsAndMassRatios->second );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionEpoch,
+                                    testDataTestParticleKickTable( i, 12 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionDistance,
+                                    testDataTestParticleKickTable( i, 13 ), 1.0e-14 );        
 
-//         i++;
-//     }
-// }
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                        semiMajorAxisIndex ),
+                                    testDataTestParticleKickTable( i, 14 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                        eccentricityIndex ),
+                                    testDataTestParticleKickTable( i, 15 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                        inclinationIndex ),
+                                    testDataTestParticleKickTable( i, 16 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                        argumentOfPeriapsisIndex ),
+                                    testDataTestParticleKickTable( i, 17 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                        longitudeOfAscendingNodeIndex ),
+                                    testDataTestParticleKickTable( i, 18 ), 1.0e-14 );
+        BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                        trueAnomalyIndex ),
+                                    testDataTestParticleKickTable( i, 19 ), 1.0e-14 );
 
-// //! Test expected run-time error thrown by function to get selected test particle kick data from
-// //! SQLite3 database.
-// BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionNonExistentSimulation )
-// {
-//     using boost::assign::map_list_of;
+        i++;
+    }
+}
 
-//     using namespace basics;
-//     using namespace database;
+//! Test expected run-time error thrown by function to get selected test particle kick data from
+//! SQLite3 database.
+BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionNonExistentSimulation )
+{
+    using boost::assign::list_of;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleKickTable.sqlite";
+    using namespace basics;
+    using namespace database;
 
-//     // Set random walk simulation period [s].
-//     const double randomWalkSimulationPeriod = 1577880000.0;
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseTestParticleKickTable.sqlite";
 
-//     // Set vector of selected test particle simulation numbers.
-//     const TestParticlesimulationIdsAndMassRatios testParticlesimulationIdsAndMassRatios
-//             = map_list_of( 1, 0.5 )( 999999, 0.1 );
+    // Set random walk simulation period [s].
+    const double randomWalkSimulationPeriod = 1577880000.0;
 
-//     // Try to retrieve table of test particle kick data, and catch expected error.
-//     bool isRunTimeErrorThrown = false;
+    // Set vector of selected test particle simulation numbers.
+    const std::vector< int > selectedSimulationIds = list_of( 1 )( 9999 );
 
-//     try
-//     {
-//         // Retrieve kick data for test particle simulations.
-//         const TestParticleKickTable testParticleKickTable = getTestParticleKickTable(
-//                     absolutePathToTestDatabase, randomWalkSimulationPeriod,
-//                     testParticlesimulationIdsAndMassRatios );
-//     }
+    // Try to retrieve table of test particle kick data, and catch expected error.
+    bool isRunTimeErrorThrown = false;
 
-//     catch( std::runtime_error& )
-//     {
-//         isRunTimeErrorThrown = true;
-//     }
+    try
+    {
+        // Retrieve table of test particle kick data.
+        const TestParticleKickTable testParticleKickTable = getTestParticleKickTable(
+                    absolutePathToTestDatabase, randomWalkSimulationPeriod,
+                    selectedSimulationIds, "test_particle_kicks" );
+    }
 
-//     // Check that expected run-time error was thrown due to request for non-existent test particle
-//     // simulation number.
-//     BOOST_CHECK( isRunTimeErrorThrown );
-// }
+    catch( std::runtime_error& )
+    {
+        isRunTimeErrorThrown = true;
+    }
+
+    // Check that expected run-time error was thrown due to request for non-existent test particle
+    // simulation number.
+    BOOST_CHECK( isRunTimeErrorThrown );
+}
 
 // //! Test implementation of function to get selected random walk Monte Carlo run data from SQLite3
 // //! database.

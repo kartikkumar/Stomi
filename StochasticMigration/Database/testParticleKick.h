@@ -61,7 +61,7 @@ public:
 
     //! Default constructor, taking input values for all elements of kick.
     TestParticleKick( const int aKickId,
-                      const int aSimulationNumber,
+                      const int asimulationId,
                       const double aConjunctionEpoch,
                       const double aConjunctionDistance,
                       const double aPreConjunctionEpoch,
@@ -76,8 +76,8 @@ public:
     //! Unique id for kick in database.
     const int kickId;
 
-    //! Simulation number.
-    const int simulationNumber;
+    //! Simulation ID.
+    const int simulationId;
 
     //! Conjunction epoch [s].
     const double conjunctionEpoch;

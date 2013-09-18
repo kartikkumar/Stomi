@@ -163,7 +163,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "PERTURBERRINGMASS" ) );    
     cout << "Perturber ring mass                                       "
-         << perturberRingMass << " M_PerturbedBody" << endl;    
+         << perturberRingMass << " M_PerturbedBody" << endl;              
 
     const double observationPeriod = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
@@ -249,7 +249,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     ///////////////////////////////////////////////////////////////////////////
 
-    // Fetch test particle input table.
+    // Fetch case and input data from database.
 
     cout << endl;
     cout << "****************************************************************************" << endl;
@@ -320,6 +320,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << "Perturber population                                      " 
          << perturberPopulation << endl;
 
+    // Compute perturber mass ratio.
+    // Note, for the random walk simulations, the mass ratio is equal for all perturbers.
+    const double perturberMassRatio = perturberRingMass / perturberPopulation;
+    cout << "Perturber mass ratio                                      "
+         << perturberMassRatio << std::endl;
+
     ///////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////
@@ -338,14 +344,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // generator and uniform distribution of simulation ID indices in input table.
     variate_generator< GlobalRandomNumberGeneratorType&, uniform_int_distribution< > > 
     generateSimulationId( randomNumberGenerator, simulationIdIndexDistribution );
-
-    // Define an uniform random number distribution for perturber mass ratios.
-    uniform_real_distribution< > perturberMassRatioDistribution( 0.0, 1.0 );
-
-    // Define variate generator for perturber mass ratios using the random number
-    // generator and uniform distribution of mass ratios.
-    variate_generator< GlobalRandomNumberGeneratorType&, uniform_real_distribution< > > 
-    generateMassRatio( randomNumberGenerator, perturberMassRatioDistribution );
 
     // Define an uniform random number distribution to select a random observation period during
     // random walk simulation period.
@@ -394,15 +392,14 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         ///////////////////////////////////////////////////////////////////////////
 
         // Select simulation ID indices (test particle simulation indices in input 
-        // table retrieved from database) and assign mass ratios to generate list of perturbers.
+        // table retrieved from database) to generate list of perturbers.
 
         // Emit output message.
-        cout << "Assigning test particle simulation IDs and mass factors to perturbers ... " 
-             << endl;
+        cout << "Selecting test particle simulation IDs ..." << endl;
 
-        // Declare map containing simulation IDs and associated mass ratios used to define
+        // Declare vector containing simulation IDs and associated mass ratios used to define
         // perturbers.
-        std::map< int, double > perturbers;
+        std::vector< int > selectedSimulationIdIndices( perturberPopulation );
 
         // If desired perturber population is greater than number of completed simulations fetched,
         // from the database input table, throw a run-time error.
@@ -411,12 +408,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             throw runtime_error( "ERROR: Perturber population > # completed simulations" );
         }
 
-        // Else, populate the map of selected simulation IDs, ensuring that all IDs are unique.
+        // Else, populate the vector of selected simulation IDs, ensuring that all IDs are unique.
         else
         {
-            // Declare vector of selected simulation IDs.
-            std::vector< int > selectedSimulationIdIndices( perturberPopulation );
-
             // Generate vector of randomly selected simulation IDs.
             generate( selectedSimulationIdIndices.begin( ), selectedSimulationIdIndices.end( ),
                       generateSimulationId );
@@ -443,34 +437,27 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                     }
                 }
             }
-
-            // Add unique simulation IDs with randomly-generated mass ratios to map of perturbers.
-            for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
-            {
-                perturbers[ selectedSimulationIdIndices.at( i ) ] = generateMassRatio( );
-            }
         }
 
         // Emit success message.
-        cout << "Perturbers successfully assigned!" << endl;
-
-        for ( std::map< int, double >::iterator it = perturbers.begin( ); it != perturbers.end( ); it++ )
-            cout << it->first << ", " << it->second << endl;
+        cout << "Test particle simulation IDs successfully selected!" << endl;
 
         ///////////////////////////////////////////////////////////////////////////
 
         ///////////////////////////////////////////////////////////////////////////
 
-//         // Compile aggregate kick table to database. To avoid locking of the database, this
-//         // section is thread-critical, so will be executed one-by-one by multiple threads.
-//         KickTable aggregateKickTable;
+        // Retrieve aggregate kick table from database based on selected simulation IDs for
+        // perturbers. 
+        // To avoid locking of the database, this section is thread-critical, so will be
+        // executed one-by-one by multiple threads.
+        TestParticleKickTable aggregateKickTable;
 
-// #pragma omp critical( accessDatabase )
-//         {
-//             aggregateKickTable = getAggregateKickTable(
+#pragma omp critical( retrieveAggregateKickTable )
+        {
+//             aggregateKickTable = getTestParticleKickTable(
 //                         databasePath, caseData.randomWalkSimulationDuration,
 //                         selectedSimulationIdIndices, massFactors );
-//         }
+        }
 
 //         ///////////////////////////////////////////////////////////////////////////
 

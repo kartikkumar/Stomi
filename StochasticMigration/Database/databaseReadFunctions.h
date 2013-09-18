@@ -11,6 +11,7 @@
  *      130214    K. Kumar          Split file to contain only read-functions (write-functions
  *                                  ported to new file).
  *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration".
+ *      130918    K. Kumar          Uncommented and update function to get kick table.
  *
  *    References
  *      SQLite C Interface. Result codes, http://www.sqlite.org/c3ref/c_abort.html, last accessed:
@@ -24,12 +25,13 @@
 #define STOCHASTIC_MIGRATION_DATABASE_READ_FUNCTIONS_H
 
 #include <string>
+#include <vector>
 
 // #include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
 // #include "StochasticMigration/Database/randomWalkPerturber.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
-// #include "StochasticMigration/Database/testParticleKick.h"
+#include "StochasticMigration/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {
@@ -83,24 +85,21 @@ TestParticleInputTable getSelectedTestParticleInputTable(
         const std::string& testParticleSimulationNumbers,
         const std::string& testParticleInputTableName );
 
-// //! Get test particle kick table.
-// !
-//  * Returns table of test particle kick data, aggregated based on specified test particle simulation
-//  * numbers.
-//  * \param databaseAbsolutePath Absolute path to simulation database.
-//  * \param randomWalkDuration Duration of random walk [s].
-//  * \param testParticleSimulationNumbersAndMassRatios Map of specified test particle simulation
-//  *          numbers to include in kick table and mass ratios associated with each.
-//  * \param testParticleKickTableName String name of test particle kick table in database (default
-//  *          is set to "test_particle_kicks").
-//  * \return Table of test particle kick data, aggregated from selected test particle simulation
-//  *          numbers.
- 
-// TestParticleKickTable getTestParticleKickTable(
-//         const std::string& databaseAbsolutePath, const double randomWalkDuration,
-//         const TestParticleSimulationNumbersAndMassRatios&
-//         testParticleSimulationNumbersAndMassRatios,
-//         const std::string& testParticleKickTableName = "test_particle_kicks" );
+//! Get test particle kick table.
+/*!
+ * Returns table of test particle kick data, aggregated based on specified test particle simulation
+ * IDs.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param randomWalkSimulationPeriod Duration of random walk [s].
+ * \param testParticleSimulationIds Vector of specified test particle simulation IDs to include in 
+ *          kick table.
+ * \param testParticleKickTableName String name of test particle kick table in database.
+ * \return Table of test particle kick data, aggregated from selected test particle simulation IDs.
+ */
+TestParticleKickTable getTestParticleKickTable(
+        const std::string& databaseAbsolutePath, const double randomWalkSimulationPeriod, 
+        const std::vector< int >& selectedSimulationIds, 
+        const std::string& testParticleKickTableName );
 
 // //! Get table of random walk Monte Carlo runs.
 // /*!

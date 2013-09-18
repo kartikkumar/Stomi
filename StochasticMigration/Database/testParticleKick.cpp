@@ -44,7 +44,7 @@ using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
 //! Default constructor, taking input values for all elements of kick.
 TestParticleKick::TestParticleKick( const int aKickId,
-                                    const int aSimulationNumber,
+                                    const int aSimulationId,
                                     const double aConjunctionEpoch,
                                     const double aConjunctionDistance,
                                     const double aPreConjunctionEpoch,
@@ -56,7 +56,7 @@ TestParticleKick::TestParticleKick( const int aKickId,
                                     const tudat::basic_mathematics::Vector6d 
                                             aPostConjunctionStateInKeplerianElements )
     : kickId( checkPositive( aKickId, "Kick ID" ) ),
-      simulationNumber( checkPositive( aSimulationNumber, "Simulation number" ) ),
+      simulationId( checkPositive( aSimulationId, "Simulation ID" ) ),
       conjunctionEpoch( checkPositive( aConjunctionEpoch, "Conjunction epoch" ) ),
       conjunctionDistance( checkPositive( aConjunctionDistance, "Conjunction distance [m]" ) ),
       preConjunctionEpoch( checkLessThan( aPreConjunctionEpoch, "Pre-conjunction epoch [s]",
@@ -95,7 +95,7 @@ bool operator==( const TestParticleKick& testParticleKick1,
                  const TestParticleKick& testParticleKick2 )
 {
     return ( testParticleKick1.kickId == testParticleKick2.kickId
-             && testParticleKick1.simulationNumber == testParticleKick2.simulationNumber
+             && testParticleKick1.simulationId == testParticleKick2.simulationId
              && testParticleKick1.conjunctionEpoch == testParticleKick2.conjunctionEpoch
              && testParticleKick1.conjunctionDistance == testParticleKick2.conjunctionDistance
              && testParticleKick1.preConjunctionEpoch == testParticleKick2.preConjunctionEpoch
@@ -128,8 +128,8 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleKick& te
     // Write contents of TestParticleKickPointer object to output stream.
     outputStream << "Test particle kick ID: "
                  << testParticleKick.kickId << endl;
-    outputStream << "Test particle simulation number: "
-                 << testParticleKick.simulationNumber << endl;
+    outputStream << "Test particle simulation ID: "
+                 << testParticleKick.simulationId << endl;
     outputStream << "Conjunction epoch (since start) [Jyr]: "
                  << convertSecondsToJulianYears( testParticleKick.conjunctionEpoch ) << endl;
     outputStream << "Conjunction distance [m]: "

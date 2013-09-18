@@ -19,6 +19,7 @@
  *      130706    K. Kumar          Updated implementation of getTestParticleInputTable() functions
  *                                  to SQLiteCpp interface and to include case ID as input 
  *                                  parameter.
+ *      130918    K. Kumar          Uncommented and update function to get kick table.
  *
  *    References
  *
@@ -138,24 +139,24 @@ TestParticleInputTable getCompleteTestParticleInputTable(
     return testParticleInputTable;
 }
 
-// //! Get test particle input table.
+//! Get test particle input table.
 TestParticleInputTable getSelectedTestParticleInputTable(
         const std::string& databaseAbsolutePath, const int caseId,
-        const std::string& testParticleSimulationNumbers,
+        const std::string& testParticleSimulationIds,
         const std::string& testParticleInputTableName )
 { 
     // Cast simulation numbers to vector of string tokens.
-    std::vector< std::string > testParticleSimulationNumberTokens;
-    boost::split( testParticleSimulationNumberTokens, testParticleSimulationNumbers,
+    std::vector< std::string > testParticleSimulationIdTokens;
+    boost::split( testParticleSimulationIdTokens, testParticleSimulationIds,
                   boost::is_any_of( " " ), boost::token_compress_on );
 
     // Populate vector of test particle simulation numbers
-    std::vector< int > testParticleSimulationNumbersVector;
+    std::vector< int > testParticularSimulationIdsVector;
 
-    for ( unsigned int i = 0; i < testParticleSimulationNumberTokens.size( ); i++ )
+    for ( unsigned int i = 0; i < testParticleSimulationIdTokens.size( ); i++ )
     {
-        testParticleSimulationNumbersVector.push_back(
-                    boost::lexical_cast< int >( testParticleSimulationNumberTokens.at( i ) ) );
+        testParticularSimulationIdsVector.push_back(
+                    boost::lexical_cast< int >( testParticleSimulationIdTokens.at( i ) ) );
     }
 
     // Open database in read-only mode.          
@@ -168,7 +169,7 @@ TestParticleInputTable getSelectedTestParticleInputTable(
     std::ostringstream testParticleInputQuery;
     testParticleInputQuery << "SELECT * FROM " << testParticleInputTableName
                            << " WHERE \"caseId\" = " << caseId
-                           << " AND \"simulationId\" = :testParticleSimulationNumber;";
+                           << " AND \"simulationId\" = :testParticleSimulationId;";
 
     // Compile a SQL query.
     SQLite::Statement query( database, testParticleInputQuery.str( ).c_str( ) );
@@ -177,13 +178,13 @@ TestParticleInputTable getSelectedTestParticleInputTable(
     TestParticleInputTable testParticleInputTable;
 
     // Loop through the table retrieved from the database, step-by-step.
-    for ( unsigned int i = 0; i < testParticleSimulationNumbersVector.size( ); i++ )
+    for ( unsigned int i = 0; i < testParticularSimulationIdsVector.size( ); i++ )
     {
         // Bind simulation number to query.
-        query.bind( ":testParticleSimulationNumber", testParticleSimulationNumbersVector.at( i ) );
+        query.bind( ":testParticleSimulationId", testParticularSimulationIdsVector.at( i ) );
 
         // Execute select query.
-        // A run-time error will be thrown if the requested simulation number can't be found.
+        // A run-time error will be thrown if the requested simulation ID can't be found.
         query.executeStep( );
 
         // Store fetched row in test particle input struct.
@@ -206,105 +207,80 @@ TestParticleInputTable getSelectedTestParticleInputTable(
     return testParticleInputTable;
 }
 
-// //! Get test particle kick table.
-// TestParticleKickTable getTestParticleKickTable(
-//         const std::string& databaseAbsolutePath, const double randomWalkPeriod,
-//         const TestParticleSimulationNumbersAndMassRatios&
-//         testParticleSimulationNumbersAndMassRatios,
-//         const std::string& testParticleKickTableName )
-// {
-//     // Initiate database connector.
-//     Sqlite3DatabaseConnectorPointer databaseConnector
-//             = initiateDatabaseConnector( databaseAbsolutePath );
+//! Get test particle kick table.
+TestParticleKickTable getTestParticleKickTable(
+        const std::string& databaseAbsolutePath, const double randomWalkSimulationPeriod, 
+        const std::vector< int >& selectedSimulationIds, 
+        const std::string& testParticleKickTableName )
+{
+    // Open database in read-only mode.          
+    SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY );
 
-//     // Set up query statement.
-//     std::ostringstream testParticleKickQuery;
-//     testParticleKickQuery << "SELECT * FROM " << testParticleKickTableName
-//                           << " WHERE \"simulation\" IN (";
+    // Open transaction to query database.
+    SQLite::Transaction transaction( database );
 
-//     // Loop over test particle simulation numbers and construct SQLite query.
-//     TestParticleSimulationNumbersAndMassRatios::const_iterator
-//             testParticleSimulationsOneButLastIterator
-//             = testParticleSimulationNumbersAndMassRatios.end( );
-//     testParticleSimulationsOneButLastIterator--;
+        // Set up query statement.
+    std::ostringstream testParticleKickQuery;
+    testParticleKickQuery << "SELECT * FROM " << testParticleKickTableName
+                          << " WHERE \"simulationId\" = :testParticleSimulationId"
+                          << " AND \"conjunctionEpoch\" > 0.0"
+                          << " AND \"conjunctionEpoch\" < " << randomWalkSimulationPeriod << ";";
 
-//     for ( TestParticleSimulationNumbersAndMassRatios::const_iterator
-//           testParticleSimulationsIterator = testParticleSimulationNumbersAndMassRatios.begin( );
-//           testParticleSimulationsIterator != testParticleSimulationsOneButLastIterator;
-//           testParticleSimulationsIterator++ )
-//     {
-//         testParticleKickQuery << testParticleSimulationsIterator->first << ",";
-//     }
+    // Compile a SQL query.
+    SQLite::Statement query( database, testParticleKickQuery.str( ).c_str( ) );
 
-//     testParticleKickQuery << testParticleSimulationsOneButLastIterator->first
-//                          << ") AND \"conjunctionEpoch\" > 0.0 AND \"conjunctionEpoch\" <= "
-//                          << randomWalkPeriod << ";";
+    // Declare test particle kick table.
+    TestParticleKickTable testParticleKickTable;
 
-//     // Populate vector of test particle simulation numbers.
-//     std::vector< unsigned int > testParticleSimulationNumbers;
+    // Loop through the table retrieved from the database, step-by-step.
+    for ( unsigned int i = 0; i < selectedSimulationIds.size( ); i++ )
+    {
+        // Bind simulation number to query.
+        query.bind( ":testParticleSimulationId", selectedSimulationIds.at( i ) );
 
-//     for ( TestParticleSimulationNumbersAndMassRatios::const_iterator
-//           testParticleSimulationsIterator = testParticleSimulationNumbersAndMassRatios.begin( );
-//           testParticleSimulationsIterator != testParticleSimulationNumbersAndMassRatios.end( );
-//           testParticleSimulationsIterator++ )
-//     {
-//         testParticleSimulationNumbers.push_back( testParticleSimulationsIterator->first );
-//     }
+        // Set flag to indicate if simulation ID was found.
+        bool isSimulationFound = false;
 
-//     // Prepare database query.
-//     databaseConnector->prepare_v2( testParticleKickQuery.str( ) );
+        // Execute select query.
+        // A run-time error will be thrown if the requested simulation ID can't be found.
+        while( query.executeStep( ) == true )
+        {
+            // Set flag to indicate that simulation ID was found to true.
+            isSimulationFound = true;
 
-//     // Declare test particle kick table.
-//     TestParticleKickTable testParticleKickTable;
+            // Store fetched row in test particle input struct.
+            testParticleKickTable.insert(
+                new TestParticleKick(
+                        query.getColumn( 0 ), query.getColumn( 1 ), query.getColumn( 2 ),
+                        query.getColumn( 3 ), query.getColumn( 4 ), query.getColumn( 5 ),
+                        ( Eigen::VectorXd( 6 ) << query.getColumn( 6 ), query.getColumn( 7 ), 
+                          query.getColumn( 8 ), query.getColumn( 9 ), query.getColumn( 10 ),
+                          query.getColumn( 11 ) ).finished( ),
+                        query.getColumn( 12 ), query.getColumn( 13 ),
+                        ( Eigen::VectorXd( 6 ) << query.getColumn( 14 ), query.getColumn( 15 ), 
+                          query.getColumn( 16 ), query.getColumn( 17 ), query.getColumn( 18 ),
+                          query.getColumn( 19 ) ).finished( ) ) );   
+        }
 
-//     // Declare database handler status.
-//     unsigned int databaseStatus = 0;
+        // Check if simulation ID was not found (by checking flag).
+        if ( !isSimulationFound )
+        {
+            std::ostringstream errorMessage;
+            errorMessage << "ERROR Simulation ID " << selectedSimulationIds.at( i ) << " "
+                         << "was not found in the test particle kicks table!";
+            throw std::runtime_error( errorMessage.str( ).c_str( ) );
+        }
 
-//     // Loop through the table retrieved from the database, step-by-step.
-//     while ( ( databaseStatus = databaseConnector->step( ) ) == SQLITE_ROW )
-//     {
-//         // Store simulation number.
-//         int simulationNumber = databaseConnector->fetchInteger( 1 );
+        // Reset query.
+        query.reset( );
+    }
 
-//         // Store fetched row in test particle kick struct.
-//         testParticleKickTable.insert(
-//             new TestParticleKick(
-//                         simulationNumber, query.getColumn( 2 ),
-//                         query.getColumn( 3 ), query.getColumn( 4 ),
-//                         query.getColumn( 5 ), query.getColumn( 6 ),
-//                         query.getColumn( 7 ), query.getColumn( 8 ),
-//                         query.getColumn( 9 ), query.getColumn( 10 ),
-//                         query.getColumn( 11 ), query.getColumn( 12 ),
-//                         query.getColumn( 13 ), query.getColumn( 14 ),
-//                         testParticleSimulationNumbersAndMassRatios.find(
-//                             databaseConnector->fetchInteger( 1 ) )->second ) );
+    // Commit database transaction.
+    transaction.commit( );    
 
-//         // Delete the test particle simulation number if found in the STL vector.
-//         std::vector< unsigned int >::iterator iteratorSimulationNumber
-//                 = std::find( testParticleSimulationNumbers.begin( ),
-//                              testParticleSimulationNumbers.end( ),
-//                              simulationNumber );
-
-//         if ( iteratorSimulationNumber != testParticleSimulationNumbers.end( ) )
-//         {
-//             testParticleSimulationNumbers.erase( iteratorSimulationNumber );
-//         }
-//     }
-
-//     // Check if the end of the table has been reached, and whether all simulations have been found.
-//     if ( databaseStatus != SQLITE_DONE
-//          || ( databaseStatus == SQLITE_DONE && testParticleSimulationNumbers.size( ) > 0 ) )
-//     {
-//         // Throw run-time error.
-//         throwDatabaseError( databaseConnector, databaseStatus );
-//     }
-
-//     // Terminate database connector cleanly.
-//     terminateDatabaseConnector( databaseConnector );
-
-//     // Return aggregated test particle kick table.
-//     return testParticleKickTable;
-// }
+    // Return aggregated test particle kick table.
+    return testParticleKickTable;
+}
 
 // //! Get table of random walk Monte Carlo runs.
 // RandomWalkMonteCarloRunTable getRandomWalkMonteCarloRunsTable(
