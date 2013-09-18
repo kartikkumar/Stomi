@@ -327,11 +327,3 @@ target_link_libraries(randomWalkSimulator
                       ${SQLITECPP_LIBRARY} 
                       ${SQLITE3_LIBRARY} 
                       ${Boost_LIBRARIES})
-
-add_executable(temp "${SRCROOT}/Applications/temp.cpp")
-setup_executable_target(temp "${SRCROOT}")
-target_link_libraries(temp
-                      ${TUDAT_CORE_LIBRARIES} 
-                      ${SQLITECPP_LIBRARY} 
-                      ${SQLITE3_LIBRARY} 
-                      ${Boost_LIBRARIES})
