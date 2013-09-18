@@ -26,6 +26,7 @@
 ######################
 *.log
 *.sql
+*.sqlite*
 
 # OS generated files #
 ######################
@@ -48,3 +49,4 @@ qtcreator-build/
 CMakeLists.txt.user
 *.sublime-*
 Documentation/
+inputFiles/
