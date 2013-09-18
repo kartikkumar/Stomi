@@ -138,7 +138,7 @@ SMALIMIT            :
 # in the case of a normal distribution for the x- and y-components of the eccentricities (sigma 
 # = standard deviation).
 # The angle parameter sets the angle between the eccentricity vector components, which
-# are generated randomly using a normal distributions. By default, the angle is 90 deg, which 
+# are generated randomly using normal distributions. By default, the angle is 90 deg, which 
 # means that the components are orthogonal and the distribution of the magnitude of the
 # eccentricities follows the Rayleigh distribution. The associated angle, the argument of  
 # periapsis, is in this case uniformly distributed. 

@@ -13,22 +13,22 @@ for a specified case.
 ###################################################################################################
 
 # Set absolute path to SQLite database with simulation data.
-databasePath    = "/Users/kartikkumar/Desktop/stochasticMigrationResults.sqlite"
+databasePath    =
 
 # Set case name.
-caseName        = "circular_equatorial_large_sma"
+caseName        =
 
 # Set absolute path to output directory.
-outputPath      = "/Users/kartikkumar/Desktop"
+outputPath      =
 
 # Set cut-off for big kicks included in plots.
-bigKicksCutOff  = 5000
+bigKicksCutOff  =
 
 # Show figures in interactive matplotlib window?
-isShowFigures   = 0
+isShowFigures   =
 
 # Set figure dpi.
-figureDPI       = 600
+figureDPI       =
 
 ###################################################################################################
 

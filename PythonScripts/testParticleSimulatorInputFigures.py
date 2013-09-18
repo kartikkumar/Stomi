@@ -13,16 +13,16 @@ test particle simulations.
 ###################################################################################################
 
 # Set absolute path to SQLite database with simulation data.
-databasePath    = "/Users/kartikkumar/Desktop/stochasticMigrationResults.sqlite"
+databasePath    =
 
 # Set case name.
-caseName        = "circular_equatorial"
+caseName        =
 
 # Set absolute path to output directory.
-outputPath      = "/Users/kartikkumar/Desktop/plots"
+outputPath      =
 
 # Set figure dpi.
-figureDPI       = 600
+figureDPI       =
 
 ###################################################################################################
 

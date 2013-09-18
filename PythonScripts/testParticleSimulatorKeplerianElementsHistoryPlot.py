@@ -13,28 +13,28 @@ with the test particle simulator.
 ###################################################################################################
 
 # Set simulation IDs as a list.
-simulationIds   = (6692, 7207)
+simulationIds   =
 
 # Set absolute path to directory with data files.
-datafilesPath   = "/Users/kartikkumar/Desktop/datafiles"
+datafilesPath   =
 
 # Set absolute path to SQLite database with simulation data.
-databasePath    = "/Users/kartikkumar/Desktop/stochasticMigrationResults.sqlite"
+databasePath    =
 
 # Set case name.
-caseName        = "circular_equatorial_large_sma"
+caseName        =
 
 # Set absolute path to output directory.
-outputPath      = "/Users/kartikkumar/Desktop/plots"
+outputPath      =
 
 # Set cut-off for big kicks included in plots.
-bigKicksCutOff  = 5000
+bigKicksCutOff  =
 
 # Show figures in interactive matplotlib window?
-isShowFigures   = 0
+isShowFigures   =
 
 # Set figure dpi.
-figureDPI       = 600
+figureDPI       =
 
 ###################################################################################################
 
