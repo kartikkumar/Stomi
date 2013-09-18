@@ -337,7 +337,15 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Define variate generator for simulation ID indices using the random number
     // generator and uniform distribution of simulation ID indices in input table.
     variate_generator< GlobalRandomNumberGeneratorType&, uniform_int_distribution< > > 
-    generatorSimulationIdIndex( randomNumberGenerator, simulationIdIndexDistribution );
+    generateSimulationId( randomNumberGenerator, simulationIdIndexDistribution );
+
+    // Define an uniform random number distribution for perturber mass ratios.
+    uniform_real_distribution< > perturberMassRatioDistribution( 0.0, 1.0 );
+
+    // Define variate generator for perturber mass ratios using the random number
+    // generator and uniform distribution of mass ratios.
+    variate_generator< GlobalRandomNumberGeneratorType&, uniform_real_distribution< > > 
+    generateMassRatio( randomNumberGenerator, perturberMassRatioDistribution );
 
     // Define an uniform random number distribution to select a random observation period during
     // random walk simulation period.
@@ -347,7 +355,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Define variate generator for the first epoch in the observation period.
     variate_generator< GlobalRandomNumberGeneratorType&, uniform_real_distribution< > > 
-    generatorObservationPeriodStartEpoch( randomNumberGenerator, observationPeriodDistribution );
+    generateObservationPeriodStartEpoch( randomNumberGenerator, observationPeriodDistribution );
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -386,11 +394,15 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         ///////////////////////////////////////////////////////////////////////////
 
         // Select simulation ID indices (test particle simulation indices in input 
-        // table retrieved from database) and assign mass ratios.
-        TestParticleSimulationIdsAndMassRatios selectedSimulationIdsAndMassRatios;
+        // table retrieved from database) and assign mass ratios to generate list of perturbers.
 
-        selectedSimulationIdsAndMassRatios[ 1 ] = 0.5;        selectedSimulationIdsAndMassRatios[ 1 ] = 0.5;
+        // Emit output message.
+        cout << "Assigning test particle simulation IDs and mass factors to perturbers ... " 
+             << endl;
 
+        // Declare map containing simulation IDs and associated mass ratios used to define
+        // perturbers.
+        std::map< int, double > perturbers;
 
         // If desired perturber population is greater than number of completed simulations fetched,
         // from the database input table, throw a run-time error.
@@ -399,85 +411,55 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             throw runtime_error( "ERROR: Perturber population > # completed simulations" );
         }
 
-        // Else, populate the map of selected simulation numbers, ensuring that all IDs are unique.
+        // Else, populate the map of selected simulation IDs, ensuring that all IDs are unique.
         else
         {
-        //     // Resize the vector of selected simulation numbers.
-        //     selectedSimulationIdIndices.resize( perturberPopulation );
+            // Declare vector of selected simulation IDs.
+            std::vector< int > selectedSimulationIdIndices( perturberPopulation );
 
-        //     // Generate vector of randomly selected simulation numbers.
-        //     generate( selectedSimulationIdIndices.begin( ), selectedSimulationIdIndices.end( ),
-        //               generatorSimulationIdIndex );
+            // Generate vector of randomly selected simulation IDs.
+            generate( selectedSimulationIdIndices.begin( ), selectedSimulationIdIndices.end( ),
+                      generateSimulationId );
 
-        //     // Check if the simulation numbers are unique, and if not, generate new random number.
-        //     for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
-        //     {
-        //         for ( unsigned int j = 0; j < selectedSimulationIdIndices.size( ); j++ )
-        //         {
-        //             // If inner and outer loop point to the same element, skip.
-        //             if ( i == j )
-        //             {
-        //                 continue;
-        //             }
+            // Check if the simulation IDs are unique, and if not, generate new random number.
+            for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
+            {
+                for ( unsigned int j = 0; j < selectedSimulationIdIndices.size( ); j++ )
+                {
+                    // If inner and outer loop point to the same element, skip.
+                    if ( i == j )
+                    {
+                        continue;
+                    }
 
-        //             // Else, check if the elements are equal, and if they are generate a new 
-        //             // simulation ID index and restart looping.
-        //             else if ( selectedSimulationIdIndices.at( j ) 
-        //                       == selectedSimulationIdIndices.at( i ) )
-        //             {
-        //                 selectedSimulationIdIndices.at( j ) = generatorSimulationIdIndex( );
-        //                 i = 0;
-        //                 break;
-        //             }
-        //         }
-        //     }
+                    // Else, check if the elements are equal, and if they are generate a new 
+                    // simulation ID index and restart looping.
+                    else if ( selectedSimulationIdIndices.at( j ) 
+                              == selectedSimulationIdIndices.at( i ) )
+                    {
+                        selectedSimulationIdIndices.at( j ) = generateSimulationId( );
+                        i = 0;
+                        break;
+                    }
+                }
+            }
+
+            // Add unique simulation IDs with randomly-generated mass ratios to map of perturbers.
+            for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
+            {
+                perturbers[ selectedSimulationIdIndices.at( i ) ] = generateMassRatio( );
+            }
         }
 
-//         // Declare map of mass factors.
-//         MassFactors massFactors;
+        // Emit success message.
+        cout << "Perturbers successfully assigned!" << endl;
 
-//         // Loop through if-statements to select mass factor type and populate map.
-//         // Check if mass factor type is "EQUAL".
-//         if ( !massDistributionType.compare( "EQUAL" ) )
-//         {
-//             // Fill map of equal mass factors.
-//             for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
-//             {
-//                 massFactors[ selectedSimulationIdIndices.at( i ) ]
-//                         = massDistributionParameters.at( 0 );
-//             }
-//         }
+        for ( std::map< int, double >::iterator it = perturbers.begin( ); it != perturbers.end( ); it++ )
+            cout << it->first << ", " << it->second << endl;
 
-//         // Else, check if mass factor type is "POWERLAW".
-//         else if ( !massDistributionType.compare( "POWERLAW" ) )
-//         {
-//             // Fill map of power-law distributed mass factors.
-//             for ( unsigned int i = 0; i < selectedSimulationIdIndices.size( ); i++ )
-//             {
-//                 double powerLawMassFactor = generatePowerLawMassFactors( );
+        ///////////////////////////////////////////////////////////////////////////
 
-//                 while ( powerLawMassFactor > 1.0 )
-//                 {
-//                     powerLawMassFactor = generatePowerLawMassFactors( );
-//                 }
-
-//                 massFactors[ selectedSimulationIdIndices.at( i ) ]
-//                         = powerLawMassFactor / dohnanyiPowerLawIndex;
-//             }
-//         }
-
-//         // Else, the mass distribution type is unknown, throw a runtime error.
-//         else
-//         {
-//             throw_exception( enable_error_info(
-//                                  runtime_error( "Mass distribution type unknown!" ) ) );
-//         }
-
-// //        // DEBUG.
-// //        for ( MassFactors::const_iterator iteratorMassFactors = massFactors.begin( );
-// //              iteratorMassFactors != massFactors.end( ); iteratorMassFactors++ )
-// //            std::cout << iteratorMassFactors->first
-// //                      << ", " << iteratorMassFactors->second << std::endl;
+        ///////////////////////////////////////////////////////////////////////////
 
 //         // Compile aggregate kick table to database. To avoid locking of the database, this
 //         // section is thread-critical, so will be executed one-by-one by multiple threads.
@@ -535,7 +517,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //         ///////////////////////////////////////////////////////////////////////////
 
 //         // Select a random observation period epoch.
-//         const double observationPeriodEpoch = generatorObservationPeriodEpoch( );
+//         const double observationPeriodEpoch = generateObservationPeriodEpoch( );
 
 // //        // DEBUG.
 // //        std::cout << std::setprecision( outputDataPrecision )
