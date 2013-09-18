@@ -31,7 +31,7 @@
 // #include <sstream>
 #include <vector>
 
-// #include <omp.h>
+#include <omp.h>
 
 // #include <boost/algorithm/string/classification.hpp>
 // #include <boost/algorithm/string/split.hpp>
@@ -394,9 +394,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Select simulation ID indices (test particle simulation indices in input 
         // table retrieved from database) to generate list of perturbers.
 
-        // Emit output message.
-        cout << "Selecting test particle simulation IDs ..." << endl;
-
         // Declare vector containing simulation IDs and associated mass ratios used to define
         // perturbers.
         std::vector< int > selectedSimulationIdIndices( perturberPopulation );
@@ -439,9 +436,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             }
         }
 
-        // Emit success message.
-        cout << "Test particle simulation IDs successfully selected!" << endl;
-
         ///////////////////////////////////////////////////////////////////////////
 
         ///////////////////////////////////////////////////////////////////////////
@@ -450,20 +444,18 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // perturbers. 
         // To avoid locking of the database, this section is thread-critical, so will be
         // executed one-by-one by multiple threads.
-        TestParticleKickTable aggregateKickTable;
-
 #pragma omp critical( retrieveAggregateKickTable )
         {
-//             aggregateKickTable = getTestParticleKickTable(
-//                         databasePath, caseData.randomWalkSimulationDuration,
-//                         selectedSimulationIdIndices, massFactors );
+            const TestParticleKickTable kicktable = getTestParticleKickTable(
+                        databasePath, caseData->randomWalkSimulationPeriod,
+                        selectedSimulationIdIndices, testParticleKickTableName );
         }
 
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
-//         // Execute random walk simulation.
+        // Execute random walk simulation.
 
 //         // Declare Mab propagation history. This stores the propagation history of the
 //         // action variables only (semi-major axis, eccentricity, inclination).
@@ -499,7 +491,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 // //                << "keplerianActionElementsHistory_case" << caseData.caseNumber
 // //                << "_perturbers" << perturberPopulation << ".dat";
 
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
 //         ///////////////////////////////////////////////////////////////////////////
 
