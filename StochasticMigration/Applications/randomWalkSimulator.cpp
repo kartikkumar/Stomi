@@ -457,9 +457,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Execute random walk simulation.
 
-//         // Declare Mab propagation history. This stores the propagation history of the
-//         // action variables only (semi-major axis, eccentricity, inclination).
-//         ActionPropagationHistory keplerianActionElementsHistory;
+        // Declare Mab propagation history. This stores the propagation history of the
+        // action variables only (semi-major axis, eccentricity, inclination).
+        // ActionPropagationHistory keplerianActionElementsHistory;
 
 //         // Set Mab initial state in Keplerian elements.
 //         keplerianActionElementsHistory[ aggregateKickTable.begin( )->first ]

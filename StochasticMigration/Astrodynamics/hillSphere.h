@@ -9,6 +9,7 @@
  *      130714    K. Kumar          File created.
  *      130715    K. Kumar          Added missing Doxygen documentation, changed naming from
  *                                  kilometers to meters.
+ *      130919    K. Kumar          Added missing include guard.
  *
  *    References
  *
@@ -17,6 +18,9 @@
  *      Should be migrated to the Assist project.
  *
  */
+
+#ifndef STOCHASTIC_MIGRATION_HILL_SPHERE_H
+#define STOCHASTIC_MIGRATION_HILL_SPHERE_H
 
 #include <iostream>
 #include <cmath>
@@ -71,3 +75,5 @@ private:
 
 } // namespace astrodynamics
 } // namespace stochastic_migration
+
+#endif // STOCHASTIC_MIGRATION_HILL_SPHERE_H

@@ -8,12 +8,16 @@
  *      YYMMDD    Author            Comment
  *      120709    K. Kumar          File created.
  *      130710    K. Kumar          Updated struct name and contents.
+ *      130919    K. Kumar          Added missing include guard.
  *
  *    References
  *
  *    Notes
  *      The PropagationDataPoint data struct needs to be unit tested.
  */
+
+#ifndef STOCHASTIC_MIGRATION_PROPAGATION_DATA_POINT_H
+#define STOCHASTIC_MIGRATION_PROPAGATION_DATA_POINT_H
 
 #include <iostream>
 #include <set> 
@@ -96,3 +100,5 @@ inline bool compareMutualDistances( const PropagationDataPoint& propagationDataP
 
 } // namespace astrodynamics
 } // namespace stochastic_migration
+
+#endif // STOCHASTIC_MIGRATION_PROPAGATION_DATA_POINT_H
