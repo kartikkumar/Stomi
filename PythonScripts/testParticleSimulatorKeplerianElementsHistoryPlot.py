@@ -27,12 +27,6 @@ caseName        =
 # Set absolute path to output directory.
 outputPath      =
 
-# Set cut-off for big kicks included in plots.
-bigKicksCutOff  =
-
-# Show figures in interactive matplotlib window?
-isShowFigures   =
-
 # Set figure dpi.
 figureDPI       =
 

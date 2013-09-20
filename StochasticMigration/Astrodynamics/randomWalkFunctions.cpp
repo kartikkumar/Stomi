@@ -10,6 +10,7 @@
  *      120522    K. Kumar          Added inclination kick computation. Added general Keplerian
  *                                  element averaging function; added wrapper for inclination.
  *      130206    K. Kumar          Fixed error in inclination kick computation.
+ *      130919    K. Kumar          Uncommented and updated executeKick() function.
  *
  *    References
  *
@@ -17,8 +18,8 @@
  *
  */
 
-// #include <cmath>
-// #include <exception>
+#include <cmath>
+#include <stdexcept>
 // #include <iomanip>
 // #include <iostream>
 // #include <iterator>
@@ -26,11 +27,12 @@
 // #include <numeric>
 // #include <sstream>
 
-// #include <boost/exception/all.hpp>
-// #include <boost/math/special_functions/fpclassify.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 
-// #include <TudatCore/Astrodynamics/BasicAstrodynamics/astrodynamicsFunctions.h>
-// #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
+#include <Eigen/Core>
+
+#include <TudatCore/Astrodynamics/BasicAstrodynamics/astrodynamicsFunctions.h>
+#include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 // #include <TudatCore/Mathematics/BasicMathematics/mathematicalConstants.h>
 
 #include "StochasticMigration/Astrodynamics/randomWalkFunctions.h"
@@ -40,131 +42,106 @@ namespace stochastic_migration
 namespace astrodynamics
 {
 
-// using namespace tudat::astrodynamics;
-// using namespace tudat::orbital_element_conversions;
+using namespace tudat::astrodynamics;
+using namespace tudat::orbital_element_conversions;
 
-// //! Execute kick.
-// Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBeforeKick,
-//                              const kick_table::KickTableRow& aggregateKickTableRowData )
-// {
-//     // Declare state in Keplerian elements after kick.
-//     Eigen::Vector3d stateInKeplerianElementsAfterKick = Eigen::Vector3d::Zero( );
+//! Execute kick.
+Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBeforeKick,
+                             const database::TestParticleKickTable::iterator kick, 
+                             const double perturberMassRatio )
+{
+    // Declare state in Keplerian elements after kick.
+    Eigen::Vector3d stateInKeplerianElementsAfterKick = Eigen::Vector3d::Zero( );
 
-//     // Declare and set pre- and post-encounter semi-major axes of perturber.
-//     const double preEncounterSemiMajorAxis = aggregateKickTableRowData.preEncounterSemiMajorAxis;
-//     const double postEncounterSemiMajorAxis
-//             = aggregateKickTableRowData.postEncounterSemiMajorAxis;
+    // Declare and set pre- and post-conjunction semi-major axes of perturber.
+    const double preConjunctionSemiMajorAxis 
+        = kick->preConjunctionStateInKeplerianElements( semiMajorAxisIndex );
+    const double postConjunctionSemiMajorAxis 
+        = kick->postConjunctionStateInKeplerianElements( semiMajorAxisIndex );
 
-//     // Declare and set pre- and post-encounter eccentricities of perturber.
-//     const double preEncounterEccentricity = aggregateKickTableRowData.preEncounterEccentricity;
-//     const double postEncounterEccentricity = aggregateKickTableRowData.postEncounterEccentricity;
+    // Declare and set pre- and post-conjunction eccentricities of perturber.
+    const double preConjunctionEccentricity 
+        = kick->preConjunctionStateInKeplerianElements( eccentricityIndex );
+    const double postConjunctionEccentricity 
+        = kick->postConjunctionStateInKeplerianElements( eccentricityIndex );
 
-//     // Declare and set pre- and post-encounter inclinations of perturber.
-//     const double preEncounterInclination = aggregateKickTableRowData.preEncounterInclination;
-//     const double postEncounterInclination = aggregateKickTableRowData.postEncounterInclination;
+    // Declare and set pre- and post-conjunction inclinations of perturber.
+    const double preConjunctionInclination 
+        = kick->preConjunctionStateInKeplerianElements( inclinationIndex );
+    const double postConjunctionInclination 
+        = kick->postConjunctionStateInKeplerianElements( inclinationIndex );
 
-//     // Compute kick in semi-major axis by using conservation of energy.
-//     stateInKeplerianElementsAfterKick( semiMajorAxisIndex )
-//             = 1.0 / ( 1.0 / stateInKeplerianElementsBeforeKick( semiMajorAxisIndex )
-//                       + aggregateKickTableRowData.massFactor
-//                       * ( 1.0 / preEncounterSemiMajorAxis
-//                           - 1.0 / postEncounterSemiMajorAxis ) );
+    // Compute semi-major axis after kick by using conservation of energy.
+    stateInKeplerianElementsAfterKick( semiMajorAxisIndex )
+            = 1.0 / ( 1.0 / stateInKeplerianElementsBeforeKick( semiMajorAxisIndex )
+                      + perturberMassRatio
+                      * ( 1.0 / preConjunctionSemiMajorAxis 
+                          - 1.0 / postConjunctionSemiMajorAxis ) );
 
-// //    // DEBUG.
-// //    std::cout << preEncounterSemiMajorAxis << ", "
-// //              << postEncounterSemiMajorAxis << ", "
-// //              << stateInKeplerianElementsBeforeKick( semiMajorAxisIndex ) << ", "
-// //              << stateInKeplerianElementsAfterKick( semiMajorAxisIndex ) << ", "
-// //              << aggregateKickTableRowData.massFactor << std::endl;
+    // Check that semi-major axis after kick is valid (has to be positive for bounded orbit).
+    if ( stateInKeplerianElementsAfterKick( semiMajorAxisIndex ) < 0.0 )
+    {
+        throw std::runtime_error( "Semi-major axis of perturbed body after kick is erroneous!" );
+    }
 
-//     // Compute angular momentum of Mab before encounter.
-//     const double angularMomentumOfMabBeforeEncounter_ = computeKeplerAngularMomentum(
-//                 stateInKeplerianElementsBeforeKick( semiMajorAxisIndex ),
-//                 stateInKeplerianElementsBeforeKick( eccentricityIndex ), 1.0, 1.0 );
+    // Compute angular momentum of perturbed body before conjunction.
+    const double angularMomentumOfPerturbedBodyBeforeConjunction = computeKeplerAngularMomentum(
+                stateInKeplerianElementsBeforeKick( semiMajorAxisIndex ),
+                stateInKeplerianElementsBeforeKick( eccentricityIndex ), 1.0, 1.0 );
 
-//     // Compute angular momentum of perturber before encounter.
-//     const double angularMomentumOfPerturberBeforeEncounter_
-//             = computeKeplerAngularMomentum( preEncounterSemiMajorAxis, preEncounterEccentricity,
-//                                             1.0, aggregateKickTableRowData.massFactor );
+    // Compute angular momentum of perturber before conjunction.
+    const double angularMomentumOfPerturberBeforeConjunction
+            = computeKeplerAngularMomentum( 
+                preConjunctionSemiMajorAxis, preConjunctionEccentricity, 1.0, perturberMassRatio );
 
-//     // Compute angular momentum of perturber after encounter.
-//     const double angularMomentumOfPerturberAfterEncounter_
-//             = computeKeplerAngularMomentum(
-//                 postEncounterSemiMajorAxis, postEncounterEccentricity,
-//                 1.0, aggregateKickTableRowData.massFactor );
+    // Compute angular momentum of perturber after conjunction.
+    const double angularMomentumOfPerturberAfterConjunction
+            = computeKeplerAngularMomentum(
+                postConjunctionSemiMajorAxis, postConjunctionEccentricity, 
+                1.0, perturberMassRatio );
 
-//     // Compute kick in eccentricity by using conservation of angular momentum.
-//     stateInKeplerianElementsAfterKick( eccentricityIndex )
-//             = std::sqrt( 1.0 - 1.0 / stateInKeplerianElementsAfterKick( semiMajorAxisIndex )
-//                          * ( angularMomentumOfMabBeforeEncounter_
-//                              + angularMomentumOfPerturberBeforeEncounter_
-//                              - angularMomentumOfPerturberAfterEncounter_ )
-//                          * ( angularMomentumOfMabBeforeEncounter_
-//                              + angularMomentumOfPerturberBeforeEncounter_
-//                              - angularMomentumOfPerturberAfterEncounter_ ) );
+    // Compute eccentricity after kick by using conservation of angular momentum.
+    stateInKeplerianElementsAfterKick( eccentricityIndex )
+            = std::sqrt( 1.0 - 1.0 / stateInKeplerianElementsAfterKick( semiMajorAxisIndex )
+                         * ( angularMomentumOfPerturbedBodyBeforeConjunction
+                             + angularMomentumOfPerturberBeforeConjunction
+                             - angularMomentumOfPerturberAfterConjunction )
+                         * ( angularMomentumOfPerturbedBodyBeforeConjunction
+                             + angularMomentumOfPerturberBeforeConjunction
+                             - angularMomentumOfPerturberAfterConjunction ) );
 
-// //    // DEBUG.
-// //    std::setprecision( std::numeric_limits< double >::digits10 );
-// //    std::cout << preEncounterEccentricity << ", "
-// //              << postEncounterEccentricity << ", "
-// //              << stateInKeplerianElementsBeforeKick( eccentricityIndex ) << ", "
-// //              << stateInKeplerianElementsAfterKick( eccentricityIndex ) << ", "
-// //              << stateInKeplerianElementsAfterKick( eccentricityIndex )
-// //              - stateInKeplerianElementsBeforeKick( eccentricityIndex )<< ", "
-// //              << aggregateKickTableRowData.massFactor << std::endl;
+    // Check that eccentricity after kick is valid (has to be 0.0 < e_new < 1.0).
+    if ( stateInKeplerianElementsAfterKick( eccentricityIndex ) < 0.0
+         || stateInKeplerianElementsAfterKick( eccentricityIndex ) > 1.0
+         || boost::math::isnan( stateInKeplerianElementsAfterKick( eccentricityIndex ) ) )
+    {
+        throw std::runtime_error( "Eccentricity of perturbed body after kick is erroneous!" );
+    }            
 
-//     // Compute angular momentum of Mab after kick.
-//     const double angularMomentumOfMabAfterEncounter_ = computeKeplerAngularMomentum(
-//                 stateInKeplerianElementsAfterKick( semiMajorAxisIndex ),
-//                 stateInKeplerianElementsAfterKick( eccentricityIndex ), 1.0, 1.0 );
+    // Compute angular momentum of perturbed body after kick.
+    const double angularMomentumOfPerturbedBodyAfterConjunction = computeKeplerAngularMomentum(
+                stateInKeplerianElementsAfterKick( semiMajorAxisIndex ),
+                stateInKeplerianElementsAfterKick( eccentricityIndex ), 1.0, 1.0 );
 
-//     // Compute kick in inclination by using conservation of z-component of angular momentum.
-//     stateInKeplerianElementsAfterKick( inclinationIndex )
-//             = std::acos( 1.0 / angularMomentumOfMabAfterEncounter_
-//                          * ( angularMomentumOfMabBeforeEncounter_
-//                            * cos( stateInKeplerianElementsBeforeKick( inclinationIndex ) )
-//                            + angularMomentumOfPerturberBeforeEncounter_
-//                            * cos( preEncounterInclination )
-//                            - angularMomentumOfPerturberAfterEncounter_
-//                            * cos( postEncounterInclination ) ) );
+    // Compute inclination after kick by using conservation of z-component of angular momentum.
+    stateInKeplerianElementsAfterKick( inclinationIndex )
+            = std::acos( 1.0 / angularMomentumOfPerturbedBodyAfterConjunction
+                         * ( angularMomentumOfPerturbedBodyBeforeConjunction
+                           * cos( stateInKeplerianElementsBeforeKick( inclinationIndex ) )
+                           + angularMomentumOfPerturberBeforeConjunction
+                           * cos( preConjunctionInclination )
+                           - angularMomentumOfPerturberAfterConjunction
+                           * cos( postConjunctionInclination ) ) );
 
-// //    // DEBUG.
-// //    std::setprecision( std::numeric_limits< double >::digits10 );
-// //    std::cout << preEncounterInclination << ", "
-// //              << postEncounterInclination << ", "
-// //              << stateInKeplerianElementsBeforeKick( inclinationIndex ) << ", "
-// //              << stateInKeplerianElementsAfterKick( inclinationIndex ) << ", "
-// //              << stateInKeplerianElementsAfterKick( inclinationIndex )
-// //                 - stateInKeplerianElementsBeforeKick( inclinationIndex )<< ", "
-// //              << aggregateKickTableRowData.massFactor << std::endl;
+    // Check that inclination after kick is valid (must not be NaN).
+    if ( boost::math::isnan( stateInKeplerianElementsAfterKick( inclinationIndex ) ) )
+    {
+        throw std::runtime_error( "Inclination of perturbed body after kick is erroneous!" );
+    }
 
-//     if ( stateInKeplerianElementsAfterKick( semiMajorAxisIndex ) < 0.0 )
-//     {
-//         boost::throw_exception(
-//                     boost::enable_error_info(
-//                         std::runtime_error(
-//                             "Semi-major axis of Mab after kick is erroneous!" ) ) );
-//     }
-
-//     else if ( stateInKeplerianElementsAfterKick( eccentricityIndex ) < 0.0
-//          || stateInKeplerianElementsAfterKick( eccentricityIndex ) > 1.0
-//          || boost::math::isnan( stateInKeplerianElementsAfterKick( eccentricityIndex ) ) )
-//     {
-//         boost::throw_exception(
-//                     boost::enable_error_info(
-//                         std::runtime_error( "Eccentricity of Mab after kick is erroneous!" ) ) );
-//     }
-
-//     else if ( boost::math::isnan( stateInKeplerianElementsAfterKick( inclinationIndex ) ) )
-//     {
-//         boost::throw_exception(
-//                     boost::enable_error_info(
-//                         std::runtime_error( "Inclination of Mab after kick is erroneous!" ) ) );
-//     }
-
-//     // Return state in Keplerian elements after kick.
-//     return stateInKeplerianElementsAfterKick;
-// }
+    // Return state in Keplerian elements after kick.
+    return stateInKeplerianElementsAfterKick;
+}
 
 // //! Compare elements from a DoubleKeyDoubleValue map.
 // bool compareDoubleKeyDoubleValueElements(

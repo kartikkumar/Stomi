@@ -22,21 +22,22 @@
 
 #include <algorithm>
 #include <cmath>
-// #include <iomanip>
+#include <iomanip>
 #include <iostream>
-// #include <iterator>
+#include <iterator>
 #include <limits>
 #include <stdexcept>
 #include <string>
-// #include <sstream>
+#include <sstream>
 #include <vector>
 
 #include <omp.h>
 
 // #include <boost/algorithm/string/classification.hpp>
 // #include <boost/algorithm/string/split.hpp>
-// #include <boost/exception/all.hpp>
 // #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/uniform_int_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
@@ -45,9 +46,10 @@
 
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/Basics/basics.h>
+#include <Assist/Basics/commonTypedefs.h>
 #include <Assist/InputOutput/basicInputOutput.h>
 
-// #include <Tudat/InputOutput/basicInputOutput.h>
+#include <Tudat/InputOutput/basicInputOutput.h>
 #include <Tudat/InputOutput/dictionaryTools.h>
 #include <Tudat/InputOutput/fieldType.h>
 #include <Tudat/InputOutput/separatedParser.h>
@@ -66,6 +68,7 @@
 
 // #include "InputOutput/basicInputOutput.h"
 #include "StochasticMigration/Astrodynamics/hillSphere.h"
+#include "StochasticMigration/Astrodynamics/randomWalkFunctions.h"
 #include "StochasticMigration/Database/databaseReadFunctions.h" 
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
@@ -75,20 +78,19 @@
 //! Execute random walk simulations.
 int main( const int numberOfInputs, const char* inputArguments[ ] )
 {
+    using std::advance;
     using std::cout;
     using std::endl;
     using std::generate;
     using std::string;
     using std::runtime_error;
 
+    using namespace boost::filesystem;
+    using boost::iequals;
     using namespace boost::random;
-//     using boost::enable_error_info;
 //     using boost::is_any_of;
 //     using boost::lexical_cast;
-//     using boost::mt19937;
 //     using boost::split;
-//     using boost::throw_exception;
-//     using boost::variate_generator;
 
     using namespace assist::astrodynamics;
     using namespace assist::basics;
@@ -108,6 +110,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //     using namespace stochastic_migration::database_functions;
     using namespace stochastic_migration::input_output;
 //     using namespace stochastic_migration::random_walk_functions;
+
+    typedef assist::basics::DoubleKeyVector3dValueMap ActionPropagationHistory;
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -200,7 +204,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     const string fileOutputDirectory = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "FILEOUTPUTDIRECTORY" ), "" );
+                findEntry( dictionary, "FILEOUTPUTDIRECTORY" ), "" ) + "/";
     cout << "File output directory                                     "
          << fileOutputDirectory << endl;
 
@@ -444,9 +448,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // perturbers. 
         // To avoid locking of the database, this section is thread-critical, so will be
         // executed one-by-one by multiple threads.
-#pragma omp critical( retrieveAggregateKickTable )
+
+        TestParticleKickTable kickTable;
+
+#pragma omp critical( retrievekickTable )
         {
-            const TestParticleKickTable kicktable = getTestParticleKickTable(
+            kickTable = getTestParticleKickTable(
                         databasePath, caseData->randomWalkSimulationPeriod,
                         selectedSimulationIdIndices, testParticleKickTableName );
         }
@@ -457,39 +464,51 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Execute random walk simulation.
 
-        // Declare Mab propagation history. This stores the propagation history of the
+        // Declare perturbed body propagation history. This stores the propagation history of the
         // action variables only (semi-major axis, eccentricity, inclination).
-        // ActionPropagationHistory keplerianActionElementsHistory;
+        ActionPropagationHistory keplerianActionElementsHistory;
 
-//         // Set Mab initial state in Keplerian elements.
-//         keplerianActionElementsHistory[ aggregateKickTable.begin( )->first ]
-//                 = caseData.mabStateInKeplerianElementsAtT0.segment( 0, 3 );
+        // Set perturbed body initial state (actions) in Keplerian elements.
+        keplerianActionElementsHistory[ 0.0 ]
+                = caseData->perturbedBodyStateInKeplerianElementsAtT0.segment( 0, 3 );
 
-//         // Declare iterator to previous state in Keplerian elements.
-//         ActionPropagationHistory::iterator iteratorPreviousKeplerianActionElements
-//                 = keplerianActionElementsHistory.begin( );
+        // Declare iterator to previous state in Keplerian elements.
+        ActionPropagationHistory::iterator iteratorPreviousKeplerianElements
+                = keplerianActionElementsHistory.begin( );
 
-//         // Loop through aggregate kick table and execute kicks on Mab. Store results in propagation
-//         // history.
-//         for ( KickTable::iterator iteratorKickTable = aggregateKickTable.begin( );
-//               iteratorKickTable != aggregateKickTable.end( ); iteratorKickTable++ )
-//         {
-//             // Execute kick and store results in propagation history.
-//             keplerianActionElementsHistory[ iteratorKickTable->first ]
-//                     = executeKick( iteratorPreviousKeplerianActionElements->second,
-//                                    iteratorKickTable->second );
+        // Loop through aggregate kick table and execute kicks on perturbed body. 
+        for ( TestParticleKickTable::iterator iteratorKickTable = kickTable.begin( );
+              iteratorKickTable != kickTable.end( ); iteratorKickTable++ )
+        {
+            // Execute kick and store results in propagation history.
+            keplerianActionElementsHistory[ iteratorKickTable->conjunctionEpoch ]
+                    = executeKick( iteratorPreviousKeplerianElements->second,
+                                   iteratorKickTable, perturberMassRatio );
 
-//             iteratorPreviousKeplerianActionElements
-//                     = keplerianActionElementsHistory.find( iteratorKickTable->first );
-//         }
+            advance( iteratorPreviousKeplerianElements, 1 );
+        }
 
-// //        // DEBUG.
-// //        // Declare stringstream for Keplerian action elements history filename.
-// //        const double outputDataPrecision = std::numeric_limits< double >::digits10;
-// //        std::stringstream keplerianActionElementsHistoryFilenameStream;
-// //        keplerianActionElementsHistoryFilenameStream
-// //                << "keplerianActionElementsHistory_case" << caseData.caseNumber
-// //                << "_perturbers" << perturberPopulation << ".dat";
+        // Check if output mode is set to "FILE".
+        // If so, open output file and write header content.
+        // Check if the output directory exists: if not, create it.
+        if ( iequals( outputMode, "FILE" ) )
+        {
+            std::ostringstream keplerianActionElementsFilename;
+            keplerianActionElementsFilename << "monteCarloRun" << monteCarloIndividual + 1
+                                            << "_keplerianActionElements.csv"; 
+            
+            std::ostringstream keplerianActionElementsFileHeader;
+            keplerianActionElementsFileHeader << "epoch,semiMajorAxis,eccentricity,inclination" 
+                                              << endl;
+            keplerianActionElementsFileHeader << "# [s],[m],[-],[rad]" << endl;                                            
+
+            writeDataMapToTextFile( keplerianActionElementsHistory,
+                                    keplerianActionElementsFilename.str( ),
+                                    fileOutputDirectory, keplerianActionElementsFileHeader.str( ),
+                                    std::numeric_limits< double >::digits10, 
+                                    std::numeric_limits< double >::digits10,
+                                    "," );
+        }
 
         ///////////////////////////////////////////////////////////////////////////
 

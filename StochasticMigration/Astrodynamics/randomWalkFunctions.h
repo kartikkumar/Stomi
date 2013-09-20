@@ -9,6 +9,8 @@
  *      120402    K. Kumar          File created from old randomWalkFunctions.h.
  *      120522    K. Kumar          Added general Keplerian element averaging function; added
  *                                  wrapper for inclination.
+ *      130919    K. Kumar          Uncommented and updated executeKick() function.
+ *
  *    References
  *
  *    Notes
@@ -21,33 +23,29 @@
 // #include <string>
 // #include <vector>
 
-// #include <Eigen/Core>
-
-// #include "MabSimulations/AuxilliaryFiles/commonTypedefs.h"
-// #include "MabSimulations/AuxilliaryFiles/kickTableRow.h"
+#include <Eigen/Core>
+ 
+#include "StochasticMigration/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {
 namespace astrodynamics
 {
 
-// typedef common_typedefs::ActionPropagationHistory ActionPropagationHistory;
-// typedef common_typedefs::DoubleKeyDoubleValueMap DoubleKeyDoubleValueMap;
-// typedef tudat::orbital_element_conversions::KeplerianElementVectorIndices
-// KeplerianElementVectorIndices;
-
-// //! Execute kick.
-// /*!
-//  * Executes kick on Mab, specified by row data from an aggregate kick table and returns Mab's state
-//  * after the kick. Only the change in the action variables is computed (semi-major axis,
-//  * eccentricity, inclination.
-//  * \param stateInKeplerianElementsBeforeKick Mab's state in Keplerian elements before kick (only
-//  *          action variables).
-//  * \param aggregateKickTableRowData Row data from aggregate kick table.
-//  * \return Mab's state in Keplerian elements after kick (only action variables).
-//  */
-// Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBeforeKick,
-//                              const kick_table::KickTableRow& aggregateKickTableRowData );
+//! Execute kick.
+/*!
+ * Executes kick on perturbed body, specified by row data from an aggregate kick table and returns
+ * perturbed body's state after the kick. Only the change in the action variables is computed 
+ * (semi-major axis, eccentricity, inclination).
+ * \param stateInKeplerianElementsBeforeKick Perturbed body's state in Keplerian elements before 
+ *          kick (only action variables).
+ * \param kick Row data from aggregate kick table.
+ * \param perturberMassRatio Mass ratio between perturber and perturbed body.
+ * \return Perturbed body's state in Keplerian elements after kick (only action variables).
+ */
+Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBeforeKick,
+                             const database::TestParticleKickTable::iterator kick, 
+                             const double perturberMassRatio );
 
 // //! Compare elements from a DoubleKeyDoubleValue map.
 // /*!
@@ -63,7 +61,7 @@ namespace astrodynamics
 // //! Compute average longitude residual for epoch window.
 // /*!
 //  * Computes average longitude residual for a given epoch window.
-//  * \param propagationHistoryInKeplerianElements Mab's propagation history.
+//  * \param propagationHistoryInKeplerianElements perturbed body's propagation history.
 //  * \param epochWindowStart Epoch at start of window.
 //  * \param epochWindowEnd Epoch at end of window.
 //  */
@@ -74,7 +72,7 @@ namespace astrodynamics
 // //! Compute average Keplerian element for epoch window.
 // !
 //  * Computes average Keplerian element for a given epoch window.
-//  * \param keplerianActionElementsHistory Mab's Keplerian action elements history.
+//  * \param keplerianActionElementsHistory perturbed body's Keplerian action elements history.
 //  * \param epochWindowStart Epoch at start of window.
 //  * \param epochWindowEnd Epoch at end of window.
 //  * \param keplerianElementIndex Index in vector of desired Keplerian element.
@@ -88,7 +86,7 @@ namespace astrodynamics
 // /*!
 //  * Computes average eccentricity for a given epoch window. This calls the general function with
 //  * eccentricity as argument.
-//  * \param keplerianActionElementsHistory Mab's Keplerian action elements history.
+//  * \param keplerianActionElementsHistory perturbed body's Keplerian action elements history.
 //  * \param epochWindowStart Epoch at start of window.
 //  * \param epochWindowEnd Epoch at end of window.
 //  * \sa computeAverageKeplerianElementForEpochWindow().
@@ -101,7 +99,7 @@ namespace astrodynamics
 // /*!
 //  * Computes average inclination for a given epoch window. This calls the general function with
 //  * eccentricity as argument.
-//  * \param keplerianActionElementsHistory Mab's Keplerian action elements history.
+//  * \param keplerianActionElementsHistory perturbed body's Keplerian action elements history.
 //  * \param epochWindowStart Epoch at start of window.
 //  * \param epochWindowEnd Epoch at end of window.
 //  * \sa computeAverageKeplerianElementForEpochWindow().
