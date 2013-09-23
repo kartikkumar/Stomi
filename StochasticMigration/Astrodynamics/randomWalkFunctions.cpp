@@ -22,7 +22,7 @@
 #include <stdexcept>
 // #include <iomanip>
 // #include <iostream>
-// #include <iterator>
+#include <iterator>
 // #include <limits>
 // #include <numeric>
 // #include <sstream>
@@ -41,6 +41,8 @@ namespace stochastic_migration
 {
 namespace astrodynamics
 {
+
+using namespace assist::basics;
 
 using namespace tudat::astrodynamics;
 using namespace tudat::orbital_element_conversions;
@@ -143,13 +145,12 @@ Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBefo
     return stateInKeplerianElementsAfterKick;
 }
 
-// //! Compare elements from a DoubleKeyDoubleValue map.
-// bool compareDoubleKeyDoubleValueElements(
-//         const common_typedefs::DoubleKeyDoubleValueMap::value_type& element1Value,
-//         const common_typedefs::DoubleKeyDoubleValueMap::value_type& element2Value )
-// {
-//     return element1Value.second < element2Value.second;
-// }
+
+
+
+
+
+
 
 // //! Compute average longitude residual for epoch window.
 // double computeAverageLongitudeResidualForEpochWindow(
@@ -222,99 +223,7 @@ Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBefo
 //     return firstMomentOfLongitudeResidualHistory / ( epochWindowEnd - epochWindowStart );
 // }
 
-// //! Compute average Keplerian element for epoch window.
-// double computeAverageKeplerianElementForEpochWindow(
-//         const ActionPropagationHistory& keplerianActionElementsHistory,
-//         const double epochWindowStart, const double epochWindowEnd,
-//         KeplerianElementVectorIndices keplerianElementIndex )
-// {
-//     // Set iterator to start of epoch window.
-//     ActionPropagationHistory::const_iterator iteratorStartOfEpochWindow
-//             = keplerianActionElementsHistory.lower_bound( epochWindowStart );
 
-//     // Set iterator to end of epoch window.
-//     ActionPropagationHistory::const_iterator iteratorEndOfEpochWindow
-//             = keplerianActionElementsHistory.lower_bound( epochWindowEnd );
-//     std::advance( iteratorEndOfEpochWindow, -1 );
-
-//     // Declare first moment.
-//     double firstMoment = 0.0;
-
-//     // Set iterator to one element before start of epoch window.
-//     ActionPropagationHistory::const_iterator iteratorOneBeforeFirstElementEpochWindow
-//             = iteratorStartOfEpochWindow;
-//     if ( iteratorStartOfEpochWindow != keplerianActionElementsHistory.begin( ) )
-//     {
-//         std::advance( iteratorOneBeforeFirstElementEpochWindow, -1 );
-//     }
-
-//     // Check if start and end of epoch window are reversed in order. This means that the epoch
-//     // window occurs within one step in the propagation history.
-//     if ( iteratorStartOfEpochWindow->first > iteratorEndOfEpochWindow->first )
-//     {
-//         // Add contribution to first moment.
-//         firstMoment = ( epochWindowEnd - epochWindowStart )
-//                 * iteratorOneBeforeFirstElementEpochWindow->second( keplerianElementIndex );
-//     }
-
-//     else
-//     {
-//         // Check that start of the epoch window is not the first element in the propagation
-//         // history.
-//         if ( iteratorStartOfEpochWindow != keplerianActionElementsHistory.begin( ) )
-//         {
-//             // Add contribution to first moment.
-//             firstMoment += ( iteratorStartOfEpochWindow->first - epochWindowStart )
-//                     * iteratorOneBeforeFirstElementEpochWindow->second( keplerianElementIndex );
-//         }
-
-//         // Declare iterator to next element in epoch window.
-//         ActionPropagationHistory::const_iterator iteratorNextElementEpochWindow;
-
-//         // Loop through the epoch window to compute the first moment.
-//         for ( ActionPropagationHistory::const_iterator iteratorEpochWindow
-//               = iteratorStartOfEpochWindow;
-//               iteratorEpochWindow != iteratorEndOfEpochWindow; iteratorEpochWindow++ )
-//         {
-//             // Set iterator to next element in epoch window.
-//             iteratorNextElementEpochWindow = iteratorEpochWindow;
-//             std::advance( iteratorNextElementEpochWindow, 1 );
-
-//             // Add contribution to first moment.
-//             firstMoment += ( iteratorNextElementEpochWindow->first - iteratorEpochWindow->first )
-//                     * iteratorEpochWindow->second( keplerianElementIndex );
-//         }
-
-//         // Compute contribution to the first moment for the end of the epoch window.
-//         firstMoment += ( epochWindowEnd - iteratorEndOfEpochWindow->first )
-//                 * iteratorEndOfEpochWindow->second( keplerianElementIndex );
-//     }
-
-//     // Return the average Keplerian element over the epoch window.
-//     return firstMoment / ( epochWindowEnd - epochWindowStart );
-// }
-
-// //! Compute average eccentricity for epoch window.
-// double computeAverageEccentricityForEpochWindow(
-//         const ActionPropagationHistory& keplerianActionElementsHistory,
-//         const double epochWindowStart, const double epochWindowEnd )
-// {
-//     // Call general function.
-//     return computeAverageKeplerianElementForEpochWindow(
-//                 keplerianActionElementsHistory,
-//                 epochWindowStart, epochWindowEnd, eccentricityIndex );
-// }
-
-// //! Compute average inclination for epoch window.
-// double computeAverageInclinationForEpochWindow(
-//         const ActionPropagationHistory& keplerianActionElementsHistory,
-//         const double epochWindowStart, const double epochWindowEnd )
-// {
-//     // Call general function.
-//     return computeAverageKeplerianElementForEpochWindow(
-//                 keplerianActionElementsHistory,
-//                 epochWindowStart, epochWindowEnd, inclinationIndex );
-// }
 
 // //! Compute longitude history.
 // DoubleKeyDoubleValueMap computeLongitudeHistory(

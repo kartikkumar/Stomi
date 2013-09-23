@@ -24,6 +24,10 @@
 // #include <vector>
 
 #include <Eigen/Core>
+
+#include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h> 
+
+#include <Assist/Basics/commonTypedefs.h> 
  
 #include "StochasticMigration/Database/testParticleKick.h"
 
@@ -47,16 +51,37 @@ Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBefo
                              const database::TestParticleKickTable::iterator kick, 
                              const double perturberMassRatio );
 
-// //! Compare elements from a DoubleKeyDoubleValue map.
+
+// //! Compute average Keplerian element for epoch window.
 // /*!
-//  * Compares elements stored in a DoubleKeyDoubleValue map and returns true if the first element
-//  * value is smaller than the second.
-//  * \param element1Value Value of first element.
-//  * \param element2Value Value of second element.
+//  * Computes average Keplerian element for a given epoch window.
+//  * \param keplerianActionElementsHistory Perturbed body's Keplerian action elements history.
+//  * \param epochWindowStart Epoch at start of window.
+//  * \param epochWindowEnd Epoch at end of window.
+//  * \param keplerianElementIndex Index in vector of desired Keplerian element.
 //  */
-// bool compareDoubleKeyDoubleValueElements(
-//         const DoubleKeyDoubleValueMap::value_type& element1Value,
-//         const DoubleKeyDoubleValueMap::value_type& element2Value );
+// double computeAverageKeplerianElementForEpochWindow(
+//         const assist::basics::DoubleKeyVector3dValueMap& keplerianActionElementsHistory,
+//         const double epochWindowStart, const double epochWindowEnd,
+//         tudat::basic_astrodynamics::orbital_element_conversions::KeplerianElementVectorIndices 
+//         keplerianElementIndex );
+
+
+
+
+// //! Compute average eccentricity for epoch window.
+// /*!
+//  * Computes average eccentricity for a given epoch window. This calls the general function with
+//  * eccentricity as argument.
+//  * \param keplerianActionElementsHistory Perturbed body's Keplerian action elements history.
+//  * \param epochWindowStart Epoch at start of window.
+//  * \param epochWindowEnd Epoch at end of window.
+//  * \sa computeAverageKeplerianElementForEpochWindow().
+//  */
+// double computeAverageEccentricityForEpochWindow(
+//         const assist::basics::DoubleKeyVector3dValueMap& keplerianActionElementsHistory,
+//         const double epochWindowStart, const double epochWindowEnd );
+
 
 // //! Compute average longitude residual for epoch window.
 // /*!
@@ -67,32 +92,6 @@ Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBefo
 //  */
 // double computeAverageLongitudeResidualForEpochWindow(
 //         const DoubleKeyDoubleValueMap& longitudeResidualsHistory,
-//         const double epochWindowStart, const double epochWindowEnd );
-
-// //! Compute average Keplerian element for epoch window.
-// !
-//  * Computes average Keplerian element for a given epoch window.
-//  * \param keplerianActionElementsHistory perturbed body's Keplerian action elements history.
-//  * \param epochWindowStart Epoch at start of window.
-//  * \param epochWindowEnd Epoch at end of window.
-//  * \param keplerianElementIndex Index in vector of desired Keplerian element.
- 
-// double computeAverageKeplerianElementForEpochWindow(
-//         const ActionPropagationHistory& keplerianActionElementsHistory,
-//         const double epochWindowStart, const double epochWindowEnd,
-//         KeplerianElementVectorIndices keplerianElementIndex );
-
-// //! Compute average eccentricity for epoch window.
-// /*!
-//  * Computes average eccentricity for a given epoch window. This calls the general function with
-//  * eccentricity as argument.
-//  * \param keplerianActionElementsHistory perturbed body's Keplerian action elements history.
-//  * \param epochWindowStart Epoch at start of window.
-//  * \param epochWindowEnd Epoch at end of window.
-//  * \sa computeAverageKeplerianElementForEpochWindow().
-//  */
-// double computeAverageEccentricityForEpochWindow(
-//         const ActionPropagationHistory& keplerianActionElementsHistory,
 //         const double epochWindowStart, const double epochWindowEnd );
 
 // //! Compute average inclination for epoch window.

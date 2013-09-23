@@ -38,6 +38,7 @@ add_executable(test_RandomWalkFunctions
 setup_unit_test_target(test_RandomWalkFunctions "${SRCROOT}${DATABASEDIR}")
 target_link_libraries(test_RandomWalkFunctions 
                       stochastic_migration_astrodynamics stochastic_migration_database
+                      assist_basics
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 
                       ${SQLITE3_LIBRARY}  

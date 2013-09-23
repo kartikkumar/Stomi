@@ -211,7 +211,7 @@ else( )
 endif( )
 
 # Find Assist library on local system.
-find_package(Assist 1 REQUIRED)
+find_package(Assist 1.1 REQUIRED)
 
 # Include Assist directories.
 # Set CMake flag to suppress Assist warnings (platform-dependent solution).

@@ -44,8 +44,8 @@
 
 // #include <sqlite3.h>
 
+#include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/unitConversions.h>
-#include <Assist/Basics/basics.h>
 #include <Assist/Basics/commonTypedefs.h>
 #include <Assist/InputOutput/basicInputOutput.h>
 
@@ -510,51 +510,32 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                                     "," );
         }
 
+        // Select a random observation period start epoch.
+        const double observationPeriodStartEpoch = generateObservationPeriodStartEpoch( );
+
         ///////////////////////////////////////////////////////////////////////////
 
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
-//         // Select a random observation period epoch.
-//         const double observationPeriodEpoch = generateObservationPeriodEpoch( );
+        // Compute maximum eccentricity change in propagation history.
 
-// //        // DEBUG.
-// //        std::cout << std::setprecision( outputDataPrecision )
-// //                  << observationPeriodEpoch << std::endl;
+        // Declare map of epoch-window average eccentricities.
+        DoubleKeyDoubleValueMap epochWindowAverageEccentricities;
 
-//         // Compute maximum eccentricity change in propagation history.
-
-//         // Declare map of epoch-window average eccentricities.
-//         DoubleKeyDoubleValueMap epochWindowAverageEccentricities;
-
-//         // Loop over observation period and compute average eccentricities per epoch window.
-//         for ( unsigned int windowNumber = 0; windowNumber < numberOfEpochWindows; windowNumber++ )
-//         {
-//             const double epochWindowCenter = observationPeriodEpoch
-//                     + windowNumber * epochWindowSpacing;
-
-// //            // DEBUG.
-// //            std::cout << std::setprecision( outputDataPrecision )
-// //                      << epochWindowCenter << std::endl;
+        // Loop over observation period and compute average eccentricities per epoch window.
+        for ( unsigned int windowNumber = 0; windowNumber < numberOfEpochWindows; windowNumber++ )
+        {
+            const double epochWindowCenter = observationPeriodStartEpoch
+                    + windowNumber * epochWindowSpacing;
 
 //             epochWindowAverageEccentricities[ epochWindowCenter ]
 //                     = computeAverageEccentricityForEpochWindow(
 //                         keplerianActionElementsHistory,
 //                         epochWindowCenter - epochWindowSize / 2.0,
 //                         epochWindowCenter + epochWindowSize / 2.0 );
-//         }
+        }
 
-// //        // DEBUG.
-// //        for ( DoubleKeyDoubleValueMap::iterator iteratorWindow
-// //              = epochWindowAverageEccentricities.begin( );
-// //              iteratorWindow != epochWindowAverageEccentricities.end( );
-// //              iteratorWindow++ )
-// //        {
-// //            std::cout << std::setprecision( outputDataPrecision )
-// //                      << iteratorWindow->first << ", "
-// //                      << iteratorWindow->second << std::endl;
-// //        }
-
-//         // Compute map of maximum eccentricity change during propagation history.
+        // Compute maximum eccentricity change during propagation history.
 //         double maximumEccentricityChange = ( std::max_element(
 //                     epochWindowAverageEccentricities.begin( ),
 //                     epochWindowAverageEccentricities.end( ),
@@ -564,11 +545,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //                         epochWindowAverageEccentricities.end( ),
 //                         compareDoubleKeyDoubleValueElements ) )->second;
 
-// //        // DEBUG.
-// //        std::cout << std::setprecision( outputDataPrecision )
-// //                  << maximumEccentricityChange << std::endl;
-
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
 //         ///////////////////////////////////////////////////////////////////////////
 

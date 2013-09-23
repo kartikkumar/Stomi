@@ -5,7 +5,7 @@
  *    See http://bit.ly/12SHPLR for license details.
  *
  *    Changelog
- *      YYMMDD    Author            Comment
+ *      YYMMDD    Author           Comment
  *      130920   K. Kumar          File created.
  *
  *    References
@@ -21,6 +21,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include <Eigen/Core>
+
+#include <Assist/Basics/commonTypedefs.h>
 
 #include <TudatCore/Basics/testMacros.h>
 
