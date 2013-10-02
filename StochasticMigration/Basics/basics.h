@@ -3,21 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130212    K. Kumar          File created from code in basicInputOutput.h.
- *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration".
- *      130705    K. Kumar          Added getRungeKuttaCoefficients() function.
- *      130717    K. Kumar          Updated getRungeKuttaCoefficients() to use enum for coefficient 
- *                                  set.
- *
- *    References
- *
- *    Notes
- *      A unit test is needed for the getStochasticMigrationRootPath() and 
- *      getRungeKuttaCoefficients() functions.
- *
  */
 
 #ifndef STOCHASTIC_MIGRATION_BASICS_H
@@ -70,3 +55,8 @@ tudat::numerical_integrators::RungeKuttaCoefficients getRungeKuttaCoefficients(
 } // namespace stochastic_migration
 
 #endif // STOCHASTIC_MIGRATION_BASICS_H
+
+/*
+ *    Unit tests are needed for the getStochasticMigrationRootPath() and 
+ *    getRungeKuttaCoefficients() functions.
+ */

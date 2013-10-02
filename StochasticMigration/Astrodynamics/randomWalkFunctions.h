@@ -3,19 +3,8 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120402    K. Kumar          File created from old randomWalkFunctions.h.
- *      120522    K. Kumar          Added general Keplerian element averaging function; added
- *                                  wrapper for inclination.
- *      130919    K. Kumar          Uncommented and updated executeKick() function.
- *
- *    References
- *
- *    Notes
- *
  */
+
 
 #ifndef STOCHASTIC_MIGRATION_RANDOM_WALK_FUNCTIONS_H
 #define STOCHASTIC_MIGRATION_RANDOM_WALK_FUNCTIONS_H
@@ -50,62 +39,6 @@ namespace astrodynamics
 Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBeforeKick,
                              const database::TestParticleKickTable::iterator kick, 
                              const double perturberMassRatio );
-
-
-// //! Compute average Keplerian element for epoch window.
-// /*!
-//  * Computes average Keplerian element for a given epoch window.
-//  * \param keplerianActionElementsHistory Perturbed body's Keplerian action elements history.
-//  * \param epochWindowStart Epoch at start of window.
-//  * \param epochWindowEnd Epoch at end of window.
-//  * \param keplerianElementIndex Index in vector of desired Keplerian element.
-//  */
-// double computeAverageKeplerianElementForEpochWindow(
-//         const assist::basics::DoubleKeyVector3dValueMap& keplerianActionElementsHistory,
-//         const double epochWindowStart, const double epochWindowEnd,
-//         tudat::basic_astrodynamics::orbital_element_conversions::KeplerianElementVectorIndices 
-//         keplerianElementIndex );
-
-
-
-
-// //! Compute average eccentricity for epoch window.
-// /*!
-//  * Computes average eccentricity for a given epoch window. This calls the general function with
-//  * eccentricity as argument.
-//  * \param keplerianActionElementsHistory Perturbed body's Keplerian action elements history.
-//  * \param epochWindowStart Epoch at start of window.
-//  * \param epochWindowEnd Epoch at end of window.
-//  * \sa computeAverageKeplerianElementForEpochWindow().
-//  */
-// double computeAverageEccentricityForEpochWindow(
-//         const assist::basics::DoubleKeyVector3dValueMap& keplerianActionElementsHistory,
-//         const double epochWindowStart, const double epochWindowEnd );
-
-
-// //! Compute average longitude residual for epoch window.
-// /*!
-//  * Computes average longitude residual for a given epoch window.
-//  * \param propagationHistoryInKeplerianElements perturbed body's propagation history.
-//  * \param epochWindowStart Epoch at start of window.
-//  * \param epochWindowEnd Epoch at end of window.
-//  */
-// double computeAverageLongitudeResidualForEpochWindow(
-//         const DoubleKeyDoubleValueMap& longitudeResidualsHistory,
-//         const double epochWindowStart, const double epochWindowEnd );
-
-// //! Compute average inclination for epoch window.
-// /*!
-//  * Computes average inclination for a given epoch window. This calls the general function with
-//  * eccentricity as argument.
-//  * \param keplerianActionElementsHistory perturbed body's Keplerian action elements history.
-//  * \param epochWindowStart Epoch at start of window.
-//  * \param epochWindowEnd Epoch at end of window.
-//  * \sa computeAverageKeplerianElementForEpochWindow().
-//  */
-// double computeAverageInclinationForEpochWindow(
-//         const ActionPropagationHistory& keplerianActionElementsHistory,
-//         const double epochWindowStart, const double epochWindowEnd );
 
 // //! Compute longitude history.
 // DoubleKeyDoubleValueMap computeLongitudeHistory(

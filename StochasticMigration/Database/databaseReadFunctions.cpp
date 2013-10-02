@@ -3,28 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120402    K. Kumar          File created from old mabSimulationDatabaseFunctions.cpp.
- *      130212    K. Kumar          Added planetary_rings namespace; rewrote getCaseData() function
- *                                  using SQLite3DatabaseConnector.
- *      130214    K. Kumar          Split file to contain only read-functions (write-functions
- *                                  ported to new file); Rewrote getInputDataTable() function using
- *                                  SQLite3DatabaseConnector.
- *      130217    K. Kumar          Optimized and standardized implementation of database read
- *                                  functions; added implementation of auxilliary functions;
- *                                  updated "mab simulations" references to "stochastic migration".
- *      130218    K. Kumar          Updated "encounter" to "conjunction".
- *      130706    K. Kumar          Updated implementation of getTestParticleInputTable() functions
- *                                  to SQLiteCpp interface and to include case ID as input 
- *                                  parameter.
- *      130918    K. Kumar          Uncommented and update function to get kick table.
- *
- *    References
- *
- *    Notes
- *
  */
 
 #include <stdexcept>
@@ -80,8 +58,7 @@ TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolute
                           query.getColumn( 15 ), query.getColumn( 16 ), query.getColumn( 17 ),
                           query.getColumn( 18 ), query.getColumn( 19 ), query.getColumn( 20 ), 
                           query.getColumn( 21 ), query.getColumn( 22 ), query.getColumn( 23 ),
-                          query.getColumn( 24 ), query.getColumn( 25 ), query.getColumn( 26 ), 
-                          query.getColumn( 27 ), query.getColumn( 28 ) ) );
+                          query.getColumn( 24 ), query.getColumn( 25 ), query.getColumn( 26 ) ) );
 
     // Throw an error if there are multiple rows present in the table.
     if ( query.executeStep( ) )
@@ -100,7 +77,7 @@ TestParticleInputTable getCompleteTestParticleInputTable(
     // Set stream with query.
     std::ostringstream testParticleInputQuery;
     testParticleInputQuery << "SELECT * FROM " << testParticleInputTableName
-                           << " WHERE \"caseId\" = " << caseId 
+                           << " WHERE \"testParticleCaseId\" = " << caseId 
                            << " AND \"completed\" = " << isCompleted << ";";
 
     // Open database in read-only mode.          
@@ -168,8 +145,8 @@ TestParticleInputTable getSelectedTestParticleInputTable(
     // Set up query statement.
     std::ostringstream testParticleInputQuery;
     testParticleInputQuery << "SELECT * FROM " << testParticleInputTableName
-                           << " WHERE \"caseId\" = " << caseId
-                           << " AND \"simulationId\" = :testParticleSimulationId;";
+                           << " WHERE \"testParticleCaseId\" == " << caseId
+                           << " AND \"simulationId\" == :simulationId;";
 
     // Compile a SQL query.
     SQLite::Statement query( database, testParticleInputQuery.str( ).c_str( ) );
@@ -181,7 +158,7 @@ TestParticleInputTable getSelectedTestParticleInputTable(
     for ( unsigned int i = 0; i < testParticularSimulationIdsVector.size( ); i++ )
     {
         // Bind simulation number to query.
-        query.bind( ":testParticleSimulationId", testParticularSimulationIdsVector.at( i ) );
+        query.bind( ":simulationId", testParticularSimulationIdsVector.at( i ) );
 
         // Execute select query.
         // A run-time error will be thrown if the requested simulation ID can't be found.
@@ -222,7 +199,7 @@ TestParticleKickTable getTestParticleKickTable(
         // Set up query statement.
     std::ostringstream testParticleKickQuery;
     testParticleKickQuery << "SELECT * FROM " << testParticleKickTableName
-                          << " WHERE \"simulationId\" = :testParticleSimulationId"
+                          << " WHERE \"testParticleSimulationId\" == :simulationId"
                           << " AND \"conjunctionEpoch\" > 0.0"
                           << " AND \"conjunctionEpoch\" < " << randomWalkSimulationPeriod << ";";
 
@@ -236,7 +213,7 @@ TestParticleKickTable getTestParticleKickTable(
     for ( unsigned int i = 0; i < selectedSimulationIds.size( ); i++ )
     {
         // Bind simulation number to query.
-        query.bind( ":testParticleSimulationId", selectedSimulationIds.at( i ) );
+        query.bind( ":simulationId", selectedSimulationIds.at( i ) );
 
         // Set flag to indicate if simulation ID was found.
         bool isSimulationFound = false;

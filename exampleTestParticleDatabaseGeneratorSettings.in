@@ -1,15 +1,13 @@
-#
 #    Copyright (c) 2010-2013, Delft University of Technology
 #    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
 #    All rights reserved.
 #    See http://bit.ly/12SHPLR for license details.
 #
-#    This is an example input file for the Database Generator application provided with the 
-#    Stochastic Migration project. 
+#    This is an example input file for the Test Particle Database Generator application provided  
+#    with the Stochastic Migration project. 
 #
 #    All lines preceded by the '#' character are interpreted as comments.
 #    Each line must contain only a single parameter/value pair, separated by a ':' character.
-#
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -20,12 +18,13 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# Set the name for the case.
-# The value of this parameter is interpreted as a string.
-
 # Set the absolute path to the database.
 # If the file doesn't exist, it will be created.
 DB                  : 
+
+# Set the name for the case.
+# The value of this parameter is interpreted as a string.
+CASE                :
 
 # Set number of simulations to populate database with.
 POPULATION          :
@@ -136,61 +135,53 @@ SMALIMIT            :
 # are seeded with. 
 # The Full-Width Half-Maximum is equivalent to 2 * sqrt( 2 * ln( 2 ) ) * sigma,
 # in the case of a normal distribution for the x- and y-components of the eccentricities (sigma 
-# = standard deviation).
-# The angle parameter sets the angle between the eccentricity vector components, which
-# are generated randomly using normal distributions. By default, the angle is 90 deg, which 
-# means that the components are orthogonal and the distribution of the magnitude of the
-# eccentricities follows the Rayleigh distribution. The associated angle, the argument of  
-# periapsis, is in this case uniformly distributed. 
-# With the default settings the test particles are all placed on circular orbits.
-# All three parameters have default values, which can be overwritten.
-# UNIT                : ECCMEAN -> -, ECCANGLE -> deg, ECCFWHM -> -
+# = standard deviation). The joint probability distribution of two orthogonal vector components 
+# that are normally distributed yields a Rayleigh distribution of the magnitude of the 
+# eccentricities and a uniform distribution of the associated angle, i.e., the argument of 
+# periapsis.
+# With the default settings, the test particles are all placed on circular orbits, with the
+# argument of periapses arbitrarily set to zero.
+# Both parameters have default values, which can be overwritten.
+# UNIT                : ECCMEAN -> -, ECCFWHM -> -
 # ECCMEAN             : 0.0
-# ECCANGLE            : 90.0
-# ECCFWHM             : 1.0e-3 
+# ECCFWHM             : 0.0
 
 # Set the parameters of the distibution of initial inclinations for the test particles.
 # The following parameters describe the distribution of inclinations that the test particles
 # are seeded with. 
 # The Full-Width Half-Maximum is equivalent to 2 * sqrt( 2 * ln( 2 ) ) * sigma,
-# in the case of a normal distribution for the magnitude of the inclinations (sigma = standard
-# deviation).
-# The angle parameter sets the angle between the inclinations vector components, which
-# are generated randomly using normal distributions. By default, the angle is 90 deg, which 
-# means that the components are orthogonal and the distribution of the magnitude of the
-# inclinations follows the Rayleigh distribution. The associated angle, the longitude of the   
-# ascending node, is in this case uniformly distributed. 
-# With the default settings the test particles are all placed on equatorial orbits.
-# All three parameters have default values, which can be overwritten.
-# UNIT                : INCMEAN -> deg, INCANGLE -> deg, INCFWHM -> deg
+# in the case of a normal distribution for the x- and y-components of the inclinations (sigma 
+# = standard deviation). The joint probability distribution of two orthogonal vector components 
+# that are normally distributed yields a Rayleigh distribution of the magnitude of the 
+# inclinations and a uniform distribution of the associated angle, i.e., the longitude of the
+# ascending node.
+# With the default settings, the test particles are all placed on equatorial orbits, with the
+# longitudes of the ascending node arbitrarily set to zero.
+# Both parameters have default values, which can be overwritten.
+# UNIT                : INCMEAN -> deg, INCFWHM -> deg
 # INCMEAN             : 0.0
-# INCANGLE            : 90.0
-# INCFWHM             : 0.057295779513082325
+# INCFWHM             : 0.0
 
 # Set the numerical integrator and its parameters.
 # The following parameters set the numerical integrator used for the test particle simulations,
 # and associated settings.
 # The numerical integrator is set to the Dormand-Prince 8(7) scheme by default. The other option
-# permitted is the Runge-Kutta-Fehlberg 7(8) scheme.
+# permitted is the Runge-Kutta-Fehlberg 7(8) scheme (RKF78).
 # The default value for the initial step size is 60.0 seconds. It might be prudent to play with 
 # this starter value for different simulation scenarios.
 # The default values for the relative and absolute tolerance for error control are 10^-12 and
-# 10^-15 respectively, which are common settings for RKF-type schemes. It might be important to
-# play around with these values for different simulation scenarios. 
+# SMA0 * 10^-15 (rounded base) respectively, which are common settings for RKF-type schemes. It 
+# might be important to play around with these values for different simulation scenarios. 
 # UNIT                : INTEGRATOR -> -; STEPESIZE -> s, RELTOL -> -, ABSTOL -> -
 # INTEGRATOR          : DOPRI853
 # STEPSIZE            : 60.0
 # RELTOL              : 1.0e-12
-# ABSTOL              : 1.0e-7
+# ABSTOL              : round(SMA0 * 1.0e-15)
 
 # Set the names of the database tables.
 # The following parameters can be used to change the default names for the database tables.
-# All the test particle and random walk simulation data is stored in an SQLite database,
-# with these table names.
+# All the test particle data is stored in an SQLite database, with these table names.
 # In general, it should not be necessary to change these table names.
 # TPCASE              : test_particle_case
 # TPINPUT             : test_particle_input
 # TPKICk              : test_particle_kick
-# RWMC                : random_walk_monte_carlo_runs
-# RWPERTURB           : random_walk_perturbers
-# RWOUTPUT            : random_walk_output

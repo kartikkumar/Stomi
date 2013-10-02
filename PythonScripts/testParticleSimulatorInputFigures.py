@@ -93,7 +93,8 @@ with database:
     caseDataColumnNameList = [column_name[0] for column_name in cursor.description]  
     
     # Select all the input data associated with the case ID.
-    cursor.execute("SELECT * FROM test_particle_input WHERE caseId == " + str(caseId) + ";")
+    cursor.execute("SELECT * FROM test_particle_input WHERE \
+                    testParticleCaseId == " + str(caseId) + ";")
     inputDataColumnNameList = [column_name[0] for column_name in cursor.description]
     rawInputData = cursor.fetchall()
     

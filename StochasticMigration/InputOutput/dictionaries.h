@@ -3,18 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120808    K. Kumar          File created.
- *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration".
- *      130704    K. Kumar          Updated function-naming.
- *
- *    References
- *
- *    Notes
- *      Unit tests need to be added to test the lexical dictionaries defined.
- *
  */
 
 #ifndef STOCHASTIC_MIGRATION_DICTIONARIES_H
@@ -27,12 +15,12 @@ namespace stochastic_migration
 namespace input_output
 {
 
-//! Get dictionary for databaseGenerator application.
+//! Get dictionary for test particle database generator application.
 /*!
- * Returns standard dictionary for StochasticMigrationDatabaseGenerator application.
- * \return Shared-pointer to new dictionary for StochasticMigrationDatabaseGenerator application.
+ * Returns standard dictionary for test particle database generator application.
+ * \return Shared-pointer to new dictionary for test particle database generator application.
  */
-tudat::input_output::dictionary::DictionaryPointer getDatabaseGeneratorDictionary( );
+tudat::input_output::dictionary::DictionaryPointer getTestParticleDatabaseGeneratorDictionary( );
 
 //! Get dictionary for testParticleSimulator application.
 /*!
@@ -52,3 +40,7 @@ tudat::input_output::dictionary::DictionaryPointer getRandomWalkSimulatorDiction
 } // namespace stochastic_migration
 
 #endif // STOCHASTIC_MIGRATION_DICTIONARIES_H
+
+/*
+ *    Unit tests need to be added to test the lexical dictionaries defined.
+ */

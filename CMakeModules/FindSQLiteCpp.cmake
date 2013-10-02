@@ -1,7 +1,7 @@
 # @file    CMakeLists.txt
 # @ingroup SQLiteCpp
 # @brief   SQLiteCpp CMake module.
-##
+#
 # Copyright (c) 2013 Kartik Kumar (me@kartikkumar.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt

@@ -3,17 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130218    K. Kumar          File created.
- *      130704    K. Kumar          Updated class contents based on revised table schema.
- *      130715    K. Kumar          Updated class contents based on revised table schema.
- *
- *    References
- *
- *    Notes
- *
  */
 
 #define NEGATIVE_ZERO -std::numeric_limits< double >::min( )
@@ -59,13 +48,11 @@ TestParticleCase::TestParticleCase(
     const double aConjunctionEventDetectionDistance,
     const double anOppositionEventDetectionDistance,
     const double anEccentricityDistributionMean,
-    const double anEccentricityDistributionAngle,
     const double anEccentricityDistributionFullWidthHalfMaximum,
     const double anInclinationDistributionMean,
-    const double anInclinationDistributionAngle,
     const double anInclinationDistributionFullWidthHalfMaximum,
     const std::string& aNumericalIntegratorType,
-    const double anInitialStepSize,
+    const double aNumericalIntegratorInitialStepSize,
     const double aNumericalIntegratorRelativeTolerance,
     const double aNumericalIntegratorAbsoluteTolerance )
         : caseId( checkPositive( aCaseId, "Case ID" ) ),
@@ -110,9 +97,6 @@ TestParticleCase::TestParticleCase(
           eccentricityDistributionMean( 
             checkGreaterThan( anEccentricityDistributionMean, 
                               "Eccentricity distribution mean [-]", NEGATIVE_ZERO ) ),
-          eccentricityDistributionAngle(
-            checkGreaterThan( anEccentricityDistributionAngle, 
-                              "Eccentricity distribution angle [rad]", NEGATIVE_ZERO ) ),
           eccentricityDistributionFullWidthHalfMaximum( 
             checkGreaterThan( anEccentricityDistributionFullWidthHalfMaximum, 
                               "Eccentricity distribution Full-Width Half-Maximum [-]",
@@ -120,15 +104,12 @@ TestParticleCase::TestParticleCase(
           inclinationDistributionMean( 
             checkGreaterThan( anInclinationDistributionMean, 
                               "Inclination distribution mean [rad]", NEGATIVE_ZERO ) ),
-          inclinationDistributionAngle( 
-            checkGreaterThan( anInclinationDistributionAngle, 
-                              "Inclination distribution angle [rad]", NEGATIVE_ZERO ) ),
           inclinationDistributionFullWidthHalfMaximum( 
             checkGreaterThan( anInclinationDistributionFullWidthHalfMaximum, 
                               "Inclination distribution Full-Width Half-Maximum [rad]",
                               NEGATIVE_ZERO ) ),
-          initialStepSize( checkPositive( anInitialStepSize, 
-                           "Numerical integrator initial step size [s]" ) ),
+          numericalIntegratorInitialStepSize( checkPositive( 
+            aNumericalIntegratorInitialStepSize, "Numerical integrator initial step size [s]" ) ),
           numericalIntegratorRelativeTolerance( 
             checkPositive( aNumericalIntegratorRelativeTolerance, 
                            "Numerical integrator relative tolerance [-]" ) ),
@@ -192,19 +173,16 @@ bool operator==( const TestParticleCase& testParticleCase1,
              == testParticleCase2.oppositionEventDetectionDistance
              && testParticleCase1.eccentricityDistributionMean 
              == testParticleCase2.eccentricityDistributionMean
-             && testParticleCase1.eccentricityDistributionAngle
-             == testParticleCase2.eccentricityDistributionAngle
              && testParticleCase1.eccentricityDistributionFullWidthHalfMaximum
              == testParticleCase2.eccentricityDistributionFullWidthHalfMaximum
              && testParticleCase1.inclinationDistributionMean 
              == testParticleCase2.inclinationDistributionMean
-             && testParticleCase1.inclinationDistributionAngle
-             == testParticleCase2.inclinationDistributionAngle
              && testParticleCase1.inclinationDistributionFullWidthHalfMaximum
              == testParticleCase2.inclinationDistributionFullWidthHalfMaximum
              && testParticleCase1.numericalIntegratorType
              == testParticleCase2.numericalIntegratorType
-             && testParticleCase1.initialStepSize == testParticleCase2.initialStepSize
+             && testParticleCase1.numericalIntegratorInitialStepSize 
+             == testParticleCase2.numericalIntegratorInitialStepSize
              && testParticleCase1.numericalIntegratorRelativeTolerance
              == testParticleCase2.numericalIntegratorRelativeTolerance
              && testParticleCase1.numericalIntegratorAbsoluteTolerance
@@ -295,17 +273,11 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
                  << testParticleCase.oppositionEventDetectionDistance << endl;
     outputStream << "Eccentricity distribution mean [-]: "
                  << testParticleCase.eccentricityDistributionMean << endl;
-    outputStream << "Eccentricity distribution angle [deg]: "
-                 << convertRadiansToDegrees( testParticleCase.eccentricityDistributionAngle ) 
-                 << endl;
     outputStream << "Eccentricity distribution Full-Width Half-Maximum [-]: "
                  << testParticleCase.eccentricityDistributionFullWidthHalfMaximum << endl;
     outputStream << "Inclination distribution mean [deg]: "
                  << convertRadiansToDegrees( testParticleCase.inclinationDistributionMean ) 
-                 << endl;
-    outputStream << "Inclination distribution angle [deg]: "
-                 << convertRadiansToDegrees( testParticleCase.inclinationDistributionAngle ) 
-                 << endl;                 
+                 << endl;           
     outputStream << "Inclination distribution Full-Width Half-Maximum [deg]: "
                  << convertRadiansToDegrees(
                         testParticleCase.inclinationDistributionFullWidthHalfMaximum )
@@ -323,7 +295,7 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
     }                 
                  
     outputStream << "Numerical integrator initial step size [s]: "
-                 << testParticleCase.initialStepSize << endl;                 
+                 << testParticleCase.numericalIntegratorInitialStepSize << endl;                 
     outputStream << "Numerical integrator relative tolerance: "
                  << testParticleCase.numericalIntegratorRelativeTolerance << endl;
     outputStream << "Numerical integrator absolute tolerance: "

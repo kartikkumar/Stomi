@@ -3,18 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130705    K. Kumar          File created.
- *      130717    K. Kumar          Updated getRungeKuttaCoefficients() to use enum for coefficient 
- *                                  set.
- *
- *    References
- *
- *    Notes
- *      A unit test is needed for the getRungeKuttaCoefficients() function.
- *
  */
 
 #include <iostream>
@@ -63,4 +51,3 @@ RungeKuttaCoefficients getRungeKuttaCoefficients( const NumericalIntegratorType 
 
 } // namespace basics
 } // namespace stochastic_migration
-

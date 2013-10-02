@@ -3,24 +3,13 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130329    K. Kumar          File created.
- *      130704    K. Kumar          Updated tests based on revised table schema.
- *      130717    K. Kumar          Updated tests based on revised table schema. 
- *                                  Removed outputInterval unit test.
- *
- *    References
- *
- *    Notes
- *
  */
 
 #define BOOST_TEST_MAIN
 
 #include <iostream>
 #include <stdexcept>
+#include <string>
 
 #include <boost/make_shared.hpp>
 #include <boost/test/unit_test.hpp>
@@ -71,13 +60,11 @@ public:
           conjunctionEventDetectionDistance( 1.234e5 ),
           oppositionEventDetectionDistance( 1.234e5 ),
           eccentricityDistributionMean( 1.0e-3 ),
-          eccentricityDistributionAngle( PI / 4.0 ),
           eccentricityDistributionFullWidthHalfMaximum( 1.0e-4 ),
           inclinationDistributionMean( 1.0e-3 ),
-          inclinationDistributionAngle( PI / 4.0 ),          
           inclinationDistributionFullWidthHalfMaximum( 1.0e-4 ),          
           numericalIntegratorType( "DOPRI853" ),
-          initialStepSize( 60.0 ),          
+          numericalIntegratorInitialStepSize( 60.0 ),          
           numericalIntegratorRelativeTolerance( 1.0e-12 ),
           numericalIntegratorAbsoluteTolerance( 1.0e-15 )
     { }
@@ -133,17 +120,11 @@ public:
     //! Mean eccentricity value for distribution.
     double eccentricityDistributionMean;
 
-    //! Angle between vector components of eccentricity distribution [rad].
-    double eccentricityDistributionAngle;
-
     //! FWHM eccentricity value for distribution.
     double eccentricityDistributionFullWidthHalfMaximum;
 
     //! Mean inclination value for distribution [rad].
     double inclinationDistributionMean;
-
-    //! Angle between vector components of inclination distribution [rad].
-    double inclinationDistributionAngle;
 
     //! FWHM inclination value for distribution [rad].
     double inclinationDistributionFullWidthHalfMaximum;
@@ -152,7 +133,7 @@ public:
     std::string numericalIntegratorType;
 
     //! Initial step size for numerical integrator.
-    double initialStepSize;
+    double numericalIntegratorInitialStepSize;
 
     //! Relative tolerance for numerical integrator.
     double numericalIntegratorRelativeTolerance;
@@ -171,10 +152,9 @@ public:
                 synodicPeriodMaximum, startUpIntegrationPeriod, centralBodyJ2GravityCoefficient, 
                 centralBodyEquatorialRadius, conjunctionEventDetectionDistance, 
                 oppositionEventDetectionDistance, eccentricityDistributionMean, 
-                eccentricityDistributionAngle, eccentricityDistributionFullWidthHalfMaximum, 
-                inclinationDistributionMean, inclinationDistributionAngle,
+                eccentricityDistributionFullWidthHalfMaximum, inclinationDistributionMean,
                 inclinationDistributionFullWidthHalfMaximum, numericalIntegratorType, 
-                initialStepSize, numericalIntegratorRelativeTolerance,
+                numericalIntegratorInitialStepSize, numericalIntegratorRelativeTolerance,
                 numericalIntegratorAbsoluteTolerance ) );
     }
 
@@ -223,18 +203,15 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseStructContruction )
                        oppositionEventDetectionDistance );
     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionMean, 
                        eccentricityDistributionMean );
-    BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionAngle, 
-                       eccentricityDistributionAngle );
     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionFullWidthHalfMaximum,
                        eccentricityDistributionFullWidthHalfMaximum );
     BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionMean, 
                        inclinationDistributionMean );
-    BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionAngle, 
-                       inclinationDistributionAngle );
     BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionFullWidthHalfMaximum,
                        inclinationDistributionFullWidthHalfMaximum );
     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorType, DOPRI853 );
-    BOOST_CHECK_EQUAL( testParticleCase->initialStepSize, initialStepSize );    
+    BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorInitialStepSize, 
+                       numericalIntegratorInitialStepSize );    
     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorRelativeTolerance, 
                        numericalIntegratorRelativeTolerance );
     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorAbsoluteTolerance, 
@@ -571,25 +548,6 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionMea
     BOOST_CHECK( isError );
 }
 
-//! Test initialization of test particle case with non-positive eccentricity distribution angle.
-BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionAngleError )
-{
-    // Set flag to indicate if error is thrown to false.
-    bool isError = false;
-
-    // Set eccentricity distribution angle to invalid (non-positive) value.
-    eccentricityDistributionAngle = -1.0;
-
-    // Try to create test particle case.
-    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
-
-    // Catch expected run-time error.
-    catch ( std::runtime_error& error ) { isError = true; }
-
-    // Check that construction of test particle case failed.
-    BOOST_CHECK( isError );
-}
-
 //! Test initialization of test particle case with non-positive eccentricity distribution FWHM .
 BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionFWHMError )
 {
@@ -617,25 +575,6 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationDistributionMean
 
     // Set inclination distribution mean to invalid (non-positive) value.
     inclinationDistributionMean = -1.0;
-
-    // Try to create test particle case.
-    try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
-
-    // Catch expected run-time error.
-    catch ( std::runtime_error& error ) { isError = true; }
-
-    // Check that construction of test particle case failed.
-    BOOST_CHECK( isError );
-}
-
-//! Test initialization of test particle case with non-positive inclination distribution angle.
-BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationDistributionAngleError )
-{
-    // Set flag to indicate if error is thrown to false.
-    bool isError = false;
-
-    // Set inclination distribution angle to invalid (non-positive) value.
-    inclinationDistributionAngle = -1.0;
 
     // Try to create test particle case.
     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }

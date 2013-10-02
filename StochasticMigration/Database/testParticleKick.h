@@ -3,35 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120520    K. Kumar          File created from old TestParticleKick.h.
- *      130212    K. Kumar          Added Doxygen comments and a note. Added planetary_rings
- *                                  namespace. Added ()-operator overloading to allow for sorting
- *                                  using STL containers.
- *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration";
- *                                  renamed file.
- *      130218    K. Kumar          Updated "encounter" to "conjunction" to reduce confusion in
- *                                  code.
- *      130308    K. Kumar          Moved constructor implementation to source file and added
- *                                  sanity checks to ensure that test particle kick is valid.
- *      130309    K. Kumar          Moved all existing operator overloads to non-member functions
- *                                  and added new ones, including for pointer comparisons.
- *      130328    K. Kumar          Moved standard operator overload functions to Assist.
- *      130329    K. Kumar          Updated typedef for test particle kick table to boost ptr_set.
- *      130708    K. Kumar          Added kick ID, Tisserance parameter, and energy & angular 
- *                                  momentum relative errors; removed mass ratio.
- *      130917    K. Kumar          Added full pre- and post-conjunction states in Keplerian 
- *                                  elements.
- *
- *    References
- *      sbi. C++ Operator Overloading, Stack Overflow,
- *          http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
- *          9th March, 2013.
- *
- *    Notes
- *
  */
 
 #ifndef STOCHASTIC_MIGRATION_TEST_PARTICLE_KICK_H
@@ -61,7 +32,7 @@ public:
 
     //! Default constructor, taking input values for all elements of kick.
     TestParticleKick( const int aKickId,
-                      const int asimulationId,
+                      const int aTestParticleSimulationId,
                       const double aConjunctionEpoch,
                       const double aConjunctionDistance,
                       const double aPreConjunctionEpoch,
@@ -76,8 +47,8 @@ public:
     //! Unique id for kick in database.
     const int kickId;
 
-    //! Simulation ID.
-    const int simulationId;
+    //! Test particle simulation ID.
+    const int testParticleSimulationId; 
 
     //! Conjunction epoch [s].
     const double conjunctionEpoch;
@@ -130,3 +101,10 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleKick& te
 } // namespace stochastic_migration
 
 #endif // STOCHASTIC_MIGRATION_TEST_PARTICLE_KICK_H
+
+/*
+ *    References
+ *      sbi. C++ Operator Overloading, Stack Overflow,
+ *          http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
+ *          9th March, 2013.
+ */

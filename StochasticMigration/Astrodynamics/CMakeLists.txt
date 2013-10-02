@@ -1,19 +1,7 @@
- #
  #    Copyright (c) 2010-2013, Delft University of Technology
  #    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  #    All rights reserved.
  #    See http://bit.ly/12SHPLR for license details.
- #
- #    Changelog
- #      YYMMDD    Author            Comment
- #      110820    S.M. Persson      File created.
- #      120820    K. Kumar          Adapted file to work with MabSimulations/Astrodynamics.
- #      130217    K. Kumar          Updated static library prefix to stochastic_migration_.
- #
- #    References
- #
- #    Notes
- #
 
 # Set source files.
 set(ASTRODYNAMICS_SOURCES

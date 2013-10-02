@@ -1,24 +1,7 @@
- #
  #    Copyright (c) 2010-2013, Delft University of Technology
  #    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  #    All rights reserved.
  #    See http://bit.ly/12SHPLR for license details.
- #
- #    Changelog
- #      YYMMDD    Author            Comment
- #      110820    S.M. Persson      File created.
- #      120214    K. Kumar          Adapted to work with Tudat and Tudat Core.
- #      130211    K. Kumar          Added GeneralTools library.
- #      130217    K. Kumar          Renamed project StochasticMigration.
- #      130330    K. Kumar          Added BUILD_DOCUMENTATION option for Doxygen html output
- #                                  generation; removed -O3 flag since it is set by "Release"
- #                                  build type if selected; updated install steps; re-organized
- #                                  file to isolate user-specified section.
- #
- #    References
- #
- #    Notes
- #
 
 # Specify minimum CMake version required.
 cmake_minimum_required(VERSION 2.6)
@@ -288,13 +271,14 @@ foreach(CURRENT_SUBDIR ${SUBDIRS})
 add_subdirectory("${SRCROOT}${CURRENT_SUBDIR}")
 endforeach(CURRENT_SUBDIR)
 
-# Add SQLite database generator for stochastic migration simulations.
-add_executable(databaseGenerator "${SRCROOT}/Applications/databaseGenerator.cpp")
-setup_executable_target(databaseGenerator "${SRCROOT}")
-target_link_libraries(databaseGenerator 
-                      stochastic_migration_input_output 
-                      assist_input_output assist_basics assist_astrodynamics
-                      tudat_basic_mathematics tudat_input_output tudat_basic_astrodynamics
+# Add SQLite database generator for test particle simulations.
+add_executable(testParticleDatabaseGenerator 
+               "${SRCROOT}/Applications/testParticleDatabaseGenerator.cpp")
+setup_executable_target(testParticleDatabaseGenerator "${SRCROOT}")
+target_link_libraries(testParticleDatabaseGenerator 
+                      stochastic_migration_astrodynamics stochastic_migration_input_output 
+                      assist_astrodynamics assist_input_output assist_mathematics  
+                      tudat_basic_astrodynamics tudat_input_output
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 
                       ${SQLITE3_LIBRARY} 
@@ -315,15 +299,15 @@ target_link_libraries(testParticleSimulator
                       ${SQLITE3_LIBRARY} 
                       ${Boost_LIBRARIES})
 
-# Add Mab random walk application (uses OpenMP).
-add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
-setup_executable_target(randomWalkSimulator "${SRCROOT}")
-target_link_libraries(randomWalkSimulator
-                      stochastic_migration_astrodynamics stochastic_migration_database 
-                      stochastic_migration_input_output
-                      assist_astrodynamics assist_basics assist_input_output
-                      tudat_input_output
-                      ${TUDAT_CORE_LIBRARIES} 
-                      ${SQLITECPP_LIBRARY} 
-                      ${SQLITE3_LIBRARY} 
-                      ${Boost_LIBRARIES})
+# # Add Mab random walk application (uses OpenMP).
+# add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
+# setup_executable_target(randomWalkSimulator "${SRCROOT}")
+# target_link_libraries(randomWalkSimulator
+#                       stochastic_migration_astrodynamics stochastic_migration_database 
+#                       stochastic_migration_input_output
+#                       assist_astrodynamics assist_basics assist_input_output assist_mathematics
+#                       tudat_input_output
+#                       ${TUDAT_CORE_LIBRARIES} 
+#                       ${SQLITECPP_LIBRARY} 
+#                       ${SQLITE3_LIBRARY} 
+#                       ${Boost_LIBRARIES})

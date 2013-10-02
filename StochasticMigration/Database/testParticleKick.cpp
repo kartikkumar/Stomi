@@ -3,25 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130218    K. Kumar          File created.
- *      130308    K. Kumar          Moved constructor implementation to source file and added
- *                                  sanity checks to ensure that test particle kick is valid.
- *      130309    K. Kumar          Moved all existing operator overloads to non-member functions
- *                                  and added new ones, including for pointer comparisons.
- *      130328    K. Kumar          Moved standard operator overload functions to Assist; used  
- *                                  comparison functions in Assist for checks in constructor.
- *      130708    K. Kumar          Added kick ID, Tisserance parameter, and energy & angular 
- *                                  momentum relative errors; removed mass ratio.
- *      130917    K. Kumar          Added full pre- and post-conjunction states in Keplerian 
- *                                  elements.
- *
- *    References
- *
- *    Notes
- *
  */
 
 #include <Eigen/Core>
@@ -44,7 +25,7 @@ using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
 //! Default constructor, taking input values for all elements of kick.
 TestParticleKick::TestParticleKick( const int aKickId,
-                                    const int aSimulationId,
+                                    const int aTestParticleSimulationId,
                                     const double aConjunctionEpoch,
                                     const double aConjunctionDistance,
                                     const double aPreConjunctionEpoch,
@@ -56,7 +37,8 @@ TestParticleKick::TestParticleKick( const int aKickId,
                                     const tudat::basic_mathematics::Vector6d 
                                             aPostConjunctionStateInKeplerianElements )
     : kickId( checkPositive( aKickId, "Kick ID" ) ),
-      simulationId( checkPositive( aSimulationId, "Simulation ID" ) ),
+      testParticleSimulationId( checkPositive( aTestParticleSimulationId, 
+                                               "Test particle simulation ID" ) ),
       conjunctionEpoch( checkPositive( aConjunctionEpoch, "Conjunction epoch" ) ),
       conjunctionDistance( checkPositive( aConjunctionDistance, "Conjunction distance [m]" ) ),
       preConjunctionEpoch( checkLessThan( aPreConjunctionEpoch, "Pre-conjunction epoch [s]",
@@ -95,7 +77,7 @@ bool operator==( const TestParticleKick& testParticleKick1,
                  const TestParticleKick& testParticleKick2 )
 {
     return ( testParticleKick1.kickId == testParticleKick2.kickId
-             && testParticleKick1.simulationId == testParticleKick2.simulationId
+             && testParticleKick1.testParticleSimulationId == testParticleKick2.testParticleSimulationId
              && testParticleKick1.conjunctionEpoch == testParticleKick2.conjunctionEpoch
              && testParticleKick1.conjunctionDistance == testParticleKick2.conjunctionDistance
              && testParticleKick1.preConjunctionEpoch == testParticleKick2.preConjunctionEpoch
@@ -129,7 +111,7 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleKick& te
     outputStream << "Test particle kick ID: "
                  << testParticleKick.kickId << endl;
     outputStream << "Test particle simulation ID: "
-                 << testParticleKick.simulationId << endl;
+                 << testParticleKick.testParticleSimulationId << endl;
     outputStream << "Conjunction epoch (since start) [Jyr]: "
                  << convertSecondsToJulianYears( testParticleKick.conjunctionEpoch ) << endl;
     outputStream << "Conjunction distance [m]: "

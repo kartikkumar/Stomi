@@ -33,9 +33,6 @@
 
 #include <omp.h>
 
-// #include <boost/algorithm/string/classification.hpp>
-// #include <boost/algorithm/string/split.hpp>
-// #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
@@ -47,7 +44,9 @@
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/Basics/commonTypedefs.h>
+#include <Assist/Basics/comparisonFunctions.h>
 #include <Assist/InputOutput/basicInputOutput.h>
+#include <Assist/Mathematics/statistics.h>
 
 #include <Tudat/InputOutput/basicInputOutput.h>
 #include <Tudat/InputOutput/dictionaryTools.h>
@@ -60,13 +59,6 @@
  #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 #include <TudatCore/Mathematics/BasicMathematics/basicMathematicsFunctions.h>
 
-// #include "AuxilliaryFiles/commonTypedefs.h"
-// #include "AuxilliaryFiles/randomWalkFunctions.h"
-
-// #include "Database/caseDataRow.h"
-// #include "Database/databaseFunctions.h"
-
-// #include "InputOutput/basicInputOutput.h"
 #include "StochasticMigration/Astrodynamics/hillSphere.h"
 #include "StochasticMigration/Astrodynamics/randomWalkFunctions.h"
 #include "StochasticMigration/Database/databaseReadFunctions.h" 
@@ -88,13 +80,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace boost::filesystem;
     using boost::iequals;
     using namespace boost::random;
-//     using boost::is_any_of;
-//     using boost::lexical_cast;
-//     using boost::split;
 
     using namespace assist::astrodynamics;
     using namespace assist::basics;
     using namespace assist::input_output;
+    using namespace assist::mathematics;
 
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
     using namespace tudat::basic_mathematics;
@@ -104,14 +94,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace tudat::input_output::parsed_data_vector_utilities;
 //     using namespace tudat::statistics;
 
-//     using namespace stochastic_migration::common_typedefs;
     using namespace stochastic_migration::astrodynamics;
     using namespace stochastic_migration::database;
-//     using namespace stochastic_migration::database_functions;
     using namespace stochastic_migration::input_output;
-//     using namespace stochastic_migration::random_walk_functions;
-
-    typedef assist::basics::DoubleKeyVector3dValueMap ActionPropagationHistory;
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -466,14 +451,14 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Declare perturbed body propagation history. This stores the propagation history of the
         // action variables only (semi-major axis, eccentricity, inclination).
-        ActionPropagationHistory keplerianActionElementsHistory;
+        DoubleKeyVector3dValueMap keplerianActionElementsHistory;
 
         // Set perturbed body initial state (actions) in Keplerian elements.
         keplerianActionElementsHistory[ 0.0 ]
                 = caseData->perturbedBodyStateInKeplerianElementsAtT0.segment( 0, 3 );
 
         // Declare iterator to previous state in Keplerian elements.
-        ActionPropagationHistory::iterator iteratorPreviousKeplerianElements
+        DoubleKeyVector3dValueMap::iterator iteratorPreviousKeplerianElements
                 = keplerianActionElementsHistory.begin( );
 
         // Loop through aggregate kick table and execute kicks on perturbed body. 
@@ -517,86 +502,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         ///////////////////////////////////////////////////////////////////////////
 
-        // Compute maximum eccentricity change in propagation history.
-
-        // Declare map of epoch-window average eccentricities.
-        DoubleKeyDoubleValueMap epochWindowAverageEccentricities;
-
-        // Loop over observation period and compute average eccentricities per epoch window.
-        for ( unsigned int windowNumber = 0; windowNumber < numberOfEpochWindows; windowNumber++ )
-        {
-            const double epochWindowCenter = observationPeriodStartEpoch
-                    + windowNumber * epochWindowSpacing;
-
-//             epochWindowAverageEccentricities[ epochWindowCenter ]
-//                     = computeAverageEccentricityForEpochWindow(
-//                         keplerianActionElementsHistory,
-//                         epochWindowCenter - epochWindowSize / 2.0,
-//                         epochWindowCenter + epochWindowSize / 2.0 );
-        }
-
-        // Compute maximum eccentricity change during propagation history.
-//         double maximumEccentricityChange = ( std::max_element(
-//                     epochWindowAverageEccentricities.begin( ),
-//                     epochWindowAverageEccentricities.end( ),
-//                     compareDoubleKeyDoubleValueElements ) )->second
-//                 - ( std::min_element(
-//                         epochWindowAverageEccentricities.begin( ),
-//                         epochWindowAverageEccentricities.end( ),
-//                         compareDoubleKeyDoubleValueElements ) )->second;
-
-        ///////////////////////////////////////////////////////////////////////////
-
-//         ///////////////////////////////////////////////////////////////////////////
-
-//         // Compute maximum inclination change in propagation history.
-
-//         // Declare map of epoch-window average inclinations.
-//         DoubleKeyDoubleValueMap epochWindowAverageInclinations;
-
-//         // Loop over observation period and compute average inclinations per epoch window.
-//         for ( unsigned int windowNumber = 0; windowNumber < numberOfEpochWindows; windowNumber++ )
-//         {
-//             const double epochWindowCenter = observationPeriodEpoch
-//                     + windowNumber * epochWindowSpacing;
-
-//             epochWindowAverageInclinations[ epochWindowCenter ]
-//                     = computeAverageInclinationForEpochWindow(
-//                         keplerianActionElementsHistory,
-//                         epochWindowCenter - epochWindowSize / 2.0,
-//                         epochWindowCenter + epochWindowSize / 2.0 );
-//         }
-
-// //        // DEBUG.
-// //        for ( DoubleKeyDoubleValueMap::iterator iteratorWindow
-// //              = epochWindowAverageInclinations.begin( );
-// //              iteratorWindow != epochWindowAverageInclinations.end( );
-// //              iteratorWindow++ )
-// //        {
-// //            std::cout << std::setprecision( outputDataPrecision )
-// //                      << iteratorWindow->first << ", "
-// //                      << iteratorWindow->second << std::endl;
-// //        }
-
-//         // Compute map of maximum inclination change during propagation history.
-//         double maximumInclinationChange = ( std::max_element(
-//                     epochWindowAverageInclinations.begin( ),
-//                     epochWindowAverageInclinations.end( ),
-//                     compareDoubleKeyDoubleValueElements ) )->second
-//                 - ( std::min_element(
-//                         epochWindowAverageInclinations.begin( ),
-//                         epochWindowAverageInclinations.end( ),
-//                         compareDoubleKeyDoubleValueElements ) )->second;
-
-// //        // DEBUG.
-// //        std::cout << std::setprecision( outputDataPrecision )
-// //                  << maximumInclinationChange << std::endl;
-
-//           ///////////////////////////////////////////////////////////////////////////
-
-//         ///////////////////////////////////////////////////////////////////////////
-
-//         // Compute maximum longitude residual change in propagation history.
+        // Compute maximum longitude residual change in propagation history.
 
 //         // Compute longitude history.
 //         DoubleKeyDoubleValueMap longitudeHistory
@@ -608,19 +514,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //                 = reduceLongitudeHistory( longitudeHistory, observationPeriodEpoch,
 //                                           epochWindowSpacing, epochWindowSize,
 //                                           numberOfEpochWindows );
-
-// //        // DEBUG.
-// //        // Write test particle (reduced) longitude history to file.
-// //        writeDataMapToTextFile( longitudeHistory,
-// //                                "longitudeHistory.dat",
-// //                                "/Users/kartikkumar/Desktop", "",
-// //                                outputDataPrecision,
-// //                                outputDataPrecision, "," );
-// //        writeDataMapToTextFile( reducedLongitudeHistory,
-// //                                "reducedLongitudeHistory.dat",
-// //                                "/Users/kartikkumar/Desktop", "",
-// //                                outputDataPrecision,
-// //                                outputDataPrecision, "," );
 
 //         // Set input data for simple linear regression.
 //         SimpleLinearRegression longitudeHistoryRegression( reducedLongitudeHistory );
@@ -644,13 +537,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //                     * iteratorReducedLongitudeHistory->first;
 //         }
 
-// //        // DEBUG.
-// //        writeDataMapToTextFile( longitudeResidualsHistory,
-// //                                "longitudeResidualsHistory.dat",
-// //                                "/Users/kartikkumar/Desktop", "",
-// //                                outputDataPrecision,
-// //                                outputDataPrecision, "," );
-
 //         // Declare map of epoch-window average longitude residuals.
 //         DoubleKeyDoubleValueMap epochWindowAverageLongitudeResiduals;
 
@@ -666,17 +552,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //                         epochWindowCenter + epochWindowSize / 2.0 );
 //         }
 
-// //        // DEBUG.
-// //        for ( DoubleKeyDoubleValueMap::iterator iteratorWindow
-// //              = epochWindowAverageLongitudeResiduals.begin( );
-// //              iteratorWindow != epochWindowAverageLongitudeResiduals.end( );
-// //              iteratorWindow++ )
-// //        {
-// //            std::cout << std::setprecision( outputDataPrecision )
-// //                      << iteratorWindow->first << ", "
-// //                      << iteratorWindow->second << std::endl;
-// //        }
-
 //         // Compute map of maximum longitude residual change during propagation history.
 //         double maximumLongitudeResidualChange = ( std::max_element(
 //                     epochWindowAverageLongitudeResiduals.begin( ),
@@ -687,11 +562,109 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 //                         epochWindowAverageLongitudeResiduals.end( ),
 //                         compareDoubleKeyDoubleValueElements ) )->second;
 
-// //        // DEBUG.
-// //        std::cout << std::setprecision( outputDataPrecision )
-// //                  << maximumLongitudeResidualChange << std::endl;
+        ///////////////////////////////////////////////////////////////////////////        
 
-//         ///////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
+        // Compute maximum eccentricity change in propagation history.
+
+        // Declare maximum eccentricity change in window.
+        double maximumEccentricityChange = 0.0;
+
+        {
+            // Populate temporary map with epochs and eccentricities.
+            DoubleKeyDoubleValueMap eccentricityHistory;
+
+            for ( DoubleKeyVector3dValueMap::iterator iteratorKeplerianActionElements 
+                  = keplerianActionElementsHistory.begin( );
+                  iteratorKeplerianActionElements != keplerianActionElementsHistory.end( );
+                  iteratorKeplerianActionElements++ )
+            {
+                eccentricityHistory[ iteratorKeplerianActionElements->first ]
+                    = iteratorKeplerianActionElements->second( eccentricityIndex );
+            }            
+
+            // Declare map of average eccentricities per window.
+            DoubleKeyDoubleValueMap averageEccentricities;
+
+            // Loop over observation period and compute average eccentricities per epoch window.
+            for ( unsigned int windowNumber = 0; 
+                  windowNumber < numberOfEpochWindows; 
+                  windowNumber++ )
+            {
+                const double epochWindowCenter = observationPeriodStartEpoch
+                        + windowNumber * epochWindowSpacing;
+
+                averageEccentricities[ epochWindowCenter ] 
+                    = computeStepFunctionWindowAverage( 
+                        eccentricityHistory, 
+                        epochWindowCenter - epochWindowSize / 2.0, 
+                        epochWindowCenter + epochWindowSize / 2.0 );
+            }
+
+            // Compute maximum eccentricity change during propagation history.
+            maximumEccentricityChange 
+                = ( std::max_element( averageEccentricities.begin( ), 
+                                      averageEccentricities.end( ),
+                                      CompareDoubleKeyDoubleValueMapValues( ) ) )->second
+                  - ( std::min_element( averageEccentricities.begin( ), 
+                                        averageEccentricities.end( ),
+                                        CompareDoubleKeyDoubleValueMapValues( ) ) )->second;        
+        }
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        // Compute maximum inclination change in propagation history.
+
+        // Declare maximum inclination change in window.
+        double maximumInclinationChange = 0.0;
+
+        {
+            // Populate temporary map with epochs and inclinations.
+            DoubleKeyDoubleValueMap inclinationHistory;
+
+            for ( DoubleKeyVector3dValueMap::iterator iteratorKeplerianActionElements 
+                  = keplerianActionElementsHistory.begin( );
+                  iteratorKeplerianActionElements != keplerianActionElementsHistory.end( );
+                  iteratorKeplerianActionElements++ )
+            {
+                inclinationHistory[ iteratorKeplerianActionElements->first ]
+                    = iteratorKeplerianActionElements->second( inclinationIndex );
+            }            
+
+            // Declare map of average inclinations per window.
+            DoubleKeyDoubleValueMap averageInclinations;
+
+            // Loop over observation period and compute average inclinations per epoch window.
+            for ( unsigned int windowNumber = 0; 
+                  windowNumber < numberOfEpochWindows; 
+                  windowNumber++ )
+            {
+                const double epochWindowCenter = observationPeriodStartEpoch
+                        + windowNumber * epochWindowSpacing;
+
+                averageInclinations[ epochWindowCenter ] 
+                    = computeStepFunctionWindowAverage( 
+                        inclinationHistory, 
+                        epochWindowCenter - epochWindowSize / 2.0, 
+                        epochWindowCenter + epochWindowSize / 2.0 );
+            }
+
+            // Compute maximum inclination change during propagation history.
+            maximumInclinationChange 
+                = ( std::max_element( averageInclinations.begin( ), 
+                                      averageInclinations.end( ),
+                                      CompareDoubleKeyDoubleValueMapValues( ) ) )->second
+                  - ( std::min_element( averageInclinations.begin( ), 
+                                        averageInclinations.end( ),
+                                        CompareDoubleKeyDoubleValueMapValues( ) ) )->second;        
+
+            cout << "Max i: " << maximumInclinationChange << endl;
+        }
+
+        ///////////////////////////////////////////////////////////////////////////
 
 //         ///////////////////////////////////////////////////////////////////////////
 

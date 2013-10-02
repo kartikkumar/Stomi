@@ -3,24 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120402    K. Kumar          File created from old caseDataRow.h.
- *      130212    K. Kumar          Added Doxygen comments and a note. Added planetary_rings
- *                                  namespace; renamed file and struct.
- *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration";
- *                                  renamed file.
- *      130704    K. Kumar          Updated class contents based on revised table schema.
- *      130715    K. Kumar          Updated class contents based on revised table schema.
- *
- *    References
- *      sbi. C++ Operator Overloading, Stack Overflow,
- *          http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
- *          9th March, 2013.
- *
- *    Notes
- *
  */
 
 #ifndef STOCHASTIC_MIGRATION_TEST_PARTICLE_CASE_H
@@ -76,13 +58,11 @@ public:
             const double aConjunctionEventDetectionDistance,
             const double anOppositionEventDetectionDistance,
             const double anEccentricityDistributionMean,
-            const double anEccentricityDistributionAngle,
             const double anEccentricityDistributionFullWidthHalfMaximum,
             const double anInclinationDistributionMean,
-            const double anInclinationDistributionAngle,
             const double anInclinationDistributionFullWidthHalfMaximum,
             const std::string& aNumericalIntegratorType,
-            const double anInitialStepSize,
+            const double aNumericalIntegratorInitialStepSize,
             const double aNumericalIntegratorRelativeTolerance,
             const double aNumericalIntegratorAbsoluteTolerance );
 
@@ -135,17 +115,11 @@ public:
     //! Mean eccentricity value for distribution.
     const double eccentricityDistributionMean;
 
-    //! Angle between vector components of eccentricity distribution [rad].
-    const double eccentricityDistributionAngle;
-
     //! FWHM eccentricity value for distribution.
     const double eccentricityDistributionFullWidthHalfMaximum;
 
     //! Mean inclination value for distribution [rad].
     const double inclinationDistributionMean;
-
-    //! Angle between vector components of inclination distribution [rad].
-    const double inclinationDistributionAngle;
 
     //! FWHM inclination value for distribution [rad].
     const double inclinationDistributionFullWidthHalfMaximum;
@@ -154,7 +128,7 @@ public:
     NumericalIntegratorType numericalIntegratorType;
 
     //! Initial step size for numerical integrator.
-    const double initialStepSize;
+    const double numericalIntegratorInitialStepSize;
 
     //! Relative tolerance for numerical integrator.
     const double numericalIntegratorRelativeTolerance;
@@ -186,3 +160,10 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
 } // namespace stochastic_migration
 
 #endif // STOCHASTIC_MIGRATION_TEST_PARTICLE_CASE_H
+
+/*
+ *    References
+ *      sbi. C++ Operator Overloading, Stack Overflow,
+ *          http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
+ *          9th March, 2013.
+ */

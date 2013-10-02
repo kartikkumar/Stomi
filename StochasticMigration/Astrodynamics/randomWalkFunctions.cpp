@@ -3,20 +3,8 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120402    K. Kumar          File created from old randomWalkFunctions.cpp.
- *      120522    K. Kumar          Added inclination kick computation. Added general Keplerian
- *                                  element averaging function; added wrapper for inclination.
- *      130206    K. Kumar          Fixed error in inclination kick computation.
- *      130919    K. Kumar          Uncommented and updated executeKick() function.
- *
- *    References
- *
- *    Notes
- *
  */
+
 
 #include <cmath>
 #include <stdexcept>

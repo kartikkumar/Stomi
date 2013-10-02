@@ -3,21 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120402    K. Kumar          File created from old databaseFunctions.cpp.
- *      130217    K. Kumar          updated "mab simulations" references to "stochastic migration".
- *      130218    K. Kumar          Updated "encounter" to "conjunction".
- *      130330    K. Kumar          Updated function to populate kick table.
- *      130725    K. Kumar          Updated function to populate kick table using SQLiteCpp 
- *                                  library. Updated function to reflect database schema.
- *      130917    K. Kumar          Updated function to populate kick table using new table schema.
-b *
- *    References
- *
- *    Notes
- *
  */
 
 #include <iostream>
@@ -95,7 +80,8 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
               iteratorKickTable++ )
         {
             // Bind values to prepared SQLite statement.
-            kickTableInsertQuery.bind( ":simulationId", iteratorKickTable->simulationId );
+            kickTableInsertQuery.bind( ":simulationId", 
+                                       iteratorKickTable->testParticleSimulationId );
             kickTableInsertQuery.bind( ":conjunctionEpoch", iteratorKickTable->conjunctionEpoch );
             kickTableInsertQuery.bind( ":conjunctionDistance", 
                 iteratorKickTable->conjunctionDistance );

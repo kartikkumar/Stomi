@@ -1,4 +1,3 @@
- #
  #    Copyright (c) 2010-2013, Delft University of Technology
  #    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  #    All rights reserved.
@@ -30,7 +29,6 @@
  #
  #      FindEigen3.cmake states that redistribution and use is allowed according to the terms of
  #      the 2-clause BSD license.
- #
 
 macro(_assist_check_version)
   file(READ "${ASSIST_INCLUDE_DIR}/Assist/assistVersion.h" _assist_header)

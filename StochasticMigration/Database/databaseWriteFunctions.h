@@ -3,16 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130214    K. Kumar          File created from old databaseFunctions.h.
- *      130217    K. Kumar          updated "mab simulations" references to "stochastic migration".
- *
- *    References
- *
- *    Notes
- *
  */
 
 #include <string>

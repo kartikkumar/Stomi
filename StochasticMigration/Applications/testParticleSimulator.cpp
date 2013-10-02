@@ -52,6 +52,7 @@
 
 #include <omp.h>
 
+#include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/body.h>
 #include <Assist/Astrodynamics/dataUpdater.h>
 #include <Assist/Astrodynamics/unitConversions.h>
@@ -400,12 +401,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         cout << "Numerical integrator type                                 "
              << numericalIntegratorType << endl;
 
-        const double initialStepSize = extractParameterValue< double >(
+        const double numericalIntegratorInitialStepSize = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "INITIALSTEPSIZE" ), 
-                    caseDataFromDatabase->initialStepSize );
+                    caseDataFromDatabase->numericalIntegratorInitialStepSize );
         cout << "Initial step size                                         "
-             << initialStepSize << " s" << endl;
+             << numericalIntegratorInitialStepSize << " s" << endl;
 
         const double numericalIntegratorRelativeTolerance = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
@@ -431,13 +432,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             synodicPeriodMaximum, startUpIntegrationPeriod, centralBodyJ2GravityCoefficient, 
             centralBodyEquatorialRadius, conjunctionEventDetectionDistance, 
             oppositionEventDetectionDistance, caseDataFromDatabase->eccentricityDistributionMean, 
-            caseDataFromDatabase->eccentricityDistributionAngle,
             caseDataFromDatabase->eccentricityDistributionFullWidthHalfMaximum,
             caseDataFromDatabase->inclinationDistributionMean, 
-            caseDataFromDatabase->inclinationDistributionAngle,
             caseDataFromDatabase->inclinationDistributionFullWidthHalfMaximum, 
-            numericalIntegratorType, initialStepSize, numericalIntegratorRelativeTolerance,
-            numericalIntegratorRelativeTolerance ) );             
+            numericalIntegratorType, numericalIntegratorInitialStepSize, 
+            numericalIntegratorRelativeTolerance, numericalIntegratorRelativeTolerance ) );             
     }
 
     // Check that all required parameters have been set.
@@ -692,7 +691,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         while ( integrator->getCurrentIndependentVariable( ) 
                 < testParticleCase->startUpIntegrationPeriod )
         {
-            integrator->performIntegrationStep( testParticleCase->initialStepSize );
+            integrator->performIntegrationStep( 
+                testParticleCase->numericalIntegratorInitialStepSize );
         }   
 
         ///////////////////////////////////////////////////////////////////////////
@@ -736,7 +736,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         if ( isStartup ) { nextStepSize = integrator->getNextStepSize( ); }
 
         // Else, set it to the initial step size specified in the case data.
-        else { nextStepSize = testParticleCase->initialStepSize; }
+        else { nextStepSize = testParticleCase->numericalIntegratorInitialStepSize; }
 
         // Propagate test-particle-perturbed-body system and retrieve table of kicks experienced by
         // the test particle.

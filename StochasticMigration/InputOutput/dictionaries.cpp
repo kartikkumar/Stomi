@@ -3,18 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120808    K. Kumar          File created.
- *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration".
- *      130704    K. Kumar          Updated definition of dictionary entries for database 
- *                                  generator.
- *
- *    References
- *
- *    Notes
- *
  */
 
 #include <boost/assign/list_of.hpp>
@@ -31,15 +19,15 @@ using namespace tudat::input_output::dictionary;
 using boost::assign::list_of;
 using boost::make_shared;
 
-//! Get dictionary for databaseGenerator application.
-DictionaryPointer getDatabaseGeneratorDictionary( )
+//! Get dictionary for test particle database generator application.
+DictionaryPointer getTestParticleDatabaseGeneratorDictionary( )
 {
     DictionaryPointer dictionary = make_shared< Dictionary >( );
 
     // Add required parameters.
-    addEntry( dictionary, "CASE",                                  1, 0 );
     addEntry( dictionary, "DATABASEPATH",                          1, 0, 
-                list_of( "DATABASE" )( "DB" ) );
+                list_of( "DATABASE" )( "DB" ) );    
+    addEntry( dictionary, "CASE",                                  1, 0 );
     addEntry( dictionary, "NUMBEROFSIMULATIONS",                   1, 0, list_of( "POPULATION" ) );
     addEntry( dictionary, "RANDOMWALKSIMULATIONPERIOD",            1, 0, list_of( "TRANDOM" ) );
     addEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER",     1, 0, list_of( "GRAVPARAM" ) );
@@ -80,12 +68,13 @@ DictionaryPointer getDatabaseGeneratorDictionary( )
     addEntry( dictionary, "TESTPARTICLECASETABLENAME",             0, 0, list_of( "TPCASE" ) );
     addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            0, 0, list_of( "TPINPUT" ) );
     addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             0, 0, list_of( "TPKICK" ) );
-    addEntry( dictionary, "RANDOMWALKMONTECARLORUNTABLENAME",      0, 0, list_of( "RWMC" ) );
-    addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          0, 0, list_of( "RWPERTURB" ) );
-    addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             0, 0, list_of( "RWOUTPUT" ) );
 
     return dictionary;
 }
+
+    // addEntry( dictionary, "RANDOMWALKMONTECARLORUNTABLENAME",      0, 0, list_of( "RWMC" ) );
+    // addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          0, 0, list_of( "RWPERTURB" ) );
+    // addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             0, 0, list_of( "RWOUTPUT" ) );
 
 //! Get dictionary for testParticleSimulator application.
 DictionaryPointer getTestParticleSimulatorDictionary( )

@@ -3,26 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130212    K. Kumar          File created.
- *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration";
- *                                  renamed file.
- *      130309    K. Kumar          Expanded unit tests to test all functionality of
- *                                  TestParticleKick objects.
- *      130328    K. Kumar          Updated unit tests to use boiler plate operator overload 
- *                                  functions in Assist.
- *      130329    K. Kumar          Added test to check that test particle kick table is sorted
- *                                  correctly.
- *      130709    K. Kumar          Updated tests to new TestParticleKick definition; re-organized
- *                                  tests.
- *      130917    K. Kumar          Updated tests to new TestParticleKick definition.
- *
- *    References
- *
- *    Notes
- *
  */
 
 #define BOOST_TEST_MAIN
@@ -61,7 +41,7 @@ public:
     //! Constructor initializing valid parameters.
     TestParticleKickFixture( )
         : kickId( 1 ),
-          simulationId( 1 ),
+          testParticleSimulationId( 1 ),
           conjunctionEpoch( 1.23e4 ),
           conjunctionDistance( 2.0e7 ),
           preConjunctionEpoch( 5.67e2 ),
@@ -79,8 +59,8 @@ public:
     //! Unique id for kick in database.
     int kickId;
 
-    //! Simulation ID.
-    int simulationId;
+    //! Test particle simulation ID.
+    int testParticleSimulationId;
 
     //! Conjunction epoch [s].
     double conjunctionEpoch;
@@ -111,7 +91,7 @@ public:
     {
         return boost::make_shared< database::TestParticleKick >(
                     database::TestParticleKick(
-                        kickId, simulationId, conjunctionEpoch, conjunctionDistance,
+                        kickId, testParticleSimulationId, conjunctionEpoch, conjunctionDistance,
                         preConjunctionEpoch, preConjunctionDistance, 
                         preConjunctionStateInKeplerianElements,
                         postConjunctionEpoch, postConjunctionDistance,
@@ -140,7 +120,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickStructContruction )
 
     // Check that the test particle kick created contains all the data as required.
     BOOST_CHECK_EQUAL( testParticleKick->kickId, kickId );    
-    BOOST_CHECK_EQUAL( testParticleKick->simulationId, simulationId );
+    BOOST_CHECK_EQUAL( testParticleKick->testParticleSimulationId, testParticleSimulationId );
     BOOST_CHECK_EQUAL( testParticleKick->conjunctionEpoch, conjunctionEpoch );
     BOOST_CHECK_EQUAL( testParticleKick->conjunctionDistance, conjunctionDistance );
     BOOST_CHECK_EQUAL( testParticleKick->preConjunctionEpoch, preConjunctionEpoch );
@@ -183,13 +163,13 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNonPositiveKickIdError )
 }
 
 //! Test initialization of test particle kick with non-positive simulation ID.
-BOOST_AUTO_TEST_CASE( testTestParticleKickNonPositivesimulationIdError )
+BOOST_AUTO_TEST_CASE( testTestParticleKickNonPositiveTestParticleSimulationIdError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
     // Set simulation ID to invalid (non-positive) number.
-    simulationId = -1;
+    testParticleSimulationId = -1;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
@@ -526,7 +506,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickNonEqualComparison )
     // Create TestParticleKick pointers.
     database::TestParticleKickPointer testParticleKick = getTestParticleKick( );
 
-    simulationId = 2;
+    testParticleSimulationId = 2;
     database::TestParticleKickPointer testParticleKick2 = getTestParticleKick( );
 
     // Check that operator is overloaded correctly.

@@ -6,7 +6,6 @@ See http://bit.ly/12SHPLR for license details.
 
 This file defines some common constants used by other Python scripts in the Stochastic Migration
 project.
-  
 '''
 
 ################################################################################################### 

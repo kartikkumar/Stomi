@@ -3,25 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130212    K. Kumar          File created.
- *      130214    K. Kumar          Added unit test to check that run-time error is thrown if
- *                                  cases table contains multiple rows; added unit test for
- *                                  input_data table get-functions().
- *      130217    K. Kumar          Optimized and completed suite of unit tests for all database
- *                                  read functions; updated "mab simulations" references to
- *                                  "stochastic migration".
- *      130218    K. Kumar          Updated "encounter" to "conjunction".
- *      130329    K. Kumar          Updated unit tests to use pointers to data structs.
- *      130704    K. Kumar          Updated tests based on revised case and input table schemas.
- *      130918    K. Kumar          Uncommented and updated tests for kick table.
- *
- *    References
- *
- *    Notes
- *
  */
 
 #define BOOST_TEST_MAIN
@@ -91,7 +72,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
                            longitudeOfAscendingNodeIndex ), 4.39704289113435 );
     BOOST_CHECK_EQUAL( testParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
                            trueAnomalyIndex ), 6.18747145100022 );
-    BOOST_CHECK_EQUAL( testParticleCase->semiMajorAxisDistributionLimit, 1016598.4241361 );
+    BOOST_CHECK_EQUAL( testParticleCase->semiMajorAxisDistributionLimit, 508299.21206805098 );
     BOOST_CHECK_EQUAL( testParticleCase->synodicPeriodMaximum, 1577880000.0 );
     BOOST_CHECK_EQUAL( testParticleCase->startUpIntegrationPeriod, 0.0 );
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyJ2GravityCoefficient, 0.0 );    
@@ -99,15 +80,13 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
     BOOST_CHECK_EQUAL( testParticleCase->conjunctionEventDetectionDistance, 48868000.0 );
     BOOST_CHECK_EQUAL( testParticleCase->oppositionEventDetectionDistance, 146604000.0 );
     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionMean, 0.0 );
-    BOOST_CHECK_SMALL( testParticleCase->eccentricityDistributionAngle - ( PI / 4.0 ), 1.0e-15 );    
     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionFullWidthHalfMaximum, 0.0 );
     BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionMean, 0.0 );
-    BOOST_CHECK_SMALL( testParticleCase->inclinationDistributionAngle - ( PI / 4.0 ), 1.0e-15 );    
     BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionFullWidthHalfMaximum, 0.0 );
     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorType, DOPRI853 );
-    BOOST_CHECK_EQUAL( testParticleCase->initialStepSize, 60.0 ); 
+    BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorInitialStepSize, 60.0 ); 
     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorRelativeTolerance, 1.0e-12 );
-    BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorAbsoluteTolerance, 1.0e-15 );
+    BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorAbsoluteTolerance, 1.0e-7 );
 }
 
 //! Test run-time error in case of multiple identical test particle cases defined in SQLite3 
@@ -156,13 +135,13 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionIncompleteSimulations
             = getStochasticMigrationRootPath( )
             + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
-    // Set requested case ID.
-    const int caseId = 1;
+    // Set requested test particle case ID.
+    const int testParticleCaseId = 1;
 
     // Retrieve table of input data for test particle simulations.
     const TestParticleInputTable testParticleInputTable
             = getCompleteTestParticleInputTable( 
-                absolutePathToTestDatabase, caseId, "test_particle_input" );
+                absolutePathToTestDatabase, testParticleCaseId, "test_particle_input" );
 
     // Read in table of test particle input data from test data file.
     const Eigen::Matrix< double, 10, 9 > testDataTestParticleInputTable
@@ -177,14 +156,14 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionIncompleteSimulations
     {
         BOOST_CHECK_EQUAL( iteratorInputTable->simulationId,
                            testDataTestParticleInputTable( i, 0 ) );
-        BOOST_CHECK_EQUAL( iteratorInputTable->caseId, caseId );
+        BOOST_CHECK_EQUAL( iteratorInputTable->testParticleCaseId, testParticleCaseId );
         BOOST_CHECK_EQUAL( iteratorInputTable->isCompleted, false );
 
         {
             TUDAT_CHECK_MATRIX_CLOSE_FRACTION(
                         iteratorInputTable->initialStateInKeplerianElements,
                         testDataTestParticleInputTable.block( i, 3, 1, 6 ).transpose( ),
-                        1.0e-15 );
+                        1.0e-14 );
         }
 
         i++;
@@ -238,19 +217,19 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionSpecificSimulations )
             + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
     // Set string of selected test particle simulation numbers.
-    const std::string testParticlesimulationIds = "1 3 5 9";
+    const std::string testParticleSimulationIds = "1 3 5 9";
 
     // Set vector of selected test particle simulation numbers.
-    const std::vector< int > testParticlesimulationIdsVector
+    const std::vector< int > testParticleSimulationIdsVector
             = boost::assign::list_of( 1 )( 3 )( 5 )( 9 );
 
-    // Set requested case ID.
-    const int caseId = 1;
+    // Set requested test particle case ID.
+    const int testParticleCaseId = 1;
 
     // Retrieve table of input data for selected test particle simulations.
     const TestParticleInputTable testParticleInputTable = getSelectedTestParticleInputTable(
-                absolutePathToTestDatabase, caseId, 
-                testParticlesimulationIds, "test_particle_input" );
+                absolutePathToTestDatabase, testParticleCaseId, 
+                testParticleSimulationIds, "test_particle_input" );
 
     // Read in table of test particle input data from test data file.
     const Eigen::Matrix< double, 4, 9 > testDataTestParticleInputTable = readMatrixFromFile(
@@ -265,14 +244,14 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionSpecificSimulations )
     {
         BOOST_CHECK_EQUAL( iteratorInputTable->simulationId,
                            testDataTestParticleInputTable( i, 0 ) );
-        BOOST_CHECK_EQUAL( iteratorInputTable->caseId, caseId );
+        BOOST_CHECK_EQUAL( iteratorInputTable->testParticleCaseId, testParticleCaseId );
         BOOST_CHECK_EQUAL( iteratorInputTable->isCompleted, false );
 
         {
             TUDAT_CHECK_MATRIX_CLOSE_FRACTION(
                         iteratorInputTable->initialStateInKeplerianElements,
                         testDataTestParticleInputTable.block( i, 3, 1, 6 ).transpose( ),
-                        1.0e-15 );
+                        1.0e-14 );
         }
 
         i++;
@@ -292,10 +271,10 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNonExistentSimulation
             + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
     // Set string of selected test particle simulation numbers.
-    const std::string testParticlesimulationIds = "1 999999";
+    const std::string testParticleSimulationIds = "1 999999";
 
-    // Set requested case ID.
-    const int caseId = 1;
+    // Set requested test particle case ID.
+    const int testParticleCaseId = 1;
 
     // Try to retrieve table of test particle input data, and catch expected error.
     bool isRunTimeErrorThrown = false;
@@ -305,8 +284,8 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNonExistentSimulation
         // Retrieve all input data for selected test particle simulations.
         const TestParticleInputTable testParticleInputTable
                 = getSelectedTestParticleInputTable( 
-                    absolutePathToTestDatabase, caseId,
-                    testParticlesimulationIds, "test_particle_input" );
+                    absolutePathToTestDatabase, testParticleCaseId,
+                    testParticleSimulationIds, "test_particle_input" );
     }
 
     catch( std::runtime_error& )
@@ -352,12 +331,12 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionSpecificSimulations )
                 + "/Database/UnitTests/testDataSelectedTestParticleKickTable.csv" );
 
     // Check that the kick data table retrieved matches the test data.
-    unsigned int i = 0;
+    unsigned int i = 0; 
 
     for ( TestParticleKickTable::iterator iteratorKickTable = testParticleKickTable.begin( );
           iteratorKickTable != testParticleKickTable.end( ); iteratorKickTable++ )
     {
-        BOOST_CHECK_EQUAL( iteratorKickTable->simulationId,
+        BOOST_CHECK_EQUAL( iteratorKickTable->testParticleSimulationId,
                            testDataTestParticleKickTable( i, 1 ) );
         BOOST_CHECK_CLOSE_FRACTION( iteratorKickTable->conjunctionEpoch,
                                     testDataTestParticleKickTable( i, 2 ), 1.0e-14 );
@@ -456,185 +435,185 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionNonExistentSimulation 
     BOOST_CHECK( isRunTimeErrorThrown );
 }
 
-// //! Test implementation of function to get selected random walk Monte Carlo run data from SQLite3
-// //! database.
-// BOOST_AUTO_TEST_CASE( testGetRandomWalkMonteCarloRunTableFunctionSpecificRuns )
-// {
-//     using boost::assign::list_of;
-//     using boost::assign::ptr_insert;
+// // //! Test implementation of function to get selected random walk Monte Carlo run data from SQLite3
+// // //! database.
+// // BOOST_AUTO_TEST_CASE( testGetRandomWalkMonteCarloRunTableFunctionSpecificRuns )
+// // {
+// //     using boost::assign::list_of;
+// //     using boost::assign::ptr_insert;
 
-//     using namespace basics;
-//     using namespace database;
+// //     using namespace basics;
+// //     using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.sqlite";
+// //     // Set absolute path to test database.
+// //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+// //             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.sqlite";
 
-//     // Set vector of selected Monte Carlo runs.
-//     const std::vector< unsigned int > monteCarloRuns = list_of( 1 )( 5 )( 1001 )( 1005 );
+// //     // Set vector of selected Monte Carlo runs.
+// //     const std::vector< unsigned int > monteCarloRuns = list_of( 1 )( 5 )( 1001 )( 1005 );
 
-//     // Retrieve table of random walk Monte Carlo runs.
-//     const RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable
-//             = getRandomWalkMonteCarloRunsTable( absolutePathToTestDatabase, monteCarloRuns );
+// //     // Retrieve table of random walk Monte Carlo runs.
+// //     const RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable
+// //             = getRandomWalkMonteCarloRunsTable( absolutePathToTestDatabase, monteCarloRuns );
 
-//     // Set expected random walk Monte Carlo run table.
-//     RandomWalkMonteCarloRunTable expectedRandomWalkMonteCarloRunTable;
-//     expectedRandomWalkMonteCarloRunTable.insert( 
-//         new RandomWalkMonteCarloRun( 1, 100, "EQUAL", 0.001, 0.0, 94672800.0, 7776000.0, 4 ) );
-//     expectedRandomWalkMonteCarloRunTable.insert( 
-//         new RandomWalkMonteCarloRun( 5, 100, "EQUAL", 0.001, 0.0, 94672800.0, 7776000.0, 4 ) );
-//     expectedRandomWalkMonteCarloRunTable.insert( 
-//         new RandomWalkMonteCarloRun( 1001, 1000, "EQUAL", 0.0001, 0.0, 
-//                                      94672800.0, 7776000.0, 4 ) );
-//     expectedRandomWalkMonteCarloRunTable.insert( 
-//         new RandomWalkMonteCarloRun( 1005, 1000, "EQUAL", 0.0001, 0.0, 
-//                                      94672800.0, 7776000.0, 4 ) );
+// //     // Set expected random walk Monte Carlo run table.
+// //     RandomWalkMonteCarloRunTable expectedRandomWalkMonteCarloRunTable;
+// //     expectedRandomWalkMonteCarloRunTable.insert( 
+// //         new RandomWalkMonteCarloRun( 1, 100, "EQUAL", 0.001, 0.0, 94672800.0, 7776000.0, 4 ) );
+// //     expectedRandomWalkMonteCarloRunTable.insert( 
+// //         new RandomWalkMonteCarloRun( 5, 100, "EQUAL", 0.001, 0.0, 94672800.0, 7776000.0, 4 ) );
+// //     expectedRandomWalkMonteCarloRunTable.insert( 
+// //         new RandomWalkMonteCarloRun( 1001, 1000, "EQUAL", 0.0001, 0.0, 
+// //                                      94672800.0, 7776000.0, 4 ) );
+// //     expectedRandomWalkMonteCarloRunTable.insert( 
+// //         new RandomWalkMonteCarloRun( 1005, 1000, "EQUAL", 0.0001, 0.0, 
+// //                                      94672800.0, 7776000.0, 4 ) );
 
-//     // Check that the random walk Monte Carlo run table retrieved matches the test data.
-//     RandomWalkMonteCarloRunTable::iterator iteratorExpectedMonteCarloRunTable 
-//         = expectedRandomWalkMonteCarloRunTable.begin( );
+// //     // Check that the random walk Monte Carlo run table retrieved matches the test data.
+// //     RandomWalkMonteCarloRunTable::iterator iteratorExpectedMonteCarloRunTable 
+// //         = expectedRandomWalkMonteCarloRunTable.begin( );
 
-//     for ( RandomWalkMonteCarloRunTable::iterator iteratorMonteCarloRunTable 
-//           = randomWalkMonteCarloRunTable.begin( );
-//           iteratorMonteCarloRunTable != randomWalkMonteCarloRunTable.end( );
-//           iteratorMonteCarloRunTable++ )
-//     {
-//         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->monteCarloRun,
-//                            iteratorExpectedMonteCarloRunTable->monteCarloRun );
-//         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->perturberPopulation,
-//                            iteratorExpectedMonteCarloRunTable->perturberPopulation );
-//         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionType,
-//                            iteratorExpectedMonteCarloRunTable->massDistributionType );
-//         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionParameter1,
-//                            iteratorExpectedMonteCarloRunTable->massDistributionParameter1 );
-//         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionParameter2,
-//                            iteratorExpectedMonteCarloRunTable->massDistributionParameter2 );
-//         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->observationPeriod,
-//                            iteratorExpectedMonteCarloRunTable->observationPeriod );
-//         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->epochWindowSize,
-//                            iteratorExpectedMonteCarloRunTable->epochWindowSize );
-//         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->numberOfEpochWindows,
-//                            iteratorExpectedMonteCarloRunTable->numberOfEpochWindows );
+// //     for ( RandomWalkMonteCarloRunTable::iterator iteratorMonteCarloRunTable 
+// //           = randomWalkMonteCarloRunTable.begin( );
+// //           iteratorMonteCarloRunTable != randomWalkMonteCarloRunTable.end( );
+// //           iteratorMonteCarloRunTable++ )
+// //     {
+// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->monteCarloRun,
+// //                            iteratorExpectedMonteCarloRunTable->monteCarloRun );
+// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->perturberPopulation,
+// //                            iteratorExpectedMonteCarloRunTable->perturberPopulation );
+// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionType,
+// //                            iteratorExpectedMonteCarloRunTable->massDistributionType );
+// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionParameter1,
+// //                            iteratorExpectedMonteCarloRunTable->massDistributionParameter1 );
+// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionParameter2,
+// //                            iteratorExpectedMonteCarloRunTable->massDistributionParameter2 );
+// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->observationPeriod,
+// //                            iteratorExpectedMonteCarloRunTable->observationPeriod );
+// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->epochWindowSize,
+// //                            iteratorExpectedMonteCarloRunTable->epochWindowSize );
+// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->numberOfEpochWindows,
+// //                            iteratorExpectedMonteCarloRunTable->numberOfEpochWindows );
 
-//         iteratorExpectedMonteCarloRunTable++;
-//     }
-// }
+// //         iteratorExpectedMonteCarloRunTable++;
+// //     }
+// // }
 
-// //! Test expected run-time error thrown by function to get selected random walk Monte Carlo data
-// //! from SQLite3 database.
-// BOOST_AUTO_TEST_CASE( testGetRandomWalkMonteCarloRunTableFunctionNonExistentRun )
-// {
-//     using boost::assign::list_of;
+// // //! Test expected run-time error thrown by function to get selected random walk Monte Carlo data
+// // //! from SQLite3 database.
+// // BOOST_AUTO_TEST_CASE( testGetRandomWalkMonteCarloRunTableFunctionNonExistentRun )
+// // {
+// //     using boost::assign::list_of;
 
-//     using namespace basics;
-//     using namespace database;
+// //     using namespace basics;
+// //     using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.sqlite";
+// //     // Set absolute path to test database.
+// //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+// //             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.sqlite";
 
-//     // Set vector of selected Monte Carlo runs.
-//     const std::vector< unsigned int > monteCarloRuns = list_of( 1 )( 99999 );
+// //     // Set vector of selected Monte Carlo runs.
+// //     const std::vector< unsigned int > monteCarloRuns = list_of( 1 )( 99999 );
 
-//     // Try to retrieve table of random walk Monte Carlo run data, and catch expected error.
-//     bool isRunTimeErrorThrown = false;
+// //     // Try to retrieve table of random walk Monte Carlo run data, and catch expected error.
+// //     bool isRunTimeErrorThrown = false;
 
-//     try
-//     {
-//         // Retrieve table of random walk Monte Carlo runs.
-//         const RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable
-//                 = getRandomWalkMonteCarloRunsTable( absolutePathToTestDatabase, monteCarloRuns );
-//     }
+// //     try
+// //     {
+// //         // Retrieve table of random walk Monte Carlo runs.
+// //         const RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable
+// //                 = getRandomWalkMonteCarloRunsTable( absolutePathToTestDatabase, monteCarloRuns );
+// //     }
 
-//     catch( std::runtime_error& )
-//     {
-//         isRunTimeErrorThrown = true;
-//     }
+// //     catch( std::runtime_error& )
+// //     {
+// //         isRunTimeErrorThrown = true;
+// //     }
 
-//     // Check that expected run-time error was thrown due to request for non-existent Monte Carlo
-//     // run.
-//     BOOST_CHECK( isRunTimeErrorThrown );
-// }
+// //     // Check that expected run-time error was thrown due to request for non-existent Monte Carlo
+// //     // run.
+// //     BOOST_CHECK( isRunTimeErrorThrown );
+// // }
 
-// //! Test implementation of function to get selected random walk perturber data from SQLite3
-// //! database.
-// BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturberTableFunctionSpecificRun )
-// {
-//     using tudat::input_output::readMatrixFromFile;
+// // //! Test implementation of function to get selected random walk perturber data from SQLite3
+// // //! database.
+// // BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturberTableFunctionSpecificRun )
+// // {
+// //     using tudat::input_output::readMatrixFromFile;
 
-//     using namespace basics;
-//     using namespace database;
+// //     using namespace basics;
+// //     using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseRandomWalkPerturberTable.sqlite";
+// //     // Set absolute path to test database.
+// //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+// //             + "/Database/UnitTests/testDatabaseRandomWalkPerturberTable.sqlite";
 
-//     // Set Monte Carlo run to retrieve data for.
-//     const unsigned int monteCarloRun = 1;
+// //     // Set Monte Carlo run to retrieve data for.
+// //     const unsigned int monteCarloRun = 1;
 
-//     // Retrieve table of perturbers for random walk.
-//     const RandomWalkPerturberTable randomWalkPerturberTable = getRandomWalkPerturberTable(
-//                 absolutePathToTestDatabase, monteCarloRun );
+// //     // Retrieve table of perturbers for random walk.
+// //     const RandomWalkPerturberTable randomWalkPerturberTable = getRandomWalkPerturberTable(
+// //                 absolutePathToTestDatabase, monteCarloRun );
 
-//     // Read in table of random walk perturber data from test data file.
-//     const Eigen::MatrixXd testRandomWalkPerturberData = readMatrixFromFile(
-//                 getStochasticMigrationRootPath( )
-//                 + "/Database/UnitTests/testDataRandomWalkPerturberTable.csv" );
+// //     // Read in table of random walk perturber data from test data file.
+// //     const Eigen::MatrixXd testRandomWalkPerturberData = readMatrixFromFile(
+// //                 getStochasticMigrationRootPath( )
+// //                 + "/Database/UnitTests/testDataRandomWalkPerturberTable.csv" );
 
-//     // Check that the random walk perturber table retrieved matches the test data.
-//     unsigned int i = 0;
+// //     // Check that the random walk perturber table retrieved matches the test data.
+// //     unsigned int i = 0;
 
-//     for ( RandomWalkPerturberTable::iterator iteratorPerturberTable 
-//           = randomWalkPerturberTable.begin( );
-//           iteratorPerturberTable != randomWalkPerturberTable.end( );
-//           iteratorPerturberTable++ )
-//     {
-//         BOOST_CHECK_EQUAL( iteratorPerturberTable->monteCarloRun,
-//                            testRandomWalkPerturberData( i, 1 ) );
-//         BOOST_CHECK_EQUAL( iteratorPerturberTable->testParticlesimulationId,
-//                            testRandomWalkPerturberData( i, 2 ) );
-//         BOOST_CHECK_EQUAL( iteratorPerturberTable->massRatio,
-//                            testRandomWalkPerturberData( i, 3 ) );
+// //     for ( RandomWalkPerturberTable::iterator iteratorPerturberTable 
+// //           = randomWalkPerturberTable.begin( );
+// //           iteratorPerturberTable != randomWalkPerturberTable.end( );
+// //           iteratorPerturberTable++ )
+// //     {
+// //         BOOST_CHECK_EQUAL( iteratorPerturberTable->monteCarloRun,
+// //                            testRandomWalkPerturberData( i, 1 ) );
+// //         BOOST_CHECK_EQUAL( iteratorPerturberTable->testParticleSimulationId,
+// //                            testRandomWalkPerturberData( i, 2 ) );
+// //         BOOST_CHECK_EQUAL( iteratorPerturberTable->massRatio,
+// //                            testRandomWalkPerturberData( i, 3 ) );
 
-//         i++;
-//     }
-// }
+// //         i++;
+// //     }
+// // }
 
-// //! Test expected run-time error thrown by function to get random walk perturber data from SQLite3
-// //! database.
-// BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturberTableFunctionNonExistentMonteCarloRun )
-// {
-//     using boost::assign::list_of;
+// // //! Test expected run-time error thrown by function to get random walk perturber data from SQLite3
+// // //! database.
+// // BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturberTableFunctionNonExistentMonteCarloRun )
+// // {
+// //     using boost::assign::list_of;
 
-//     using namespace basics;
-//     using namespace database;
+// //     using namespace basics;
+// //     using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
-//             + "/Database/UnitTests/testDatabaseRandomWalkPerturberTable.sqlite";
+// //     // Set absolute path to test database.
+// //     const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+// //             + "/Database/UnitTests/testDatabaseRandomWalkPerturberTable.sqlite";
 
-//     // Set selected Monte Carlo run.
-//     const unsigned int monteCarloRun = 999999;
+// //     // Set selected Monte Carlo run.
+// //     const unsigned int monteCarloRun = 999999;
 
-//     // Try to retrieve table of random walk perturber data, and catch expected error.
-//     bool isRunTimeErrorThrown = false;
+// //     // Try to retrieve table of random walk perturber data, and catch expected error.
+// //     bool isRunTimeErrorThrown = false;
 
-//     try
-//     {
-//         // Retrieve table of perturbers for random walk.
-//         const RandomWalkPerturberTable randomWalkPerturberTable = getRandomWalkPerturberTable(
-//                     absolutePathToTestDatabase, monteCarloRun );
-//     }
+// //     try
+// //     {
+// //         // Retrieve table of perturbers for random walk.
+// //         const RandomWalkPerturberTable randomWalkPerturberTable = getRandomWalkPerturberTable(
+// //                     absolutePathToTestDatabase, monteCarloRun );
+// //     }
 
-//     catch( std::runtime_error& )
-//     {
-//         isRunTimeErrorThrown = true;
-//     }
+// //     catch( std::runtime_error& )
+// //     {
+// //         isRunTimeErrorThrown = true;
+// //     }
 
-//     // Check that expected run-time error was thrown due to request for non-existent Monte Carlo
-//     // run.
-//     BOOST_CHECK( isRunTimeErrorThrown );
-// }
+// //     // Check that expected run-time error was thrown due to request for non-existent Monte Carlo
+// //     // run.
+// //     BOOST_CHECK( isRunTimeErrorThrown );
+// // }
 
 BOOST_AUTO_TEST_SUITE_END( )
 

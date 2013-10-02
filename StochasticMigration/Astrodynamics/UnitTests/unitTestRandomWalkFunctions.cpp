@@ -3,16 +3,8 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author           Comment
- *      130920   K. Kumar          File created.
- *
- *    References
- *
- *    Notes
- *
  */
+
 
 #define BOOST_TEST_MAIN
 

@@ -13,22 +13,22 @@ for a specified case.
 ###################################################################################################
 
 # Set absolute path to SQLite database with simulation data.
-databasePath    =
+databasePath    = "/Users/kartikkumar/Desktop/testDatabase.sqlite"
 
 # Set case name.
-caseName        =
+caseName        = "test_case"
 
 # Set absolute path to output directory.
-outputPath      =
+outputPath      = "/Users/kartikkumar/Desktop"
 
 # Set cut-off for big kicks included in plots.
-bigKicksCutOff  =
+bigKicksCutOff  = 100
 
 # Show figures in interactive matplotlib window?
-isShowFigures   =
+isShowFigures   = 0
 
 # Set figure dpi.
-figureDPI       =
+figureDPI       = 300
 
 ###################################################################################################
 
@@ -101,14 +101,16 @@ with database:
     caseDataColumnNameList = [column_name[0] for column_name in cursor.description]  
 
     # Select all the input data associated with the case ID.
-    cursor.execute("SELECT * FROM test_particle_input WHERE caseId == " + str(caseId) + ";")
+    cursor.execute("SELECT * FROM test_particle_input WHERE testParticleCaseId \
+                    == " + str(caseId) + ";")
     rawInputData = cursor.fetchall()
     inputDataColumnNameList = [column_name[0] for column_name in cursor.description]  
 
     # Select all the output data associated with the case ID.
-    cursor.execute("SELECT * FROM test_particle_kicks WHERE test_particle_kicks.simulationId \
+    cursor.execute("SELECT * FROM test_particle_kicks \
+                    WHERE test_particle_kicks.testParticleSimulationId \
                     IN (SELECT simulationId FROM test_particle_input \
-                        WHERE caseId == " + str(caseId) + ");")
+                        WHERE testParticleCaseId == " + str(caseId) + ");")
     rawOutputData = cursor.fetchall()
     outputDataColumnNameList = [column_name[0] for column_name in cursor.description]
     
@@ -211,11 +213,11 @@ simulationIdMapping = dict(zip(inputData['simulationId'], range(len(inputData)))
 # Store initial semi-major axes based on simulation ID mapping.
 plottingData['initialSemiMajorAxis'] \
     = (numpy.array([inputData['semiMajorAxis'][simulationIdMapping[key]] \
-                   for key in outputData['simulationId']])
+                   for key in outputData['testParticleSimulationId']])
        - caseData['perturbedBodySemiMajorAxisAtT0']) * constants.meterInKilometers
 
 # Store simulation numbers.
-plottingData['simulationId'] = outputData['simulationId']
+plottingData['simulationId'] = outputData['testParticleSimulationId']
 
 # Sort plotting data in descending order based on semi-major axis kick (magnitude).
 semiMajorAxisKickSortedData = plottingData[numpy.argsort(plottingData, \

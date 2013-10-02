@@ -3,17 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120709    K. Kumar          File created.
- *      130710    K. Kumar          Updated struct name and contents.
- *      130919    K. Kumar          Added missing include guard.
- *
- *    References
- *
- *    Notes
- *      The PropagationDataPoint data struct needs to be unit tested.
  */
 
 #ifndef STOCHASTIC_MIGRATION_PROPAGATION_DATA_POINT_H
@@ -69,7 +58,6 @@ struct PropagationDataPoint
 
     //! Perturbed body state in Keplerian elements.
     tudat::basic_mathematics::Vector6d perturbedBodyStateInKeplerianElements;
-
 };
 
 //! Typedef for shared-pointer to PropagationDataPoint object.
@@ -102,3 +90,7 @@ inline bool compareMutualDistances( const PropagationDataPoint& propagationDataP
 } // namespace stochastic_migration
 
 #endif // STOCHASTIC_MIGRATION_PROPAGATION_DATA_POINT_H
+
+/*    
+ * The PropagationDataPoint data struct needs to be unit tested.
+ */

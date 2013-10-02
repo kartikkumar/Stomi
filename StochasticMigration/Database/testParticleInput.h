@@ -3,29 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120402    K. Kumar          File created from old caseSimulationDataRow.h.
- *      120515    K. Kumar          Renamed file to rowData.h; renamed struct to rowData.
- *      130212    K. Kumar          Added Doxygen comments and a note. Added planetary_rings
- *                                  namespace.
- *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration";
- *                                  renamed file.
- *      130309    K. Kumar          Moved all existing operator overloads to non-member functions
- *                                  and added new ones, including for pointer comparisons; added
- *                                  shared-pointer definition.
- *      130328    K. Kumar          Moved standard operator overload functions to Assist.
- *      130329    K. Kumar          Updated typedef for test particle kick table to boost ptr_set.
- *      130705    K. Kumar          Added caseId variable.
- *
- *    References
- *      sbi. C++ Operator Overloading, Stack Overflow,
- *          http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
- *          9th March, 2013.
- *
- *    Notes
- *
  */
 
 #ifndef STOCHASTIC_MIGRATION_TEST_PARTICLE_INPUT_H
@@ -62,15 +39,15 @@ public:
     //! Default constructor, initializing class members.
     TestParticleInput(
             const int aSimulationId,
-            const int aCaseId,
+            const int aTestParticleCaseId,
             const bool aCompletedFlag,
             const tudat::basic_mathematics::Vector6d& anInitialStateInKeplerianElements );
 
     //! Simulation ID.
     const int simulationId;
 
-    //! Case ID.
-    const int caseId;
+    //! Test particle case ID.
+    const int testParticleCaseId;
 
     //! Flag indicating if simulation has been completed/executed already.
     const bool isCompleted;
@@ -105,3 +82,11 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleInput& t
 } // namespace stochastic_migration
 
 #endif // STOCHASTIC_MIGRATION_TEST_PARTICLE_INPUT_H
+
+/*
+ *    References
+ *      sbi. C++ Operator Overloading, Stack Overflow,
+ *          http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
+ *          9th March, 2013.
+ */
+ 

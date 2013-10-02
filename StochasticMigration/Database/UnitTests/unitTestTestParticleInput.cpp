@@ -3,20 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130310    K. Kumar          File created.
- *      130328    K. Kumar          Updated unit tests to use boiler plate operator overload 
- *                                  functions in Assist.
- *      130329    K. Kumar          Added test to check that test particle input table is sorted
- *                                  correctly.
- *      130706    K. Kumar          Added test for caseId variable.
- *
- *    References
- *
- *    Notes
- *
  */
 
 #define BOOST_TEST_MAIN
@@ -56,7 +42,7 @@ public:
     //! Constructor initializing valid parameters.
     TestParticleInputFixture( )
         : simulationId( 1 ),
-          caseId( 1 ),
+          testParticleCaseId( 1 ),
           isCompleted( true ),
           initialStateInKeplerianElements(
               ( Eigen::VectorXd( 6 ) << 1234.5, 0.55, 0.975, 1.234, 4.567, 3.456 ).finished( ) )
@@ -65,8 +51,8 @@ public:
     //! Simulation number.
     int simulationId;
 
-    //! Case ID.
-    int caseId;
+    //! Test particle case ID.
+    int testParticleCaseId;
 
     //! Flag indicating if simulation has been completed/executed already.
     bool isCompleted;
@@ -78,7 +64,8 @@ public:
     database::TestParticleInputPointer getTestParticleInput( )
     {
         return boost::make_shared< database::TestParticleInput >(
-                    simulationId, caseId, isCompleted, initialStateInKeplerianElements );
+                    simulationId, testParticleCaseId, 
+                    isCompleted, initialStateInKeplerianElements );
     }
 
 protected:
@@ -103,7 +90,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputStructContruction )
 
     // Check that the test particle input created contains all the data as required.
     BOOST_CHECK_EQUAL( testParticleInput->simulationId, simulationId );
-    BOOST_CHECK_EQUAL( testParticleInput->caseId, caseId );
+    BOOST_CHECK_EQUAL( testParticleInput->testParticleCaseId, testParticleCaseId );
     BOOST_CHECK_EQUAL( testParticleInput->isCompleted, isCompleted );
 
     {
@@ -134,14 +121,14 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputNonPositiveSimulationIdError )
     BOOST_CHECK( isError );
 }
 
-//! Test initialization of test particle input with non-positive case ID.
-BOOST_AUTO_TEST_CASE( testTestParticleInputNonPositiveCaseIdError )
+//! Test initialization of test particle input with non-positive test particle case ID.
+BOOST_AUTO_TEST_CASE( testTestParticleInputNonPositiveTestParticleCaseIdError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set case ID to invalid (non-positive) number.
-    caseId = -1;
+    // Set test particle case ID to invalid (non-positive) number.
+    testParticleCaseId = -1;
 
     // Try to create test particle input.
     try { database::TestParticleInputPointer testParticleInput = getTestParticleInput( ); }

@@ -3,17 +3,8 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130709    K. Kumar          File created.
- *      130710    K. Kumar          Updated struct name and contents.
- *
- *    References
- *
- *    Notes
- *
  */
+
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/unitConversions.h>

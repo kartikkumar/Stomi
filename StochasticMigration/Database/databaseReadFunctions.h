@@ -3,22 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120402    K. Kumar          File created from old mabSimulationDatabaseFunctions.h.
- *      130212    K. Kumar          Added planetary_rings namespace; updated Doxygen documentation.
- *      130214    K. Kumar          Split file to contain only read-functions (write-functions
- *                                  ported to new file).
- *      130217    K. Kumar          Updated "mab simulations" references to "stochastic migration".
- *      130918    K. Kumar          Uncommented and update function to get kick table.
- *
- *    References
- *      SQLite C Interface. Result codes, http://www.sqlite.org/c3ref/c_abort.html, last accessed:
- *          17th Feb, 2013.
- *
- *    Notes
- *
  */
 
 #ifndef STOCHASTIC_MIGRATION_DATABASE_READ_FUNCTIONS_H
@@ -135,3 +119,9 @@ TestParticleKickTable getTestParticleKickTable(
 } // namespace stochastic_migration
 
 #endif // STOCHASTIC_MIGRATION_DATABASE_READ_FUNCTIONS_H
+
+/*
+ *    References
+ *      SQLite C Interface. Result codes, http://www.sqlite.org/c3ref/c_abort.html, last accessed:
+ *          17th Feb, 2013.
+ */

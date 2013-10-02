@@ -3,26 +3,12 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      130714    K. Kumar          File created.
- *      130715    K. Kumar          Added missing Doxygen documentation, changed naming from
- *                                  kilometers to meters.
- *      130919    K. Kumar          Added missing include guard.
- *
- *    References
- *
- *    Notes
- *      The ConvertHillRadiiToMeters needs to be unit tested.
- *      Should be migrated to the Assist project.
- *
  */
+
 
 #ifndef STOCHASTIC_MIGRATION_HILL_SPHERE_H
 #define STOCHASTIC_MIGRATION_HILL_SPHERE_H
 
-#include <iostream>
 #include <cmath>
 
 namespace stochastic_migration
@@ -77,3 +63,7 @@ private:
 } // namespace stochastic_migration
 
 #endif // STOCHASTIC_MIGRATION_HILL_SPHERE_H
+
+/*
+ *    The ConvertHillRadiiToMeters needs to be unit tested. Should be migrated to Assist.
+ */

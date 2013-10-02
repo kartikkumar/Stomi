@@ -1,4 +1,3 @@
- #
  #    Copyright (c) 2010-2013, Delft University of Technology
  #    All rights reserved.
  #    See LICENSE for license details 
@@ -28,7 +27,6 @@
  #
  #      FindEigen3.cmake states that redistribution and use is allowed according to the terms of
  #      the 2-clause BSD license.
- #
 
 macro(_tudat_core_check_version)
 	MESSAGE( STATUS "Checking for TudatCore in:         " ${TUDAT_CORE_BASE_PATH} )
