@@ -592,7 +592,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             ostringstream numberOfCaseRowsError;
             numberOfCaseRowsError << "Error: Table '" << testParticleCaseTableName << "' contains "
                                   << numberOfCaseRows << " rows for case '" << caseName << "'!";
-            runtime_error( numberOfCaseRowsError.str( ).c_str( ) );
+            throw runtime_error( numberOfCaseRowsError.str( ).c_str( ) );
         }
     }
 
@@ -829,7 +829,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Close database.
 
-    // Database will be automatically closed after this statement 
+    // Database will be automatically closed after the application is terminated. 
     // (when object goes out of scope its destructor will be called).
     cout << "SQLite database file '" << database.getFilename( ).c_str( ) 
          << "' closed successfully ..." << endl;

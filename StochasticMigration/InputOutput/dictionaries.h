@@ -22,6 +22,13 @@ namespace input_output
  */
 tudat::input_output::dictionary::DictionaryPointer getTestParticleDatabaseGeneratorDictionary( );
 
+//! Get dictionary for random walk database generator application.
+/*!
+ * Returns standard dictionary for random walk database generator application.
+ * \return Shared-pointer to new dictionary for random walk database generator application.
+ */
+tudat::input_output::dictionary::DictionaryPointer getRandomWalkDatabaseGeneratorDictionary( );
+
 //! Get dictionary for testParticleSimulator application.
 /*!
  * Returns standard dictionary for TestParticleSimulator application.

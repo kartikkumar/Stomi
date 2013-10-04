@@ -65,16 +65,47 @@ DictionaryPointer getTestParticleDatabaseGeneratorDictionary( )
     addEntry( dictionary, "INITIALSTEPSIZE",                       0, 0, list_of( "STEPSIZE0" ) );
     addEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE",      0, 0, list_of( "RELTOL" ) );
     addEntry( dictionary, "RUNGEKUTTAABSOLUTEERRORTOLERANCE",      0, 0, list_of( "ABSTOL" ) );
-    addEntry( dictionary, "TESTPARTICLECASETABLENAME",             0, 0, list_of( "TPCASE" ) );
-    addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            0, 0, list_of( "TPINPUT" ) );
-    addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             0, 0, list_of( "TPKICK" ) );
+    addEntry( dictionary, "TESTPARTICLECASETABLENAME",             
+                0, 0, list_of( "TPCASETABLE" ) );
+    addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            
+                0, 0, list_of( "TPINPUTTABLE" ) );
+    addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             
+                0, 0, list_of( "TPKICKTABLE" ) );
 
     return dictionary;
 }
 
-    // addEntry( dictionary, "RANDOMWALKMONTECARLORUNTABLENAME",      0, 0, list_of( "RWMC" ) );
-    // addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          0, 0, list_of( "RWPERTURB" ) );
-    // addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             0, 0, list_of( "RWOUTPUT" ) );
+//! Get dictionary for random walk database generator application.
+tudat::input_output::dictionary::DictionaryPointer getRandomWalkDatabaseGeneratorDictionary( )
+{
+    DictionaryPointer dictionary = make_shared< Dictionary >( );
+
+    // Add required parameters.
+    addEntry( dictionary, "DATABASEPATH",                          1, 0, 
+                list_of( "DATABASE" )( "DB" ) );    
+    addEntry( dictionary, "CASE",                                  1, 0 );
+    addEntry( dictionary, "TESTPARTICLECASE",                      1, 0, list_of( "TPCASE" ) );
+    addEntry( dictionary, "MONTECARLOPOPULATION",                  1, 0, list_of( "MCPOP" ) );
+    addEntry( dictionary, "PERTURBERDENSITY",                      1, 0, 
+                list_of( "RHOPERTURBER" ) );    
+    addEntry( dictionary, "PERTURBERRINGMASS",                     1, 0, 
+                list_of( "MPERTURBERRING" ) );
+    addEntry( dictionary, "OBSERVATIONPERIOD",                     1, 0, list_of( "POBS" ) );
+    addEntry( dictionary, "EPOCHWINDOWSIZE",                       1, 0, list_of( "EPOCHSIZE" ) );
+    addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",                  1, 0, list_of( "NUMEPOCHS" ) ); 
+
+    // Add optional parameters.
+    addEntry( dictionary, "RANDOMWALKCASETABLENAME",               
+                0, 0, list_of( "RWCASETABLE" ) );
+    addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          
+                0, 0, list_of( "RWPERTURBTABLE" ) );
+    addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             
+                0, 0, list_of( "RWOUTPUTTABLE" ) );
+    addEntry( dictionary, "TESTPARTICLECASETABLENAME",             
+                0, 0, list_of( "TPCASETABLE" ) );    
+
+    return dictionary;
+}
 
 //! Get dictionary for testParticleSimulator application.
 DictionaryPointer getTestParticleSimulatorDictionary( )

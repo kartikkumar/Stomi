@@ -182,6 +182,6 @@ SMALIMIT            :
 # The following parameters can be used to change the default names for the database tables.
 # All the test particle data is stored in an SQLite database, with these table names.
 # In general, it should not be necessary to change these table names.
-# TPCASE              : test_particle_case
-# TPINPUT             : test_particle_input
-# TPKICk              : test_particle_kick
+# TPCASETABLE         : test_particle_case
+# TPINPUTTABLE        : test_particle_input
+# TPKICKTABLE         : test_particle_kick

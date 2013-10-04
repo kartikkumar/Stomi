@@ -3,8 +3,8 @@
 #    All rights reserved.
 #    See http://bit.ly/12SHPLR for license details.
 #
-#    This is an example input file for the Random Walk Simulator application provided with the 
-#    Stochastic Migration project. 
+#    This is an example input file for the Test Particle Database Generator application provided  
+#    with the Stochastic Migration project. 
 #
 #    All lines preceded by the '#' character are interpreted as comments.
 #    Each line must contain only a single parameter/value pair, separated by a ':' character.
@@ -14,23 +14,31 @@
 #
 # REQUIRED PARAMETERS
 #
-# These parameters must be specified for the application to be executed.
+# These parameters must be specified for the to be executed.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Set the name for the case.
-# The value of this parameter is interpreted as a string. This case must already exist in the 
-# database. To populate a new case, use the Database Generator application.
-CASE                : 
+# The value of this parameter is interpreted as a string.
 
 # Set the absolute path to the database.
-# The database must already exist. It can be created and populated using the Database Generator
-# application.
-DB                  : 
+# If the file doesn't exist, it will be created.
+DB                  : /Users/kartikkumar/Desktop/testDatabase.sqlite
+
+# Set the name for the case.
+# The value of this parameter is interpreted as a string.
+CASE                : circular_equatorial_nominal
+
+# Set the name for the test particle case.
+# The value of this parameter is interpreted as a string. 
+# This parameter refers to a case registered in database table containing test particle cases.
+# The case specified by this parameter is used to obtain the kick data used for the random walk
+# simulator.
+TPCASE              : test_case
 
 # Set the size of the Monte Carlo population.
 # This parameter sets the number of Monte Carlo trials to execute.
-MCPOP               : 
+MCPOP               : 1000
 
 # Set the perturber density.
 # This parameter sets the density of perturbers in the vicinity of the perturbed body. The
@@ -43,7 +51,7 @@ MCPOP               :
 # number of available test particle simulations for the specified case. The available test
 # particle simulations are fetched from the input table in the SQLite database.
 # UNIT              : # of perturbers per R_Hill
-RHOPERTURBER        : 
+RHOPERTURBER        : 1.0
 
 # Set the perturber ring mass.
 # This parameter sets the total perturber ring mass in the vicinity of the perturbed body. This 
@@ -51,24 +59,24 @@ RHOPERTURBER        :
 # being distributed based on the the density specified by RHOPERTURBER. The total perturber ring
 # mass is expressed in terms of the perturbed body's mass.
 # UNIT              : M_PERTURBED
-MPERTURBERRING      :
+MPERTURBERRING      : 1.0
 
 # Set the observation period.
 # This parameter sets the length of the observation period for the metrics used to track the 
 # random walk of the perturbed body. This should correspond to any real observations made.
 # UNIT              : yrs
-POBS                :
+POBS                : 3.0
 
 # Set the number of epochs.
 # This parameter sets the number of epochs at which the observation metrics are given within the
 # observation period. These epochs are equally spaced in time, within the observation period.
-NUMEPOCHS           :
+NUMEPOCHS           : 4
 
 # Set the epoch window size.
 # This parameter sets the size of the window about a given epoch within the observation period, 
 # used to average the variation of the perturbed body's orbital elements. 
 # UNIT              : days
-EPOCHSIZE           :
+EPOCHSIZE           : 90.0
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -80,35 +88,13 @@ EPOCHSIZE           :
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# Set the number of parallel threads to run the application on.
-# This parameters sets the number of parallel threads to spawn using OpenMP, to run the 
-# application. The random walk simulations are parallelized over the number of threads specified.
-# By default, the application runs on a single thread.
-# THREADS             : 1
-
-# Set the output mode for the simulations.
-# This parameter sets whether the output should be stored in the database or written to file.
-# By default, output is written to the database. To switch this to file, simply pass the parameter
-# as "file" (without quotation marks).
-# OUTPUT              : database
-
-# Set the file output directory.
-# This parameter should only be set in case the OUTPUT parameter is set to "file". The parameter 
-# will be ignored if OUTPUT is set to "database".
-# With this parameter, the absolute path to the output directory can be specified, where the output  
-# files generated are stored.
-# The default directory for the output files is the root directory of the Stochastic Migration
-# project.
-# FILEOUTPUTDIR       : rootdir
 
 # Set the database table names.
-# The following parameters can be used to override the default names for the test particle tables
-# in the database. For descriptions of these tables, take a look at the 
-# "exampleDatabaseGeneratorSettings.in" input file. Uncomment any of these parameters to override
-# the default table names.
-# TPCASE              : test_particle_case
-# TPINPUT             : test_particle_input
-# TPKICk              : test_particle_kick
-# RWMC                : random_walk_monte_carlo_runs
-# RWPERTURB           : random_walk_perturbers
-# RWOUTPUT            : random_walk_output
+# The following parameters can be used to override the default names for the tables in the 
+# database. For descriptions of these tables, take a look at the 
+# "exampleRandomWalkDatabaseGeneratorSettings.in" input file. Uncomment any of these parameters to 
+# override the default table names.
+# RWCASETABLE         : random_walk_case
+# RWPERTURBTABLE      : random_walk_perturbers
+# RWOUTPUTTABLE       : random_walk_output
+# TPCASETABLE         : test_particle_case
