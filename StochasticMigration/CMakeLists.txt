@@ -304,7 +304,8 @@ add_executable(randomWalkDatabaseGenerator
                "${SRCROOT}/Applications/randomWalkDatabaseGenerator.cpp")
 setup_executable_target(randomWalkDatabaseGenerator "${SRCROOT}")
 target_link_libraries(randomWalkDatabaseGenerator 
-                      stochastic_migration_input_output# stochastic_migration_astrodynamics  
+                      stochastic_migration_astrodynamics stochastic_migration_database 
+                      stochastic_migration_input_output   
                       assist_input_output assist_astrodynamics#  assist_mathematics  
                       tudat_input_output# tudat_basic_astrodynamics 
                       ${TUDAT_CORE_LIBRARIES} 

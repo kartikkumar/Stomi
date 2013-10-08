@@ -97,12 +97,18 @@ tudat::input_output::dictionary::DictionaryPointer getRandomWalkDatabaseGenerato
     // Add optional parameters.
     addEntry( dictionary, "RANDOMWALKCASETABLENAME",               
                 0, 0, list_of( "RWCASETABLE" ) );
+    addEntry( dictionary, "RANDOMWALKINPUTTABLENAME",               
+                0, 0, list_of( "RWINPUTTABLE" ) );
+    addEntry( dictionary, "RANDOMWALKWINDOWSTABLENAME",               
+                0, 0, list_of( "RWWINDOWSTABLE" ) );
     addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          
                 0, 0, list_of( "RWPERTURBTABLE" ) );
     addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             
                 0, 0, list_of( "RWOUTPUTTABLE" ) );
     addEntry( dictionary, "TESTPARTICLECASETABLENAME",             
-                0, 0, list_of( "TPCASETABLE" ) );    
+                0, 0, list_of( "TPCASETABLE" ) );  
+    addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            
+                0, 0, list_of( "TPINPUTTABLE" ) );                  
 
     return dictionary;
 }
