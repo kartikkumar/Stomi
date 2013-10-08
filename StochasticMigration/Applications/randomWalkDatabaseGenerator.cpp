@@ -188,7 +188,13 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 findEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME" ),
                 "random_walk_perturbers" );
     cout << "Random walk perturber table                               "
-         << randomWalkPerturberTableName << endl;              
+         << randomWalkPerturberTableName << endl;  
+
+    const string randomWalkOutputTableName = extractParameterValue< string >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME" ), "random_walk_output" );
+    cout << "Random walk output table                                  "
+         << randomWalkOutputTableName << endl;                     
 
     const string testParticleCaseTableName = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
@@ -201,12 +207,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 findEntry( dictionary, "TESTPARTICLEINPUTTABLENAME" ), "test_particle_input" );
     cout << "Test particle input table                                 "
          << testParticleInputTableName << endl;                
-
-    // const string randomWalkOutputTableName = extractParameterValue< string >(
-    //             parsedData->begin( ), parsedData->end( ),
-    //             findEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME" ), "random_walk_output" );
-    // cout << "Random walk output table                                  "
-    //      << randomWalkOutputTableName << endl;
 
     // Check that all required parameters have been set.
     checkRequiredParameters( dictionary );
@@ -559,8 +559,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     }
 
     // Populate table.
+    // Table containing list of perturbers is populated simultaneously.
     cout << "Populating input table with " << monteCarloPopulation 
          << " new Monte Carlo simulations ... " << endl;
+    cout << "Populating perturber table with " << monteCarloPopulation 
+         << " new data for Monte Carlo simulations ... " << endl;         
 
     // Set up database transaction.
     Transaction randomWalkInputTableTransaction( database );
@@ -673,50 +676,52 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     ///////////////////////////////////////////////////////////////////////////
 
-//     ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
-//     // Set up random walk output table.
-//     if ( !database.tableExists( randomWalkOutputTableName.c_str( ) ) )
-//     {
-//         cout << "Table '" << randomWalkOutputTableName << "' does not exist ..." << endl;
-//         cout << "Creating table ... " << endl;
+    // Set up random walk output table.
+    if ( !database.tableExists( randomWalkOutputTableName.c_str( ) ) )
+    {
+        cout << "Table '" << randomWalkOutputTableName << "' does not exist ..." << endl;
+        cout << "Creating table ... " << endl;
 
-//         // Create table.
-//         ostringstream randomWalkOutputTableCreate;
-//         randomWalkOutputTableCreate
-//             << "CREATE TABLE IF NOT EXISTS " << randomWalkOutputTableName << " ("
-//             << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-//             << "\"monteCarloRunId\" INTEGER NOT NULL,"
-//             << "\"maximumEccentricityChange\" REAL NOT NULL,"
-//             << "\"maximumLongitudeResidualChange\" REAL NOT NULL,"
-//             << "\"maximumInclinationChange\" REAL NOT NULL);";
+        // Create table.
+        ostringstream randomWalkOutputTableCreate;
+        randomWalkOutputTableCreate
+            << "CREATE TABLE IF NOT EXISTS " << randomWalkOutputTableName << " ("
+            << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"monteCarloRunId\" INTEGER NOT NULL,"
+            << "\"maximumEccentricityChange\" REAL NOT NULL,"
+            << "\"averageEccentricityChange\" REAL NOT NULL,"
+            << "\"maximumLongitudeResidualChange\" REAL NOT NULL,"
+            << "\"averageLongitudeResidualChange\" REAL NOT NULL,"
+            << "\"maximumInclinationChange\" REAL NOT NULL,"
+            << "\"averageInclinationChange\" REAL NOT NULL);";
 
-//         // Execute command to create table.
-//         database.exec( randomWalkOutputTableCreate.str( ).c_str( ) );
+        // Execute command to create table.
+        database.exec( randomWalkOutputTableCreate.str( ).c_str( ) );
 
-//         // Check that the table was created successfully.
-//         if ( database.tableExists( randomWalkOutputTableName.c_str( ) ) )
-//         {
-//             cout << "Table '" << randomWalkOutputTableName 
-//                       << "' successfully created!" << endl; 
-//         }
+        // Check that the table was created successfully.
+        if ( database.tableExists( randomWalkOutputTableName.c_str( ) ) )
+        {
+            cout << "Table '" << randomWalkOutputTableName << "' successfully created!" << endl; 
+        }
 
-//         else
-//         {
-//             ostringstream tableCreateError;
-//             tableCreateError << "Error: Creating table '" << randomWalkOutputTableName 
-//             << "'' failed!";
-//             throw runtime_error( tableCreateError.str( ).c_str( ) );
-//         }
-//     }
+        else
+        {
+            ostringstream tableCreateError;
+            tableCreateError << "Error: Creating table '" << randomWalkOutputTableName
+                             << "'' failed!";
+            throw runtime_error( tableCreateError.str( ).c_str( ) );
+        }
+    }
 
-//     else
-//     {
-//         cout << "Table '" << randomWalkOutputTableName 
-//                   << "' already exists ... skipping creating table ..." << endl;
-//     }
+    else
+    {
+        cout << "Table '" << randomWalkOutputTableName 
+             << "' already exists ... skipping creating table ..." << endl;
+    }
 
-//     ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////
 
