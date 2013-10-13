@@ -95,20 +95,20 @@ tudat::input_output::dictionary::DictionaryPointer getRandomWalkDatabaseGenerato
     addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",                  1, 0, list_of( "NUMEPOCHS" ) ); 
 
     // Add optional parameters.
-    addEntry( dictionary, "RANDOMWALKCASETABLENAME",               
-                0, 0, list_of( "RWCASETABLE" ) );
-    addEntry( dictionary, "RANDOMWALKINPUTTABLENAME",               
-                0, 0, list_of( "RWINPUTTABLE" ) );
-    addEntry( dictionary, "RANDOMWALKWINDOWSTABLENAME",               
-                0, 0, list_of( "RWWINDOWSTABLE" ) );
-    addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          
-                0, 0, list_of( "RWPERTURBTABLE" ) );
-    addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             
-                0, 0, list_of( "RWOUTPUTTABLE" ) );
-    addEntry( dictionary, "TESTPARTICLECASETABLENAME",             
-                0, 0, list_of( "TPCASETABLE" ) );  
-    addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            
-                0, 0, list_of( "TPINPUTTABLE" ) );                  
+    addEntry( dictionary, "RANDOMWALKCASETABLENAME",               0, 0, 
+                list_of( "RWCASETABLE" ) );
+    addEntry( dictionary, "RANDOMWALKINPUTTABLENAME",              0, 0, 
+                list_of( "RWINPUTTABLE" ) );
+    addEntry( dictionary, "RANDOMWALKWINDOWSTABLENAME",            0, 0, 
+                list_of( "RWWINDOWSTABLE" ) );
+    addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          0, 0, 
+                list_of( "RWPERTURBTABLE" ) );
+    addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             0, 0, 
+                list_of( "RWOUTPUTTABLE" ) );
+    addEntry( dictionary, "TESTPARTICLECASETABLENAME",             0, 0, 
+                list_of( "TPCASETABLE" ) );  
+    addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            0, 0, 
+                list_of( "TPINPUTTABLE" ) );                  
 
     return dictionary;
 }
@@ -174,24 +174,31 @@ DictionaryPointer getRandomWalkSimulatorDictionary( )
     addEntry( dictionary, "DATABASE",                              1, 0, list_of( "DB" ) );
 
     // Add optional parameters.
-    addEntry( dictionary, "MONTECARLOPOPULATION",                  0, 0, list_of( "MCPOP" ) );
-    addEntry( dictionary, "PERTURBERDENSITY",                      0, 0, 
-                list_of( "RHOPERTURBER" ) );    
-    addEntry( dictionary, "PERTURBERRINGMASS",                     0, 0, 
-                list_of( "MPERTURBERRING" ) );        
-    addEntry( dictionary, "OBSERVATIONPERIOD",                     0, 0, list_of( "POBS" ) );
-    addEntry( dictionary, "EPOCHWINDOWSIZE",                       0, 0, list_of( "EPOCHSIZE" ) );
-    addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",                  0, 0, list_of( "NUMEPOCHS" ) );    
     addEntry( dictionary, "NUMBEROFTHREADS",                       0, 0, list_of( "THREADS" ) );
-    addEntry( dictionary, "OUTPUTMODE",                            0, 0, list_of( "OUTPUT" ) );
+    addEntry( dictionary, "OUTPUTMODE",                            0, 0, list_of( "OUTPUT" ) );   
     addEntry( dictionary, "FILEOUTPUTDIRECTORY",                   0, 0, 
-                list_of( "FILEOUTPUTDIR" ) );
+            list_of( "FILEOUTPUTDIR" ) ); 
+    addEntry( dictionary, "RANDOMWALKCASETABLENAME",               0, 0, 
+                list_of( "RWCASETABLE" ) );
+    addEntry( dictionary, "RANDOMWALKINPUTTABLENAME",              0, 0, 
+                list_of( "RWINPUTTABLE" ) );
+    addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          0, 0, 
+                list_of( "RWPERTURBERTABLE" ) );    
+    addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             0, 0, 
+                list_of( "RWOUTPUTTABLE" ) );        
     addEntry( dictionary, "TESTPARTICLECASETABLENAME",             0, 0, list_of( "TPCASE" ) );
-    addEntry( dictionary, "TESTPARTICLEINPUTTABLENAME",            0, 0, list_of( "TPINPUT" ) );
     addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             0, 0, list_of( "TPKICK" ) );
-    addEntry( dictionary, "RANDOMWALKMONTECARLORUNTABLENAME",      0, 0, list_of( "RWMC" ) );
-    addEntry( dictionary, "RANDOMWALKPERTURBERTABLENAME",          0, 0, list_of( "RWPERTURB" ) );
-    addEntry( dictionary, "RANDOMWALKOUTPUTTABLENAME",             0, 0, list_of( "RWOUTPUT" ) );    
+
+
+    // addEntry( dictionary, "MONTECARLOPOPULATION",                  0, 0, list_of( "MCPOP" ) );
+    // addEntry( dictionary, "PERTURBERDENSITY",                      0, 0, 
+    //             list_of( "RHOPERTURBER" ) );    
+    // addEntry( dictionary, "PERTURBERRINGMASS",                     0, 0, 
+    //             list_of( "MPERTURBERRING" ) );        
+    // addEntry( dictionary, "OBSERVATIONPERIOD",                     0, 0, list_of( "POBS" ) );
+    // addEntry( dictionary, "EPOCHWINDOWSIZE",                       0, 0, list_of( "EPOCHSIZE" ) );
+    // addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",                  0, 0, list_of( "NUMEPOCHS" ) );    
+
 
     return dictionary;
 }

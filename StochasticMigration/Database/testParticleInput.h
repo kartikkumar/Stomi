@@ -49,7 +49,7 @@ public:
     //! Test particle case ID.
     const int testParticleCaseId;
 
-    //! Flag indicating if simulation has been completed/executed already.
+    //! Flag indicating if simulation has been completed/executed and stored in database.
     const bool isCompleted;
 
     //! Initial state of test particle in Keplerian elements.

@@ -7,9 +7,9 @@
 set(DATABASE_SOURCES
   "${SRCROOT}${DATABASEDIR}/databaseReadFunctions.cpp"
   "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.cpp"
-#  "${SRCROOT}${DATABASEDIR}/randomWalkMonteCarloRun.cpp"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.cpp"
   "${SRCROOT}${DATABASEDIR}/randomWalkCase.cpp"
+  "${SRCROOT}${DATABASEDIR}/randomWalkInput.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleInput.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleKick.cpp"
@@ -19,9 +19,9 @@ set(DATABASE_SOURCES
 set(DATABASE_HEADERS
   "${SRCROOT}${DATABASEDIR}/databaseReadFunctions.h"
   "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.h"
-#  "${SRCROOT}${DATABASEDIR}/randomWalkMonteCarloRun.h"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.h"
   "${SRCROOT}${DATABASEDIR}/randomWalkCase.h"
+  "${SRCROOT}${DATABASEDIR}/randomWalkInput.h"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.h"
   "${SRCROOT}${DATABASEDIR}/testParticleInput.h"
   "${SRCROOT}${DATABASEDIR}/testParticleKick.h"

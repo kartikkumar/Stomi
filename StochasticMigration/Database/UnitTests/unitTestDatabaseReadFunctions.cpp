@@ -493,6 +493,99 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunctionExtraRow )
     BOOST_CHECK( isExtraRowPresent );
 }
 
+
+
+
+
+
+
+//! Test implementation of function to get incomplete simulations from random walk input table in
+//! SQLite3 database for a given case ID.
+BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionIncompleteSimulations )
+{
+//     using tudat::input_output::readMatrixFromFile;
+//     using namespace basics;
+//     using namespace database;
+
+//     // Set absolute path to test database.
+//     const std::string absolutePathToTestDatabase
+//             = getStochasticMigrationRootPath( )
+//             + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
+
+//     // Set requested test particle case ID.
+//     const int testParticleCaseId = 1;
+
+//     // Retrieve table of input data for test particle simulations.
+//     const TestParticleInputTable testParticleInputTable
+//             = getCompleteTestParticleInputTable( 
+//                 absolutePathToTestDatabase, testParticleCaseId, "test_particle_input" );
+
+//     // Read in table of test particle input data from test data file.
+//     const Eigen::Matrix< double, 10, 9 > testDataTestParticleInputTable
+//             = readMatrixFromFile( getStochasticMigrationRootPath( )
+//                                   + "/Database/UnitTests/testDataTestParticleInputTable.csv" );
+
+//     // Check that the input data table retrieved matches the test data.
+//     unsigned int i = 0;
+
+//     for ( TestParticleInputTable::iterator iteratorInputTable = testParticleInputTable.begin( );
+//           iteratorInputTable != testParticleInputTable.end( ); iteratorInputTable++ )
+//     {
+//         BOOST_CHECK_EQUAL( iteratorInputTable->simulationId,
+//                            testDataTestParticleInputTable( i, 0 ) );
+//         BOOST_CHECK_EQUAL( iteratorInputTable->testParticleCaseId, testParticleCaseId );
+//         BOOST_CHECK_EQUAL( iteratorInputTable->isCompleted, false );
+
+//         {
+//             TUDAT_CHECK_MATRIX_CLOSE_FRACTION(
+//                         iteratorInputTable->initialStateInKeplerianElements,
+//                         testDataTestParticleInputTable.block( i, 3, 1, 6 ).transpose( ),
+//                         1.0e-14 );
+//         }
+
+//         i++;
+//     }
+}
+
+// //! Test run-time error in case of no fetched test particle input data from SQLite3 database,
+// //! when requesting data for completed simulations.
+// BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNoRows )
+// {
+//     using namespace basics;
+//     using namespace database;
+
+//     // Set absolute path to test database.
+//     const std::string absolutePathToTestDatabase
+//             = getStochasticMigrationRootPath( )
+//             + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
+
+//     // Try to retrieve test particle input data.
+//     bool isNoRowPresent = false;
+
+//     try
+//     {
+//         // Retrieve all input data for test particle simulations that are complete.
+//         const TestParticleInputTable testParticleInputTable
+//                 = getCompleteTestParticleInputTable( 
+//                     absolutePathToTestDatabase, 1, "test_particle_input", true );
+//     }
+
+//     // Catch expected run-time error.
+//     catch( std::runtime_error& )
+//     {
+//         isNoRowPresent = true;
+//     }
+
+//     // Check that the expected run-time error was thrown.
+//     BOOST_CHECK( isNoRowPresent );
+// }
+
+
+
+
+
+
+
 // // //! Test implementation of function to get selected random walk Monte Carlo run data from SQLite3
 // // //! database.
 // // BOOST_AUTO_TEST_CASE( testGetRandomWalkMonteCarloRunTableFunctionSpecificRuns )

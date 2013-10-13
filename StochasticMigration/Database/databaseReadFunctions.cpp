@@ -25,15 +25,16 @@ namespace stochastic_migration
 namespace database
 {
 
+
 //! Get test particle case data.
 TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolutePath, 
-                                             const std::string& caseName,
+                                             const int caseId,
                                              const std::string& testParticleCaseTableName )
 {
     // Set stream with database query.
     std::ostringstream testParticleCaseQuery;
     testParticleCaseQuery << "SELECT * FROM " <<  testParticleCaseTableName 
-                          << " WHERE \"caseName\" = \"" << caseName << "\";";
+                          << " WHERE \"caseId\" = \"" << caseId << "\";";
 
     // Open database in read-only mode.          
     SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY );
@@ -61,10 +62,41 @@ TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolute
     // Throw an error if there are multiple rows present in the table.
     if ( query.executeStep( ) )
     {
-        throw std::runtime_error( "Multiple rows for case in table!" );
+        throw std::runtime_error( "ERROR: Multiple rows for case in table!" );
     }
 
     return testParticleCase;
+}
+
+//! Get test particle case data.
+TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolutePath, 
+                                             const std::string& caseName,
+                                             const std::string& testParticleCaseTableName )
+{
+    // Set stream with database query.
+    std::ostringstream testParticleCaseIdQuery;
+    testParticleCaseIdQuery << "SELECT caseId FROM " << testParticleCaseTableName 
+                            << " WHERE \"caseName\" = \"" << caseName << "\";";
+
+    // Open database in read-only mode.          
+    SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY ); 
+
+    // Set up database query.
+    SQLite::Statement query( database, testParticleCaseIdQuery.str( ).c_str( ));
+
+    // Get row of case data.
+    query.executeStep( );
+
+    const int caseId = query.getColumn( 0 );
+
+    // Throw an error if there are multiple rows present in the table.
+    if ( query.executeStep( ) )
+    {
+        throw std::runtime_error( "ERROR: Multiple rows for case in table!" );
+    }
+    
+    // Get test particle case from database and return data object.
+    return getTestParticleCase( databaseAbsolutePath, caseId, testParticleCaseTableName );   
 }
 
 // //! Get test particle input table.
@@ -107,7 +139,7 @@ TestParticleInputTable getCompleteTestParticleInputTable(
     if ( testParticleInputTable.size( ) == 0 )
     {
         // Throw run-time error.
-        throw std::runtime_error( "Test particle input table is empty!" );
+        throw std::runtime_error( "ERROR: Test particle input table is empty!" );
     }
 
     // Return test particle input table.
@@ -194,7 +226,7 @@ TestParticleKickTable getTestParticleKickTable(
     // Open transaction to query database.
     SQLite::Transaction transaction( database );
 
-        // Set up query statement.
+    // Set up query statement.
     std::ostringstream testParticleKickQuery;
     testParticleKickQuery << "SELECT * FROM " << testParticleKickTableName
                           << " WHERE \"testParticleSimulationId\" == :simulationId"
@@ -241,7 +273,7 @@ TestParticleKickTable getTestParticleKickTable(
         if ( !isSimulationFound )
         {
             std::ostringstream errorMessage;
-            errorMessage << "ERROR Simulation ID " << selectedSimulationIds.at( i ) << " "
+            errorMessage << "ERROR: Simulation ID " << selectedSimulationIds.at( i ) << " "
                          << "was not found in the test particle kicks table!";
             throw std::runtime_error( errorMessage.str( ).c_str( ) );
         }
@@ -285,134 +317,115 @@ RandomWalkCasePointer getRandomWalkCase( const std::string& databaseAbsolutePath
     // Throw an error if there are multiple rows present in the table.
     if ( query.executeStep( ) )
     {
-        throw std::runtime_error( "Multiple rows for case in table!" );
+        throw std::runtime_error( "ERROR: Multiple rows for case in table!" );
     }
 
     return randomWalkCase;    
 }
 
-// //! Get table of random walk Monte Carlo runs.
-// RandomWalkMonteCarloRunTable getRandomWalkMonteCarloRunsTable(
-//         const std::string& databaseAbsolutePath, const std::vector< unsigned int >& monteCarloRuns,
-//         const std::string& randomWalkMonteCarloRunTableName )
-// {
-//     // Initiate database connector.
-//     Sqlite3DatabaseConnectorPointer databaseConnector
-//             = initiateDatabaseConnector( databaseAbsolutePath );
+//! Get complete random walk input table.
+RandomWalkInputTable getCompleteRandomWalkInputTable(
+        const std::string& databaseAbsolutePath, const int caseId,
+        const double randomWalkSimulationPeriod,
+        const std::string& randomWalkInputTableName, 
+        const std::string& randomWalkPerturberTableName,
+        const std::string& testParticleKickTableName, bool isCompleted )
+{
+    // Set stream with input table query.
+    std::ostringstream randomWalkInputQuery;
+    randomWalkInputQuery << "SELECT * FROM " << randomWalkInputTableName
+                         << " WHERE \"randomWalkCaseId\" = " << caseId 
+                         << " AND \"completed\" = " << isCompleted << ";";
 
-//     // Set stream with query.
-//     std::ostringstream randomWalkMonteCarloRunQuery;
-//     randomWalkMonteCarloRunQuery << "SELECT * FROM " << randomWalkMonteCarloRunTableName
-//                                  << " WHERE \"run\" in (" << monteCarloRuns.at( 0 );
+    // Open database in read-only mode.          
+    SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY );
 
-//     for ( unsigned int i = 1; i < monteCarloRuns.size( ); i++ )
-//     {
-//         randomWalkMonteCarloRunQuery << ", " << monteCarloRuns.at( i );
-//     }
+    // Open transaction to query database.
+    SQLite::Transaction transaction( database );
 
-//     randomWalkMonteCarloRunQuery << ");";
+    // Set up database query.
+    SQLite::Statement query( database, randomWalkInputQuery.str( ).c_str( ) );
 
-//     // Copy vector of Monte Carlo runs.
-//     std::vector< unsigned int > monteCarloRunsCopy = monteCarloRuns;
+    // Declare random walk input table.
+    RandomWalkInputTable randomWalkInputTable;
 
-//     // Prepare database query.
-//     databaseConnector->prepare_v2( randomWalkMonteCarloRunQuery.str( ) );
+    // Loop through the table retrieved from the database, step-by-step.
+    while ( query.executeStep( ) )
+    {
+        // Store Monte Carlo run ID.
+        const int monteCarloRunId = query.getColumn( 0 );
 
-//     // Declare random walk Monte Carlo run table.
-//     RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable;
+        // Fetch list of perturbers (given as test particular simulation IDs).
+        const std::vector< int > perturbers = getRandomWalkPerturberList( 
+            databaseAbsolutePath, monteCarloRunId, randomWalkPerturberTableName );
 
-//     // Declare database handler status.
-//     unsigned int databaseStatus = 0;
+        // Fetch test particle kick table based on list of perturbers.
+        const TestParticleKickTable kickTable = getTestParticleKickTable( 
+            databaseAbsolutePath, randomWalkSimulationPeriod, 
+            perturbers, testParticleKickTableName );
 
-//     // Loop through the table retrieved from the database, step-by-step.
-//     while ( ( databaseStatus = databaseConnector->step( ) ) == SQLITE_ROW )
-//     {
-//         // Store Monte Carlo run.
-//         int monteCarloRun = databaseConnector->fetchInteger( 0 );
+        // Store fetched row in random walk input struct.
+        randomWalkInputTable.insert(
+            new RandomWalkInput( query.getColumn( 0 ), query.getColumn( 1 ),
+                                 boost::lexical_cast< bool >( query.getColumn( 2 ) ), 
+                                 query.getColumn( 3 ), perturbers, kickTable ) );
+    }
 
-//         // Store fetched row in random walk Monte Carlo run struct.
-//         randomWalkMonteCarloRunTable.insert(
-//             new RandomWalkMonteCarloRun(
-//                 monteCarloRun, databaseConnector->fetchInteger( 1 ),
-//                 databaseConnector->fetchString( 2 ),  query.getColumn( 3 ),
-//                 query.getColumn( 4 ), query.getColumn( 5 ),
-//                 query.getColumn( 6 ),
-//                 databaseConnector->fetchInteger( 7 ) ) );
+    // Commit database transaction.
+    transaction.commit( );    
 
-//         // Delete the Monte Carlo run number if found in the STL vector.
-//         std::vector< unsigned int >::iterator iteratorMonteCarloRunNumber
-//                 = std::find( monteCarloRunsCopy.begin( ), monteCarloRunsCopy.end( ),
-//                              monteCarloRun );
+    // Check if input table is empty.
+    if ( randomWalkInputTable.size( ) == 0 )
+    {
+        // Throw run-time error.
+        throw std::runtime_error( "ERROR: Random walk input table is empty!" );
+    }
 
-//         if ( iteratorMonteCarloRunNumber != monteCarloRunsCopy.end( ) )
-//         {
-//             monteCarloRunsCopy.erase( iteratorMonteCarloRunNumber );
-//         }
-//     }
+    // Return random walk input table.
+    return randomWalkInputTable;
+}
 
-//     // Check if the end of the table has been reached, and whether all Monte Carlo runs have been
-//     // found.
-//     if ( databaseStatus != SQLITE_DONE
-//          || ( databaseStatus == SQLITE_DONE && monteCarloRunsCopy.size( ) > 0 ) )
-//     {
-//         // Throw run-time error.
-//         throwDatabaseError( databaseConnector, databaseStatus );
-//     }
+//! Get list of selected test particle simulation IDs for random walk Monte Carlo run.
+std::vector< int > getRandomWalkPerturberList(
+        const std::string& databaseAbsolutePath, const unsigned int monteCarloRunId,
+        const std::string& randomWalkPerturberTableName )
+{
+    // Set stream with perturber table query.
+    std::ostringstream randomWalkPerturberQuery;
+    randomWalkPerturberQuery << "SELECT * FROM " << randomWalkPerturberTableName
+                             << " WHERE \"monteCarloRunId\" = " << monteCarloRunId << ";";
 
-//     // Terminate database connector cleanly.
-//     terminateDatabaseConnector( databaseConnector );
+    // Open database in read-only mode.          
+    SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY );
 
-//     // Return random walk Monte Carlo run table.
-//     return randomWalkMonteCarloRunTable;
-// }
+    // Open transaction to query database.
+    SQLite::Transaction transaction( database );
 
-// //! Get table of selected perturbers for random walk Monte Carlo run.
-// RandomWalkPerturberTable getRandomWalkPerturberTable(
-//         const std::string& databaseAbsolutePath, const unsigned int monteCarloRun,
-//         const std::string& randomWalkPerturberTableName )
-// {
-//     // Initiate database connector.
-//     Sqlite3DatabaseConnectorPointer databaseConnector
-//             = initiateDatabaseConnector( databaseAbsolutePath );
+    // Set up database query.
+    SQLite::Statement query( database, randomWalkPerturberQuery.str( ).c_str( ));          
+    
+    // Declare list of perturbers.
+    std::vector< int > perturbers;
 
-//     // Set stream with query.
-//     std::ostringstream randomWalkPerturberTableQuery;
-//     randomWalkPerturberTableQuery << "SELECT * FROM " << randomWalkPerturberTableName
-//                                   << " WHERE \"run\" = " << monteCarloRun << ";";
+    // Loop through the table retrieved from the database, step-by-step.
+    while ( query.executeStep( ) )
+    {
+        perturbers.push_back( query.getColumn( 2 ) );
+    }       
 
-//     // Prepare database query.
-//     databaseConnector->prepare_v2( randomWalkPerturberTableQuery.str( ) );
+    // Commit database transaction.
+    transaction.commit( );   
 
-//     // Declare random walk perturber table.
-//     RandomWalkPerturberTable randomWalkPerturberTable;
+    // Check if list of perturbers is empty.
+    if ( perturbers.size( ) == 0 )
+    {
+        // Throw run-time error.
+        throw std::runtime_error( "ERROR: List of perturbers is empty!" );
+    }                    
 
-//     // Declare database handler status.
-//     unsigned int databaseStatus = 0;
-
-//     // Loop through the table retrieved from the database, step-by-step.
-//     while ( ( databaseStatus = databaseConnector->step( ) ) == SQLITE_ROW )
-//     {
-//         // Store fetched row in random walk perturber struct.
-//         randomWalkPerturberTable.insert(
-//             new RandomWalkPerturber( databaseConnector->fetchInteger( 1 ),
-//                                      databaseConnector->fetchInteger( 2 ),
-//                                      query.getColumn( 3 ) ) );
-//     }
-
-//     // Check if the end of the table has been reached, and whether any perturbers have been found.
-//     if ( databaseStatus != SQLITE_DONE
-//          || ( databaseStatus == SQLITE_DONE && randomWalkPerturberTable.size( ) == 0 ) )
-//     {
-//         // Throw run-time error.
-//         throwDatabaseError( databaseConnector, databaseStatus );
-//     }
-
-//     // Terminate database connector cleanly.
-//     terminateDatabaseConnector( databaseConnector );
-
-//     // Return random walk perturber table for specified Monte Carlo run.
-//     return randomWalkPerturberTable;
-// }
+    // Return perturber list.
+    return perturbers;    
+}
 
 } // namespace database
 } // namespace stochastic_migration

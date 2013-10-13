@@ -38,7 +38,7 @@ TPCASE              : test_case
 
 # Set the size of the Monte Carlo population.
 # This parameter sets the number of Monte Carlo trials to execute.
-MCPOP               : 1000
+MCPOP               : 10
 
 # Set the perturber density.
 # This parameter sets the density of perturbers in the vicinity of the perturbed body. The

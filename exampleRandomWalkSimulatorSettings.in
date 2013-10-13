@@ -26,7 +26,7 @@ CASE                : circular_equatorial_nominal
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator
 # application.
-DB                  : /Users/kartikkumar/Desktop/testDatabase.db
+DB                  : /Users/kartikkumar/Desktop/testDatabase.sqlite
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -37,3 +37,25 @@ DB                  : /Users/kartikkumar/Desktop/testDatabase.db
 # DO NOT uncomment the UNIT lines; they are simply comment lines.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# Set the number of parallel threads to run the application on.
+# This parameters sets the number of parallel threads to spawn using OpenMP, to run the 
+# application. The random walk Monte Carlo simulations are parallelized over the number of threads 
+# specified.
+# By default, the application runs on a single thread.
+# THREADS             : 1
+
+# Set the output mode for the simulations.
+# This parameter sets whether the output should be stored in the database or written to file.
+# By default, output is written to the database. To switch this to file, simply pass the parameter
+# as "file" (without quotation marks).
+OUTPUT              : file
+
+# Set the file output directory.
+# This parameter should only be set in case the OUTPUT parameter is set to "file". The parameter 
+# will be ignored if OUTPUT is set to "database".
+# With this parameter, the absolute path to the output directory can be specified, where the output  
+# files generated are stored.
+# The default directory for the output files is the root directory of the Stochastic Migration
+# project.
+FILEOUTPUTDIR       : /Users/kartikkumar/Desktop/results

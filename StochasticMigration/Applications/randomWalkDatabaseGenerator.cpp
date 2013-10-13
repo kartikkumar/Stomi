@@ -516,6 +516,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         << "CREATE TABLE IF NOT EXISTS " << randomWalkInputTableName << " ("
         << "\"monteCarloRunId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
         << "\"randomWalkCaseId\" INTEGER NOT NULL,"
+        << "\"completed\" INTEGER NOT NULL,"
         << "\"observationPeriodStartEpoch\" REAL NOT NULL);";
 
         // Execute command to create table.
@@ -570,7 +571,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     ostringstream randomWalkInputTableInsert;
     randomWalkInputTableInsert << "INSERT INTO " << randomWalkInputTableName
                                << " VALUES (NULL, " << caseId 
-                               << ", :observationPeriodStartEpoch);";
+                               << ", 0, :observationPeriodStartEpoch);";
 
     // Compile a SQL query.
     Statement randomWalkInputTableInsertQuery( 
@@ -688,12 +689,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "CREATE TABLE IF NOT EXISTS " << randomWalkOutputTableName << " ("
             << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             << "\"monteCarloRunId\" INTEGER NOT NULL,"
+            << "\"averageLongitudeResidual\" REAL NOT NULL,"
+            << "\"maximumLongitudeResidualChange\" REAL NOT NULL,"            
+            << "\"averageEccentricity\" REAL NOT NULL,"            
             << "\"maximumEccentricityChange\" REAL NOT NULL,"
-            << "\"averageEccentricityChange\" REAL NOT NULL,"
-            << "\"maximumLongitudeResidualChange\" REAL NOT NULL,"
-            << "\"averageLongitudeResidualChange\" REAL NOT NULL,"
-            << "\"maximumInclinationChange\" REAL NOT NULL,"
-            << "\"averageInclinationChange\" REAL NOT NULL);";
+            << "\"averageInclination\" REAL NOT NULL,"
+            << "\"maximumInclinationChange\" REAL NOT NULL);";
 
         // Execute command to create table.
         database.exec( randomWalkOutputTableCreate.str( ).c_str( ) );

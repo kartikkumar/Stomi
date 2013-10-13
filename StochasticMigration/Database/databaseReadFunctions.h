@@ -11,9 +11,8 @@
 #include <string>
 #include <vector>
 
-// #include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
-// #include "StochasticMigration/Database/randomWalkPerturber.h"
 #include "StochasticMigration/Database/randomWalkCase.h"
+#include "StochasticMigration/Database/randomWalkInput.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
 #include "StochasticMigration/Database/testParticleKick.h"
@@ -22,6 +21,19 @@ namespace stochastic_migration
 {
 namespace database
 {
+
+//! Get test particle case data.
+/*!
+ * Returns case data, used as metadata for a set of test particle simulations, retrieved from
+ * simulation database.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param caseId ID stored in table for test particle case.
+ * \param testParticleCaseTableName String name of test particle case table in database.
+ * \return Test particle case data, stored in a shared-point to a TestParticleCase object.
+ */
+TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolutePath, 
+                                             const int caseId,
+                                             const std::string& testParticleCaseTableName );
 
 //! Get test particle case data.
 /*!
@@ -76,8 +88,8 @@ TestParticleInputTable getSelectedTestParticleInputTable(
  * IDs.
  * \param databaseAbsolutePath Absolute path to simulation database.
  * \param randomWalkSimulationPeriod Duration of random walk [s].
- * \param testParticleSimulationIds Vector of specified test particle simulation IDs to include in 
- *          kick table.
+ * \param selectedSimulationIds Vector of specified test particle simulation IDs to include in kick
+ *          table.
  * \param testParticleKickTableName String name of test particle kick table in database.
  * \return Table of test particle kick data, aggregated from selected test particle simulation IDs.
  */
@@ -99,35 +111,41 @@ RandomWalkCasePointer getRandomWalkCase( const std::string& databaseAbsolutePath
                                          const std::string& caseName,
                                          const std::string& randomWalkCaseTableName );
 
-// //! Get table of random walk Monte Carlo runs.
-// /*!
-//  * Returns random_walk_runs table retrieved from SQLite simulation database, aggregated from the
-//  * Monte Carlo runs requested.
-//  * \param databaseAbsolutePath Absolute path to simulation database.
-//  * \param monteCarloRuns Monte Carlo runs to retrieve data for.
-//  * \param randomWalkMonteCarloRunTableName String name of random walk Monte Carlo run table in
-//  *          database (default is set to "random_walk_monte_carlo_runs").
-//  * \return Monte Carlo run table, stored in a set of RandomWalkMonteCarloRun objects.
-//  */
-// RandomWalkMonteCarloRunTable getRandomWalkMonteCarloRunsTable(
-//         const std::string& databaseAbsolutePath, const std::vector< unsigned int >& monteCarloRuns,
-//         const std::string& randomWalkMonteCarloRunTableName = "random_walk_monte_carlo_runs" );
+//! Get complete random walk input table.
+/*!
+ * Returns table of input data for random walk simulations, retrieved from simulation database,
+ * for a given case, defined by a string-name.
+ * Completed (true) or incomplete (false) simulations can be retrieved.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param caseId ID stored in table for requested random walk case.
+ * \param randomWalkSimulationPeriod Period for random walk simulations, used to fetch table of 
+ *          kicks.
+ * \param randomWalkInputTableName String name of random walk input table in database.
+ * \param randomWalkPerturberTableName String name of random walk perturber table in database.
+ * \param testParticleKickTableName String name of test particle kick table in database. 
+ * \param isCompleted Flag indicating whether to retrieve completed or incomplete simulations
+ *          (default is set to retrieve input data for simulations that haven't been completed).
+ * \return Random walk input table, as a set of RandomWalkInput pointers.
+ */
+RandomWalkInputTable getCompleteRandomWalkInputTable(
+        const std::string& databaseAbsolutePath, const int caseId,
+        const double randomWalkSimulationPeriod,
+        const std::string& randomWalkInputTableName, 
+        const std::string& randomWalkPerturberTableName,
+        const std::string& testParticleKickTableName, bool isCompleted = false );
 
-// //! Get table of selected perturbers for random walk Monte Carlo run.
-// /*!
-//  * Returns table of selected perturbers retrieved from SQLite simulation database, aggregated from
-//  * the test particle simulation numbers and associated mass factors for the requested Monte Carlo
-//  * run.
-//  * \param databaseAbsolutePath Absolute path to simulation database.
-//  * \param monteCarloRun Monte Carlo run to retrieve list of selected perturbers for.
-//  * \param randomWalkPerturberTableName String name of random walk perturber table in database
-//  *          (default is set to "random_walk_perturber_selection").
-//  * \return Random walk perturber selection table, stored in a set of RandomWalkPerturber
-//  *          objects.
-//  */
-// RandomWalkPerturberTable getRandomWalkPerturberTable(
-//         const std::string& databaseAbsolutePath, const unsigned int monteCarloRun,
-//         const std::string& randomWalkPerturberTableName = "random_walk_perturbers" );
+//! Get list of selected perturbers for random walk Monte Carlo run.
+/*!
+ * Returns selected perturbers, given as test particle simulation IDs retrieved from SQLite
+ * simulation database, for the specified Monte Carlo run ID.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param monteCarloRunId Monte Carlo run ID to retrieve list of selected perturbers for.
+ * \param randomWalkPerturberTableName String name of random walk perturber table in database.
+ * \return Vector containing list of test particle simulation IDs.
+ */
+std::vector< int > getRandomWalkPerturberList(
+        const std::string& databaseAbsolutePath, const unsigned int monteCarloRunId,
+        const std::string& randomWalkPerturberTableName );
 
 } // namespace database
 } // namespace stochastic_migration
