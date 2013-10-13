@@ -7,7 +7,9 @@
 
 #include <iostream>
 #include <sstream>
- 
+
+#include <boost/math/special_functions/fpclassify.hpp>
+
 #include <SQLiteC++.h> 
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
@@ -47,8 +49,8 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
     // the kick table is empty. Emit warning message.
     if ( isCompleted == -1 ) 
     {   
-        std::cout << "WARNING: Kick table is empty, so updating input table and ";
-        std::cout << "skipping population of kick table in database ..." << std::endl;
+        std::cerr << "WARNING: Kick table is empty, so updating input table and ";
+        std::cerr << "skipping population of kick table in database ..." << std::endl;
         return;
     }
 
@@ -56,7 +58,7 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
     else if ( isCompleted == 1 )
     {
         // Set up database transaction.
-        SQLite::Transaction kicktTableTransaction( database );
+        SQLite::Transaction kickTableTransaction( database );
 
         // Set up insert statement for test particle kick table.
         std::ostringstream kickTableInsert;
@@ -130,186 +132,73 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
         }
 
         // Commit transaction.
-        kicktTableTransaction.commit( );
+        kickTableTransaction.commit( );
     }
 }
 
-// //! Populate random walk Monte Carlo run and output tables.
-// void populateRandomWalkRunAndOutputTables(
-//         const std::string& databaseAbsolutePath,
-//         const TestParticlesimulationIdsAndMassFactors&
-//         testParticlesimulationIdsAndMassFactors,
-//         const std::string& massDistributionType,
-//         const std::vector< double > massDistributionParameters, const double observationPeriod,
-//         const double epochWindowSize, const int numberOfEpochWindows,
-//         const double maximumEccentricityChange, const double maximumLongitudeResidualChange,
-//         const double maximumInclinationChange )
-// {
-//     // Initiate database connector.
-//     Sqlite3DatabaseConnectorPointer databaseConnector
-//             = initiateDatabaseConnector( databaseAbsolutePath );
+//! Populate random walk output tables.
+void populateRandomWalkOutputTable(
+        const std::string& databaseAbsolutePath, const int monteCarloRunId,
+        const double averageLongitudeResidual, const double maximumLongitudeResidualChange,
+        const double averageEccentricity, const double maximumEccentricityChange,
+        const double averageInclination, const double maximumInclinationChange,
+        const std::string& randomWalkOutputTableName, const std::string& randomWalkInputTableName )
+{
+    using boost::math::isnan;
 
-//     // Query number of random walk runs already present in database.
-//     // Set up query statement.
-//     std::ostringstream randomWalkRunsQuery;
-//     randomWalkRunsQuery << "SELECT COUNT(*) FROM random_walk_runs;";
+    // Set completed status variable to 1 (completed), unless any values are NaN.
+    const int isCompleted = ( isnan( averageLongitudeResidual ) 
+                              || isnan( maximumLongitudeResidualChange )
+                              || isnan( averageEccentricity ) 
+                              || isnan( maximumEccentricityChange ) 
+                              || isnan( averageInclination ) 
+                              || isnan( maximumInclinationChange ) ) ? -1 : 1;
 
-// //    // Declare sqlite3 statement structure.
-// //    sqlite3_stmt* fetchedRandomWalkRunsRowCount;
+    // Set up update statement for random walk input table.
+    std::ostringstream inputTableUpdate;
+    inputTableUpdate << "UPDATE " << randomWalkInputTableName << " SET \"completed\" = " 
+                     << isCompleted << " WHERE \"monteCarloRunId\" = " << monteCarloRunId << ";" 
+                     << std::endl;
 
-// //    // Declare pointer to unused part of SQL statement.
-// //    const char** unusedPartOfStatement_ = 0;
+    // Open database in write mode.          
+    SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READWRITE );     
 
-// //    // Prepare database query.
-// //    if ( sqlite3_prepare_v2( database, randomWalkRunsQuery.str( ).c_str( ),
-// //                             randomWalkRunsQuery.str( ).size( ),
-// //                             &fetchedRandomWalkRunsRowCount, unusedPartOfStatement_ ) != SQLITE_OK )
-// //    {
-// //        sqlite3_close( database );
-// //        boost::throw_exception(
-// //                    boost::enable_error_info(
-// //                        std::runtime_error( "No data fetched!" ) ) );
-// //    }
+   // Set up database transaction.
+    SQLite::Transaction outputTableTransaction( database );
 
-// //    // Loop through fetched results.
-// //    int rowCountRandomWalkRuns = 0;
-// //    while ( sqlite3_step( fetchedRandomWalkRunsRowCount ) == SQLITE_ROW )
-// //    {
-// //        rowCountRandomWalkRuns = boost::lexical_cast< int >(
-// //                    sqlite3_column_text( fetchedRandomWalkRunsRowCount, 0 ) );
-// //    }
-// //    rowCountRandomWalkRuns++;
+    // Execute command to update input table.
+    database.exec( inputTableUpdate.str( ).c_str( ) );
 
-// //    // Insert random walk run in table.
-// //    std::stringstream randomWalkRunInsert;
-// //    randomWalkRunInsert << "INSERT INTO random_walk_runs VALUES (\""
-// //                        << rowCountRandomWalkRuns << "\",\""
-// //                        << selectedsimulationIds.size( )
-// //                        << "\",\"" << massDistributionType << "\",\""
-// //                        << massDistributionParameters.at( 0 );
+    // If completed status is -1, return the function handler so the rest is not executed, since
+    // the output is incomplete. Emit warning message.
+    if ( isCompleted == -1 ) 
+    {   
+        std::cerr << "WARNING: Output for Monte Carlo run is incomplete so updating input table ";
+        std::cerr << "and skipping population of output table in database ..." << std::endl;
+        return;
+    }
 
-// //    if ( massDistributionParameters.size( ) == 2 )
-// //    {
-// //        randomWalkRunInsert << "\",\"" << massDistributionParameters.at( 1 );
-// //    }
+    // Else, populate output table in the database.
+    else if ( isCompleted == 1 )
+    {
+        // Set up insert statement for test particle kick table.
+        std::ostringstream outputTableInsert;
+        outputTableInsert << "INSERT INTO " << randomWalkOutputTableName << " "
+                          << "VALUES (NULL, " << monteCarloRunId << ", "
+                          << averageLongitudeResidual << ", " 
+                          << maximumLongitudeResidualChange << ", "
+                          << averageEccentricity << ", "
+                          << maximumEccentricityChange << ", "
+                          << averageInclination << ", "
+                          << maximumInclinationChange << ");";
 
-// //    else
-// //    {
-// //        randomWalkRunInsert << "\",\"0.0\"";
-// //    }
+        // Execute insert query.
+        database.exec( outputTableInsert.str( ).c_str( ) );
+    }
 
-// //    randomWalkRunInsert << ",\"" << observationPeriod << "\","
-// //                        << "\"" << epochWindowSize << "\","
-// //                        << "\"" << numberOfEpochWindows << "\"";
-
-// //    randomWalkRunInsert << ");" << std::endl;
-
-// //    // Execute insert command.
-// //    sqlite3_exec( database, randomWalkRunInsert.str( ).c_str( ), NULL, 0, &databaseErrorMessage );
-
-// //    // Check if sql statement exited with an error message and throw runtime error if necessary.
-// //    if ( databaseErrorMessage )
-// //    {
-// //        sqlite3_close( database );
-// //        std::cout << randomWalkRunInsert.str( ) << std::endl;
-// //        boost::throw_exception(
-// //                    boost::enable_error_info(
-// //                        std::runtime_error( "Updating random_walk_runs failed!" ) ) );
-// //    }
-
-// //    // Set up insert statement.
-// //    std::ostringstream randomWalkSelectionInsert;
-// //    randomWalkSelectionInsert << "INSERT INTO random_walk_selection VALUES (NULL, ?1, ?2, ?3);";
-
-// //    // Declare sqlite3 statement structure.
-// //    sqlite3_stmt* randomWalkSelectionInsertStatement;
-
-// //    // Prepare sql statement.
-// //    sqlite3_prepare_v2( database, randomWalkSelectionInsert.str( ).c_str( ),
-// //                        randomWalkSelectionInsert.str( ).size( ),
-// //                        &randomWalkSelectionInsertStatement, unusedPartOfStatement_ );
-
-// //    // Check if any part of the sql statement is unused and throw runtime error if necessary.
-// //    if ( unusedPartOfStatement_ )
-// //    {
-// //        sqlite3_close( database );
-// //        boost::throw_exception(
-// //                    boost::enable_error_info(
-// //                        std::runtime_error( "Part of sql statement is unused!" ) ) );
-// //    }
-
-// //    // Insert simulation numbers and mass factors into database.
-// //    // Loop over selected simulation numbers and mass factors.
-// //    for ( common_typedefs::MassFactors::const_iterator iteratorMassFactors = massFactors.begin( );
-// //          iteratorMassFactors != massFactors.end( ); iteratorMassFactors++ )
-// //    {
-// //        sqlite3_bind_int( randomWalkSelectionInsertStatement, 1, rowCountRandomWalkRuns );
-// //        sqlite3_bind_int( randomWalkSelectionInsertStatement, 2, iteratorMassFactors->first );
-// //        sqlite3_bind_double( randomWalkSelectionInsertStatement, 3, iteratorMassFactors->second );
-
-// //        // Insert simulation data row.
-// //        if ( sqlite3_step( randomWalkSelectionInsertStatement ) != SQLITE_DONE )
-// //        {
-// //            sqlite3_close( database );
-// //            boost::throw_exception(
-// //                        boost::enable_error_info(
-// //                            std::runtime_error( "Random walk selection could not be inserted!" ) ) );
-// //        }
-
-// //        // Reset values in insert statement.
-// //        sqlite3_clear_bindings( randomWalkSelectionInsertStatement );
-
-// //        // Reset insert statement.
-// //        sqlite3_reset( randomWalkSelectionInsertStatement );
-// //    }
-
-// //    // Finalize sql statement to prevent memory leaks.
-// //    sqlite3_finalize( randomWalkSelectionInsertStatement );
-
-// //    // Insert row data into database.
-// //    // Set up insert statement.
-// //    std::ostringstream randomWalkRowInsert;
-// //    randomWalkRowInsert << "INSERT INTO random_walk VALUES (NULL, "
-// //                        << rowCountRandomWalkRuns << ", "
-// //                        << maximumEccentricityChange << ", "
-// //                        << maximumLongitudeResidualChange << ", "
-// //                        << maximumInclinationChange << ");";
-
-// //    // Declare sqlite3 statement structure.
-// //    sqlite3_stmt* randomWalkRowInsertStatement;
-
-// //    // Prepare sql statement.
-// //    sqlite3_prepare_v2( database, randomWalkRowInsert.str( ).c_str( ),
-// //                        randomWalkRowInsert.str( ).size( ),
-// //                        &randomWalkRowInsertStatement, unusedPartOfStatement_ );
-
-// //    // Check if any part of the sql statement is unused and throw runtime error if necessary.
-// //    if ( unusedPartOfStatement_ )
-// //    {
-// //        sqlite3_close( database );
-// //        boost::throw_exception(
-// //                    boost::enable_error_info(
-// //                        std::runtime_error( "Part of sql statement is unused!" ) ) );
-// //    }
-
-// //    // Insert simulation data row.
-// //    if ( sqlite3_step( randomWalkRowInsertStatement ) != SQLITE_DONE )
-// //    {
-// //        sqlite3_close( database );
-// //        boost::throw_exception(
-// //                    boost::enable_error_info(
-// //                        std::runtime_error( "Random walk row could not be inserted!" ) ) );
-// //    }
-
-// //    // Finalize sql statement to prevent memory leaks.
-// //    sqlite3_finalize( randomWalkRowInsertStatement );
-
-// //    // End database transaction.
-// //    sqlite3_exec( database, "END;", 0, 0, &databaseErrorMessage );
-
-// //    // Disconnect from SQLite database.
-// //    sqlite3_close( database );
-// }
+    // Commit transaction.
+    outputTableTransaction.commit( );    
+}
 
 } // namespace database
 } // namespace stochastic_migration

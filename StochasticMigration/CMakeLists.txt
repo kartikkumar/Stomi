@@ -320,7 +320,7 @@ target_link_libraries(randomWalkSimulator
                       stochastic_migration_astrodynamics stochastic_migration_database  
                       stochastic_migration_input_output
                       assist_astrodynamics assist_basics assist_input_output assist_mathematics
-                      tudat_input_output
+                      tudat_input_output tudat_statistics
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 
                       ${SQLITE3_LIBRARY} 

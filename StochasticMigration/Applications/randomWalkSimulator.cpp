@@ -24,19 +24,20 @@
 #include <Assist/InputOutput/basicInputOutput.h>
 #include <Assist/Mathematics/statistics.h>
 
+#include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
+#include <TudatCore/Mathematics/BasicMathematics/mathematicalConstants.h>
+
 #include <Tudat/InputOutput/basicInputOutput.h>
 #include <Tudat/InputOutput/dictionaryTools.h>
 #include <Tudat/InputOutput/fieldType.h>
 #include <Tudat/InputOutput/separatedParser.h>
 #include <Tudat/InputOutput/parsedDataVectorUtilities.h>
-// // #include <Tudat/Mathematics/Statistics/simpleLinearRegression.h>
-
-#include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
-// #include <TudatCore/Mathematics/BasicMathematics/basicMathematicsFunctions.h>
+#include <Tudat/Mathematics/Statistics/simpleLinearRegression.h>
 
 #include "StochasticMigration/Astrodynamics/hillSphere.h"
 #include "StochasticMigration/Astrodynamics/randomWalkFunctions.h"
 #include "StochasticMigration/Database/databaseReadFunctions.h" 
+#include "StochasticMigration/Database/databaseWriteFunctions.h"  
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/randomWalkCase.h"
 #include "StochasticMigration/Database/randomWalkInput.h"
@@ -61,12 +62,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace assist::mathematics;
 
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
-//     using namespace tudat::basic_mathematics;
+    using namespace tudat::basic_mathematics::mathematical_constants;
     using namespace tudat::input_output;
     using namespace tudat::input_output::dictionary;
     using namespace tudat::input_output::field_types::general;
     using namespace tudat::input_output::parsed_data_vector_utilities;
-// //     using namespace tudat::statistics;
+    using namespace tudat::statistics;
 
     using namespace stochastic_migration::astrodynamics;
     using namespace stochastic_migration::database;
@@ -400,72 +401,103 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // period.
 
         // Declare average longitude residual in observation period [-].
-        double averageLongitudeResidual = 0.0;
+        double averageLongitudeResidual = TUDAT_NAN;
 
         // Declare maximum longitude residual change in observation period [-].
-        double maximumLongitudeResidualChange = 0.0;
+        double maximumLongitudeResidualChange = TUDAT_NAN;
 
         {
-            
+            // Populate temporary map with epochs and semi-major axes.
+            DoubleKeyDoubleValueMap semiMajorAxisHistory;
+
+            for ( DoubleKeyVector3dValueMap::iterator iteratorKeplerianActionElements 
+                  = keplerianActionElementsHistory.begin( );
+                  iteratorKeplerianActionElements != keplerianActionElementsHistory.end( );
+                  iteratorKeplerianActionElements++ )
+            {
+                semiMajorAxisHistory[ iteratorKeplerianActionElements->first ]
+                    = iteratorKeplerianActionElements->second( semiMajorAxisIndex );
+            }  
+
+            // Compute longitude history.
+            const DoubleKeyDoubleValueMap longitudeHistory
+                    = computeLongitudeHistory( 
+                        semiMajorAxisHistory,
+                        testParticleCaseData->centralBodyGravitationalParameter );      
+
+            // Compute reduced longitude history.
+            DoubleKeyDoubleValueMap reducedLongitudeHistory
+                    = reduceLongitudeHistory( 
+                        longitudeHistory, 
+                        iteratorRandomWalkInputTable->observationPeriodStartEpoch,
+                        epochWindowSpacing, 
+                        randomWalkCaseData->epochWindowSize,
+                        randomWalkCaseData->numberOfEpochWindows ); 
+
+            // Set input data for simple linear regression.
+            SimpleLinearRegression longitudeHistoryRegression( reducedLongitudeHistory );
+         
+            // Compute linear fit.
+            longitudeHistoryRegression.computeFit( );        
+                
+            // Clear longitude residuals history.
+            DoubleKeyDoubleValueMap longitudeResidualsHistory;
+
+            // Generate longitude history residuals by subtracting linear fit from data.
+            for ( DoubleKeyDoubleValueMap::iterator iteratorReducedLongitudeHistory
+                  = reducedLongitudeHistory.begin( );
+                  iteratorReducedLongitudeHistory != reducedLongitudeHistory.end( );
+                  iteratorReducedLongitudeHistory++ )
+            {
+                longitudeResidualsHistory[ iteratorReducedLongitudeHistory->first ]
+                        = iteratorReducedLongitudeHistory->second
+                        - longitudeHistoryRegression.getCoefficientOfConstantTerm( )
+                        - longitudeHistoryRegression.getCoefficientOfLinearTerm( )
+                        * iteratorReducedLongitudeHistory->first;
+            }  
+
+            // Declare map of average longitude residuals per window [rad].
+            DoubleKeyDoubleValueMap averageLongitudeResiduals;
+
+            // Loop over observation period and compute average longitude residuals per epoch window.
+            for ( int windowNumber = 0; 
+                  windowNumber < randomWalkCaseData->numberOfEpochWindows; 
+                  windowNumber++ )
+            {
+                const double epochWindowCenter 
+                    = iteratorRandomWalkInputTable->observationPeriodStartEpoch
+                      + windowNumber * epochWindowSpacing;
+
+                averageLongitudeResiduals[ epochWindowCenter ] 
+                    = computeStepFunctionWindowAverage( 
+                        longitudeResidualsHistory, 
+                        epochWindowCenter - randomWalkCaseData->epochWindowSize / 2.0, 
+                        epochWindowCenter + randomWalkCaseData->epochWindowSize / 2.0 );
+            }
+
+             // Compute average longitude residual during propagation history.
+            double sumLongitudeResiduals = 0.0;
+
+            for ( DoubleKeyDoubleValueMap::iterator iteratorAverageLongitudeResiduals 
+                    = averageLongitudeResiduals.begin( );
+                  iteratorAverageLongitudeResiduals != averageLongitudeResiduals.end( );
+                  iteratorAverageLongitudeResiduals++ )
+            {
+                sumLongitudeResiduals += iteratorAverageLongitudeResiduals->second;
+            }
+
+            averageLongitudeResidual 
+                = sumLongitudeResiduals / randomWalkCaseData->numberOfEpochWindows;
+
+            // Compute maximum longitude residual change during propagation history.
+            maximumLongitudeResidualChange 
+                = ( std::max_element( averageLongitudeResiduals.begin( ), 
+                                      averageLongitudeResiduals.end( ),
+                                      CompareDoubleKeyDoubleValueMapValues( ) ) )->second
+                  - ( std::min_element( averageLongitudeResiduals.begin( ), 
+                                        averageLongitudeResiduals.end( ),
+                                        CompareDoubleKeyDoubleValueMapValues( ) ) )->second;                     
         }
-
-//         // Compute longitude history.
-//         DoubleKeyDoubleValueMap longitudeHistory
-//                 = computeLongitudeHistory( keplerianActionElementsHistory,
-//                                            caseData.uranusGravitationalParameter );
-
-// //         // Compute reduced longitude history.
-// //         DoubleKeyDoubleValueMap reducedLongitudeHistory
-// //                 = reduceLongitudeHistory( longitudeHistory, observationPeriodEpoch,
-// //                                           epochWindowSpacing, epochWindowSize,
-// //                                           numberOfEpochWindows );
-
-// //         // Set input data for simple linear regression.
-// //         SimpleLinearRegression longitudeHistoryRegression( reducedLongitudeHistory );
-
-// //         // Compute linear fit.
-// //         longitudeHistoryRegression.computeFit( );
-
-// //         // Clear longitude residuals history.
-// //         DoubleKeyDoubleValueMap longitudeResidualsHistory;
-
-// //         // Generate longitude history residuals by subtracting linear fit from data.
-// //         for ( DoubleKeyDoubleValueMap::iterator iteratorReducedLongitudeHistory
-// //               = reducedLongitudeHistory.begin( );
-// //               iteratorReducedLongitudeHistory != reducedLongitudeHistory.end( );
-// //               iteratorReducedLongitudeHistory++ )
-// //         {
-// //             longitudeResidualsHistory[ iteratorReducedLongitudeHistory->first ]
-// //                     = iteratorReducedLongitudeHistory->second
-// //                     - longitudeHistoryRegression.getCoefficientOfConstantTerm( )
-// //                     - longitudeHistoryRegression.getCoefficientOfLinearTerm( )
-// //                     * iteratorReducedLongitudeHistory->first;
-// //         }
-
-// //         // Declare map of epoch-window average longitude residuals.
-// //         DoubleKeyDoubleValueMap epochWindowAverageLongitudeResiduals;
-
-// //         for ( unsigned int windowNumber = 0; windowNumber < numberOfEpochWindows; windowNumber++ )
-// //         {
-// //             const double epochWindowCenter = epochWindowSize / 2.0
-// //                     + windowNumber * epochWindowSpacing;
-
-// //             epochWindowAverageLongitudeResiduals[ epochWindowCenter ]
-// //                     = computeAverageLongitudeResidualForEpochWindow(
-// //                         longitudeResidualsHistory,
-// //                         epochWindowCenter - epochWindowSize / 2.0,
-// //                         epochWindowCenter + epochWindowSize / 2.0 );
-// //         }
-
-// //         // Compute map of maximum longitude residual change during propagation history.
-// //         double maximumLongitudeResidualChange = ( std::max_element(
-// //                     epochWindowAverageLongitudeResiduals.begin( ),
-// //                     epochWindowAverageLongitudeResiduals.end( ),
-// //                     compareDoubleKeyDoubleValueElements ) )->second
-// //                 - ( std::min_element(
-// //                         epochWindowAverageLongitudeResiduals.begin( ),
-// //                         epochWindowAverageLongitudeResiduals.end( ),
-// //                         compareDoubleKeyDoubleValueElements ) )->second;
 
         ///////////////////////////////////////////////////////////////////////////        
 
@@ -474,10 +506,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Compute average eccentricity and maximum eccentricity change in observation window.
 
         // Declare average eccentricity in observation period [-].
-        double averageEccentricity = 0.0;
+        double averageEccentricity = TUDAT_NAN;
 
         // Declare maximum eccentricity change in observation period [-].
-        double maximumEccentricityChange = 0.0;
+        double maximumEccentricityChange = TUDAT_NAN;
 
         {
             // Populate temporary map with epochs and eccentricities.
@@ -492,7 +524,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                     = iteratorKeplerianActionElements->second( eccentricityIndex );
             }            
 
-            // Declare map of average eccentricities per window.
+            // Declare map of average eccentricities per window [-].
             DoubleKeyDoubleValueMap averageEccentricities;
 
             // Loop over observation period and compute average eccentricities per epoch window.
@@ -541,10 +573,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Compute average inclination and maximum inclination change in observation window.
 
         // Declare average inclination in observation period [rad].
-        double averageInclination = 0.0;
+        double averageInclination = TUDAT_NAN;
 
         // Declare maximum inclination change in observation period [rad].
-        double maximumInclinationChange = 0.0;
+        double maximumInclinationChange = TUDAT_NAN;
 
         {
             // Populate temporary map with epochs and inclinations.
@@ -559,7 +591,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                     = iteratorKeplerianActionElements->second( inclinationIndex );
             }            
 
-            // Declare map of average inclinations per window.
+            // Declare map of average inclinations per window [rad].
             DoubleKeyDoubleValueMap averageInclinations;
 
             // Loop over observation period and compute average inclinations per epoch window.
@@ -609,12 +641,13 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // thread-critical, so will be executed one-by-one by multiple threads.
 #pragma omp critical( writeToDatabase )
         {
-//             // Populate kick table in database.
-//             populateRandomWalkTable( databasePath, selectedSimulationIdIndices, massFactors,
-//                                      massDistributionType, massDistributionParameters,
-//                                      observationPeriod, epochWindowSize, numberOfEpochWindows,
-//                                      maximumEccentricityChange, maximumLongitudeResidualChange,
-//                                      maximumInclinationChange );
+            // Populate output table in database.
+            populateRandomWalkOutputTable( 
+                databasePath, iteratorRandomWalkInputTable->monteCarloRunId,
+                averageLongitudeResidual, maximumLongitudeResidualChange,
+                averageEccentricity, maximumEccentricityChange,
+                averageInclination, maximumInclinationChange,
+                randomWalkOutputTableName, randomWalkInputTableName );
         }
 
         ///////////////////////////////////////////////////////////////////

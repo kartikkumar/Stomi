@@ -21,49 +21,44 @@ namespace database
 /*!
  * Populates table of test particle kicks in SQLite database.
  * \param databaseAbsolutePath Absolute path to simulation database.
- * \param simulationNumber Simulation number associated with kick table.
+ * \param simulationId Test particle simulation ID associated with kick table.
  * \param kickTable Table containing kick data as set of pointers to TestParticleKick objects.
  * \param testParticleKickTableName String name of test particle kick table in database.
  * \param testParticleInputTableName String name of test particle input table in database.
  */
 void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
-                                    const int simulationNumber,
+                                    const int simulationId,
                                     const TestParticleKickTable& kickTable,
                                     const std::string& testParticleKickTableName, 
                                     const std::string& testParticleInputTableName );
 
-//! Populate random walk Monte Carlo run and output tables.
+//! Populate random walk output tables.
 /*!
- * Populates SQLite database with random walk Monte Carlo run and output data. The random walk
- * Monte Carlo run serves as metadata for the random walk simulations. The random walk Monte Carlo
- * output data is the data generated through execution of the Monte Carlo run.
+ * Populates table of random walk output data in SQLite database.
  * \param databaseAbsolutePath Absolute path to simulation database.
- * \param testParticleSimulationNumbersAndMassFactors Map of specified test particle simulation
- *          numbers and mass factors associated with each, used during execution of random walk
- *          Monte Carlo simulation.
- * \param massDistributionType Mass distribution type (EQUAL, UNIFORM, LINEAR, or POWERLAW). [ONLY
- *          EQUAL IMPLEMENTED AT THE MOMENT].
- * \param massDistributionParameters Mass distribution parameters (type EQUAL has only one
- *          parameter).
- * \param maximumEccentricityChange Maximum eccentricity change that perturber body underwent
- *          during random walk Monte Carlo simulation. The eccentricity change is computed based on
- *          the method that the observation metrics are specified.
- * \param maximumLongitudeResidualChange Maximum longitude residual changes that perturber body
- *          underwent during random walk Monte Carlo simulation [rad]. The longitude residual
- *          change is computed based on the method that the observation metrics are specified.
- * \param maximumInclinationChange Maximum inclination changes that perturber body underwent during
- *          random walk Monte Carlo simulation [rad]. The inclination change is computed based on
- *          the method that the observation metrics are specified.
+ * \param monteCarloRunId Random walk Monte Carlo run ID associated with output table.
+ * \param averageLongitudeResidual Average longitude residual of perturbed body during random
+ *           walk Monte  Carlo simulation. 
+ * \param maximumLongitudeResidualChange Maximum longitude residual change that perturbed body 
+ *          underwent during random walk Monte Carlo simulation.
+ * \param averageEccentricity Average eccentricity of perturbed body during random walk Monte 
+ *          Carlo simulation. 
+ * \param maximumEccentricityChange Maximum eccentricity change that perturbed body underwent
+ *          during random walk Monte Carlo simulation.
+ * \param averageInclination Average inclination of perturbed body during random walk Monte 
+ *          Carlo simulation. 
+ * \param maximumInclinationChange Maximum inclination change that perturbed body underwent
+ *          during random walk Monte Carlo simulation.
+ * \param randomWalkOutputTableName String name of random walk output table in database.
+ * \param randomWalkInputTableName String name of random walk input table in database.
  */
-// void populateRandomWalkRunAndOutputTables(
-//         const std::string& databaseAbsolutePath,
-//         const TestParticleSimulationNumbersAndMassFactors&
-//         testParticleSimulationNumbersAndMassFactors,
-//         const std::string& massDistributionType,
-//         const std::vector< double > massDistributionParameters, const double observationPeriod,
-//         const double epochWindowSize, const int numberOfEpochWindows,
-//         const double maximumEccentricityChange, const double maximumLongitudeResidualChange,
-//         const double maximumInclinationChange );
+void populateRandomWalkOutputTable(
+        const std::string& databaseAbsolutePath, const int monteCarloRunId,
+        const double averageLongitudeResidual, const double maximumLongitudeResidualChange,
+        const double averageEccentricity, const double maximumEccentricityChange,
+        const double averageInclination, const double maximumInclinationChange,
+        const std::string& randomWalkOutputTableName, 
+        const std::string& randomWalkInputTableName );
 
 } // namespace database
 } // namespace stochastic_migration

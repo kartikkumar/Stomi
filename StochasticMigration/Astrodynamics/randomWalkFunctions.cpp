@@ -133,192 +133,108 @@ Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBefo
     return stateInKeplerianElementsAfterKick;
 }
 
+//! Compute longitude history.
+DoubleKeyDoubleValueMap computeLongitudeHistory(
+        const DoubleKeyDoubleValueMap& semiMajorAxisHistory,
+        const double centralBodyGravitationalParameter )
+{
+    // Declare longitude history.
+    DoubleKeyDoubleValueMap longitudeHistory;
 
+    // Set initial longitude to zero.
+    longitudeHistory[ semiMajorAxisHistory.begin( )->first ] = 0.0;
 
+    // Declare and set semi-major axis history iterator to one element after start.
+    DoubleKeyDoubleValueMap::const_iterator iteratorSemiMajorAxisHistory
+            = semiMajorAxisHistory.begin( );
+    std::advance( iteratorSemiMajorAxisHistory, 1 );
 
+    // Declare iterator to previous semi-major axis history element.
+    DoubleKeyDoubleValueMap::const_iterator iteratorPreviousSemiMajorAxisHistory;
+    iteratorPreviousSemiMajorAxisHistory = semiMajorAxisHistory.begin( );
 
+    // Declare iterator to previous longitude history element.
+    DoubleKeyDoubleValueMap::iterator iteratorPreviousLongitudeHistory;
+    iteratorPreviousLongitudeHistory = longitudeHistory.begin( );
 
+    // Loop over propagation history.
+    for ( ; iteratorSemiMajorAxisHistory != semiMajorAxisHistory.end( );
+          iteratorSemiMajorAxisHistory++ )
+    {
+        longitudeHistory[ iteratorSemiMajorAxisHistory->first ]
+                = iteratorPreviousLongitudeHistory->second
+                + computeKeplerMeanMotion( iteratorPreviousSemiMajorAxisHistory->second,
+                                           centralBodyGravitationalParameter )
+                * ( iteratorSemiMajorAxisHistory->first
+                    - iteratorPreviousSemiMajorAxisHistory->first );
 
+        iteratorPreviousSemiMajorAxisHistory++;
+        iteratorPreviousLongitudeHistory++;
+    }
 
-// //! Compute average longitude residual for epoch window.
-// double computeAverageLongitudeResidualForEpochWindow(
-//         const DoubleKeyDoubleValueMap& longitudeResidualsHistory,
-//         const double epochWindowStart, const double epochWindowEnd )
-// {
-//     // Set iterator to start of epoch window.
-//     DoubleKeyDoubleValueMap::const_iterator iteratorStartOfEpochWindow
-//             = longitudeResidualsHistory.lower_bound( epochWindowStart );
+    // Return longitude history.
+    return longitudeHistory;
+}
 
-//     // Set iterator to end of epoch window.
-//     DoubleKeyDoubleValueMap::const_iterator iteratorEndOfEpochWindow
-//             = longitudeResidualsHistory.lower_bound( epochWindowEnd );
-//     std::advance( iteratorEndOfEpochWindow, -1 );
+//! Reduce longitude history to observation period epoch windows.
+DoubleKeyDoubleValueMap reduceLongitudeHistory( 
+        const DoubleKeyDoubleValueMap& longitudeHistory,
+        const double observationPeriodStartEpoch,
+        const double epochWindowSpacing,
+        const double epochWindowSize,
+        const unsigned int numberOfEpochWindows )
+{
+    // Declare reduced (non-shifted) longitude history.
+    DoubleKeyDoubleValueMap reducedNonShiftedLongitudeHistory;
 
-//     // Declare value of first moment.
-//     double firstMomentOfLongitudeResidualHistory = 0.0;
+    // Declare longitude history iterators.
+    DoubleKeyDoubleValueMap::const_iterator iteratorEpochWindowStart;
+    DoubleKeyDoubleValueMap::const_iterator iteratorEpochWindowEnd;
 
-//     // Set iterator to one element before start of epoch window.
-//     DoubleKeyDoubleValueMap::const_iterator iteratorOneBeforeFirstElementEpochWindow
-//             = iteratorStartOfEpochWindow;
-//     if ( iteratorStartOfEpochWindow != longitudeResidualsHistory.begin( ) )
-//     {
-//         std::advance( iteratorOneBeforeFirstElementEpochWindow, -1 );
-//     }
+    // Loop over observation period and extract longitude epoch windows.
+    for ( unsigned int windowNumber = 0; windowNumber < numberOfEpochWindows; windowNumber++ )
+    {
+        const double epochWindowCenter = observationPeriodStartEpoch
+                + windowNumber * epochWindowSpacing;
 
-//     // Check if start and end of epoch window are reversed in order. This means that the epoch
-//     // window occurs within one step in the propagation history.
-//     if ( iteratorStartOfEpochWindow->first > iteratorEndOfEpochWindow->first )
-//     {
-//         // Add contribution to first moment.
-//         firstMomentOfLongitudeResidualHistory = ( epochWindowEnd - epochWindowStart )
-//                 * iteratorOneBeforeFirstElementEpochWindow->second;
-//     }
+        iteratorEpochWindowStart = longitudeHistory.lower_bound(
+                    epochWindowCenter - epochWindowSize / 2.0 );
 
-//     else
-//     {
-//         // Check that start of the epoch window is not the first element in the propagation
-//         // history.
-//         if ( iteratorStartOfEpochWindow != longitudeResidualsHistory.begin( ) )
-//         {
-//             firstMomentOfLongitudeResidualHistory
-//                     += ( iteratorStartOfEpochWindow->first - epochWindowStart )
-//                     * iteratorOneBeforeFirstElementEpochWindow->second;
-//         }
+        if ( iteratorEpochWindowStart != longitudeHistory.begin( ) )
+        {
+            iteratorEpochWindowStart--;
+        }
 
-//         // Declare iterator to next element in epoch window.
-//         DoubleKeyDoubleValueMap::const_iterator iteratorNextElementEpochWindow;
+        iteratorEpochWindowEnd = longitudeHistory.lower_bound(
+                    epochWindowCenter + epochWindowSize / 2.0 );
 
-//         // Loop through the epoch window to compute the first moment.
-//         for ( DoubleKeyDoubleValueMap::const_iterator iteratorEpochWindow
-//               = iteratorStartOfEpochWindow;
-//               iteratorEpochWindow != iteratorEndOfEpochWindow; iteratorEpochWindow++ )
-//         {
-//             iteratorNextElementEpochWindow = iteratorEpochWindow;
-//             std::advance( iteratorNextElementEpochWindow, 1 );
+        for ( DoubleKeyDoubleValueMap::const_iterator iteratorEpochWindow = iteratorEpochWindowStart;
+              iteratorEpochWindow != iteratorEpochWindowEnd;
+              iteratorEpochWindow++ )
+        {
+            reducedNonShiftedLongitudeHistory[ iteratorEpochWindow->first ]
+                    = iteratorEpochWindow->second;
+        }
+    }
 
-//             firstMomentOfLongitudeResidualHistory
-//                     += ( iteratorNextElementEpochWindow->first - iteratorEpochWindow->first )
-//                     * iteratorEpochWindow->second;
-//         }
+    // Declare reduced (shifted) longitude history.
+    DoubleKeyDoubleValueMap reducedLongitudeHistory;
 
-//         // Compute contribution to the first moment for the end of the epoch window.
-//         firstMomentOfLongitudeResidualHistory
-//                 += ( epochWindowEnd - iteratorEndOfEpochWindow->first )
-//                 * iteratorEndOfEpochWindow->second;
-//     }
+    // Shift reduced longitude history to start at origin.
+    for ( DoubleKeyDoubleValueMap::iterator iteratorReducedLongitudeHistory
+          = reducedNonShiftedLongitudeHistory.begin( );
+          iteratorReducedLongitudeHistory != reducedNonShiftedLongitudeHistory.end( );
+          iteratorReducedLongitudeHistory++ )
+    {
+        reducedLongitudeHistory[ iteratorReducedLongitudeHistory->first
+                - reducedNonShiftedLongitudeHistory.begin( )->first ]
+                = iteratorReducedLongitudeHistory->second
+                - reducedNonShiftedLongitudeHistory.begin( )->second;
+    }
 
-//     // Return the average longitude residual over the epoch window.
-//     return firstMomentOfLongitudeResidualHistory / ( epochWindowEnd - epochWindowStart );
-// }
-
-
-
-// //! Compute longitude history.
-// DoubleKeyDoubleValueMap computeLongitudeHistory(
-//         const ActionPropagationHistory& keplerianActionElementsHistory,
-//         const double uranusGravitationalParameter )
-// {
-//     // Declare longitude history.
-//     DoubleKeyDoubleValueMap longitudeHistory;
-
-//     // Set initial longitude to zero.
-//     longitudeHistory[ keplerianActionElementsHistory.begin( )->first ] = 0.0;
-
-//     // Declare and set action elements history iterator to one element after start.
-//     ActionPropagationHistory::const_iterator iteratorActionElementsHistory
-//             = keplerianActionElementsHistory.begin( );
-//     std::advance( iteratorActionElementsHistory, 1 );
-
-//     // Declare iterator to previous action elements history element.
-//     ActionPropagationHistory::const_iterator iteratorPreviousActionElementsHistory;
-//     iteratorPreviousActionElementsHistory = keplerianActionElementsHistory.begin( );
-
-//     // Declare iterator to previous longitude history element.
-//     DoubleKeyDoubleValueMap::iterator iteratorPreviousLongitudeHistory;
-//     iteratorPreviousLongitudeHistory = longitudeHistory.begin( );
-
-//     // Loop over propagation history.
-//     for ( ; iteratorActionElementsHistory != keplerianActionElementsHistory.end( );
-//           iteratorActionElementsHistory++ )
-//     {
-//         longitudeHistory[ iteratorActionElementsHistory->first ]
-//                 = iteratorPreviousLongitudeHistory->second
-//                 + std::sqrt( uranusGravitationalParameter
-//                              / ( iteratorPreviousActionElementsHistory->second(
-//                                      semiMajorAxisIndex )
-//                                  * iteratorPreviousActionElementsHistory->second(
-//                                      semiMajorAxisIndex )
-//                                  * iteratorPreviousActionElementsHistory->second(
-//                                      semiMajorAxisIndex ) ) )
-//                 * ( iteratorActionElementsHistory->first
-//                     - iteratorPreviousActionElementsHistory->first );
-
-//         iteratorPreviousActionElementsHistory++;
-//         iteratorPreviousLongitudeHistory++;
-//     }
-
-//     // Return longitude history.
-//     return longitudeHistory;
-// }
-
-// //! Reduce longitude history to observation period epoch windows.
-// DoubleKeyDoubleValueMap reduceLongitudeHistory( const DoubleKeyDoubleValueMap& longitudeHistory,
-//                                                 const double observationPeriodEpoch,
-//                                                 const double epochWindowSpacing,
-//                                                 const double epochWindowSize,
-//                                                 const unsigned int numberOfEpochWindows )
-// {
-//     // Declare reduced (non-shifted) longitude history.
-//     DoubleKeyDoubleValueMap reducedNonShiftedLongitudeHistory;
-
-//     // Declare longitude history iterators.
-//     DoubleKeyDoubleValueMap::const_iterator iteratorEpochWindowStart;
-//     DoubleKeyDoubleValueMap::const_iterator iteratorEpochWindowEnd;
-
-//     // Loop over observation period and extract longitude epoch windows
-//     for ( unsigned int windowNumber = 0; windowNumber < numberOfEpochWindows; windowNumber++ )
-//     {
-//         const double epochWindowCenter = observationPeriodEpoch
-//                 + windowNumber * epochWindowSpacing;
-
-//         iteratorEpochWindowStart = longitudeHistory.lower_bound(
-//                     epochWindowCenter - epochWindowSize / 2.0 );
-
-//         if ( iteratorEpochWindowStart != longitudeHistory.begin( ) )
-//         {
-//             iteratorEpochWindowStart--;
-//         }
-
-//         iteratorEpochWindowEnd = longitudeHistory.lower_bound(
-//                     epochWindowCenter + epochWindowSize / 2.0 );
-
-//         for ( DoubleKeyDoubleValueMap::const_iterator iteratorEpochWindow = iteratorEpochWindowStart;
-//               iteratorEpochWindow != iteratorEpochWindowEnd;
-//               iteratorEpochWindow++ )
-//         {
-//             reducedNonShiftedLongitudeHistory[ iteratorEpochWindow->first ]
-//                     = iteratorEpochWindow->second;
-//         }
-//     }
-
-//     // Declare reduced (shifted) longitude history.
-//     DoubleKeyDoubleValueMap reducedLongitudeHistory;
-
-//     // Shift reduced longitude history to start at origin.
-//     for ( DoubleKeyDoubleValueMap::iterator iteratorReducedLongitudeHistory
-//           = reducedNonShiftedLongitudeHistory.begin( );
-//           iteratorReducedLongitudeHistory != reducedNonShiftedLongitudeHistory.end( );
-//           iteratorReducedLongitudeHistory++ )
-//     {
-//         reducedLongitudeHistory[ iteratorReducedLongitudeHistory->first
-//                 - reducedNonShiftedLongitudeHistory.begin( )->first ]
-//                 = iteratorReducedLongitudeHistory->second
-//                 - reducedNonShiftedLongitudeHistory.begin( )->second;
-//     }
-
-//     // Return reduced longitude history.
-//     return reducedLongitudeHistory;
-// }
+    // Return reduced longitude history.
+    return reducedLongitudeHistory;
+}
 
 } // namespace astrodynamics
 } // namespace stochastic_migration

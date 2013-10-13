@@ -21,7 +21,7 @@
 # Set the name for the random walk simulation case.
 # The value of this parameter is interpreted as a string. This case must already exist in the 
 # database. To populate a new case, use the Random Walk Database Generator application.
-CASE                : circular_equatorial_nominal
+CASE                : circular_equatorial_heavy
 
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator

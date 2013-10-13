@@ -27,7 +27,7 @@ DB                  : /Users/kartikkumar/Desktop/testDatabase.sqlite
 
 # Set the name for the case.
 # The value of this parameter is interpreted as a string.
-CASE                : circular_equatorial_nominal
+CASE                : circular_equatorial_heavy
 
 # Set the name for the test particle case.
 # The value of this parameter is interpreted as a string. 
@@ -38,7 +38,7 @@ TPCASE              : test_case
 
 # Set the size of the Monte Carlo population.
 # This parameter sets the number of Monte Carlo trials to execute.
-MCPOP               : 10
+MCPOP               : 100
 
 # Set the perturber density.
 # This parameter sets the density of perturbers in the vicinity of the perturbed body. The
@@ -51,7 +51,7 @@ MCPOP               : 10
 # number of available test particle simulations for the specified case. The available test
 # particle simulations are fetched from the input table in the SQLite database.
 # UNIT              : # of perturbers per R_Hill
-RHOPERTURBER        : 1.0
+RHOPERTURBER        : 3.0
 
 # Set the perturber ring mass.
 # This parameter sets the total perturber ring mass in the vicinity of the perturbed body. This 
@@ -59,7 +59,7 @@ RHOPERTURBER        : 1.0
 # being distributed based on the the density specified by RHOPERTURBER. The total perturber ring
 # mass is expressed in terms of the perturbed body's mass.
 # UNIT              : M_PERTURBED
-MPERTURBERRING      : 1.0
+MPERTURBERRING      : 3.0
 
 # Set the observation period.
 # This parameter sets the length of the observation period for the metrics used to track the 
