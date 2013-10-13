@@ -43,7 +43,7 @@ public:
     TestParticleCase(
             // Required parameters.
             const int aCaseId,
-            const std::string aCaseName,
+            const std::string& aCaseName,
             const double aRandomWalkSimulationPeriod,
             const double aCentralBodyGravitationalParameter,
             const double aPerturbedBodyRadius,

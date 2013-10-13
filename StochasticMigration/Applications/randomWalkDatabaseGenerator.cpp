@@ -353,7 +353,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"caseId\" INTEGER PRIMARY KEY NOT NULL,"
             << "\"caseName\" TEXT NOT NULL,"
             << "\"testParticleCaseId\" INTEGER NOT NULL,"
-            << "\"monteCarloPopulation\" INTEGER NOT NULL,"
             << "\"perturberDensity\" INTEGER NOT NULL,"
             << "\"perturberRingMass\" INTEGER NOT NULL,"            
             << "\"observationPeriod\" REAL NOT NULL,"
@@ -420,8 +419,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "INSERT INTO " << randomWalkCaseTableName << " VALUES ("
             << "NULL,"
             << "\"" << caseName << "\","
-            << testParticleCaseData->caseId << ","
-            << monteCarloPopulation << ",";
+            << testParticleCaseData->caseId << ",";
         randomWalkCaseDataInsert 
             << std::setprecision( std::numeric_limits< double >::digits10 )
             << perturberDensity << ","

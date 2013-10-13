@@ -9,6 +9,7 @@ set(DATABASE_SOURCES
   "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.cpp"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkMonteCarloRun.cpp"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.cpp"
+  "${SRCROOT}${DATABASEDIR}/randomWalkCase.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleInput.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleKick.cpp"
@@ -20,6 +21,7 @@ set(DATABASE_HEADERS
   "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.h"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkMonteCarloRun.h"
 #  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.h"
+  "${SRCROOT}${DATABASEDIR}/randomWalkCase.h"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.h"
   "${SRCROOT}${DATABASEDIR}/testParticleInput.h"
   "${SRCROOT}${DATABASEDIR}/testParticleKick.h"
@@ -63,11 +65,24 @@ target_link_libraries(test_DatabaseReadFunctions
 # target_link_libraries(test_RandomWalkPerturber stochastic_migration_database assist_basics
 #                       ${TUDAT_CORE_LIBRARIES} ${SQLITE3_LIBRARY} ${Boost_LIBRARIES})
 
+add_executable(test_RandomWalkCase 
+               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestRandomWalkCase.cpp")
+setup_unit_test_target(test_RandomWalkCase "${SRCROOT}${DATABASEDIR}")
+target_link_libraries(test_RandomWalkCase
+                      stochastic_migration_database 
+                      assist_basics 
+                      ${TUDAT_CORE_LIBRARIES} 
+                      ${Boost_LIBRARIES})
+
 add_executable(test_TestParticleCase 
                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleCase.cpp")
 setup_unit_test_target(test_TestParticleCase "${SRCROOT}${DATABASEDIR}")
-target_link_libraries(test_TestParticleCase stochastic_migration_database assist_basics 
-                      tudat_basic_mathematics ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(test_TestParticleCase 
+                      stochastic_migration_database 
+                      assist_basics 
+                      tudat_basic_mathematics 
+                      ${TUDAT_CORE_LIBRARIES} 
+                      ${Boost_LIBRARIES})
 
 add_executable(test_TestParticleInput 
                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleInput.cpp")

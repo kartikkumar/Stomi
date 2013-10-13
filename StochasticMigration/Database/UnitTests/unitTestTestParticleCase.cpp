@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseIdNonPositiveNumberError )
     BOOST_CHECK( isError );
 }
 
-//! Test initialization of test particle case with empty name
+//! Test initialization of test particle case with empty name.
 BOOST_AUTO_TEST_CASE( testTestParticleCaseNameEmpty )
 {
     // Set flag to indicate if error is thrown to false.

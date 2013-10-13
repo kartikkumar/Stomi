@@ -25,8 +25,6 @@ namespace stochastic_migration
 namespace database
 {
 
-// using namespace assist::database;
-
 //! Get test particle case data.
 TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolutePath, 
                                              const std::string& caseName,
@@ -257,6 +255,40 @@ TestParticleKickTable getTestParticleKickTable(
 
     // Return aggregated test particle kick table.
     return testParticleKickTable;
+}
+
+//! Get random walk case data.
+RandomWalkCasePointer getRandomWalkCase( const std::string& databaseAbsolutePath, 
+                                         const std::string& caseName,
+                                         const std::string& randomWalkCaseTableName )
+{
+    // Set stream with database query.
+    std::ostringstream randomWalkCaseQuery;
+    randomWalkCaseQuery << "SELECT * FROM " <<  randomWalkCaseTableName 
+                        << " WHERE \"caseName\" = \"" << caseName << "\";";
+
+    // Open database in read-only mode.          
+    SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY );
+
+    // Set up database query.
+    SQLite::Statement query( database, randomWalkCaseQuery.str( ).c_str( ));
+
+    // Get row of case data.
+    query.executeStep( );
+
+    // Store data in random walk case object.
+    const RandomWalkCasePointer randomWalkCase = boost::make_shared< RandomWalkCase >(
+        query.getColumn( 0 ), query.getColumn( 1 ), query.getColumn( 2 ),  
+        query.getColumn( 3 ), query.getColumn( 4 ), query.getColumn( 5 ),
+        query.getColumn( 6 ), query.getColumn( 7 ) );
+
+    // Throw an error if there are multiple rows present in the table.
+    if ( query.executeStep( ) )
+    {
+        throw std::runtime_error( "Multiple rows for case in table!" );
+    }
+
+    return randomWalkCase;    
 }
 
 // //! Get table of random walk Monte Carlo runs.

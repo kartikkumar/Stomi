@@ -18,57 +18,15 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# Set the name for the case.
+# Set the name for the random walk simulation case.
 # The value of this parameter is interpreted as a string. This case must already exist in the 
-# database. To populate a new case, use the Database Generator application.
-CASE                : 
+# database. To populate a new case, use the Random Walk Database Generator application.
+CASE                : circular_equatorial_nominal
 
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator
 # application.
-DB                  : 
-
-# Set the size of the Monte Carlo population.
-# This parameter sets the number of Monte Carlo trials to execute.
-MCPOP               : 
-
-# Set the perturber density.
-# This parameter sets the density of perturbers in the vicinity of the perturbed body. The
-# perturber density is translated to a set of perturbers randomly selected within the semi-major 
-# axis bounds, either side of the perturbed body's nominal semi-major axis, as used in the test 
-# particle simulations. 
-# The perturbed density is expressed in terms of the perturbed body's Hill radius. Note that this
-# density can be fractional.
-# IMPORTANT: The total number of perturbers used in a simulation must not exceed the maximum
-# number of available test particle simulations for the specified case. The available test
-# particle simulations are fetched from the input table in the SQLite database.
-# UNIT              : # of perturbers per R_Hill
-RHOPERTURBER        : 
-
-# Set the perturber ring mass.
-# This parameter sets the total perturber ring mass in the vicinity of the perturbed body. This 
-# total ring mass is translated into a equal mass per perturber, with the perturbers in the ring
-# being distributed based on the the density specified by RHOPERTURBER. The total perturber ring
-# mass is expressed in terms of the perturbed body's mass.
-# UNIT              : M_PERTURBED
-MPERTURBERRING      :
-
-# Set the observation period.
-# This parameter sets the length of the observation period for the metrics used to track the 
-# random walk of the perturbed body. This should correspond to any real observations made.
-# UNIT              : yrs
-POBS                :
-
-# Set the number of epochs.
-# This parameter sets the number of epochs at which the observation metrics are given within the
-# observation period. These epochs are equally spaced in time, within the observation period.
-NUMEPOCHS           :
-
-# Set the epoch window size.
-# This parameter sets the size of the window about a given epoch within the observation period, 
-# used to average the variation of the perturbed body's orbital elements. 
-# UNIT              : days
-EPOCHSIZE           :
+DB                  : /Users/kartikkumar/Desktop/testDatabase.db
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -79,36 +37,3 @@ EPOCHSIZE           :
 # DO NOT uncomment the UNIT lines; they are simply comment lines.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-# Set the number of parallel threads to run the application on.
-# This parameters sets the number of parallel threads to spawn using OpenMP, to run the 
-# application. The random walk simulations are parallelized over the number of threads specified.
-# By default, the application runs on a single thread.
-# THREADS             : 1
-
-# Set the output mode for the simulations.
-# This parameter sets whether the output should be stored in the database or written to file.
-# By default, output is written to the database. To switch this to file, simply pass the parameter
-# as "file" (without quotation marks).
-# OUTPUT              : database
-
-# Set the file output directory.
-# This parameter should only be set in case the OUTPUT parameter is set to "file". The parameter 
-# will be ignored if OUTPUT is set to "database".
-# With this parameter, the absolute path to the output directory can be specified, where the output  
-# files generated are stored.
-# The default directory for the output files is the root directory of the Stochastic Migration
-# project.
-# FILEOUTPUTDIR       : rootdir
-
-# Set the database table names.
-# The following parameters can be used to override the default names for the test particle tables
-# in the database. For descriptions of these tables, take a look at the 
-# "exampleDatabaseGeneratorSettings.in" input file. Uncomment any of these parameters to override
-# the default table names.
-# TPCASE              : test_particle_case
-# TPINPUT             : test_particle_input
-# TPKICk              : test_particle_kick
-# RWMC                : random_walk_monte_carlo_runs
-# RWPERTURB           : random_walk_perturbers
-# RWOUTPUT            : random_walk_output

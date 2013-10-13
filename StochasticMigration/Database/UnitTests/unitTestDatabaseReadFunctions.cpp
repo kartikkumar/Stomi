@@ -7,16 +7,15 @@
 
 #define BOOST_TEST_MAIN
 
-// #include <stdexcept>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
 #include <boost/assign/list_of.hpp>
-// #include <boost/assign/ptr_list_inserter.hpp>
 #include <boost/test/floating_point_comparison.hpp>
 #include <boost/test/unit_test.hpp>
 
-// #include <Eigen/Core>
+#include <Eigen/Core>
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 #include <TudatCore/Basics/testMacros.h>
@@ -25,7 +24,7 @@
 
 #include "StochasticMigration/Basics/basics.h"
 #include "StochasticMigration/Database/databaseReadFunctions.h"
-// #include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
+#include "StochasticMigration/Database/randomWalkCase.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
 #include "StochasticMigration/Database/testParticleKick.h"
@@ -433,6 +432,65 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionNonExistentSimulation 
     // Check that expected run-time error was thrown due to request for non-existent test particle
     // simulation number.
     BOOST_CHECK( isRunTimeErrorThrown );
+}
+
+//! Test implementation of function to get random walk case data from SQLite3 database.
+BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunction )
+{
+    using namespace basics;
+    using namespace database;
+
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseRandomWalkCase.sqlite";
+
+    // Retrieve random walk case data.
+    const RandomWalkCasePointer randomWalkCase 
+        = getRandomWalkCase( absolutePathToTestDatabase, "circular_equatorial_nominal", 
+                             "random_walk_case" );
+
+    // Check that the values read from the database are correct.
+    BOOST_CHECK_EQUAL( randomWalkCase->caseId, 1 );
+    BOOST_CHECK_EQUAL( randomWalkCase->caseName, "circular_equatorial_nominal" );
+    BOOST_CHECK_EQUAL( randomWalkCase->testParticleCaseId, 1 );
+    BOOST_CHECK_EQUAL( randomWalkCase->perturberDensity, 1.0 );
+    BOOST_CHECK_EQUAL( randomWalkCase->perturberRingMass, 1.0 );  
+    BOOST_CHECK_EQUAL( randomWalkCase->observationPeriod, 94672800.0 );    
+    BOOST_CHECK_EQUAL( randomWalkCase->numberOfEpochWindows, 4 );    
+    BOOST_CHECK_EQUAL( randomWalkCase->epochWindowSize, 7776000.0 );    
+}
+
+//! Test run-time error in case of multiple identical random walk cases defined in SQLite3 
+//! database.
+BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunctionExtraRow )
+{
+    using namespace basics;
+    using namespace database;
+
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStochasticMigrationRootPath( )
+            + "/Database/UnitTests/testDatabaseRandomWalkCaseMultipleError.sqlite";
+
+    // Try to retrieve case data.
+    bool isExtraRowPresent = false;
+
+    try
+    {
+        // Retrieve test particle case data.
+        const RandomWalkCasePointer randomWalkCase
+                = getRandomWalkCase( absolutePathToTestDatabase, "circular_equatorial_nominal", 
+                                     "random_walk_case" );
+    }
+
+    // Catch expected run-time error.
+    catch( std::runtime_error& )
+    {
+        isExtraRowPresent = true;
+    }
+
+    // Check that the expected run-time error was thrown.
+    BOOST_CHECK( isExtraRowPresent );
 }
 
 // // //! Test implementation of function to get selected random walk Monte Carlo run data from SQLite3

@@ -172,16 +172,16 @@ DictionaryPointer getRandomWalkSimulatorDictionary( )
     // Add required parameters.
     addEntry( dictionary, "CASE",                                  1, 0 );
     addEntry( dictionary, "DATABASE",                              1, 0, list_of( "DB" ) );
-    addEntry( dictionary, "MONTECARLOPOPULATION",                  1, 0, list_of( "MCPOP" ) );
-    addEntry( dictionary, "PERTURBERDENSITY",                      1, 0, 
-                list_of( "RHOPERTURBER" ) );    
-    addEntry( dictionary, "PERTURBERRINGMASS",                     1, 0, 
-                list_of( "MPERTURBERRING" ) );        
-    addEntry( dictionary, "OBSERVATIONPERIOD",                     1, 0, list_of( "POBS" ) );
-    addEntry( dictionary, "EPOCHWINDOWSIZE",                       1, 0, list_of( "EPOCHSIZE" ) );
-    addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",                  1, 0, list_of( "NUMEPOCHS" ) );    
 
     // Add optional parameters.
+    addEntry( dictionary, "MONTECARLOPOPULATION",                  0, 0, list_of( "MCPOP" ) );
+    addEntry( dictionary, "PERTURBERDENSITY",                      0, 0, 
+                list_of( "RHOPERTURBER" ) );    
+    addEntry( dictionary, "PERTURBERRINGMASS",                     0, 0, 
+                list_of( "MPERTURBERRING" ) );        
+    addEntry( dictionary, "OBSERVATIONPERIOD",                     0, 0, list_of( "POBS" ) );
+    addEntry( dictionary, "EPOCHWINDOWSIZE",                       0, 0, list_of( "EPOCHSIZE" ) );
+    addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",                  0, 0, list_of( "NUMEPOCHS" ) );    
     addEntry( dictionary, "NUMBEROFTHREADS",                       0, 0, list_of( "THREADS" ) );
     addEntry( dictionary, "OUTPUTMODE",                            0, 0, list_of( "OUTPUT" ) );
     addEntry( dictionary, "FILEOUTPUTDIRECTORY",                   0, 0, 

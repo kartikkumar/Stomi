@@ -33,7 +33,7 @@ using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 TestParticleCase::TestParticleCase(
     // Required parameters.
     const int aCaseId,
-    const std::string aCaseName,
+    const std::string& aCaseName,
     const double aRandomWalkSimulationPeriod,
     const double aCentralBodyGravitationalParameter,
     const double aPerturbedBodyRadius,

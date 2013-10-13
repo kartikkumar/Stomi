@@ -13,6 +13,7 @@
 
 // #include "StochasticMigration/Database/randomWalkMonteCarloRun.h"
 // #include "StochasticMigration/Database/randomWalkPerturber.h"
+#include "StochasticMigration/Database/randomWalkCase.h"
 #include "StochasticMigration/Database/testParticleCase.h"
 #include "StochasticMigration/Database/testParticleInput.h"
 #include "StochasticMigration/Database/testParticleKick.h"
@@ -84,6 +85,19 @@ TestParticleKickTable getTestParticleKickTable(
         const std::string& databaseAbsolutePath, const double randomWalkSimulationPeriod, 
         const std::vector< int >& selectedSimulationIds, 
         const std::string& testParticleKickTableName );
+
+//! Get random walk case data.
+/*!
+ * Returns case data, used as metadata for a set of random walk simulations, retrieved from
+ * simulation database.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param caseName Name stored in table for random walk case.
+ * \param randomWalkCaseTableName String name of random walk case table in database.
+ * \return Random Walk case data, stored in a shared-point to a RandomWalkCase object.
+ */
+RandomWalkCasePointer getRandomWalkCase( const std::string& databaseAbsolutePath, 
+                                         const std::string& caseName,
+                                         const std::string& randomWalkCaseTableName );
 
 // //! Get table of random walk Monte Carlo runs.
 // /*!
