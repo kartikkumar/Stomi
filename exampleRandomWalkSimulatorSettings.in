@@ -18,15 +18,15 @@
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-# Set the name for the random walk simulation case.
-# The value of this parameter is interpreted as a string. This case must already exist in the 
-# database. To populate a new case, use the Random Walk Database Generator application.
-CASE                : circular_equatorial_heavy
-
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator
 # application.
-DB                  : /Users/kartikkumar/Desktop/testDatabase.sqlite
+DB                  : /Users/kartikkumar/Documents/University/PhD/Simulations/Tudat/Workspace/tudatApplications/stochasticMigration/stochasticMigrationResults.sqlite
+
+# Set the name for the random walk simulation case.
+# The value of this parameter is interpreted as a string. This case must already exist in the 
+# database. To populate a new case, use the Random Walk Database Generator application.
+CASE                : circular_equatorial_nominal
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -49,7 +49,7 @@ DB                  : /Users/kartikkumar/Desktop/testDatabase.sqlite
 # This parameter sets whether the output should be stored in the database or written to file.
 # By default, output is written to the database. To switch this to file, simply pass the parameter
 # as "file" (without quotation marks).
-OUTPUT              : file
+#OUTPUT              : database
 
 # Set the file output directory.
 # This parameter should only be set in case the OUTPUT parameter is set to "file". The parameter 
@@ -58,4 +58,4 @@ OUTPUT              : file
 # files generated are stored.
 # The default directory for the output files is the root directory of the Stochastic Migration
 # project.
-FILEOUTPUTDIR       : /Users/kartikkumar/Desktop/results
+#FILEOUTPUTDIR       : /Users/kartikkumar/Desktop/results

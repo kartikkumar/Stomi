@@ -229,58 +229,55 @@ TestParticleKickTable getTestParticleKickTable(
     // Set up query statement.
     std::ostringstream testParticleKickQuery;
     testParticleKickQuery << "SELECT * FROM " << testParticleKickTableName
-                          << " WHERE \"testParticleSimulationId\" == :simulationId"
+                          << " WHERE \"testParticleSimulationId\" IN (";
+
+    // Loop through the list of test particle simulation IDs.
+    for ( unsigned int i = 0; i < selectedSimulationIds.size( ) - 1; i++ )
+    {
+        testParticleKickQuery << selectedSimulationIds.at( i ) << ",";
+    }
+
+    testParticleKickQuery << selectedSimulationIds.back( ) << ")"
                           << " AND \"conjunctionEpoch\" > 0.0"
                           << " AND \"conjunctionEpoch\" < " << randomWalkSimulationPeriod << ";";
-
     // Compile a SQL query.
     SQLite::Statement query( database, testParticleKickQuery.str( ).c_str( ) );
 
     // Declare test particle kick table.
     TestParticleKickTable testParticleKickTable;
 
-    // Loop through the table retrieved from the database, step-by-step.
-    for ( unsigned int i = 0; i < selectedSimulationIds.size( ); i++ )
+    // // Set flag to indicate if simulation ID was found.
+    // bool isSimulationFound = false;
+
+    // Execute select query.
+    // A run-time error will be thrown if the requested simulation ID can't be found.
+    while( query.executeStep( ) )
     {
-        // Bind simulation number to query.
-        query.bind( ":simulationId", selectedSimulationIds.at( i ) );
+        // // Set flag to indicate that simulation ID was found to true.
+        // isSimulationFound = true;
 
-        // Set flag to indicate if simulation ID was found.
-        bool isSimulationFound = false;
-
-        // Execute select query.
-        // A run-time error will be thrown if the requested simulation ID can't be found.
-        while( query.executeStep( ) == true )
-        {
-            // Set flag to indicate that simulation ID was found to true.
-            isSimulationFound = true;
-
-            // Store fetched row in test particle input struct.
-            testParticleKickTable.insert(
-                new TestParticleKick(
-                        query.getColumn( 0 ), query.getColumn( 1 ), query.getColumn( 2 ),
-                        query.getColumn( 3 ), query.getColumn( 4 ), query.getColumn( 5 ),
-                        ( Eigen::VectorXd( 6 ) << query.getColumn( 6 ), query.getColumn( 7 ), 
-                          query.getColumn( 8 ), query.getColumn( 9 ), query.getColumn( 10 ),
-                          query.getColumn( 11 ) ).finished( ),
-                        query.getColumn( 12 ), query.getColumn( 13 ),
-                        ( Eigen::VectorXd( 6 ) << query.getColumn( 14 ), query.getColumn( 15 ), 
-                          query.getColumn( 16 ), query.getColumn( 17 ), query.getColumn( 18 ),
-                          query.getColumn( 19 ) ).finished( ) ) );   
-        }
-
-        // Check if simulation ID was not found (by checking flag).
-        if ( !isSimulationFound )
-        {
-            std::ostringstream errorMessage;
-            errorMessage << "ERROR: Simulation ID " << selectedSimulationIds.at( i ) << " "
-                         << "was not found in the test particle kicks table!";
-            throw std::runtime_error( errorMessage.str( ).c_str( ) );
-        }
-
-        // Reset query.
-        query.reset( );
+        // Store fetched row in test particle input struct.
+        testParticleKickTable.insert(
+            new TestParticleKick(
+                    query.getColumn( 0 ), query.getColumn( 1 ), query.getColumn( 2 ),
+                    query.getColumn( 3 ), query.getColumn( 4 ), query.getColumn( 5 ),
+                    ( Eigen::VectorXd( 6 ) << query.getColumn( 6 ), query.getColumn( 7 ), 
+                      query.getColumn( 8 ), query.getColumn( 9 ), query.getColumn( 10 ),
+                      query.getColumn( 11 ) ).finished( ),
+                    query.getColumn( 12 ), query.getColumn( 13 ),
+                    ( Eigen::VectorXd( 6 ) << query.getColumn( 14 ), query.getColumn( 15 ), 
+                      query.getColumn( 16 ), query.getColumn( 17 ), query.getColumn( 18 ),
+                      query.getColumn( 19 ) ).finished( ) ) );   
     }
+
+    // // Check if simulation ID was not found (by checking flag).
+    // if ( !isSimulationFound )
+    // {
+    //     std::ostringstream errorMessage;
+    //     errorMessage << "ERROR: Simulation ID " << selectedSimulationIds.at( i ) << " "
+    //                  << "was not found in the test particle kicks table!";
+    //     throw std::runtime_error( errorMessage.str( ).c_str( ) );
+    // }
 
     // Commit database transaction.
     transaction.commit( );    
@@ -326,10 +323,8 @@ RandomWalkCasePointer getRandomWalkCase( const std::string& databaseAbsolutePath
 //! Get complete random walk input table.
 RandomWalkInputTable getCompleteRandomWalkInputTable(
         const std::string& databaseAbsolutePath, const int caseId,
-        const double randomWalkSimulationPeriod,
         const std::string& randomWalkInputTableName, 
-        const std::string& randomWalkPerturberTableName,
-        const std::string& testParticleKickTableName, bool isCompleted )
+        const std::string& randomWalkPerturberTableName, bool isCompleted )
 {
     // Set stream with input table query.
     std::ostringstream randomWalkInputQuery;
@@ -359,16 +354,11 @@ RandomWalkInputTable getCompleteRandomWalkInputTable(
         const std::vector< int > perturbers = getRandomWalkPerturberList( 
             databaseAbsolutePath, monteCarloRunId, randomWalkPerturberTableName );
 
-        // Fetch test particle kick table based on list of perturbers.
-        const TestParticleKickTable kickTable = getTestParticleKickTable( 
-            databaseAbsolutePath, randomWalkSimulationPeriod, 
-            perturbers, testParticleKickTableName );
-
         // Store fetched row in random walk input struct.
         randomWalkInputTable.insert(
             new RandomWalkInput( query.getColumn( 0 ), query.getColumn( 1 ),
                                  boost::lexical_cast< bool >( query.getColumn( 2 ) ), 
-                                 query.getColumn( 3 ), perturbers, kickTable ) );
+                                 query.getColumn( 3 ), perturbers ) );
     }
 
     // Commit database transaction.

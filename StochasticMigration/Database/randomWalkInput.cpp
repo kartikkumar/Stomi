@@ -23,15 +23,13 @@ RandomWalkInput::RandomWalkInput( const int aMonteCarloRunId,
                                   const int aRandomWalkCaseId,
                                   const bool aCompletedFlag,
                                   const double anObservationPeriodStartEpoch,
-                                  const std::vector< int >& someTestParticleSimulationIds,
-                                  const TestParticleKickTable& aTestParticleKickTable )
+                                  const std::vector< int >& someTestParticleSimulationIds )
   : monteCarloRunId( checkPositive( aMonteCarloRunId, "Monte Carlo run ID" ) ),
     randomWalkCaseId( checkPositive( aRandomWalkCaseId, "Random walk case ID" ) ),
     isCompleted( aCompletedFlag ),
     observationPeriodStartEpoch( checkPositive( anObservationPeriodStartEpoch, 
                                                 "Observation period start epoch [s]" ) ),
-    testParticleSimulationIds( someTestParticleSimulationIds ),
-    testParticleKickTable( aTestParticleKickTable )
+    testParticleSimulationIds( someTestParticleSimulationIds )
 { }    
 
 //! Overload == operator.
@@ -44,8 +42,7 @@ bool operator==( const RandomWalkInput& randomWalkInput1,
              && randomWalkInput1.observationPeriodStartEpoch 
              == randomWalkInput2.observationPeriodStartEpoch 
              && randomWalkInput1.testParticleSimulationIds 
-             == randomWalkInput2.testParticleSimulationIds
-             && randomWalkInput1.testParticleKickTable == randomWalkInput2.testParticleKickTable );
+             == randomWalkInput2.testParticleSimulationIds );
 }
 
 //! Overload < operator.

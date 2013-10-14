@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <limits>
@@ -39,9 +40,13 @@
 #include "StochasticMigration/Database/databaseReadFunctions.h" 
 #include "StochasticMigration/Database/databaseWriteFunctions.h"  
 #include "StochasticMigration/Database/testParticleCase.h"
+#include "StochasticMigration/Database/testParticleKick.h"
 #include "StochasticMigration/Database/randomWalkCase.h"
 #include "StochasticMigration/Database/randomWalkInput.h"
 #include "StochasticMigration/InputOutput/dictionaries.h"
+
+
+#include <SQLiteC++.h> 
 
 //! Execute random walk simulations.
 int main( const int numberOfInputs, const char* inputArguments[ ] )
@@ -242,9 +247,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Get entire test particle input table from database. Only random walk input data for  
     // incomplete simulations are fetched for the given case ID.
     const RandomWalkInputTable randomWalkInputTable = getCompleteRandomWalkInputTable(
-                databasePath, randomWalkCaseData->caseId, 
-                testParticleCaseData->randomWalkSimulationPeriod, randomWalkInputTableName, 
-                randomWalkPerturberTableName, testParticleKickTableName, false );    
+                databasePath, randomWalkCaseData->caseId, randomWalkInputTableName, 
+                randomWalkPerturberTableName, false );    
 
     // Generate output message to indicate that the input table was fetched successfully.
     cout << "Random walk input data (" << randomWalkInputTable.size( )
@@ -307,7 +311,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     ///////////////////////////////////////////////////////////////////////////
 
     // Execute Monte Carlo simulation.
-
     cout << endl;
     cout << "****************************************************************************" << endl;
     cout << "Simulation loop" << endl;
@@ -343,6 +346,20 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         ///////////////////////////////////////////////////////////////////////////
 
+        // Fetch kick table based on test particle simulation IDs for Monte Carlo run.
+        TestParticleKickTable kickTable;
+#pragma omp critical( accessKickTable )
+        {        
+            kickTable = getTestParticleKickTable( 
+                databasePath, testParticleCaseData->randomWalkSimulationPeriod,
+                iteratorRandomWalkInputTable->testParticleSimulationIds, 
+                testParticleKickTableName );
+        }
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////////////////////
+
         // Execute random walk simulation.
 
         // Declare perturbed body propagation history. This stores the propagation history of the
@@ -358,7 +375,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 = keplerianActionElementsHistory.begin( );
 
         // Loop through aggregate kick table and execute kicks on perturbed body. 
-        const TestParticleKickTable kickTable = iteratorRandomWalkInputTable->testParticleKickTable;
         for ( TestParticleKickTable::iterator iteratorKickTable = kickTable.begin( );
               iteratorKickTable != kickTable.end( ); iteratorKickTable++ )
         {
@@ -454,7 +470,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                         - longitudeHistoryRegression.getCoefficientOfConstantTerm( )
                         - longitudeHistoryRegression.getCoefficientOfLinearTerm( )
                         * iteratorReducedLongitudeHistory->first;
-            }  
+            }           
 
             // Declare map of average longitude residuals per window [rad].
             DoubleKeyDoubleValueMap averageLongitudeResiduals;
@@ -464,9 +480,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                   windowNumber < randomWalkCaseData->numberOfEpochWindows; 
                   windowNumber++ )
             {
-                const double epochWindowCenter 
-                    = iteratorRandomWalkInputTable->observationPeriodStartEpoch
-                      + windowNumber * epochWindowSpacing;
+                const double epochWindowCenter = windowNumber * epochWindowSpacing;
 
                 averageLongitudeResiduals[ epochWindowCenter ] 
                     = computeStepFunctionWindowAverage( 
@@ -639,15 +653,20 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Write random walk output to database. To avoid locking of the database, this section is
         // thread-critical, so will be executed one-by-one by multiple threads.
-#pragma omp critical( writeToDatabase )
+
+        // Check if output mode is set to "DATABASE".
+        if ( iequals( outputMode, "DATABASE" ) )
         {
-            // Populate output table in database.
-            populateRandomWalkOutputTable( 
-                databasePath, iteratorRandomWalkInputTable->monteCarloRunId,
-                averageLongitudeResidual, maximumLongitudeResidualChange,
-                averageEccentricity, maximumEccentricityChange,
-                averageInclination, maximumInclinationChange,
-                randomWalkOutputTableName, randomWalkInputTableName );
+    #pragma omp critical( writeToDatabase )
+            {
+                // Populate output table in database.
+                populateRandomWalkOutputTable( 
+                    databasePath, iteratorRandomWalkInputTable->monteCarloRunId,
+                    averageLongitudeResidual, maximumLongitudeResidualChange,
+                    averageEccentricity, maximumEccentricityChange,
+                    averageInclination, maximumInclinationChange,
+                    randomWalkOutputTableName, randomWalkInputTableName );
+            }
         }
 
         ///////////////////////////////////////////////////////////////////

@@ -35,8 +35,7 @@ public:
                      const int aRandomWalkCaseId,
                      const bool aCompletedFlag,
                      const double anObservationPeriodStartEpoch,
-                     const std::vector< int >& someTestParticleSimulationIds,
-                     const TestParticleKickTable& aTestParticleKickTable );
+                     const std::vector< int >& someTestParticleSimulationIds );
 
     //! Monte Carlo run ID.
     const int monteCarloRunId;
@@ -52,9 +51,6 @@ public:
 
     //! List of test particle simulation IDs, used to generate perturbers.
     const std::vector< int > testParticleSimulationIds;
-
-    //! Table of test particle kicks associated with perturbers.
-    const TestParticleKickTable testParticleKickTable;
 
 protected:
 private:

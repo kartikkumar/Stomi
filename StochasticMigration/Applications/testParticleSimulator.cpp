@@ -1210,7 +1210,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             kickTableFile.close( );
         }
 
-        // Else, check if output mdoe is set to "DATABASE".
+        // Else, check if output mode is set to "DATABASE".
         else if ( iequals( outputMode, "DATABASE" ) )
         {
             // To avoid locking of the database, this section is thread-critical, so will be 

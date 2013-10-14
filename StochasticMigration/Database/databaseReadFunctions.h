@@ -118,21 +118,16 @@ RandomWalkCasePointer getRandomWalkCase( const std::string& databaseAbsolutePath
  * Completed (true) or incomplete (false) simulations can be retrieved.
  * \param databaseAbsolutePath Absolute path to simulation database.
  * \param caseId ID stored in table for requested random walk case.
- * \param randomWalkSimulationPeriod Period for random walk simulations, used to fetch table of 
- *          kicks.
  * \param randomWalkInputTableName String name of random walk input table in database.
  * \param randomWalkPerturberTableName String name of random walk perturber table in database.
- * \param testParticleKickTableName String name of test particle kick table in database. 
  * \param isCompleted Flag indicating whether to retrieve completed or incomplete simulations
  *          (default is set to retrieve input data for simulations that haven't been completed).
  * \return Random walk input table, as a set of RandomWalkInput pointers.
  */
 RandomWalkInputTable getCompleteRandomWalkInputTable(
         const std::string& databaseAbsolutePath, const int caseId,
-        const double randomWalkSimulationPeriod,
         const std::string& randomWalkInputTableName, 
-        const std::string& randomWalkPerturberTableName,
-        const std::string& testParticleKickTableName, bool isCompleted = false );
+        const std::string& randomWalkPerturberTableName, bool isCompleted = false );
 
 //! Get list of selected perturbers for random walk Monte Carlo run.
 /*!
