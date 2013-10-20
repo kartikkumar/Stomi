@@ -3,33 +3,6 @@
  *    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
  *    See http://bit.ly/12SHPLR for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120330    K. Kumar          File created from mabSystemIntegrator.cpp.
- *      120331    K. Kumar          Updated file to work with openmp and serialize write
- *                                  operations to database.
- *      120403    K. Kumar          Updated code to write kick tables to temoporary swap files;
- *                                  the database is updated at the end, so there is no concurrent
- *                                  access, which leads to problems.
- *      120502    K. Kumar          Modified filename to mabSystemSimulator.cpp.
- *      120503    K. Kumar          Updated code to not save Mab's state; to reduce memory
- *                                  footprint.
- *      120522    K. Kumar          Changed filename to testParticleSimulator.cpp.
- *      120629    K. Kumar          Updated propagation loop to used fixed output interval.
- *      120808    K. Kumar          Updated to new dictionary-based input file system.
- *      120830    K. Kumar          Cleaned up code; implemented composite state derivative model.
- *      130717    K. Kumar          Updated and cleaned up the input deck.
- *      130723    K. Kumar          Added code to write data to output files. Added section to 
- *                                  write kick table to database.
- *      130725    K. Kumar          Created workaround for OpenMP to work with iterators.
- *      130917    K. Kumar          Updated code to reflect changes to TestParticleKick struct.
- *
- *    References
- *      Kumar, K., de Pater, I., Showalter, M.R. In prep, 2013.
- *
- *    Notes
- *
  */
 
 #include <algorithm>

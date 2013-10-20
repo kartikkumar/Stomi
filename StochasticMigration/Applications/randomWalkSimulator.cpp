@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
@@ -17,6 +18,7 @@
 #include <omp.h>
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/filesystem.hpp>
 
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/unitConversions.h>
@@ -58,6 +60,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using std::string;
 
     using boost::iequals;
+    using namespace boost::filesystem;    
 
     using namespace SQLite;
 
@@ -332,14 +335,16 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Set input table iterator and emit output message.
 
         // Set input table iterator for current simulation wrt to start of input table and counter.
-        RandomWalkInputTable::iterator iteratorRandomWalkInputTable = randomWalkInputTable.begin( );
+        RandomWalkInputTable::iterator iteratorRandomWalkInputTable 
+            = randomWalkInputTable.begin( );
         advance( iteratorRandomWalkInputTable, i );
 
         // Emit output message.
 #pragma omp critical( outputToConsole )
         {
-            cout << "Monte Carlo run " << iteratorRandomWalkInputTable->monteCarloRunId << " on thread "
-                 << omp_get_thread_num( ) + 1 << " / " << omp_get_num_threads( ) << endl;
+            cout << "Monte Carlo run " << iteratorRandomWalkInputTable->monteCarloRunId 
+                 << " on thread " << omp_get_thread_num( ) + 1 << " / " 
+                 << omp_get_num_threads( ) << endl;
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -354,6 +359,77 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 databasePath, testParticleCaseData->randomWalkSimulationPeriod,
                 iteratorRandomWalkInputTable->testParticleSimulationIds, 
                 testParticleKickTableName );
+        }
+
+       // Check if output mode is set to "FILE".
+        // If so, open output file and write kick table data.
+        // Check if the output directory exists: if not, create it.
+        if ( iequals( outputMode, "FILE" ) )
+        {
+            // Check if output directory exists.
+            if ( !exists( fileOutputDirectory ) )
+            {
+               std::cerr << "Directory does not exist. Will be created." << std::endl;
+               create_directories( fileOutputDirectory );
+            }        
+
+            // Declare file handler.
+            std::ofstream kickTableFile;
+
+            // Set up and write file header to file.
+            std::ostringstream kickTableFilename;
+            kickTableFilename << fileOutputDirectory << "monteCarloRun" 
+                              << iteratorRandomWalkInputTable->monteCarloRunId 
+                              << "_kickTable.csv";            
+            kickTableFile.open( kickTableFilename.str( ).c_str( ) );
+            kickTableFile << "epoch,kickTable" << std::endl;
+            kickTableFile << "# [s],[m],[s],[m],[m],[-],[rad],[rad],[rad],[rad]," 
+                          << "[m],[-],[rad],[rad],[rad],[rad]" << std::endl;       
+
+            // Write kick table to file.
+            for ( TestParticleKickTable::iterator iteratorTestParticleKicks = kickTable.begin( );
+                  iteratorTestParticleKicks != kickTable.end( );
+                  iteratorTestParticleKicks++ )
+            {
+                kickTableFile 
+                    << iteratorTestParticleKicks->kickId << "," 
+                    << iteratorTestParticleKicks->testParticleSimulationId << ", ";
+                kickTableFile
+                    << std::setprecision( std::numeric_limits< double >::digits10 )
+                    << iteratorTestParticleKicks->conjunctionEpoch << ", "
+                    << iteratorTestParticleKicks->conjunctionDistance << ", "
+                    << iteratorTestParticleKicks->preConjunctionEpoch << ", "
+                    << iteratorTestParticleKicks->preConjunctionDistance << ", "
+                    << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
+                        semiMajorAxisIndex ) << ", "
+                    << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
+                        eccentricityIndex ) << ", "
+                    << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
+                        inclinationIndex ) << ", "
+                    << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
+                        argumentOfPeriapsisIndex ) << ", "
+                    << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
+                        longitudeOfAscendingNodeIndex ) << ", "
+                    << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
+                        trueAnomalyIndex ) << ", "
+                    << iteratorTestParticleKicks->postConjunctionEpoch << ", "
+                    << iteratorTestParticleKicks->postConjunctionDistance << ", "
+                    << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
+                        semiMajorAxisIndex ) << ", "
+                    << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
+                        eccentricityIndex ) << ", "
+                    << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
+                        inclinationIndex ) << ", "
+                    << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
+                        argumentOfPeriapsisIndex ) << ", "
+                    << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
+                        longitudeOfAscendingNodeIndex ) << ", "
+                    << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
+                        trueAnomalyIndex ) << std::endl;
+
+                // Close file handler.
+                kickTableFile.close( );
+            }                 
         }
 
         ///////////////////////////////////////////////////////////////////////////

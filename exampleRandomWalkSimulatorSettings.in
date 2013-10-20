@@ -26,7 +26,7 @@ DB                  : /Users/kartikkumar/Documents/University/PhD/Simulations/Tu
 # Set the name for the random walk simulation case.
 # The value of this parameter is interpreted as a string. This case must already exist in the 
 # database. To populate a new case, use the Random Walk Database Generator application.
-CASE                : circular_equatorial_nominal
+CASE                : circular_equatorial_short
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

@@ -27,7 +27,7 @@ DB                  : /Users/kartikkumar/Documents/University/PhD/Simulations/Tu
 
 # Set the name for the case.
 # The value of this parameter is interpreted as a string.
-CASE                : circular_equatorial_nominal
+CASE                : circular_equatorial_short
 
 # Set the name for the test particle case.
 # The value of this parameter is interpreted as a string. 
@@ -65,12 +65,12 @@ MPERTURBERRING      : 1.0
 # This parameter sets the length of the observation period for the metrics used to track the 
 # random walk of the perturbed body. This should correspond to any real observations made.
 # UNIT              : yrs
-POBS                : 3.0
+POBS                : 1.0
 
 # Set the number of epochs.
 # This parameter sets the number of epochs at which the observation metrics are given within the
 # observation period. These epochs are equally spaced in time, within the observation period.
-NUMEPOCHS           : 4
+NUMEPOCHS           : 2
 
 # Set the epoch window size.
 # This parameter sets the size of the window about a given epoch within the observation period, 
