@@ -13,7 +13,8 @@ perturber ring.
 ###################################################################################################
 
 # Set absolute path to SQLite database with simulation data.
-databasePath    = "/Users/kartikkumar/Documents/University/PhD/Simulations/Tudat/Workspace/tudatApplications/stochasticMigration/stochasticMigrationResults.sqlite"
+databasePath    = "/Users/kartikkumar/Documents/University/PhD/Simulations/Tudat/Workspace/" \
+                  "tudatApplications/stochasticMigration/stochasticMigrationResults.sqlite"
 
 # Set case name.
 caseName        = "circular_equatorial_nominal"
