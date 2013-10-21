@@ -68,18 +68,17 @@ TestParticleInputTable getCompleteTestParticleInputTable(
 /*!
  * Returns table of input data for test particle simulations, retrieved from simulation database,
  * for a given case, defined by a string-name.
- * A list of specific test particle simulation numbers can be requested to be retrieved from the
- * SQLite database.
+ * A list of specific test particle simulation IDs can be requested to be retrieved from the SQLite
+ * database.
  * \param databaseAbsolutePath Absolute path to simulation database.
  * \param caseId ID stored in table for requested test particle case.
- * \param testParticleSimulationNumbers List of test particle simulation numbers to select from
- *          database.
+ * \param testParticleSimulationIds List of test particle simulation IDs to select from database.
  * \param testParticleInputTableName String name of test particle input table in database.
  * \return Test particle input table, as a vector of TestParticleInput objects.
  */
 TestParticleInputTable getSelectedTestParticleInputTable(
         const std::string& databaseAbsolutePath, const int caseId,
-        const std::string& testParticleSimulationNumbers,
+        const std::string& testParticleSimulationIds,
         const std::string& testParticleInputTableName );
 
 //! Get test particle kick table.
@@ -128,6 +127,25 @@ RandomWalkInputTable getCompleteRandomWalkInputTable(
         const std::string& databaseAbsolutePath, const int caseId,
         const std::string& randomWalkInputTableName, 
         const std::string& randomWalkPerturberTableName, bool isCompleted = false );
+
+//! Get selected random walk input table.
+/*!
+ * Returns table of input data for random walk simulations, retrieved from simulation database,
+ * for a given case, defined by a string-name.
+ * A list of specific random walk Monte Carlo run IDs can be requested to be retrieved from the
+ * SQLite database.
+ * \param databaseAbsolutePath Absolute path to simulation database.
+ * \param caseId ID stored in table for requested random walk case.
+ * \param monteCarloRunIds List of Monte Carlo run IDs to select from database.
+ * \param randomWalkInputTableName String name of random walk input table in database.
+ * \param randomWalkPerturberTableName String name of random walk perturber table in database. 
+ * \return Random walk input table, as a vector of RandomWalkInput objects.
+ */
+RandomWalkInputTable getSelectedRandomWalkInputTable(
+        const std::string& databaseAbsolutePath, const int caseId,
+        const std::string& monteCarloRunIds,
+        const std::string& randomWalkInputTableName,
+        const std::string& randomWalkPerturberTableName );
 
 //! Get list of selected perturbers for random walk Monte Carlo run.
 /*!

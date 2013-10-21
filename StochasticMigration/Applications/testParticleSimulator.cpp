@@ -141,16 +141,16 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Extract input parameters.
 
-    // Extract required parameters. 
-    const string caseName = extractParameterValue< string >(
-                parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "CASE" ) );
-    cout << "Case                                                      " 
-         << caseName << endl; 
-
+    // Extract required parameters.
     const string databasePath = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "DATABASE" ) );
     cout << "Database                                                  "
          << databasePath << endl;
+
+    const string caseName = extractParameterValue< string >(
+                parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "CASE" ) );
+    cout << "Test particle case                                        " 
+         << caseName << endl; 
 
     // Extract optional parameters. 
     const int numberOfThreads = extractParameterValue< int >(
@@ -171,17 +171,17 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << "File output directory                                     "
          << fileOutputDirectory << endl;
 
-    const double outputInterval = extractParameterValue< double >(
-            parsedData->begin( ), parsedData->end( ),
-            findEntry( dictionary, "OUTPUTINTERVAL" ), 3600.0 );
-    cout << "Output interval                                           " 
-         << outputInterval << " s" << endl;     
-
     const string simulationsToExecute = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "SIMULATIONSTOEXECUTE" ), "ALL" );
     cout << "Simulations to execute                                    "
          << simulationsToExecute << endl;
+         
+    const double outputInterval = extractParameterValue< double >(
+            parsedData->begin( ), parsedData->end( ),
+            findEntry( dictionary, "OUTPUTINTERVAL" ), 3600.0 );
+    cout << "Output interval                                           " 
+         << outputInterval << " s" << endl;     
 
     const string testParticleCaseTableName = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),

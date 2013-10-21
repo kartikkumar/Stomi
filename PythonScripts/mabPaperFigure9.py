@@ -13,22 +13,24 @@ elements.
 ###################################################################################################
 
 # Set Monte Carlo run IDs as a list.
-monteCarloRunId =
+monteCarloRunIds    = (1,2,3,4,5)
 
 # Set absolute path to directory with data files.
-datafilesPath   =
+datafilesPath       = "/Users/kartikkumar/Desktop/results"
 
 # Set absolute path to SQLite database with simulation data.
-databasePath    = 
+databasePath        = "/Users/kartikkumar/Documents/Education/PhD/Simulations/" \
+                      + "Tudat/Workspace/tudatApplications/stochasticMigration/" \
+                      + "stochasticMigrationResults.sqlite"
 
 # Set case name.
-caseName        = 
+caseName            = "circular_equatorial_nominal"
 
 # Set absolute path to output directory.
-outputPath      = 
+outputPath          = "/Users/kartikkumar/Desktop/results"
 
 # Set figure dpi.
-figureDPI       = 
+figureDPI           = 600
 
 ###################################################################################################
 
@@ -90,23 +92,30 @@ with database:
     # Set cursor to scan through database and execute queries.
     cursor = database.cursor()
     
-    # Select the case ID corresponding to the case name provided.
-    cursor.execute("SELECT caseId FROM test_particle_case WHERE caseName == \"" + caseName + "\";")
-    caseId = cursor.fetchall()[0][0]  
-    
-    # Select all the case data associated with the case ID.
-    cursor.execute("SELECT * FROM test_particle_case WHERE caseId == " + str(caseId) + ";")
-    rawCaseData = cursor.fetchall()
-    caseDataColumnNameList = [column_name[0] for column_name in cursor.description]  
-    
+    # Select test particle case ID associated with random walk case.
+    cursor.execute("SELECT testParticleCaseId FROM random_walk_case " \
+                   "WHERE caseName == \"" + caseName + "\";")
+    testParticleCaseId = cursor.fetchall()[0][0]
+
+    # Select observation period associated with random walk case.
+    cursor.execute("SELECT observationPeriod FROM random_walk_case " \
+                   "WHERE caseName == \"" + caseName + "\";")
+    observationPeriod = cursor.fetchall()[0][0]    
+
+    # Select all the test particle case data associated with the case ID.
+    cursor.execute("SELECT * FROM test_particle_case WHERE caseId == " \
+                   + str(testParticleCaseId) + ";")
+    rawTestParticleCaseData = cursor.fetchall()
+    caseDataColumnNameList = [column_name[0] for column_name in cursor.description]      
+
+# Store random walk case data in dictionary, using column names from database.    
+testParticleCaseData = {} 
+for i,name in enumerate(caseDataColumnNameList):
+    testParticleCaseData[name] = rawTestParticleCaseData[0][i]   
+
 # Close database connection if it is open.    
 if database:
     database.close()    
-    
-# Store case data in dictionary, using column names from database.    
-caseData = {} 
-for i,name in enumerate(caseDataColumnNameList):
-    caseData[name] = rawCaseData[0][i]    
 
 ###################################################################################################
 
@@ -118,16 +127,27 @@ for i,name in enumerate(caseDataColumnNameList):
 # Change the working directory to the directory containing the data files.
 os.chdir(datafilesPath)
 
-# Declare empty array to store Keplerian element arrays.
-keplerianElements = []
+# Declare empty array to store Keplerian action element arrays.
+keplerianActionElements = []
 
-# Set up base for filenames.
-filenameBase = 'monteCarloRun' + str(monteCarloRunId) + "_"
-keplerianElementsFilename = filenameBase + 'keplerianActionElements.csv'
+# Declare empty array to store longitude residual arrays.
+longitudeResiduals = []
 
-# Read in Keplerian elements history for test particle.
-keplerianElements.append(numpy.genfromtxt(keplerianElementsFilename, \
-                         delimiter = ',', comments = '#', names = True) )
+for monteCarloRunId in monteCarloRunIds:
+    # Set up base for filenames.
+    filenameBase = 'monteCarloRun' + str(monteCarloRunId) + "_"
+
+    keplerianActionElementsFilename = filenameBase + 'keplerianActionElements.csv'
+
+    # Read in Keplerian action elements history for Monte Carlo run.
+    keplerianActionElements.append(numpy.genfromtxt(keplerianActionElementsFilename, \
+                                   delimiter = ',', comments = '#', names = True) )
+
+    longitudeResidualsFilename = filenameBase + 'longitudeResiduals.csv'
+
+    # Read in longitude residual history for Monte Carlo run.
+    longitudeResiduals.append(numpy.genfromtxt(longitudeResidualsFilename, \
+                              delimiter = ',', comments = '#', names = True) )    
 
 ###################################################################################################
 
@@ -136,44 +156,48 @@ keplerianElements.append(numpy.genfromtxt(keplerianElementsFilename, \
 # Generate figures
 ###################################################################################################
 
-# Set output path and case-prefix for files generated.
-outputPathAndCasePrefix = outputPath + "/case" + str(caseData['caseId']) + "_"
+for i,keplerData in enumerate(keplerianActionElements):
+    # Set output path and case-prefix for files generated.
+    outputPathAndCasePrefix = outputPath + "/monteCarloRun" + str(monteCarloRunIds[i]) + "_"
 
-plt.figure()
-plt.xlabel("Epoch [Julian years]")
-plt.ylabel("Mab semi-major axis wrt T0 [km]")
-plt.xlim(xmin = 0.0, xmax = 50.0)
-for keplerData in keplerianElements:
+    # Plot time-histories of Keplerian elements.
+    fig = plt.figure()
+
+    plt.subplot(221)
+    plt.xlabel("Epoch [Julian years]")
+    plt.ylabel("$\Delta a_{Mab}$ [km]")
+    plt.xlim(xmin = 0.0, xmax = 50.0)
     plt.plot(keplerData['epoch']/constants.julianYear, \
-             (keplerData['semiMajorAxis'] - caseData['perturbedBodySemiMajorAxisAtT0']) \
+             (keplerData['semiMajorAxis'] - testParticleCaseData['perturbedBodySemiMajorAxisAtT0']) \
              * constants.meterInKilometers, 'k')
-plt.savefig(outputPathAndCasePrefix + "semiMajorAxisHistory.pdf", \
-            dpi = figureDPI)    
-plt.close()
 
-plt.figure()
-plt.xlabel("Epoch [Julian years]")
-plt.ylabel("Mab eccentricity wrt T0 [km]")
-plt.xlim(xmin = 0.0, xmax = 50.0)
-plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
-for keplerData in keplerianElements:
+    plt.subplot(222)
+    plt.xlabel("Epoch [Julian years]")
+    plt.ylabel("$\Delta e_{Mab}$ [-]")
+    plt.xlim(xmin = 0.0, xmax = 50.0)
+    plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     plt.plot(keplerData['epoch']/constants.julianYear, \
-             keplerData['eccentricity'] - caseData['perturbedBodyEccentricityAtT0'], 'k')
-plt.savefig(outputPathAndCasePrefix + "eccentricityHistory.pdf", \
-            dpi = figureDPI)    
-plt.close()
+             keplerData['eccentricity'] - testParticleCaseData['perturbedBodyEccentricityAtT0'], 'k')
 
+    plt.subplot(223)
+    plt.xlabel("Epoch [Julian years]")
+    plt.ylabel("$\Delta i_{Mab}$ [deg]")
+    plt.xlim(xmin = 0.0, xmax = 50.0)
+    plt.plot(keplerData['epoch']/constants.julianYear, \
+             ( keplerData['inclination'] - testParticleCaseData['perturbedBodyInclinationAtT0'] ) \
+             * constants.radiansInDegrees, 'k')
 
-plt.figure()
-plt.xlabel("Epoch [Julian years]")
-plt.ylabel("Mab inclination [km]")
-plt.xlim(xmin = 0.0, xmax = 50.0)
-for keplerData in keplerianElements:
-    plt.plot(keplerData['epoch']/constants.julianYear,keplerData['inclination'], 'k')
-plt.savefig(outputPathAndCasePrefix + "inclinationHistory.pdf", \
-            dpi = figureDPI)    
-plt.close()
+    plt.subplot(224)
+    plt.xlabel("Epoch [Julian years]")
+    plt.ylabel("$\Delta L_{Mab}$ [deg]")
+    plt.xlim(xmin = 0.0, xmax = observationPeriod/constants.julianYear)
+    plt.plot(longitudeResiduals[i]['epoch']/constants.julianYear, \
+             longitudeResiduals[i]['longitudeResidual'] * constants.radiansInDegrees, 'k')
 
+    fig.set_tight_layout(True)
+
+    plt.savefig(outputPathAndCasePrefix + "keplerianElementsHistory.pdf", dpi = figureDPI)    
+    plt.close()
 
 ###################################################################################################
 

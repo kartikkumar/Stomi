@@ -177,7 +177,9 @@ DictionaryPointer getRandomWalkSimulatorDictionary( )
     addEntry( dictionary, "NUMBEROFTHREADS",                       0, 0, list_of( "THREADS" ) );
     addEntry( dictionary, "OUTPUTMODE",                            0, 0, list_of( "OUTPUT" ) );   
     addEntry( dictionary, "FILEOUTPUTDIRECTORY",                   0, 0, 
-            list_of( "FILEOUTPUTDIR" ) ); 
+                list_of( "FILEOUTPUTDIR" ) ); 
+    addEntry( dictionary, "MONTECARLORUNSTOEXECUTE",               0, 0, 
+                list_of( "MONTECARLORUNS" ) );    
     addEntry( dictionary, "RANDOMWALKCASETABLENAME",               0, 0, 
                 list_of( "RWCASETABLE" ) );
     addEntry( dictionary, "RANDOMWALKINPUTTABLENAME",              0, 0, 
@@ -188,16 +190,14 @@ DictionaryPointer getRandomWalkSimulatorDictionary( )
                 list_of( "RWOUTPUTTABLE" ) );        
     addEntry( dictionary, "TESTPARTICLECASETABLENAME",             0, 0, list_of( "TPCASE" ) );
     addEntry( dictionary, "TESTPARTICLEKICKTABLENAME",             0, 0, list_of( "TPKICK" ) );
-
-
-    // addEntry( dictionary, "MONTECARLOPOPULATION",                  0, 0, list_of( "MCPOP" ) );
-    // addEntry( dictionary, "PERTURBERDENSITY",                      0, 0, 
-    //             list_of( "RHOPERTURBER" ) );    
-    // addEntry( dictionary, "PERTURBERRINGMASS",                     0, 0, 
-    //             list_of( "MPERTURBERRING" ) );        
-    // addEntry( dictionary, "OBSERVATIONPERIOD",                     0, 0, list_of( "POBS" ) );
-    // addEntry( dictionary, "EPOCHWINDOWSIZE",                       0, 0, list_of( "EPOCHSIZE" ) );
-    // addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",                  0, 0, list_of( "NUMEPOCHS" ) );    
+    addEntry( dictionary, "MONTECARLOPOPULATION",                  0, 0, list_of( "MCPOP" ) );
+    addEntry( dictionary, "PERTURBERDENSITY",                      0, 0, 
+                list_of( "RHOPERTURBER" ) );    
+    addEntry( dictionary, "PERTURBERRINGMASS",                     0, 0, 
+                list_of( "MPERTURBERRING" ) );        
+    addEntry( dictionary, "OBSERVATIONPERIOD",                     0, 0, list_of( "POBS" ) );
+    addEntry( dictionary, "EPOCHWINDOWSIZE",                       0, 0, list_of( "EPOCHSIZE" ) );
+    addEntry( dictionary, "NUMBEROFEPOCHWINDOWS",                  0, 0, list_of( "NUMEPOCHS" ) );    
 
 
     return dictionary;

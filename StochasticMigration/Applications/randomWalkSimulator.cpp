@@ -19,6 +19,7 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/make_shared.hpp>
 
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/unitConversions.h>
@@ -60,7 +61,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using std::string;
 
     using boost::iequals;
-    using namespace boost::filesystem;    
+    using namespace boost::filesystem; 
+    using boost::make_shared;   
 
     using namespace SQLite;
 
@@ -120,7 +122,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
          << randomWalkCaseName << endl;  
 
     // Extract optional parameters. 
-
     const int numberOfThreads = extractParameterValue< int >(
                 parsedData->begin( ), parsedData->end( ),
                 findEntry( dictionary, "NUMBEROFTHREADS" ), 1 );
@@ -138,6 +139,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 findEntry( dictionary, "FILEOUTPUTDIRECTORY" ), "" ) + "/";
     cout << "File output directory                                     "
          << fileOutputDirectory << endl;
+
+    const string monteCarloRunsToExecute = extractParameterValue< string >(
+                parsedData->begin( ), parsedData->end( ),
+                findEntry( dictionary, "MONTECARLORUNSTOEXECUTE" ), "ALL" );
+    cout << "Monte Carlo runs to execute                               "
+         << monteCarloRunsToExecute << endl;         
 
     const string randomWalkCaseTableName = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
@@ -176,38 +183,57 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << "Test particle kick table                                  "
          << testParticleKickTableName << endl;          
 
-//     const double perturberDensity = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "PERTURBERDENSITY" ) );    
-//     cout << "Perturber density                                         "
-//          << perturberDensity << " perturbers per R_Hill" << endl;                         
+    // Retrieve and store random walk case data from database.
+    RandomWalkCasePointer randomWalkCase;
 
-//     const double perturberRingMass = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "PERTURBERRINGMASS" ) );    
-//     cout << "Perturber ring mass                                       "
-//          << perturberRingMass << " M_PerturbedBody" << endl;              
+    // Case data is extracted in local scope from the database, with overwritten parameters 
+    // extracted from the input file, to ensure that none of these parameters are used globally
+    // elsewhere in this file.
+    {
+        const RandomWalkCasePointer caseDataFromDatabase = getRandomWalkCase( 
+            databasePath, randomWalkCaseName, randomWalkCaseTableName ); 
 
-//     const double observationPeriod = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "OBSERVATIONPERIOD" ),
-//                 TUDAT_NAN, &convertJulianYearsToSeconds );
-//     cout << "Observation period                                        "
-//          << convertSecondsToJulianYears( observationPeriod ) << " yrs" << endl; 
+        const double perturberDensity = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "PERTURBERDENSITY" ),
+                    caseDataFromDatabase->perturberDensity );    
+        cout << "Perturber density                                         "
+             << perturberDensity << " perturbers per R_Hill" << endl;                         
 
-//     const unsigned int numberOfEpochWindows = extractParameterValue< unsigned int >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "NUMBEROFEPOCHWINDOWS" ) );    
-//     cout << "Number of epoch windows                                   "
-//          << numberOfEpochWindows << endl;                                                 
+        const double perturberRingMass = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "PERTURBERRINGMASS" ),
+                    caseDataFromDatabase->perturberRingMass );    
+        cout << "Perturber ring mass                                       "
+             << perturberRingMass << " M_PerturbedBody" << endl;              
 
-//     const double epochWindowSize = extractParameterValue< double >(
-//                 parsedData->begin( ), parsedData->end( ),
-//                 findEntry( dictionary, "EPOCHWINDOWSIZE" ),
-//                 TUDAT_NAN, &convertJulianDaysToSeconds  );
-//     cout << "Epoch window size                                         "
-//          << convertSecondsToJulianDays( epochWindowSize ) << " days" << endl;     
+        const double observationPeriod = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "OBSERVATIONPERIOD" ),
+                    caseDataFromDatabase->observationPeriod, &convertJulianYearsToSeconds );
+        cout << "Observation period                                        "
+             << convertSecondsToJulianYears( observationPeriod ) << " yrs" << endl; 
 
+        const unsigned int numberOfEpochWindows = extractParameterValue< unsigned int >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "NUMBEROFEPOCHWINDOWS" ),
+                    caseDataFromDatabase->numberOfEpochWindows );    
+        cout << "Number of epoch windows                                   "
+             << numberOfEpochWindows << endl;                                                 
+
+        const double epochWindowSize = extractParameterValue< double >(
+                    parsedData->begin( ), parsedData->end( ),
+                    findEntry( dictionary, "EPOCHWINDOWSIZE" ),
+                    caseDataFromDatabase->epochWindowSize, &convertJulianDaysToSeconds  );
+        cout << "Epoch window size                                         "
+             << convertSecondsToJulianDays( epochWindowSize ) << " days" << endl;     
+
+        // Store case data with possible overwritten data.
+        randomWalkCase = make_shared< RandomWalkCase >( 
+            caseDataFromDatabase->caseId, randomWalkCaseName, 
+            caseDataFromDatabase->testParticleCaseId, perturberDensity, perturberRingMass,
+            observationPeriod, numberOfEpochWindows, epochWindowSize );
+    }
 
     // Check that all required parameters have been set.
     checkRequiredParameters( dictionary );
@@ -225,21 +251,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << endl;
 
     // Generate output message.
-    cout << "Fetching random walk case data from database ..." << endl;   
-
-    // Retrieve and store case data.
-    const RandomWalkCasePointer randomWalkCaseData = getRandomWalkCase( 
-        databasePath, randomWalkCaseName, randomWalkCaseTableName ); 
-
-    // Generate output message to indicate that case data was fetched successfully.
-    cout << "Random walk case data fetched successfully from database!" << endl;  
-
-    // Generate output message.
     cout << "Fetching test particle case data from database ..." << endl;      
 
     // Retrieve and store case data.
     const TestParticleCasePointer testParticleCaseData = getTestParticleCase( 
-        databasePath, randomWalkCaseData->testParticleCaseId, testParticleCaseTableName ); 
+        databasePath, randomWalkCase->testParticleCaseId, testParticleCaseTableName ); 
 
     // Generate output message to indicate that case data was fetched successfully.
     cout << "Test particle case data fetched successfully from database!" << endl;   
@@ -247,11 +263,29 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Generate output message.
     cout << "Fetching random walk input data from database ..." << endl;   
 
-    // Get entire test particle input table from database. Only random walk input data for  
-    // incomplete simulations are fetched for the given case ID.
-    const RandomWalkInputTable randomWalkInputTable = getCompleteRandomWalkInputTable(
-                databasePath, randomWalkCaseData->caseId, randomWalkInputTableName, 
-                randomWalkPerturberTableName, false );    
+    // Check if all incomplete Monte Carlo runs are to be run and fetch the input table, else only 
+    // fetch the requested Monte Carlo run IDs.
+    RandomWalkInputTable randomWalkInputTable;
+
+    if ( iequals( monteCarloRunsToExecute, "ALL" )  )
+    {
+        cout << "Fetching all incomplete random walk Monte Carlo runs ..." << endl;    
+
+        // Get entire random walk input table from database.
+        randomWalkInputTable = getCompleteRandomWalkInputTable(
+                    databasePath, randomWalkCase->caseId, 
+                    randomWalkInputTableName, randomWalkPerturberTableName );
+    }
+
+    else
+    {
+        cout << "Fetching all requested random walk Monte Carlo runs ..." << endl;    
+
+        // Get selected random walk input table from database.
+        randomWalkInputTable = getSelectedRandomWalkInputTable(
+                    databasePath, randomWalkCase->caseId, monteCarloRunsToExecute, 
+                    randomWalkInputTableName, randomWalkPerturberTableName );
+    }
 
     // Generate output message to indicate that the input table was fetched successfully.
     cout << "Random walk input data (" << randomWalkInputTable.size( )
@@ -271,7 +305,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Compute epoch window spacing [s].
     const double epochWindowSpacing 
-        = randomWalkCaseData->observationPeriod / ( randomWalkCaseData->numberOfEpochWindows - 1 );
+        = randomWalkCase->observationPeriod / ( randomWalkCase->numberOfEpochWindows - 1 );
     cout << "Epoch window spacing                                      " 
          << convertSecondsToJulianDays( epochWindowSpacing ) << " days" << endl;
 
@@ -296,7 +330,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         perturbedBodyGravitationalParameter, 
         testParticleCaseData->perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
     const double perturberDensityInMeters 
-        = randomWalkCaseData->perturberDensity / convertHillRadiiToMeters( 1.0 );
+        = randomWalkCase->perturberDensity / convertHillRadiiToMeters( 1.0 );
     const unsigned int perturberPopulation = std::floor( 
         2.0 * testParticleCaseData->semiMajorAxisDistributionLimit 
         * perturberDensityInMeters + 0.5 );
@@ -305,7 +339,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Compute perturber mass ratio.
     // Note, for the random walk simulations, the mass ratio is equal for all perturbers.
-    const double perturberMassRatio = randomWalkCaseData->perturberRingMass / perturberPopulation;
+    const double perturberMassRatio = randomWalkCase->perturberRingMass / perturberPopulation;
     cout << "Perturber mass ratio                                      "
          << perturberMassRatio << endl;
 
@@ -361,7 +395,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 testParticleKickTableName );
         }
 
-       // Check if output mode is set to "FILE".
+        // Check if output mode is set to "FILE".
         // If so, open output file and write kick table data.
         // Check if the output directory exists: if not, create it.
         if ( iequals( outputMode, "FILE" ) )
@@ -380,11 +414,22 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             std::ostringstream kickTableFilename;
             kickTableFilename << fileOutputDirectory << "monteCarloRun" 
                               << iteratorRandomWalkInputTable->monteCarloRunId 
-                              << "_kickTable.csv";            
+                              << "_kickTable.csv";    
+
             kickTableFile.open( kickTableFilename.str( ).c_str( ) );
-            kickTableFile << "epoch,kickTable" << std::endl;
-            kickTableFile << "# [s],[m],[s],[m],[m],[-],[rad],[rad],[rad],[rad]," 
-                          << "[m],[-],[rad],[rad],[rad],[rad]" << std::endl;       
+
+            kickTableFile << "kickId,simulationId,conjunctionEpoch,conjunctionDistance,"
+                          << "preConjunctionEpoch,preConjunctionDistance,"
+                          << "preConjunctionSemiMajorAxis,preConjunctionEccentricity,"
+                          << "preConjunctionInclination,preConjunctionArgumentOfPeriapsis,"
+                          << "preConjunctionLongitudeOfAscendingNode,preConjunctionTrueAnomaly"
+                          << "postConjunctionEpoch,postConjunctionDistance,"
+                          << "postConjunctionSemiMajorAxis,postConjunctionEccentricity,"
+                          << "postConjunctionInclination,postConjunctionArgumentOfPeriapsis,"
+                          << "postConjunctionLongitudeOfAscendingNode,postConjunctionTrueAnomaly"                          
+                          << endl;
+            kickTableFile << "# [-],[-],[s],[m],[s],[m],[m],[-],[rad],[rad],[rad],[rad]," 
+                          << "[s],[m],[m],[-],[rad],[rad],[rad],[rad]" << std::endl;       
 
             // Write kick table to file.
             for ( TestParticleKickTable::iterator iteratorTestParticleKicks = kickTable.begin( );
@@ -425,11 +470,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                     << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
                         longitudeOfAscendingNodeIndex ) << ", "
                     << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
-                        trueAnomalyIndex ) << std::endl;
-
-                // Close file handler.
-                kickTableFile.close( );
+                        trueAnomalyIndex ) << endl;
             }                 
+
+            // Close file handler.
+            kickTableFile.close( );
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -464,7 +509,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Check if output mode is set to "FILE".
         // If so, open output file and write header content.
-        // Check if the output directory exists: if not, create it.
         if ( iequals( outputMode, "FILE" ) )
         {
             ostringstream keplerianActionElementsFilename;
@@ -479,11 +523,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
             writeDataMapToTextFile( keplerianActionElementsHistory,
                                     keplerianActionElementsFilename.str( ),
-                                    fileOutputDirectory, keplerianActionElementsFileHeader.str( ),
+                                    fileOutputDirectory, 
+                                    keplerianActionElementsFileHeader.str( ),
                                     std::numeric_limits< double >::digits10, 
                                     std::numeric_limits< double >::digits10,
-                                    "," );
-        }
+                                    "," ); 
+        }        
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -512,7 +557,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             }  
 
             // Compute longitude history.
-            const DoubleKeyDoubleValueMap longitudeHistory
+            DoubleKeyDoubleValueMap longitudeHistory
                     = computeLongitudeHistory( 
                         semiMajorAxisHistory,
                         testParticleCaseData->centralBodyGravitationalParameter );      
@@ -523,8 +568,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                         longitudeHistory, 
                         iteratorRandomWalkInputTable->observationPeriodStartEpoch,
                         epochWindowSpacing, 
-                        randomWalkCaseData->epochWindowSize,
-                        randomWalkCaseData->numberOfEpochWindows ); 
+                        randomWalkCase->epochWindowSize,
+                        randomWalkCase->numberOfEpochWindows ); 
 
             // Set input data for simple linear regression.
             SimpleLinearRegression longitudeHistoryRegression( reducedLongitudeHistory );
@@ -553,7 +598,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
             // Loop over observation period and compute average longitude residuals per epoch window.
             for ( int windowNumber = 0; 
-                  windowNumber < randomWalkCaseData->numberOfEpochWindows; 
+                  windowNumber < randomWalkCase->numberOfEpochWindows; 
                   windowNumber++ )
             {
                 const double epochWindowCenter = windowNumber * epochWindowSpacing;
@@ -561,8 +606,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 averageLongitudeResiduals[ epochWindowCenter ] 
                     = computeStepFunctionWindowAverage( 
                         longitudeResidualsHistory, 
-                        epochWindowCenter - randomWalkCaseData->epochWindowSize / 2.0, 
-                        epochWindowCenter + randomWalkCaseData->epochWindowSize / 2.0 );
+                        epochWindowCenter - randomWalkCase->epochWindowSize / 2.0, 
+                        epochWindowCenter + randomWalkCase->epochWindowSize / 2.0 );
             }
 
              // Compute average longitude residual during propagation history.
@@ -577,7 +622,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             }
 
             averageLongitudeResidual 
-                = sumLongitudeResiduals / randomWalkCaseData->numberOfEpochWindows;
+                = sumLongitudeResiduals / randomWalkCase->numberOfEpochWindows;
 
             // Compute maximum longitude residual change during propagation history.
             maximumLongitudeResidualChange 
@@ -586,7 +631,28 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                                       CompareDoubleKeyDoubleValueMapValues( ) ) )->second
                   - ( std::min_element( averageLongitudeResiduals.begin( ), 
                                         averageLongitudeResiduals.end( ),
-                                        CompareDoubleKeyDoubleValueMapValues( ) ) )->second;                     
+                                        CompareDoubleKeyDoubleValueMapValues( ) ) )->second;            
+
+            // Check if output mode is set to "FILE".
+            // If so, open output file and write header content.
+            if ( iequals( outputMode, "FILE" ) )
+            {
+                ostringstream longitudeResidualsFilename;
+                longitudeResidualsFilename << "monteCarloRun"
+                                           << iteratorRandomWalkInputTable->monteCarloRunId
+                                           << "_longitudeResiduals.csv"; 
+                
+                ostringstream longitudeResidualsFileHeader;
+                longitudeResidualsFileHeader << "epoch,longitudeResidual" << endl;
+                longitudeResidualsFileHeader << "# [s],[rad]" << endl;                                            
+
+                writeDataMapToTextFile( longitudeResidualsHistory,
+                                        longitudeResidualsFilename.str( ),
+                                        fileOutputDirectory, longitudeResidualsFileHeader.str( ),
+                                        std::numeric_limits< double >::digits10, 
+                                        std::numeric_limits< double >::digits10,
+                                        "," );                                                 
+            }                       
         }
 
         ///////////////////////////////////////////////////////////////////////////        
@@ -619,7 +685,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
             // Loop over observation period and compute average eccentricities per epoch window.
             for ( int windowNumber = 0; 
-                  windowNumber < randomWalkCaseData->numberOfEpochWindows; 
+                  windowNumber < randomWalkCase->numberOfEpochWindows; 
                   windowNumber++ )
             {
                 const double epochWindowCenter 
@@ -629,8 +695,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 averageEccentricities[ epochWindowCenter ] 
                     = computeStepFunctionWindowAverage( 
                         eccentricityHistory, 
-                        epochWindowCenter - randomWalkCaseData->epochWindowSize / 2.0, 
-                        epochWindowCenter + randomWalkCaseData->epochWindowSize / 2.0 );
+                        epochWindowCenter - randomWalkCase->epochWindowSize / 2.0, 
+                        epochWindowCenter + randomWalkCase->epochWindowSize / 2.0 );
             }
 
             // Compute average eccentricity during propagation history.
@@ -644,7 +710,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 sumEccentricities += iteratorAverageEccentricities->second;
             }
 
-            averageEccentricity = sumEccentricities / randomWalkCaseData->numberOfEpochWindows;
+            averageEccentricity = sumEccentricities / randomWalkCase->numberOfEpochWindows;
 
             // Compute maximum eccentricity change during propagation history.
             maximumEccentricityChange 
@@ -686,7 +752,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
             // Loop over observation period and compute average inclinations per epoch window.
             for ( int windowNumber = 0; 
-                  windowNumber < randomWalkCaseData->numberOfEpochWindows; 
+                  windowNumber < randomWalkCase->numberOfEpochWindows; 
                   windowNumber++ )
             {
                 const double epochWindowCenter 
@@ -696,8 +762,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 averageInclinations[ epochWindowCenter ] 
                     = computeStepFunctionWindowAverage( 
                         inclinationHistory, 
-                        epochWindowCenter - randomWalkCaseData->epochWindowSize / 2.0, 
-                        epochWindowCenter + randomWalkCaseData->epochWindowSize / 2.0 );
+                        epochWindowCenter - randomWalkCase->epochWindowSize / 2.0, 
+                        epochWindowCenter + randomWalkCase->epochWindowSize / 2.0 );
             }
 
             // Compute average inclination during propagation history.
@@ -711,7 +777,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 sumInclinations += iteratorAverageInclinations->second;
             }
 
-            averageInclination = sumInclinations / randomWalkCaseData->numberOfEpochWindows;
+            averageInclination = sumInclinations / randomWalkCase->numberOfEpochWindows;
 
             // Compute maximum inclination change during propagation history.
             maximumInclinationChange 

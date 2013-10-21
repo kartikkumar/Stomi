@@ -152,17 +152,17 @@ TestParticleInputTable getSelectedTestParticleInputTable(
         const std::string& testParticleSimulationIds,
         const std::string& testParticleInputTableName )
 { 
-    // Cast simulation numbers to vector of string tokens.
+    // Cast simulation IDs to vector of string tokens.
     std::vector< std::string > testParticleSimulationIdTokens;
     boost::split( testParticleSimulationIdTokens, testParticleSimulationIds,
                   boost::is_any_of( " " ), boost::token_compress_on );
 
-    // Populate vector of test particle simulation numbers
-    std::vector< int > testParticularSimulationIdsVector;
+    // Populate vector of test particle simulation IDs.
+    std::vector< int > testParticleSimulationIdsVector;
 
     for ( unsigned int i = 0; i < testParticleSimulationIdTokens.size( ); i++ )
     {
-        testParticularSimulationIdsVector.push_back(
+        testParticleSimulationIdsVector.push_back(
                     boost::lexical_cast< int >( testParticleSimulationIdTokens.at( i ) ) );
     }
 
@@ -185,10 +185,10 @@ TestParticleInputTable getSelectedTestParticleInputTable(
     TestParticleInputTable testParticleInputTable;
 
     // Loop through the table retrieved from the database, step-by-step.
-    for ( unsigned int i = 0; i < testParticularSimulationIdsVector.size( ); i++ )
+    for ( unsigned int i = 0; i < testParticleSimulationIdsVector.size( ); i++ )
     {
-        // Bind simulation number to query.
-        query.bind( ":simulationId", testParticularSimulationIdsVector.at( i ) );
+        // Bind simulation ID to query.
+        query.bind( ":simulationId", testParticleSimulationIdsVector.at( i ) );
 
         // Execute select query.
         // A run-time error will be thrown if the requested simulation ID can't be found.
@@ -210,7 +210,7 @@ TestParticleInputTable getSelectedTestParticleInputTable(
     // Commit database transaction.
     transaction.commit( );
 
-    // Return case simulation table.
+    // Return input table.
     return testParticleInputTable;
 }
 
@@ -350,7 +350,7 @@ RandomWalkInputTable getCompleteRandomWalkInputTable(
         // Store Monte Carlo run ID.
         const int monteCarloRunId = query.getColumn( 0 );
 
-        // Fetch list of perturbers (given as test particular simulation IDs).
+        // Fetch list of perturbers.
         const std::vector< int > perturbers = getRandomWalkPerturberList( 
             databaseAbsolutePath, monteCarloRunId, randomWalkPerturberTableName );
 
@@ -372,6 +372,77 @@ RandomWalkInputTable getCompleteRandomWalkInputTable(
     }
 
     // Return random walk input table.
+    return randomWalkInputTable;
+}
+
+//! Get selected random walk input table.
+RandomWalkInputTable getSelectedRandomWalkInputTable(
+        const std::string& databaseAbsolutePath, const int caseId,
+        const std::string& monteCarloRunIds,
+        const std::string& randomWalkInputTableName, 
+        const std::string& randomWalkPerturberTableName )
+{
+    // Cast Monte Carlo run IDs to vector of string tokens.
+    std::vector< std::string > monteCarloRunIdTokens;
+    boost::split( monteCarloRunIdTokens, monteCarloRunIds,
+                  boost::is_any_of( " " ), boost::token_compress_on );
+
+    // Populate vector of random walk monte Carlo Run IDs.
+    std::vector< int > monteCarloRunIdsVector;
+
+    for ( unsigned int i = 0; i < monteCarloRunIdTokens.size( ); i++ )
+    {
+        monteCarloRunIdsVector.push_back(
+                    boost::lexical_cast< int >( monteCarloRunIdTokens.at( i ) ) );
+    }
+
+    // Open database in read-only mode.          
+    SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY );
+
+    // Open transaction to query database.
+    SQLite::Transaction transaction( database );
+
+    // Set up query statement.
+    std::ostringstream randomWalkInputQuery;
+    randomWalkInputQuery << "SELECT * FROM " << randomWalkInputTableName
+                         << " WHERE \"randomWalkCaseId\" = " << caseId
+                         << " AND \"monteCarloRunId\" = :monteCarloRunId;";         
+
+    // Compile a SQL query.
+    SQLite::Statement query( database, randomWalkInputQuery.str( ).c_str( ) );
+
+    // Declare random walk input table.
+    RandomWalkInputTable randomWalkInputTable;
+
+    // Loop through the table retrieved from the database, step-by-step.
+    for ( unsigned int i = 0; i < monteCarloRunIdsVector.size( ); i++ )
+    {
+        // Bind Monte Carlo run ID to query.
+        query.bind( ":monteCarloRunId", monteCarloRunIdsVector.at( i ) );
+
+        // Execute select query.
+        // A run-time error will be thrown if the requested simulation ID can't be found.
+        query.executeStep( );
+
+        // Fetch list of perturbers.
+        const std::vector< int > perturbers = getRandomWalkPerturberList( 
+            databaseAbsolutePath, monteCarloRunIdsVector.at( i ), 
+            randomWalkPerturberTableName );
+
+        // Store fetched row in random walk input struct.
+        randomWalkInputTable.insert(
+            new RandomWalkInput( query.getColumn( 0 ), query.getColumn( 1 ),
+                                 boost::lexical_cast< bool >( query.getColumn( 2 ) ), 
+                                 query.getColumn( 3 ), perturbers ) );
+
+        // Reset query.
+        query.reset( );
+    }
+
+    // Commit database transaction.
+    transaction.commit( );
+
+    // Return input table.
     return randomWalkInputTable;
 }
 
