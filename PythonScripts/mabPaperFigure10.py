@@ -13,14 +13,15 @@ perturber ring.
 ###################################################################################################
 
 # Set absolute path to SQLite database with simulation data.
-databasePath    = "/Users/kartikkumar/Documents/University/PhD/Simulations/Tudat/Workspace/" \
-                  "tudatApplications/stochasticMigration/stochasticMigrationResults.sqlite"
+databasePath        = "/Users/kartikkumar/Documents/Education/PhD/Simulations/" \
+                      + "Tudat/Workspace/tudatApplications/stochasticMigration/" \
+                      + "stochasticMigrationResults.sqlite"
 
 # Set case name.
 caseName        = "circular_equatorial_nominal"
 
 # Set absolute path to output directory.
-outputPath      = "/Users/kartikkumar/Desktop/results"
+outputPath      = "/Users/kartikkumar/Desktop/Figure10"
 
 # Set figure dpi.
 figureDPI       = 600
@@ -39,6 +40,7 @@ figureDPI       = 600
 
 # # Import necessary external packages.
 import math
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy
 import os
@@ -132,37 +134,43 @@ outputData = numpy.array(rawOutputData, dtype = numpy.dtype(outputDataTypeList))
 # Plot histograms of random walk output data.
 ###################################################################################################
 
+matplotlib.rcParams.update({'font.size': 18})
+
 # Set output path and case-prefix for files generated.
-outputPathAndCasePrefix = outputPath + "/randomWalkCase" + str(caseData['caseId']) + "_"
+outputPathAndCasePrefix = outputPath + "/randomWalkCase" + str(caseData['caseId'])
 
 # Plot histogram of obsevation period start epochs used for random walk simulations.
 plt.figure()
 plt.hist(inputData['observationPeriodStartEpoch'], facecolor='w', edgecolor='k')
 plt.xlabel("Epoch at start of observation period [s]")
 plt.ylabel("Frequency [-]")
-plt.savefig(outputPathAndCasePrefix + "histogramObservationPeriodStartEpoch.pdf", dpi = figureDPI)
+plt.savefig(outputPathAndCasePrefix + "HistogramObservationPeriodStartEpoch.pdf", dpi = figureDPI)
 plt.close()
 
 # Plot histograms of maximum changes of perturbed body's orbital elements, based on reduction of 
 # random walk simulation data.
 figure = plt.figure()
-figure.subplots_adjust(hspace=.5)
-plt.subplot(311)
 plt.hist(numpy.rad2deg(outputData['maximumLongitudeResidualChange']), \
          facecolor='w', edgecolor='k', bins=20)
 plt.xlabel("Maximum longitude residual change [deg]")
 plt.ylabel("Frequency [-]")
 plt.yticks([0.0,50.0,100.0,150.0,200.0])
+plt.savefig(outputPathAndCasePrefix + "HistogramMaximumLongitudeResidualChange.pdf", \
+            dpi = figureDPI)
+plt.close()
 
-plt.subplot(312)
+figure = plt.figure()
 figureAxes = plt.gca()        
 plt.hist(outputData['maximumEccentricityChange'], facecolor='w', edgecolor='k', bins=20)
 figureAxes.xaxis.major.formatter.set_powerlimits((0,0)) 
 plt.xlabel("Maximum eccentricity change [-]")
 plt.ylabel("Frequency [-]")
 plt.yticks([0.0,50.0,100.0,150.0,200.0,250.0,300.0])
+plt.savefig(outputPathAndCasePrefix + "HistogramMaximumEccentricityChange.pdf", \
+            dpi = figureDPI)
+plt.close()
 
-plt.subplot(313)
+figure = plt.figure()
 figureAxes = plt.gca()        
 plt.hist(numpy.rad2deg(outputData['maximumInclinationChange']), \
          facecolor='w', edgecolor='k', bins=20)
@@ -170,8 +178,8 @@ figureAxes.xaxis.major.formatter.set_powerlimits((0,0))
 plt.xlabel("Maximum inclination change [deg]")
 plt.ylabel("Frequency [-]")
 plt.yticks([0.0,50.0,100.0,150.0])
-
-plt.savefig(outputPathAndCasePrefix + "histogramsOfMaximumChanges.pdf", dpi = figureDPI)
+plt.savefig(outputPathAndCasePrefix + "HistogramMaximumInclinationChange.pdf", \
+            dpi = figureDPI)
 plt.close()
 
 ###################################################################################################

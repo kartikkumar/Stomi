@@ -13,10 +13,10 @@ elements.
 ###################################################################################################
 
 # Set Monte Carlo run IDs as a list.
-monteCarloRunIds    = (1,2,3,4,5)
+monteCarloRunIds    = (1,1)
 
 # Set absolute path to directory with data files.
-datafilesPath       = "/Users/kartikkumar/Desktop/results"
+datafilesPath       = "/Users/kartikkumar/Documents/Education/PhD/PhD Thesis/2_MabsOrbitalMotion/MabIcarusJournalPaper/Figures/Figure9"
 
 # Set absolute path to SQLite database with simulation data.
 databasePath        = "/Users/kartikkumar/Documents/Education/PhD/Simulations/" \
@@ -27,7 +27,7 @@ databasePath        = "/Users/kartikkumar/Documents/Education/PhD/Simulations/" 
 caseName            = "circular_equatorial_nominal"
 
 # Set absolute path to output directory.
-outputPath          = "/Users/kartikkumar/Desktop/results"
+outputPath          = "/Users/kartikkumar/Documents/Education/PhD/PhD Thesis/2_MabsOrbitalMotion/MabIcarusJournalPaper/Figures/Figure9"
 
 # Set figure dpi.
 figureDPI           = 600
@@ -48,6 +48,7 @@ figureDPI           = 600
 # # Import necessary external packages.
 # import math
 import matplotlib.pyplot as plt
+import matplotlib
 import numpy
 import numpy.lib.recfunctions
 import os
@@ -156,48 +157,55 @@ for monteCarloRunId in monteCarloRunIds:
 # Generate figures
 ###################################################################################################
 
+matplotlib.rcParams.update({'font.size': 18})
+
 for i,keplerData in enumerate(keplerianActionElements):
     # Set output path and case-prefix for files generated.
     outputPathAndCasePrefix = outputPath + "/monteCarloRun" + str(monteCarloRunIds[i]) + "_"
 
     # Plot time-histories of Keplerian elements.
     fig = plt.figure()
-
-    plt.subplot(221)
     plt.xlabel("Epoch [Julian years]")
     plt.ylabel("$\Delta a_{Mab}$ [km]")
     plt.xlim(xmin = 0.0, xmax = 50.0)
     plt.plot(keplerData['epoch']/constants.julianYear, \
              (keplerData['semiMajorAxis'] - testParticleCaseData['perturbedBodySemiMajorAxisAtT0']) \
              * constants.meterInKilometers, 'k')
+    plt.tight_layout(True)    
+    plt.savefig(outputPathAndCasePrefix + "semiMajorAxisHistory.pdf", dpi = figureDPI)    
+    plt.close()
 
-    plt.subplot(222)
+    fig = plt.figure()
     plt.xlabel("Epoch [Julian years]")
     plt.ylabel("$\Delta e_{Mab}$ [-]")
     plt.xlim(xmin = 0.0, xmax = 50.0)
     plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     plt.plot(keplerData['epoch']/constants.julianYear, \
              keplerData['eccentricity'] - testParticleCaseData['perturbedBodyEccentricityAtT0'], 'k')
+    plt.tight_layout(True)        
+    plt.savefig(outputPathAndCasePrefix + "eccentricityHistory.pdf", dpi = figureDPI)    
+    plt.close()    
 
-    plt.subplot(223)
+    fig = plt.figure()
     plt.xlabel("Epoch [Julian years]")
     plt.ylabel("$\Delta i_{Mab}$ [deg]")
     plt.xlim(xmin = 0.0, xmax = 50.0)
     plt.plot(keplerData['epoch']/constants.julianYear, \
              ( keplerData['inclination'] - testParticleCaseData['perturbedBodyInclinationAtT0'] ) \
              * constants.radiansInDegrees, 'k')
+    plt.tight_layout(True)        
+    plt.savefig(outputPathAndCasePrefix + "inclinationHistory.pdf", dpi = figureDPI)    
+    plt.close()        
 
-    plt.subplot(224)
+    fig = plt.figure()
     plt.xlabel("Epoch [Julian years]")
     plt.ylabel("$\Delta L_{Mab}$ [deg]")
     plt.xlim(xmin = 0.0, xmax = observationPeriod/constants.julianYear)
     plt.plot(longitudeResiduals[i]['epoch']/constants.julianYear, \
              longitudeResiduals[i]['longitudeResidual'] * constants.radiansInDegrees, 'k')
-
-    fig.set_tight_layout(True)
-
-    plt.savefig(outputPathAndCasePrefix + "keplerianElementsHistory.pdf", dpi = figureDPI)    
-    plt.close()
+    plt.tight_layout(True)        
+    plt.savefig(outputPathAndCasePrefix + "longitudeResidualHistory.pdf", dpi = figureDPI)    
+    plt.close() 
 
 ###################################################################################################
 
