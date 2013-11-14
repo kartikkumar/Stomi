@@ -26,13 +26,19 @@ sparse              = "circular_inclined_sparse"
 dense               = "circular_inclined_dense"
 
 # Set absolute path to output directory.
-outputPath          = "/Users/kartikkumar/Desktop/Figure13"
+outputPath          = "/Users/kartikkumar/Desktop"
+
+# Set figure number.
+figureNumber        = 13
 
 # Set figure dpi.
 figureDPI           = 600
 
 # Set flag whether outliers should be shown in boxplots.
 showOutliers        = False
+
+# Set font size for axes labels.
+fontSize            = 24
 
 ###################################################################################################
 
@@ -148,10 +154,12 @@ if database:
 # Plot boxplots of random walk output data as a function of perturber ring mass
 ###################################################################################################
 
-rcParams.update({'font.size': 18})
+rcParams.update({'font.size': fontSize})
+
+subfigures = ('a', 'c', 'e', 'b', 'd', 'f')
 
 # Set output path and case-prefix for files generated.
-outputPathAndCasePrefix = outputPath + "/case" + str(testParticleCaseId)
+outputFilename = outputPath + "/figure" + str(figureNumber) + "%s_case" + str(testParticleCaseId)
 
 if showOutliers:
     outliers = '.'
@@ -164,6 +172,7 @@ longitudeResidualVsRingMass.append(numpy.rad2deg(outputLight['maximumLongitudeRe
 longitudeResidualVsRingMass.append(numpy.rad2deg(outputNominal['maximumLongitudeResidualChange']))
 longitudeResidualVsRingMass.append(numpy.rad2deg(outputHeavy['maximumLongitudeResidualChange']))
 
+output = outputFilename % subfigures[0]
 fig = plt.figure()
 axes = fig.gca()
 plotOut = plt.boxplot(longitudeResidualVsRingMass,sym=outliers)
@@ -180,11 +189,11 @@ for line in plotOut['medians']:
     medianX, medianY = line.get_xydata()[1]
 
     # Overlay median value.
-    axes.annotate( '%1.1f' % medianY, xy=(medianX+0.15, medianY), xycoords='data',\
+    axes.annotate('%1.1f' % medianY, xy=(medianX+0.15, medianY), xycoords='data',\
                   horizontalalignment='center', verticalalignment='center')
 
 plt.tight_layout(True)
-plt.savefig(outputPathAndCasePrefix + "MaximumLongitudeResidualVsRingMass.pdf", \
+plt.savefig(output + "MaximumLongitudeResidualVsRingMass.pdf", \
             dpi = figureDPI, bbox_inches='tight')
 plt.close()
 
@@ -194,6 +203,7 @@ eccentricityVsRingMass.append(outputLight['maximumEccentricityChange'])
 eccentricityVsRingMass.append(outputNominal['maximumEccentricityChange'])
 eccentricityVsRingMass.append(outputHeavy['maximumEccentricityChange'])
 
+output = outputFilename % subfigures[1]
 fig = plt.figure()
 axes = fig.gca()
 plotOut = plt.boxplot(eccentricityVsRingMass,sym=outliers)
@@ -211,11 +221,11 @@ for line in plotOut['medians']:
     medianX, medianY = line.get_xydata()[1]
 
     # Overlay median value.
-    axes.annotate( '%1.1e' % medianY, xy=(medianX+0.21, medianY), xycoords='data',\
+    axes.annotate('%1.0e' % medianY, xy=(medianX+0.23, medianY), xycoords='data',\
                   horizontalalignment='center', verticalalignment='center')
 
 plt.tight_layout(True)
-plt.savefig(outputPathAndCasePrefix + "MaximumEccentricityVsRingMass.pdf", \
+plt.savefig(output + "MaximumEccentricityVsRingMass.pdf", \
             dpi = figureDPI)
 plt.close()
 
@@ -225,6 +235,7 @@ inclinationVsRingMass.append(numpy.rad2deg(outputLight['maximumInclinationChange
 inclinationVsRingMass.append(numpy.rad2deg(outputNominal['maximumInclinationChange']))
 inclinationVsRingMass.append(numpy.rad2deg(outputHeavy['maximumInclinationChange']))
 
+output = outputFilename % subfigures[2]
 fig = plt.figure()
 axes = fig.gca()
 plotOut = plt.boxplot(inclinationVsRingMass,sym=outliers)
@@ -242,11 +253,11 @@ for line in plotOut['medians']:
     medianX, medianY = line.get_xydata()[1]
 
     # Overlay median value.
-    axes.annotate( '%1.1e' % medianY, xy=(medianX+0.21, medianY), xycoords='data',\
+    axes.annotate('%1.0e' % medianY, xy=(medianX+0.23, medianY), xycoords='data',\
                   horizontalalignment='center', verticalalignment='center')
 
 plt.tight_layout(True)
-plt.savefig(outputPathAndCasePrefix + "MaximumInclinationVsRingMass.pdf", \
+plt.savefig(output + "MaximumInclinationVsRingMass.pdf", \
             dpi = figureDPI)
 plt.close()
 
@@ -263,6 +274,7 @@ longitudeResidualVsRingDensity.append(numpy.rad2deg(outputSparse['maximumLongitu
 longitudeResidualVsRingDensity.append(numpy.rad2deg(outputNominal['maximumLongitudeResidualChange']))
 longitudeResidualVsRingDensity.append(numpy.rad2deg(outputDense['maximumLongitudeResidualChange']))
 
+output = outputFilename % subfigures[3]
 fig = plt.figure()
 axes = fig.gca()
 plotOut = plt.boxplot(longitudeResidualVsRingDensity,sym=outliers)
@@ -279,11 +291,11 @@ for line in plotOut['medians']:
     medianX, medianY = line.get_xydata()[1]
 
     # Overlay median value.
-    axes.annotate( '%1.1f' % medianY, xy=(medianX+0.11, medianY), xycoords='data',\
+    axes.annotate('%1.1f' % medianY, xy=(medianX+0.15, medianY), xycoords='data',\
                   horizontalalignment='center', verticalalignment='center')
 
 plt.tight_layout(True)
-plt.savefig(outputPathAndCasePrefix + "MaximumLongitudeResidualVsRingDensity.pdf", \
+plt.savefig(output + "MaximumLongitudeResidualVsRingDensity.pdf", \
             dpi = figureDPI)
 plt.close()
 
@@ -293,6 +305,7 @@ eccentricityVsRingDensity.append(outputSparse['maximumEccentricityChange'])
 eccentricityVsRingDensity.append(outputNominal['maximumEccentricityChange'])
 eccentricityVsRingDensity.append(outputDense['maximumEccentricityChange'])
 
+output = outputFilename % subfigures[4]
 fig = plt.figure()
 axes = fig.gca()
 plotOut = plt.boxplot(eccentricityVsRingDensity,sym=outliers)
@@ -310,11 +323,11 @@ for line in plotOut['medians']:
     medianX, medianY = line.get_xydata()[1]
 
     # Overlay median value.
-    axes.annotate( '%1.1e' % medianY, xy=(medianX+0.21, medianY), xycoords='data',\
+    axes.annotate('%1.0e' % medianY, xy=(medianX+0.23, medianY), xycoords='data',\
                   horizontalalignment='center', verticalalignment='center')
 
 plt.tight_layout(True)
-plt.savefig(outputPathAndCasePrefix + "MaximumEccentricityVsRingDensity.pdf", \
+plt.savefig(output + "MaximumEccentricityVsRingDensity.pdf", \
             dpi = figureDPI)
 plt.close()
 
@@ -324,6 +337,7 @@ inclinationVsRingDensity.append(numpy.rad2deg(outputSparse['maximumInclinationCh
 inclinationVsRingDensity.append(numpy.rad2deg(outputNominal['maximumInclinationChange']))
 inclinationVsRingDensity.append(numpy.rad2deg(outputDense['maximumInclinationChange']))
 
+output = outputFilename % subfigures[5]
 fig = plt.figure()
 axes = fig.gca()
 plotOut = plt.boxplot(inclinationVsRingDensity,sym=outliers)
@@ -341,11 +355,11 @@ for line in plotOut['medians']:
     medianX, medianY = line.get_xydata()[1]
 
     # Overlay median value.
-    axes.annotate( '%1.1e' % medianY, xy=(medianX+0.21, medianY), xycoords='data',\
+    axes.annotate('%1.0e' % medianY, xy=(medianX+0.23, medianY), xycoords='data',\
                   horizontalalignment='center', verticalalignment='center')
 
 plt.tight_layout(True)
-plt.savefig(outputPathAndCasePrefix + "MaximumInclinationVsRingDensity.pdf", \
+plt.savefig(output + "MaximumInclinationVsRingDensity.pdf", \
             dpi = figureDPI)
 plt.close()
 

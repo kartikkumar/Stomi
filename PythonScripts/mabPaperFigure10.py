@@ -21,10 +21,13 @@ databasePath        = "/Users/kartikkumar/Documents/Education/PhD/Simulations/" 
 caseName        = "circular_equatorial_nominal"
 
 # Set absolute path to output directory.
-outputPath      = "/Users/kartikkumar/Desktop/Figure10"
+outputPath      = "/Users/kartikkumar/Desktop"
 
 # Set figure dpi.
 figureDPI       = 600
+
+# Set font size for axes labels.
+fontSize        = 24
 
 ###################################################################################################
 
@@ -39,6 +42,7 @@ figureDPI       = 600
 ###################################################################################################
 
 # # Import necessary external packages.
+import constants
 import math
 import matplotlib
 import matplotlib.pyplot as plt
@@ -134,51 +138,62 @@ outputData = numpy.array(rawOutputData, dtype = numpy.dtype(outputDataTypeList))
 # Plot histograms of random walk output data.
 ###################################################################################################
 
-matplotlib.rcParams.update({'font.size': 18})
+matplotlib.rcParams.update({'font.size': fontSize})
+
+subfigures = ('x', 'a', 'b', 'c')
 
 # Set output path and case-prefix for files generated.
-outputPathAndCasePrefix = outputPath + "/randomWalkCase" + str(caseData['caseId'])
+outputFilename = outputPath + "/figure10%s_randomWalkCase" + str(caseData['caseId'])
 
 # Plot histogram of obsevation period start epochs used for random walk simulations.
+output = outputFilename % subfigures[0]
 plt.figure()
-plt.hist(inputData['observationPeriodStartEpoch'], facecolor='w', edgecolor='k')
-plt.xlabel("Epoch at start of observation period [s]")
+plt.hist(inputData['observationPeriodStartEpoch'] / constants.julianYear, \
+         facecolor='w', edgecolor='k')
+plt.xlabel("$P_{obs,0}$ [s]")
 plt.ylabel("Frequency [-]")
-plt.savefig(outputPathAndCasePrefix + "HistogramObservationPeriodStartEpoch.pdf", dpi = figureDPI)
+plt.tight_layout(True)    
+plt.savefig(output + "HistogramObservationPeriodStartEpoch.pdf", dpi = figureDPI)
 plt.close()
 
 # Plot histograms of maximum changes of perturbed body's orbital elements, based on reduction of 
 # random walk simulation data.
+output = outputFilename % subfigures[1]
 figure = plt.figure()
 plt.hist(numpy.rad2deg(outputData['maximumLongitudeResidualChange']), \
          facecolor='w', edgecolor='k', bins=20)
-plt.xlabel("Maximum longitude residual change [deg]")
+plt.xlabel("$\Delta (\Delta L)_{max}$ [deg]")
 plt.ylabel("Frequency [-]")
 plt.yticks([0.0,50.0,100.0,150.0,200.0])
-plt.savefig(outputPathAndCasePrefix + "HistogramMaximumLongitudeResidualChange.pdf", \
+plt.tight_layout(True)    
+plt.savefig(output + "HistogramMaximumLongitudeResidualChange.pdf", \
             dpi = figureDPI)
 plt.close()
 
+output = outputFilename % subfigures[2]
 figure = plt.figure()
 figureAxes = plt.gca()        
 plt.hist(outputData['maximumEccentricityChange'], facecolor='w', edgecolor='k', bins=20)
 figureAxes.xaxis.major.formatter.set_powerlimits((0,0)) 
-plt.xlabel("Maximum eccentricity change [-]")
+plt.xlabel("$\Delta e_{max}$ [-]")
 plt.ylabel("Frequency [-]")
 plt.yticks([0.0,50.0,100.0,150.0,200.0,250.0,300.0])
-plt.savefig(outputPathAndCasePrefix + "HistogramMaximumEccentricityChange.pdf", \
+plt.tight_layout(True)    
+plt.savefig(output + "HistogramMaximumEccentricityChange.pdf", \
             dpi = figureDPI)
 plt.close()
 
+output = outputFilename % subfigures[3]
 figure = plt.figure()
 figureAxes = plt.gca()        
 plt.hist(numpy.rad2deg(outputData['maximumInclinationChange']), \
          facecolor='w', edgecolor='k', bins=20)
 figureAxes.xaxis.major.formatter.set_powerlimits((0,0)) 
-plt.xlabel("Maximum inclination change [deg]")
+plt.xlabel("$\Delta i_{max}$ [deg]")
 plt.ylabel("Frequency [-]")
 plt.yticks([0.0,50.0,100.0,150.0])
-plt.savefig(outputPathAndCasePrefix + "HistogramMaximumInclinationChange.pdf", \
+plt.tight_layout(True)    
+plt.savefig(output + "HistogramMaximumInclinationChange.pdf", \
             dpi = figureDPI)
 plt.close()
 

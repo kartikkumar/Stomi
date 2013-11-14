@@ -27,10 +27,13 @@ databasePath        = "/Users/kartikkumar/Documents/Education/PhD/Simulations/" 
 caseName            = "circular_equatorial_nominal"
 
 # Set absolute path to output directory.
-outputPath          = "/Users/kartikkumar/Documents/Education/PhD/PhD Thesis/2_MabsOrbitalMotion/MabIcarusJournalPaper/Figures/Figure9"
+outputPath          = "/Users/kartikkumar/Desktop"
 
 # Set figure dpi.
 figureDPI           = 600
+
+# Set font size for axes labels.
+fontSize            = 24
 
 ###################################################################################################
 
@@ -157,13 +160,16 @@ for monteCarloRunId in monteCarloRunIds:
 # Generate figures
 ###################################################################################################
 
-matplotlib.rcParams.update({'font.size': 18})
+matplotlib.rcParams.update({'font.size': fontSize})
+
+subfigures = ('a', 'b', 'c', 'd')
 
 for i,keplerData in enumerate(keplerianActionElements):
     # Set output path and case-prefix for files generated.
-    outputPathAndCasePrefix = outputPath + "/monteCarloRun" + str(monteCarloRunIds[i]) + "_"
+    outputFilename  = outputPath + "/figure9%s_monteCarloRun" + str(monteCarloRunIds[i])
 
     # Plot time-histories of Keplerian elements.
+    output = outputFilename % subfigures[0]
     fig = plt.figure()
     plt.xlabel("Epoch [Julian years]")
     plt.ylabel("$\Delta a_{Mab}$ [km]")
@@ -172,9 +178,10 @@ for i,keplerData in enumerate(keplerianActionElements):
              (keplerData['semiMajorAxis'] - testParticleCaseData['perturbedBodySemiMajorAxisAtT0']) \
              * constants.meterInKilometers, 'k')
     plt.tight_layout(True)    
-    plt.savefig(outputPathAndCasePrefix + "semiMajorAxisHistory.pdf", dpi = figureDPI)    
+    plt.savefig(output + "SemiMajorAxisHistory.pdf", dpi = figureDPI)    
     plt.close()
 
+    output = outputFilename % subfigures[1]
     fig = plt.figure()
     plt.xlabel("Epoch [Julian years]")
     plt.ylabel("$\Delta e_{Mab}$ [-]")
@@ -183,20 +190,23 @@ for i,keplerData in enumerate(keplerianActionElements):
     plt.plot(keplerData['epoch']/constants.julianYear, \
              keplerData['eccentricity'] - testParticleCaseData['perturbedBodyEccentricityAtT0'], 'k')
     plt.tight_layout(True)        
-    plt.savefig(outputPathAndCasePrefix + "eccentricityHistory.pdf", dpi = figureDPI)    
+    plt.savefig(output + "EccentricityHistory.pdf", dpi = figureDPI)    
     plt.close()    
 
+    output = outputFilename % subfigures[2]
     fig = plt.figure()
     plt.xlabel("Epoch [Julian years]")
     plt.ylabel("$\Delta i_{Mab}$ [deg]")
     plt.xlim(xmin = 0.0, xmax = 50.0)
+    plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
     plt.plot(keplerData['epoch']/constants.julianYear, \
              ( keplerData['inclination'] - testParticleCaseData['perturbedBodyInclinationAtT0'] ) \
              * constants.radiansInDegrees, 'k')
     plt.tight_layout(True)        
-    plt.savefig(outputPathAndCasePrefix + "inclinationHistory.pdf", dpi = figureDPI)    
+    plt.savefig(output + "InclinationHistory.pdf", dpi = figureDPI)    
     plt.close()        
 
+    output = outputFilename % subfigures[3]
     fig = plt.figure()
     plt.xlabel("Epoch [Julian years]")
     plt.ylabel("$\Delta L_{Mab}$ [deg]")
@@ -204,7 +214,7 @@ for i,keplerData in enumerate(keplerianActionElements):
     plt.plot(longitudeResiduals[i]['epoch']/constants.julianYear, \
              longitudeResiduals[i]['longitudeResidual'] * constants.radiansInDegrees, 'k')
     plt.tight_layout(True)        
-    plt.savefig(outputPathAndCasePrefix + "longitudeResidualHistory.pdf", dpi = figureDPI)    
+    plt.savefig(output + "LongitudeResidualHistory.pdf", dpi = figureDPI)    
     plt.close() 
 
 ###################################################################################################
