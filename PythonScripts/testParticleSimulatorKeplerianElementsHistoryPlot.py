@@ -13,22 +13,24 @@ with the test particle simulator.
 ###################################################################################################
 
 # Set simulation IDs as a list.
-simulationIds   =
+simulationIds   = [17860]
 
 # Set absolute path to directory with data files.
-datafilesPath   =
+datafilesPath   = "/Users/kartikkumar/Desktop/17860"
 
 # Set absolute path to SQLite database with simulation data.
-databasePath    =
+databasePath     = "/Users/kartikkumar/Documents/Education/PhD/Simulations/" \
+                   + "Tudat/Workspace/tudatApplications/stochasticMigration/" \
+                   + "stochasticMigrationResults.sqlite"
 
 # Set case name.
-caseName        =
+caseName        = "circular_equatorial"
 
 # Set absolute path to output directory.
-outputPath      =
+outputPath      = "/Users/kartikkumar/Desktop/17860"
 
 # Set figure dpi.
-figureDPI       =
+figureDPI       = 600
 
 ###################################################################################################
 

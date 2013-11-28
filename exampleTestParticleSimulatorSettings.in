@@ -21,12 +21,12 @@
 # Set the name for the case.
 # The value of this parameter is interpreted as a string. This case must already exist in the 
 # database. To populate a new case, use the Database Generator application.
-CASE                :  
+CASE                :
 
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator
 # application.
-DB                  : 
+DB                  :
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -57,7 +57,7 @@ DB                  :
 # files generated are stored.
 # The default directory for the output files is the root directory of the Stochastic Migration
 # project.
-# FILEOUTPUTDIR       : rootdir
+# FILEOUTPUTDIR       :
 
 # Set the output interval.
 # This parameter should only be set in case the OUTPUT parameter is set to "file". The parameter 
