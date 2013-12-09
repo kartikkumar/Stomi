@@ -13,7 +13,7 @@
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/Basics/comparisonFunctions.h>
 
-#include "StochasticMigration/Database/testParticleKick.h"
+#include "StoMi/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {

@@ -18,7 +18,7 @@
 
 #include <Assist/Basics/commonTypedefs.h> 
  
-#include "StochasticMigration/Database/testParticleKick.h"
+#include "StoMi/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {

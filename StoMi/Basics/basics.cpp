@@ -8,7 +8,7 @@
 #include <iostream>
 #include <stdexcept>
  
-#include "StochasticMigration/Basics/basics.h"
+#include "StoMi/Basics/basics.h"
 
 namespace stochastic_migration
 {

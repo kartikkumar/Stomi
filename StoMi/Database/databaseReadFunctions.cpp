@@ -18,7 +18,7 @@
 
 #include <SQLiteC++.h> 
 
-#include "StochasticMigration/Database/databaseReadFunctions.h"
+#include "StoMi/Database/databaseReadFunctions.h"
 
 namespace stochastic_migration
 {

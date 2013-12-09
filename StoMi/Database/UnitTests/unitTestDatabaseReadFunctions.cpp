@@ -22,12 +22,12 @@
 #include <TudatCore/InputOutput/matrixTextFileReader.h>
 #include <TudatCore/Mathematics/BasicMathematics/mathematicalConstants.h>
 
-#include "StochasticMigration/Basics/basics.h"
-#include "StochasticMigration/Database/databaseReadFunctions.h"
-#include "StochasticMigration/Database/randomWalkCase.h"
-#include "StochasticMigration/Database/testParticleCase.h"
-#include "StochasticMigration/Database/testParticleInput.h"
-#include "StochasticMigration/Database/testParticleKick.h"
+#include "StoMi/Basics/basics.h"
+#include "StoMi/Database/databaseReadFunctions.h"
+#include "StoMi/Database/randomWalkCase.h"
+#include "StoMi/Database/testParticleCase.h"
+#include "StoMi/Database/testParticleInput.h"
+#include "StoMi/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {

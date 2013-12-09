@@ -14,7 +14,7 @@
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
 
-#include "StochasticMigration/Database/randomWalkCase.h"
+#include "StoMi/Database/randomWalkCase.h"
  
 namespace stochastic_migration
 {

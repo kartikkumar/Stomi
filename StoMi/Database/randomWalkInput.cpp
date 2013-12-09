@@ -9,7 +9,7 @@
  
 #include <Assist/Basics/comparisonFunctions.h>
 
-#include "StochasticMigration/Database/randomWalkInput.h"
+#include "StoMi/Database/randomWalkInput.h"
 
 namespace stochastic_migration
 {

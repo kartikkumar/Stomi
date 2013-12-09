@@ -51,14 +51,14 @@
 #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaVariableStepSizeIntegrator.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-#include "StochasticMigration/Astrodynamics/propagationDataPoint.h"
-#include "StochasticMigration/Basics/basics.h"
-#include "StochasticMigration/Database/databaseReadFunctions.h"
-#include "StochasticMigration/Database/databaseWriteFunctions.h"
-#include "StochasticMigration/Database/testParticleCase.h"
-#include "StochasticMigration/Database/testParticleInput.h"
-#include "StochasticMigration/Database/testParticleKick.h"
-#include "StochasticMigration/InputOutput/dictionaries.h"
+#include "StoMi/Astrodynamics/propagationDataPoint.h"
+#include "StoMi/Basics/basics.h"
+#include "StoMi/Database/databaseReadFunctions.h"
+#include "StoMi/Database/databaseWriteFunctions.h"
+#include "StoMi/Database/testParticleCase.h"
+#include "StoMi/Database/testParticleInput.h"
+#include "StoMi/Database/testParticleKick.h"
+#include "StoMi/InputOutput/dictionaries.h"
 
 //! Execute test particle simulations.
 int main( const int numberOfInputs, const char* inputArguments[ ] )

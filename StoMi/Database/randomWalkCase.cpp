@@ -12,7 +12,7 @@
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/unitConversions.h>
 
-#include "StochasticMigration/Database/randomWalkCase.h"
+#include "StoMi/Database/randomWalkCase.h"
 
 namespace stochastic_migration
 {

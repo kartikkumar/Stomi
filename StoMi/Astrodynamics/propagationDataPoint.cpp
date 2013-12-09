@@ -12,7 +12,7 @@
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/Basics/comparisonFunctions.h>
 
-#include <StochasticMigration/Astrodynamics/propagationDataPoint.h>
+#include "StoMi/Astrodynamics/propagationDataPoint.h"
 
 namespace stochastic_migration
 {

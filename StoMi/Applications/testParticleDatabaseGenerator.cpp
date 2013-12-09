@@ -39,8 +39,8 @@
 #include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-#include "StochasticMigration/Astrodynamics/hillSphere.h"
-#include "StochasticMigration/InputOutput/dictionaries.h"
+#include "StoMi/Astrodynamics/hillSphere.h"
+#include "StoMi/InputOutput/dictionaries.h"
 
 //! Execute test particle database generator.
 int main( const int numberOfInputs, const char* inputArguments[ ] )

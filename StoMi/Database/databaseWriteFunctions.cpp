@@ -14,7 +14,7 @@
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 
-#include "StochasticMigration/Database/databaseWriteFunctions.h"
+#include "StoMi/Database/databaseWriteFunctions.h"
 
 namespace stochastic_migration
 {

@@ -24,7 +24,7 @@
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
 
-#include "StochasticMigration/Database/testParticleCase.h"
+#include "StoMi/Database/testParticleCase.h"
 
 namespace stochastic_migration
 {

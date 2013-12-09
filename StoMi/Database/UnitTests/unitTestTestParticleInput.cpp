@@ -22,7 +22,7 @@
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
 
-#include "StochasticMigration/Database/testParticleInput.h"
+#include "StoMi/Database/testParticleInput.h"
 
 namespace stochastic_migration
 {

@@ -11,11 +11,11 @@
 #include <string>
 #include <vector>
 
-#include "StochasticMigration/Database/randomWalkCase.h"
-#include "StochasticMigration/Database/randomWalkInput.h"
-#include "StochasticMigration/Database/testParticleCase.h"
-#include "StochasticMigration/Database/testParticleInput.h"
-#include "StochasticMigration/Database/testParticleKick.h"
+#include "StoMi/Database/randomWalkCase.h"
+#include "StoMi/Database/randomWalkInput.h"
+#include "StoMi/Database/testParticleCase.h"
+#include "StoMi/Database/testParticleInput.h"
+#include "StoMi/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {

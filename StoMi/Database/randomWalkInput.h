@@ -14,7 +14,7 @@
 #include <boost/ptr_container/ptr_set.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include "StochasticMigration/Database/testParticleKick.h" 
+#include "StoMi/Database/testParticleKick.h" 
 
 namespace stochastic_migration
 {

@@ -10,7 +10,7 @@
 
 #include <Assist/Basics/comparisonFunctions.h>
 
-#include "StochasticMigration/Database/testParticleInput.h"
+#include "StoMi/Database/testParticleInput.h"
 
 namespace stochastic_migration
 {

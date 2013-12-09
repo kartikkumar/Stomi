@@ -8,7 +8,7 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/make_shared.hpp>
 
-#include "StochasticMigration/InputOutput/dictionaries.h"
+#include "StoMi/InputOutput/dictionaries.h"
 
 namespace stochastic_migration
 {

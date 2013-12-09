@@ -21,10 +21,10 @@
 
 #include <TudatCore/InputOutput/matrixTextFileReader.h>
 
-#include "StochasticMigration/Basics/basics.h"
+#include "StoMi/Basics/basics.h"
 
-// #include "StochasticMigration/Database/databaseWriteFunctions.h"
-// #include "StochasticMigration/Database/testParticleKick.h"
+// #include "StoMi/Database/databaseWriteFunctions.h"
+// #include "StoMi/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {

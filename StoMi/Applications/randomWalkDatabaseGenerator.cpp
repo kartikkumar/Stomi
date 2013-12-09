@@ -36,10 +36,10 @@
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/InputOutput/basicInputOutput.h> 
 
-#include "StochasticMigration/Astrodynamics/hillSphere.h"
-#include "StochasticMigration/Database/databaseReadFunctions.h" 
-#include "StochasticMigration/Database/testParticleCase.h" 
-#include "StochasticMigration/InputOutput/dictionaries.h"
+#include "StoMi/Astrodynamics/hillSphere.h"
+#include "StoMi/Database/databaseReadFunctions.h" 
+#include "StoMi/Database/testParticleCase.h" 
+#include "StoMi/InputOutput/dictionaries.h"
 
 //! Execute random walk database generator.
 int main( const int numberOfInputs, const char* inputArguments[ ] )

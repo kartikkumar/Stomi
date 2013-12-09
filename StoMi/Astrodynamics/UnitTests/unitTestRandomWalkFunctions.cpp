@@ -18,8 +18,8 @@
 
 #include <TudatCore/Basics/testMacros.h>
 
-#include <StochasticMigration/Astrodynamics/randomWalkFunctions.h> 
-#include <StochasticMigration/Database/testParticleKick.h> 
+#include "StoMi/Astrodynamics/randomWalkFunctions.h"
+#include "StoMi/Database/testParticleKick.h"
 
 namespace stochastic_migration
 {

@@ -23,7 +23,7 @@
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 // #include <TudatCore/Mathematics/BasicMathematics/mathematicalConstants.h>
 
-#include "StochasticMigration/Astrodynamics/randomWalkFunctions.h"
+#include "StoMi/Astrodynamics/randomWalkFunctions.h"
 
 namespace stochastic_migration
 {
