@@ -429,7 +429,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                           << "postConjunctionLongitudeOfAscendingNode,postConjunctionTrueAnomaly"                          
                           << endl;
             kickTableFile << "# [-],[-],[s],[m],[s],[m],[m],[-],[rad],[rad],[rad],[rad]," 
-                          << "[s],[m],[m],[-],[rad],[rad],[rad],[rad]" << std::endl;       
+                          << "[s],[m],[m],[-],[rad],[rad],[rad],[rad]" << endl;       
 
             // Write kick table to file.
             for ( TestParticleKickTable::iterator iteratorTestParticleKicks = kickTable.begin( );
@@ -438,37 +438,37 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             {
                 kickTableFile 
                     << iteratorTestParticleKicks->kickId << "," 
-                    << iteratorTestParticleKicks->testParticleSimulationId << ", ";
+                    << iteratorTestParticleKicks->testParticleSimulationId << ",";
                 kickTableFile
                     << std::setprecision( std::numeric_limits< double >::digits10 )
-                    << iteratorTestParticleKicks->conjunctionEpoch << ", "
-                    << iteratorTestParticleKicks->conjunctionDistance << ", "
-                    << iteratorTestParticleKicks->preConjunctionEpoch << ", "
-                    << iteratorTestParticleKicks->preConjunctionDistance << ", "
+                    << iteratorTestParticleKicks->conjunctionEpoch << ","
+                    << iteratorTestParticleKicks->conjunctionDistance << ","
+                    << iteratorTestParticleKicks->preConjunctionEpoch << ","
+                    << iteratorTestParticleKicks->preConjunctionDistance << ","
                     << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
-                        semiMajorAxisIndex ) << ", "
+                        semiMajorAxisIndex ) << ","
                     << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
-                        eccentricityIndex ) << ", "
+                        eccentricityIndex ) << ","
                     << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
-                        inclinationIndex ) << ", "
+                        inclinationIndex ) << ","
                     << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
-                        argumentOfPeriapsisIndex ) << ", "
+                        argumentOfPeriapsisIndex ) << ","
                     << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
-                        longitudeOfAscendingNodeIndex ) << ", "
+                        longitudeOfAscendingNodeIndex ) << ","
                     << iteratorTestParticleKicks->preConjunctionStateInKeplerianElements( 
-                        trueAnomalyIndex ) << ", "
-                    << iteratorTestParticleKicks->postConjunctionEpoch << ", "
-                    << iteratorTestParticleKicks->postConjunctionDistance << ", "
+                        trueAnomalyIndex ) << ","
+                    << iteratorTestParticleKicks->postConjunctionEpoch << ","
+                    << iteratorTestParticleKicks->postConjunctionDistance << ","
                     << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
-                        semiMajorAxisIndex ) << ", "
+                        semiMajorAxisIndex ) << ","
                     << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
-                        eccentricityIndex ) << ", "
+                        eccentricityIndex ) << ","
                     << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
-                        inclinationIndex ) << ", "
+                        inclinationIndex ) << ","
                     << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
-                        argumentOfPeriapsisIndex ) << ", "
+                        argumentOfPeriapsisIndex ) << ","
                     << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
-                        longitudeOfAscendingNodeIndex ) << ", "
+                        longitudeOfAscendingNodeIndex ) << ","
                     << iteratorTestParticleKicks->postConjunctionStateInKeplerianElements( 
                         trueAnomalyIndex ) << endl;
             }                 
@@ -543,6 +543,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Declare maximum longitude residual change in observation period [-].
         double maximumLongitudeResidualChange = TUDAT_NAN;
 
+        // Declare map of average longitude residuals per window [rad].
+        DoubleKeyDoubleValueMap averageLongitudeResiduals;
+
         {
             // Populate temporary map with epochs and semi-major axes.
             DoubleKeyDoubleValueMap semiMajorAxisHistory;
@@ -562,7 +565,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                         semiMajorAxisHistory,
                         testParticleCaseData->centralBodyGravitationalParameter );      
 
-            // Compute reduced longitude history.
+            // Compute reduced longitude history (data is reduced to only the epoch windows).
             DoubleKeyDoubleValueMap reducedLongitudeHistory
                     = reduceLongitudeHistory( 
                         longitudeHistory, 
@@ -577,37 +580,36 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             // Compute linear fit.
             longitudeHistoryRegression.computeFit( );        
                 
-            // Clear longitude residuals history.
+            // Store longitude residuals history.
             DoubleKeyDoubleValueMap longitudeResidualsHistory;
 
             // Generate longitude history residuals by subtracting linear fit from data.
             for ( DoubleKeyDoubleValueMap::iterator iteratorReducedLongitudeHistory
-                  = reducedLongitudeHistory.begin( );
+                    = reducedLongitudeHistory.begin( );
                   iteratorReducedLongitudeHistory != reducedLongitudeHistory.end( );
                   iteratorReducedLongitudeHistory++ )
             {
                 longitudeResidualsHistory[ iteratorReducedLongitudeHistory->first ]
                         = iteratorReducedLongitudeHistory->second
-                        - longitudeHistoryRegression.getCoefficientOfConstantTerm( )
-                        - longitudeHistoryRegression.getCoefficientOfLinearTerm( )
-                        * iteratorReducedLongitudeHistory->first;
+                          - longitudeHistoryRegression.getCoefficientOfConstantTerm( )
+                          - longitudeHistoryRegression.getCoefficientOfLinearTerm( )
+                          * iteratorReducedLongitudeHistory->first;
             }           
-
-            // Declare map of average longitude residuals per window [rad].
-            DoubleKeyDoubleValueMap averageLongitudeResiduals;
 
             // Loop over observation period and compute average longitude residuals per epoch window.
             for ( int windowNumber = 0; 
                   windowNumber < randomWalkCase->numberOfEpochWindows; 
                   windowNumber++ )
             {
-                const double epochWindowCenter = windowNumber * epochWindowSpacing;
+                const double epochWindowCenter 
+                    = iteratorRandomWalkInputTable->observationPeriodStartEpoch 
+                      + windowNumber * epochWindowSpacing;
 
                 averageLongitudeResiduals[ epochWindowCenter ] 
                     = computeStepFunctionWindowAverage( 
                         longitudeResidualsHistory, 
-                        epochWindowCenter - randomWalkCase->epochWindowSize / 2.0, 
-                        epochWindowCenter + randomWalkCase->epochWindowSize / 2.0 );
+                        epochWindowCenter - 0.5 * randomWalkCase->epochWindowSize, 
+                        epochWindowCenter + 0.5 * randomWalkCase->epochWindowSize );
             }
 
              // Compute average longitude residual during propagation history.
@@ -637,6 +639,40 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             // If so, open output file and write header content.
             if ( iequals( outputMode, "FILE" ) )
             {
+                ostringstream longitudeHistoryFilename;
+                longitudeHistoryFilename << "monteCarloRun"
+                                         << iteratorRandomWalkInputTable->monteCarloRunId
+                                         << "_longitudeHistory.csv"; 
+                
+                ostringstream longitudeHistoryFileHeader;
+                longitudeHistoryFileHeader << "epoch,longitude" << endl;
+                longitudeHistoryFileHeader << "# [s],[rad]" << endl;                                            
+
+                writeDataMapToTextFile( longitudeHistory,
+                                        longitudeHistoryFilename.str( ),
+                                        fileOutputDirectory, 
+                                        longitudeHistoryFileHeader.str( ),
+                                        std::numeric_limits< double >::digits10, 
+                                        std::numeric_limits< double >::digits10,
+                                        "," );             
+
+                ostringstream reducedLongitudeHistoryFilename;
+                reducedLongitudeHistoryFilename << "monteCarloRun"
+                                                << iteratorRandomWalkInputTable->monteCarloRunId
+                                                << "_reducedLongitudeHistory.csv"; 
+                
+                ostringstream reducedLongitudeHistoryFileHeader;
+                reducedLongitudeHistoryFileHeader << "epoch,longitude" << endl;
+                reducedLongitudeHistoryFileHeader << "# [s],[rad]" << endl;                                            
+
+                writeDataMapToTextFile( reducedLongitudeHistory,
+                                        reducedLongitudeHistoryFilename.str( ),
+                                        fileOutputDirectory, 
+                                        reducedLongitudeHistoryFileHeader.str( ),
+                                        std::numeric_limits< double >::digits10, 
+                                        std::numeric_limits< double >::digits10,
+                                        "," );            
+
                 ostringstream longitudeResidualsFilename;
                 longitudeResidualsFilename << "monteCarloRun"
                                            << iteratorRandomWalkInputTable->monteCarloRunId
@@ -648,7 +684,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
                 writeDataMapToTextFile( longitudeResidualsHistory,
                                         longitudeResidualsFilename.str( ),
-                                        fileOutputDirectory, longitudeResidualsFileHeader.str( ),
+                                        fileOutputDirectory, 
+                                        longitudeResidualsFileHeader.str( ),
                                         std::numeric_limits< double >::digits10, 
                                         std::numeric_limits< double >::digits10,
                                         "," );                                                 
@@ -667,6 +704,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Declare maximum eccentricity change in observation period [-].
         double maximumEccentricityChange = TUDAT_NAN;
 
+        // Declare map of average eccentricities per window [-].
+        DoubleKeyDoubleValueMap averageEccentricities;
+
         {
             // Populate temporary map with epochs and eccentricities.
             DoubleKeyDoubleValueMap eccentricityHistory;
@@ -680,9 +720,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                     = iteratorKeplerianActionElements->second( eccentricityIndex );
             }            
 
-            // Declare map of average eccentricities per window [-].
-            DoubleKeyDoubleValueMap averageEccentricities;
-
             // Loop over observation period and compute average eccentricities per epoch window.
             for ( int windowNumber = 0; 
                   windowNumber < randomWalkCase->numberOfEpochWindows; 
@@ -695,8 +732,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 averageEccentricities[ epochWindowCenter ] 
                     = computeStepFunctionWindowAverage( 
                         eccentricityHistory, 
-                        epochWindowCenter - randomWalkCase->epochWindowSize / 2.0, 
-                        epochWindowCenter + randomWalkCase->epochWindowSize / 2.0 );
+                        epochWindowCenter - 0.5 * randomWalkCase->epochWindowSize, 
+                        epochWindowCenter + 0.5 * randomWalkCase->epochWindowSize );
             }
 
             // Compute average eccentricity during propagation history.
@@ -734,6 +771,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Declare maximum inclination change in observation period [rad].
         double maximumInclinationChange = TUDAT_NAN;
 
+        // Declare map of average inclinations per window [rad].
+        DoubleKeyDoubleValueMap averageInclinations;        
+
         {
             // Populate temporary map with epochs and inclinations.
             DoubleKeyDoubleValueMap inclinationHistory;
@@ -747,9 +787,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                     = iteratorKeplerianActionElements->second( inclinationIndex );
             }            
 
-            // Declare map of average inclinations per window [rad].
-            DoubleKeyDoubleValueMap averageInclinations;
-
             // Loop over observation period and compute average inclinations per epoch window.
             for ( int windowNumber = 0; 
                   windowNumber < randomWalkCase->numberOfEpochWindows; 
@@ -762,8 +799,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 averageInclinations[ epochWindowCenter ] 
                     = computeStepFunctionWindowAverage( 
                         inclinationHistory, 
-                        epochWindowCenter - randomWalkCase->epochWindowSize / 2.0, 
-                        epochWindowCenter + randomWalkCase->epochWindowSize / 2.0 );
+                        epochWindowCenter - randomWalkCase->epochWindowSize * 0.5, 
+                        epochWindowCenter + randomWalkCase->epochWindowSize * 0.5 );
             }
 
             // Compute average inclination during propagation history.
@@ -788,6 +825,55 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                                         averageInclinations.end( ),
                                         CompareDoubleKeyDoubleValueMapValues( ) ) )->second;        
         }
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////////////////////
+
+        // Write epoch-windoow average values to file.
+
+        // Check if output mode is set to "FILE".
+        // If so, open output file and write header content.
+        if ( iequals( outputMode, "FILE" ) )
+        {
+            // Declare file handler.
+            std::ofstream epochWindowAveragesFile;   
+
+            ostringstream epochWindowAveragesFilename;
+            epochWindowAveragesFilename << fileOutputDirectory << "monteCarloRun" 
+                                        << iteratorRandomWalkInputTable->monteCarloRunId
+                                        << "_epochWindowAverages.csv";
+            
+            epochWindowAveragesFile.open( epochWindowAveragesFilename.str( ).c_str( ) );                                        
+
+            epochWindowAveragesFile << "epoch,longitudeResidual,eccentricity,inclination" << endl;
+            epochWindowAveragesFile << "# [s],[rad],[-],[rad]" << endl; 
+
+            // Loop through epoch-window averages and write data to file.
+            DoubleKeyDoubleValueMap::iterator iteratorEpochWindowAverageLongitudeResiduals
+                = averageLongitudeResiduals.begin( );
+            DoubleKeyDoubleValueMap::iterator iteratorEpochWindowAverageEccentricities
+                = averageEccentricities.begin( );
+            DoubleKeyDoubleValueMap::iterator iteratorEpochWindowAverageInclinations
+                = averageInclinations.begin( );
+                                                
+            for ( int i = 0; i < randomWalkCase->numberOfEpochWindows; i++ )
+            {
+                epochWindowAveragesFile 
+                    << std::setprecision( std::numeric_limits< double >::digits10 )
+                    << iteratorEpochWindowAverageLongitudeResiduals->first << ","
+                    << iteratorEpochWindowAverageLongitudeResiduals->second << ","
+                    << iteratorEpochWindowAverageEccentricities->second << ","
+                    << iteratorEpochWindowAverageInclinations->second << endl;
+
+                iteratorEpochWindowAverageLongitudeResiduals++;    
+                iteratorEpochWindowAverageEccentricities++;
+                iteratorEpochWindowAverageInclinations++;
+            }
+
+            // Close file handler.
+            epochWindowAveragesFile.close( );
+        }        
 
         ///////////////////////////////////////////////////////////////////////////
 

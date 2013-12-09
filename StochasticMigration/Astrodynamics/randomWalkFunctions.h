@@ -65,7 +65,7 @@ assist::basics::DoubleKeyDoubleValueMap computeLongitudeHistory(
  *          period [s].
  * \param epochWindowSize Size of epoch windows [s].
  * \param numberOfEpochWindows Number of epoch windows in observation period.
- * \param Reduced (to epoch windows) time-history of longitude of perturbed body.
+ * \return Reduced (to epoch windows) time-history of longitude of perturbed body.
  */
 assist::basics::DoubleKeyDoubleValueMap reduceLongitudeHistory( 
         const assist::basics::DoubleKeyDoubleValueMap& longitudeHistory,

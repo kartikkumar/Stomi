@@ -184,8 +184,8 @@ DoubleKeyDoubleValueMap reduceLongitudeHistory(
         const double epochWindowSize,
         const unsigned int numberOfEpochWindows )
 {
-    // Declare reduced (non-shifted) longitude history.
-    DoubleKeyDoubleValueMap reducedNonShiftedLongitudeHistory;
+    // Declare reduced longitude history.
+    DoubleKeyDoubleValueMap reducedLongitudeHistory;
 
     // Declare longitude history iterators.
     DoubleKeyDoubleValueMap::const_iterator iteratorEpochWindowStart;
@@ -194,42 +194,31 @@ DoubleKeyDoubleValueMap reduceLongitudeHistory(
     // Loop over observation period and extract longitude epoch windows.
     for ( unsigned int windowNumber = 0; windowNumber < numberOfEpochWindows; windowNumber++ )
     {
+        // Compute the epoch at the center of the current window.
         const double epochWindowCenter = observationPeriodStartEpoch
                 + windowNumber * epochWindowSpacing;
 
+        // Set start iterator to element before start of the epoch window.
         iteratorEpochWindowStart = longitudeHistory.lower_bound(
-                    epochWindowCenter - epochWindowSize / 2.0 );
+            epochWindowCenter - 0.5 * epochWindowSize );
 
         if ( iteratorEpochWindowStart != longitudeHistory.begin( ) )
         {
             iteratorEpochWindowStart--;
         }
 
+        // Set end iterator to element after start of the epoch window.
         iteratorEpochWindowEnd = longitudeHistory.lower_bound(
-                    epochWindowCenter + epochWindowSize / 2.0 );
+                    epochWindowCenter + 0.5 * epochWindowSize );
 
-        for ( DoubleKeyDoubleValueMap::const_iterator iteratorEpochWindow = iteratorEpochWindowStart;
+        // Loop through the epoch window and save the data.
+        for ( DoubleKeyDoubleValueMap::const_iterator iteratorEpochWindow 
+                = iteratorEpochWindowStart;
               iteratorEpochWindow != iteratorEpochWindowEnd;
               iteratorEpochWindow++ )
         {
-            reducedNonShiftedLongitudeHistory[ iteratorEpochWindow->first ]
-                    = iteratorEpochWindow->second;
+            reducedLongitudeHistory[ iteratorEpochWindow->first ] = iteratorEpochWindow->second;
         }
-    }
-
-    // Declare reduced (shifted) longitude history.
-    DoubleKeyDoubleValueMap reducedLongitudeHistory;
-
-    // Shift reduced longitude history to start at origin.
-    for ( DoubleKeyDoubleValueMap::iterator iteratorReducedLongitudeHistory
-          = reducedNonShiftedLongitudeHistory.begin( );
-          iteratorReducedLongitudeHistory != reducedNonShiftedLongitudeHistory.end( );
-          iteratorReducedLongitudeHistory++ )
-    {
-        reducedLongitudeHistory[ iteratorReducedLongitudeHistory->first
-                - reducedNonShiftedLongitudeHistory.begin( )->first ]
-                = iteratorReducedLongitudeHistory->second
-                - reducedNonShiftedLongitudeHistory.begin( )->second;
     }
 
     // Return reduced longitude history.

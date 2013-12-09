@@ -58,11 +58,11 @@ OUTPUT              : file
 # files generated are stored.
 # The default directory for the output files is the root directory of the Stochastic Migration
 # project.
-FILEOUTPUTDIR       : /Users/kartikkumar/Desktop/results
+FILEOUTPUTDIR       : /Users/kartikkumar/Documents/Education/PhD/PhD Thesis/2_MabsOrbitalMotion/MabIcarusJournalPaper/Figures/Figure16
 
 # Set the Monte carlo runs to execute.
 # This parameter sets the Monte Carlo runs to execute, based on the IDs in the input table 
 # in the database. To list multiple Monte Carlo run IDs, simply list the numbers, separated by 
 # spaces. An example of a list of IDs is provided.
 # The default setting is to run all incomplete Monte Carlo runs extracted from the database.
-MONTECARLORUNS         : 1 2 3 4 5
+MONTECARLORUNS         : 1
