@@ -6,8 +6,8 @@
  */
 
 
-#ifndef STOCHASTIC_MIGRATION_RANDOM_WALK_FUNCTIONS_H
-#define STOCHASTIC_MIGRATION_RANDOM_WALK_FUNCTIONS_H
+#ifndef STOMI_RANDOM_WALK_FUNCTIONS_H
+#define STOMI_RANDOM_WALK_FUNCTIONS_H
 
 // #include <string>
 // #include <vector>
@@ -20,7 +20,7 @@
  
 #include "StoMi/Database/testParticleKick.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace astrodynamics
 {
@@ -75,6 +75,6 @@ assist::basics::DoubleKeyDoubleValueMap reduceLongitudeHistory(
         const unsigned int numberOfEpochWindows );
 
 } // namespace astrodynamics
-} // namespace stochastic_migration
+} // namespace stomi
 
-#endif // STOCHASTIC_MIGRATION_RANDOM_WALK_FUNCTIONS_H
+#endif // STOMI_RANDOM_WALK_FUNCTIONS_H

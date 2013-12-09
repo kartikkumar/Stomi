@@ -12,7 +12,7 @@
 
 #include "StoMi/Database/testParticleInput.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -107,4 +107,4 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleInput& t
 }
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi

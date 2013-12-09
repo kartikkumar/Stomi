@@ -6,12 +6,12 @@
  */
 
 
-#ifndef STOCHASTIC_MIGRATION_HILL_SPHERE_H
-#define STOCHASTIC_MIGRATION_HILL_SPHERE_H
+#ifndef STOMI_HILL_SPHERE_H
+#define STOMI_HILL_SPHERE_H
 
 #include <cmath>
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace astrodynamics
 {
@@ -60,9 +60,9 @@ private:
 };
 
 } // namespace astrodynamics
-} // namespace stochastic_migration
+} // namespace stomi
 
-#endif // STOCHASTIC_MIGRATION_HILL_SPHERE_H
+#endif // STOMI_HILL_SPHERE_H
 
 /*
  *    The ConvertHillRadiiToMeters needs to be unit tested. Should be migrated to Assist.

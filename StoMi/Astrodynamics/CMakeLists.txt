@@ -17,15 +17,15 @@ set(ASTRODYNAMICS_HEADERS
 )
 
 # Add static library.
-add_library(stochastic_migration_astrodynamics STATIC ${ASTRODYNAMICS_SOURCES} ${ASTRODYNAMICS_HEADERS})
-setup_library_target(stochastic_migration_astrodynamics "${SRCROOT}${ASTRODYNAMICSDIR}")
+add_library(stomi_astrodynamics STATIC ${ASTRODYNAMICS_SOURCES} ${ASTRODYNAMICS_HEADERS})
+setup_library_target(stomi_astrodynamics "${SRCROOT}${ASTRODYNAMICSDIR}")
 
 # Add unit tests.
 add_executable(test_RandomWalkFunctions 
                "${SRCROOT}${ASTRODYNAMICSDIR}/UnitTests/unitTestRandomWalkFunctions.cpp")
 setup_unit_test_target(test_RandomWalkFunctions "${SRCROOT}${DATABASEDIR}")
 target_link_libraries(test_RandomWalkFunctions 
-                      stochastic_migration_astrodynamics stochastic_migration_database
+                      stomi_astrodynamics stomi_database
                       assist_basics
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 

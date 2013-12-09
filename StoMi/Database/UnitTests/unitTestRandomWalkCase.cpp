@@ -16,7 +16,7 @@
 
 #include "StoMi/Database/randomWalkCase.h"
  
-namespace stochastic_migration
+namespace stomi
 {
 namespace unit_tests
 {
@@ -364,4 +364,4 @@ BOOST_AUTO_TEST_CASE( testRandomWalkCaseGreaterThanOrEqualComparison )
 BOOST_AUTO_TEST_SUITE_END( )
 
 } // namespace unit_tests
-} // namespace stochastic_migration  
+} // namespace stomi  

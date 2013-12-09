@@ -10,7 +10,7 @@
  
 #include "StoMi/Basics/basics.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace basics
 {
@@ -50,4 +50,4 @@ RungeKuttaCoefficients getRungeKuttaCoefficients( const NumericalIntegratorType 
 }
 
 } // namespace basics
-} // namespace stochastic_migration
+} // namespace stomi

@@ -14,5 +14,5 @@ set(BASICS_HEADERS
 )
 
 # Add static library.
-add_library(stochastic_migration_basics STATIC ${BASICS_SOURCES} ${BASICS_HEADERS})
-setup_library_target(stochastic_migration_basics "${SRCROOT}${BASICSDIR}")
+add_library(stomi_basics STATIC ${BASICS_SOURCES} ${BASICS_HEADERS})
+setup_library_target(stomi_basics "${SRCROOT}${BASICSDIR}")

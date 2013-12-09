@@ -5,12 +5,12 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-#ifndef STOCHASTIC_MIGRATION_DICTIONARIES_H
-#define STOCHASTIC_MIGRATION_DICTIONARIES_H
+#ifndef STOMI_DICTIONARIES_H
+#define STOMI_DICTIONARIES_H
 
 #include <Tudat/InputOutput/dictionaryTools.h>
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace input_output
 {
@@ -44,9 +44,9 @@ tudat::input_output::dictionary::DictionaryPointer getTestParticleSimulatorDicti
 tudat::input_output::dictionary::DictionaryPointer getRandomWalkSimulatorDictionary( );
 
 } // namespace input_output
-} // namespace stochastic_migration
+} // namespace stomi
 
-#endif // STOCHASTIC_MIGRATION_DICTIONARIES_H
+#endif // STOMI_DICTIONARIES_H
 
 /*
  *    Unit tests need to be added to test the lexical dictionaries defined.

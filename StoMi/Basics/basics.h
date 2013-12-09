@@ -5,8 +5,8 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-#ifndef STOCHASTIC_MIGRATION_BASICS_H
-#define STOCHASTIC_MIGRATION_BASICS_H
+#ifndef STOMI_BASICS_H
+#define STOMI_BASICS_H
 
 #include <string>
 
@@ -14,21 +14,21 @@
 
 #include "StoMi/Database/testParticleCase.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace basics
 {
 
-//! Get root-path for StochasticMigration directory.
+//! Get root-path for StoMi directory.
 /*!
- * Returns root-path corresponding with root-directory of StochasticMigration as a string with
+ * Returns root-path corresponding with root-directory of StoMi as a string with
  * trailing slash included.
- * \return StochasticMigration root-path.
+ * \return StoMi root-path.
  */
-static inline std::string getStochasticMigrationRootPath( )
+static inline std::string getStoMiRootPath( )
 {
-#ifdef STOCHASTIC_MIGRATION_CUSTOM_ROOT_PATH
-    return std::string( STOCHASTIC_MIGRATION_CUSTOM_ROOT_PATH );
+#ifdef STOMI_CUSTOM_ROOT_PATH
+    return std::string( STOMI_CUSTOM_ROOT_PATH );
 #else
     // Declare file path string assigned to filePath.
     // __FILE__ only gives the absolute path in the header file!
@@ -52,11 +52,11 @@ tudat::numerical_integrators::RungeKuttaCoefficients getRungeKuttaCoefficients(
     const database::NumericalIntegratorType coefficientSet );
 
 } // namespace basics
-} // namespace stochastic_migration
+} // namespace stomi
 
-#endif // STOCHASTIC_MIGRATION_BASICS_H
+#endif // STOMI_BASICS_H
 
 /*
- *    Unit tests are needed for the getStochasticMigrationRootPath() and 
+ *    Unit tests are needed for the getStoMiRootPath() and 
  *    getRungeKuttaCoefficients() functions.
  */

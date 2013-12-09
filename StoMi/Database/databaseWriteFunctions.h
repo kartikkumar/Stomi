@@ -9,10 +9,10 @@
 
 #include "StoMi/Database/testParticleKick.h"
 
-#ifndef STOCHASTIC_MIGRATION_DATABASE_WRITE_FUNCTIONS_H
-#define STOCHASTIC_MIGRATION_DATABASE_WRITE_FUNCTIONS_H
+#ifndef STOMI_DATABASE_WRITE_FUNCTIONS_H
+#define STOMI_DATABASE_WRITE_FUNCTIONS_H
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -61,6 +61,6 @@ void populateRandomWalkOutputTable(
         const std::string& randomWalkInputTableName );
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi
 
-#endif // STOCHASTIC_MIGRATION_DATABASE_WRITE_FUNCTIONS_H
+#endif // STOMI_DATABASE_WRITE_FUNCTIONS_H

@@ -14,7 +14,7 @@
 
 #include "StoMi/Astrodynamics/propagationDataPoint.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace astrodynamics
 {
@@ -135,4 +135,4 @@ std::ostream& operator<<( std::ostream& outputStream, const PropagationDataPoint
 }    
 
 } // namespace astrodynamics
-} // namespace stochastic_migration
+} // namespace stomi

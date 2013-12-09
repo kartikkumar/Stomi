@@ -5,8 +5,8 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-#ifndef STOCHASTIC_MIGRATION_TEST_PARTICLE_CASE_H
-#define STOCHASTIC_MIGRATION_TEST_PARTICLE_CASE_H
+#ifndef STOMI_TEST_PARTICLE_CASE_H
+#define STOMI_TEST_PARTICLE_CASE_H
 
 #include <iostream>
 #include <string>
@@ -19,7 +19,7 @@
 
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -157,9 +157,9 @@ bool operator<( const TestParticleCase& testParticleCase1,
 std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& testParticleCase );
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi
 
-#endif // STOCHASTIC_MIGRATION_TEST_PARTICLE_CASE_H
+#endif // STOMI_TEST_PARTICLE_CASE_H
 
 /*
  *    References

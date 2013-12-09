@@ -25,7 +25,7 @@
 
 #include "StoMi/Astrodynamics/randomWalkFunctions.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace astrodynamics
 {
@@ -226,4 +226,4 @@ DoubleKeyDoubleValueMap reduceLongitudeHistory(
 }
 
 } // namespace astrodynamics
-} // namespace stochastic_migration
+} // namespace stomi

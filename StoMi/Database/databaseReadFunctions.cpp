@@ -20,7 +20,7 @@
 
 #include "StoMi/Database/databaseReadFunctions.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -489,4 +489,4 @@ std::vector< int > getRandomWalkPerturberList(
 }
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi

@@ -5,8 +5,8 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-#ifndef STOCHSTIC_MIGRATION_RANDOM_WALK_INPUT_H
-#define STOCHSTIC_MIGRATION_RANDOM_WALK_INPUT_H
+#ifndef STOMI_RANDOM_WALK_INPUT_H
+#define STOMI_RANDOM_WALK_INPUT_H
 
 #include <iostream>
 #include <vector>
@@ -16,7 +16,7 @@
 
 #include "StoMi/Database/testParticleKick.h" 
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -77,9 +77,9 @@ std::ostream& operator<<( std::ostream& outputStream,
                           const RandomWalkInput& randomWalkInput );
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi
 
-#endif // STOCHSTIC_MIGRATION_RANDOM_WALK_INPUT_H
+#endif // STOMI_RANDOM_WALK_INPUT_H
 
 /*
  *    References

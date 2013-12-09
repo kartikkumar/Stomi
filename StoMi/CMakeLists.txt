@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 # Specify project name.
-project(StochasticMigration)
+project(StoMi)
 
 # Set module path to local CMake scripts.
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../CMakeModules)
@@ -52,17 +52,17 @@ endif()
 # -------------------------------------------------------------------------------------------------
 
 # Load user specific settings. These can overwrite all previous settings.
-if (NOT STOCHASTIC_MIGRATION_USER_SETTINGS AND NOT DEFINED ENV{STOCHASTIC_MIGRATION_USER_SETTINGS})
+if (NOT stomi_USER_SETTINGS AND NOT DEFINED ENV{stomi_USER_SETTINGS})
   # Load from default paths, least important first.
   include( "../UserSettings.txt" OPTIONAL)
   include( "UserSettings.txt" OPTIONAL)
 else()
   MESSAGE(STATUS "Loading preset...")
   # Load the user specified file.
-  if (STOCHASTIC_MIGRATION_USER_SETTINGS)
-    include($STOCHASTIC_MIGRATION_USER_SETTINGS OPTIONAL)
+  if (stomi_USER_SETTINGS)
+    include($stomi_USER_SETTINGS OPTIONAL)
   else()
-    include($ENV{STOCHASTIC_MIGRATION_USER_SETTINGS} OPTIONAL)
+    include($ENV{stomi_USER_SETTINGS} OPTIONAL)
   endif()
 endif()
 
@@ -106,14 +106,14 @@ if(NOT TUDAT_BUNDLE_DISTRIBUTION_PATH)
     set(TUDAT_BUNDLE_DISTRIBUTION_PATH "${CODEROOT}")
 endif(NOT TUDAT_BUNDLE_DISTRIBUTION_PATH)
 
-if(NOT STOCHASTIC_MIGRATION_DISTRIBUTION_PATH)
-    set(STOCHASTIC_MIGRATION_DISTRIBUTION_PATH 
-        "${TUDAT_BUNDLE_DISTRIBUTION_PATH}/tudatApplications/stochasticMigration")
-endif(NOT STOCHASTIC_MIGRATION_DISTRIBUTION_PATH)
+if(NOT STOMI_DISTRIBUTION_PATH)
+    set(STOMI_DISTRIBUTION_PATH 
+        "${TUDAT_BUNDLE_DISTRIBUTION_PATH}/tudatApplications/stomi")
+endif(NOT STOMI_DISTRIBUTION_PATH)
 
 # Install files.
 install(DIRECTORY "${SRCROOT}/"
-        DESTINATION "${STOCHASTIC_MIGRATION_DISTRIBUTION_PATH}/StochasticMigration"
+        DESTINATION "${STOMI_DISTRIBUTION_PATH}/stomi"
         PATTERN ".DS_STORE" EXCLUDE
         PATTERN "CMakeLists.txt.user" EXCLUDE
         PATTERN ".svn" EXCLUDE
@@ -123,7 +123,7 @@ install(DIRECTORY "${SRCROOT}/"
 
 install(FILES ${CODEROOT}/LICENSE ${CODEROOT}/NOTICE ${CODEROOT}/README 
               ${CODEROOT}/UserSettings.txt.example
-        DESTINATION "${STOCHASTIC_MIGRATION_DISTRIBUTION_PATH}")
+        DESTINATION "${STOMI_DISTRIBUTION_PATH}")
 
 # Set the main sub-directories.
 set(ASTRODYNAMICSDIR "/Astrodynamics")
@@ -248,7 +248,7 @@ if(BUILD_DOCUMENTATION)
 
   # Install documentation.
   install(DIRECTORY "${CODEROOT}/Documentation" 
-          DESTINATION "${STOCHASTIC_MIGRATION_DISTRIBUTION_PATH}")
+          DESTINATION "${STOMI_DISTRIBUTION_PATH}")
 endif()
 
 # Set flags to compile using openmp.
@@ -276,7 +276,7 @@ add_executable(testParticleDatabaseGenerator
                "${SRCROOT}/Applications/testParticleDatabaseGenerator.cpp")
 setup_executable_target(testParticleDatabaseGenerator "${SRCROOT}")
 target_link_libraries(testParticleDatabaseGenerator 
-                      stochastic_migration_astrodynamics stochastic_migration_input_output 
+                      stomi_astrodynamics stomi_input_output 
                       assist_astrodynamics assist_input_output assist_mathematics  
                       tudat_basic_astrodynamics tudat_input_output
                       ${TUDAT_CORE_LIBRARIES} 
@@ -288,8 +288,7 @@ target_link_libraries(testParticleDatabaseGenerator
 add_executable(testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
 setup_executable_target(testParticleSimulator "${SRCROOT}")
 target_link_libraries(testParticleSimulator 
-                      stochastic_migration_astrodynamics stochastic_migration_basics 
-                      stochastic_migration_database stochastic_migration_input_output 
+                      stomi_astrodynamics stomi_basics stomi_database stomi_input_output 
                       assist_astrodynamics assist_basics assist_input_output
                       tudat_state_derivative_models tudat_basic_mathematics 
                       tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators 
@@ -304,8 +303,7 @@ add_executable(randomWalkDatabaseGenerator
                "${SRCROOT}/Applications/randomWalkDatabaseGenerator.cpp")
 setup_executable_target(randomWalkDatabaseGenerator "${SRCROOT}")
 target_link_libraries(randomWalkDatabaseGenerator 
-                      stochastic_migration_astrodynamics stochastic_migration_database 
-                      stochastic_migration_input_output   
+                      stomi_astrodynamics stomi_database stomi_input_output   
                       assist_input_output assist_astrodynamics  
                       tudat_input_output 
                       ${TUDAT_CORE_LIBRARIES} 
@@ -317,8 +315,7 @@ target_link_libraries(randomWalkDatabaseGenerator
 add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
 setup_executable_target(randomWalkSimulator "${SRCROOT}")
 target_link_libraries(randomWalkSimulator
-                      stochastic_migration_astrodynamics stochastic_migration_database  
-                      stochastic_migration_input_output
+                      stomi_astrodynamics stomi_database stomi_input_output
                       assist_astrodynamics assist_basics assist_input_output assist_mathematics
                       tudat_input_output tudat_statistics
                       ${TUDAT_CORE_LIBRARIES} 

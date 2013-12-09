@@ -16,7 +16,7 @@
 
 #include "StoMi/Database/databaseWriteFunctions.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -201,4 +201,4 @@ void populateRandomWalkOutputTable(
 }
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi

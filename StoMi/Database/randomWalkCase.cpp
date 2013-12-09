@@ -14,7 +14,7 @@
 
 #include "StoMi/Database/randomWalkCase.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -109,4 +109,4 @@ std::ostream& operator<<( std::ostream& outputStream, const RandomWalkCase& rand
 }
 
 } // namespace database
-} // namespace stochastic_migration    
+} // namespace stomi    

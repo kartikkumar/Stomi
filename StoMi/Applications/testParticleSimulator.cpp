@@ -101,10 +101,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace tudat::numerical_integrators;
     using namespace tudat::state_derivative_models;
 
-    using namespace stochastic_migration::astrodynamics;
-    using namespace stochastic_migration::basics;
-    using namespace stochastic_migration::database;
-    using namespace stochastic_migration::input_output;
+    using namespace stomi::astrodynamics;
+    using namespace stomi::basics;
+    using namespace stomi::database;
+    using namespace stomi::input_output;
 
     // Typedefs.
     typedef CompositeStateDerivativeModel< double, Vector12d, Vector6d > 

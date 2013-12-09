@@ -10,7 +10,7 @@
 
 #include "StoMi/InputOutput/dictionaries.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace input_output
 {
@@ -204,4 +204,4 @@ DictionaryPointer getRandomWalkSimulatorDictionary( )
 }
 
 } // namespace input_output
-} // namespace stochastic_migration
+} // namespace stomi

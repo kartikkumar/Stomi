@@ -21,7 +21,7 @@
 
 #include "StoMi/Database/testParticleCase.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -306,4 +306,4 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
 }
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi

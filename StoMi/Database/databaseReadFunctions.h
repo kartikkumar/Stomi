@@ -5,8 +5,8 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-#ifndef STOCHASTIC_MIGRATION_DATABASE_READ_FUNCTIONS_H
-#define STOCHASTIC_MIGRATION_DATABASE_READ_FUNCTIONS_H
+#ifndef STOMI_DATABASE_READ_FUNCTIONS_H
+#define STOMI_DATABASE_READ_FUNCTIONS_H
 
 #include <string>
 #include <vector>
@@ -17,7 +17,7 @@
 #include "StoMi/Database/testParticleInput.h"
 #include "StoMi/Database/testParticleKick.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -161,9 +161,9 @@ std::vector< int > getRandomWalkPerturberList(
         const std::string& randomWalkPerturberTableName );
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi
 
-#endif // STOCHASTIC_MIGRATION_DATABASE_READ_FUNCTIONS_H
+#endif // STOMI_DATABASE_READ_FUNCTIONS_H
 
 /*
  *    References

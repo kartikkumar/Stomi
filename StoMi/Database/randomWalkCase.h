@@ -5,15 +5,15 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-#ifndef STOCHASTIC_MIGRATION_RANDOM_WALK_CASE_H
-#define STOCHASTIC_MIGRATION_RANDOM_WALK_CASE_H
+#ifndef STOMI_RANDOM_WALK_CASE_H
+#define STOMI_RANDOM_WALK_CASE_H
 
 #include <iostream>
 #include <string>
 
 #include <boost/shared_ptr.hpp>
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -87,9 +87,9 @@ bool operator<( const RandomWalkCase& randomWalkCase1,
 std::ostream& operator<<( std::ostream& outputStream, const RandomWalkCase& randomWalkCase );
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi
 
-#endif // STOCHASTIC_MIGRATION_RANDOM_WALK_CASE_H
+#endif // STOMI_RANDOM_WALK_CASE_H
 
 /*
  *    References

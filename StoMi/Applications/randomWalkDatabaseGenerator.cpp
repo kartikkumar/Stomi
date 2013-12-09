@@ -72,9 +72,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace tudat::input_output::field_types::general;
     using namespace tudat::input_output::parsed_data_vector_utilities;
 
-    using namespace stochastic_migration::astrodynamics;
-    using namespace stochastic_migration::database;
-    using namespace stochastic_migration::input_output;    
+    using namespace stomi::astrodynamics;
+    using namespace stomi::database;
+    using namespace stomi::input_output;    
 
     ///////////////////////////////////////////////////////////////////////////
 

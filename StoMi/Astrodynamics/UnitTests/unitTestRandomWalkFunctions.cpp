@@ -21,7 +21,7 @@
 #include "StoMi/Astrodynamics/randomWalkFunctions.h"
 #include "StoMi/Database/testParticleKick.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace unit_tests
 {
@@ -31,8 +31,8 @@ BOOST_AUTO_TEST_SUITE( testRandomWalkFunctions )
 //! Test execution of zero-kick on perturbed body.
 BOOST_AUTO_TEST_CASE( testExecuteZeroKick )
 {
-    using namespace stochastic_migration::astrodynamics;
-    using namespace stochastic_migration::database;
+    using namespace stomi::astrodynamics;
+    using namespace stomi::database;
 
     // Set up kick table with single entry. 
     // Pre- and post-conjunction Keplerian elements for perturber are equal.
@@ -59,8 +59,8 @@ BOOST_AUTO_TEST_CASE( testExecuteZeroKick )
 //! Test execution of two kicks that cancel each other out on perturbed body.
 BOOST_AUTO_TEST_CASE( testExecuteCancellingKicks )
 {
-    using namespace stochastic_migration::astrodynamics;
-    using namespace stochastic_migration::database;
+    using namespace stomi::astrodynamics;
+    using namespace stomi::database;
 
     // Set mass ratio between perturber and perturbed body.
     const double massRatio = 0.01;
@@ -100,8 +100,8 @@ BOOST_AUTO_TEST_CASE( testExecuteCancellingKicks )
 //! Test execution of arbitrary kick on perturbed body.
 BOOST_AUTO_TEST_CASE( testExecuteGeneralKick )
 {
-    using namespace stochastic_migration::astrodynamics;
-    using namespace stochastic_migration::database;
+    using namespace stomi::astrodynamics;
+    using namespace stomi::database;
 
     // Set mass ratio between perturber and perturbed body.
     const double massRatio = 0.01;
@@ -146,4 +146,4 @@ BOOST_AUTO_TEST_CASE( testExecuteGeneralKick )
 BOOST_AUTO_TEST_SUITE_END( )
 
 } // namespace unit_tests
-} // namespace stochastic_migration    
+} // namespace stomi    

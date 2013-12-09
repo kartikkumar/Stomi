@@ -16,12 +16,12 @@ set(INPUTOUTPUT_HEADERS
 )
 
 # Add static library.
-add_library(stochastic_migration_input_output STATIC ${INPUTOUTPUT_SOURCES} ${INPUTOUTPUT_HEADERS})
-setup_library_target(stochastic_migration_input_output "${SRCROOT}${INPUTOUTPUTDIR}")
+add_library(stomi_input_output STATIC ${INPUTOUTPUT_SOURCES} ${INPUTOUTPUT_HEADERS})
+setup_library_target(stomi_input_output "${SRCROOT}${INPUTOUTPUTDIR}")
 
 ## Add unit tests.
 #add_executable(test_BasicInputOutput 
 #               "${SRCROOT}${INPUTOUTPUTDIR}/UnitTests/unitTestBasicInputOutput.cpp")
 #setup_unit_test_target(test_BasicInputOutput "${SRCROOT}${INPUTOUTPUTDIR}")
-#target_link_libraries(test_BasicInputOutput stochastic_migration_input_output 
-#                      stochastic_migration_database ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
+#target_link_libraries(test_BasicInputOutput stomi_input_output 
+#                      stomi_database ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})

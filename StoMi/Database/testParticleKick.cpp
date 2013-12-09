@@ -15,7 +15,7 @@
 
 #include "StoMi/Database/testParticleKick.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -176,4 +176,4 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleKick& te
 }
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi

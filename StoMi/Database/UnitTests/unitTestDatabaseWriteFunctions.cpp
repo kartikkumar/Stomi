@@ -26,7 +26,7 @@
 // #include "StoMi/Database/databaseWriteFunctions.h"
 // #include "StoMi/Database/testParticleKick.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace unit_tests
 {
@@ -42,11 +42,11 @@ BOOST_AUTO_TEST_CASE( testWriteTestParticleKickFunction )
     // using namespace database; 
 
     // Set absolute path to empty test database.
-    const std::string absolutePathToEmptyTestDatabase = getStochasticMigrationRootPath( )
+    const std::string absolutePathToEmptyTestDatabase = getStoMiRootPath( )
             + "/Database/UnitTests/testDatabaseEmptyTestParticleKickTable.db";
 
     // Copy empty test database to temporary file.
-    const std::string absolutePathToTestDatabase = getStochasticMigrationRootPath( )
+    const std::string absolutePathToTestDatabase = getStoMiRootPath( )
         + "/Database/UnitTests/testDatabaseWritableTestParticleKickTable.db";
 
     boost::filesystem::copy_file( absolutePathToEmptyTestDatabase, absolutePathToTestDatabase,
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE( testWriteTestParticleKickFunction )
 
     // // Read in table of test particle kick data from test data file.
     // const Eigen::MatrixXd testDataTestParticleKickTable
-    //         = readMatrixFromFile( getStochasticMigrationRootPath( )
+    //         = readMatrixFromFile( getStoMiRootPath( )
     //                               + "/Database/UnitTests/testDataWriteKickTableToDatabase.csv" );
 
     // // Create table of test particle kicks from test data matrix.
@@ -117,4 +117,4 @@ BOOST_AUTO_TEST_CASE( testWriteTestParticleKickFunction )
 BOOST_AUTO_TEST_SUITE_END( )
 
 } // namespace unit_tests
-} // namespace stochastic_migration
+} // namespace stomi

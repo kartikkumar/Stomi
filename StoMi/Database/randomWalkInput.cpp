@@ -11,7 +11,7 @@
 
 #include "StoMi/Database/randomWalkInput.h"
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace database
 {
@@ -90,4 +90,4 @@ std::ostream& operator<<( std::ostream& outputStream,
 }
 
 } // namespace database
-} // namespace stochastic_migration
+} // namespace stomi

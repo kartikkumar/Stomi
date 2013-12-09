@@ -5,8 +5,8 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-#ifndef STOCHASTIC_MIGRATION_PROPAGATION_DATA_POINT_H
-#define STOCHASTIC_MIGRATION_PROPAGATION_DATA_POINT_H
+#ifndef STOMI_PROPAGATION_DATA_POINT_H
+#define STOMI_PROPAGATION_DATA_POINT_H
 
 #include <iostream>
 #include <set> 
@@ -15,7 +15,7 @@
 
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-namespace stochastic_migration
+namespace stomi
 {
 namespace astrodynamics
 {
@@ -87,9 +87,9 @@ inline bool compareMutualDistances( const PropagationDataPoint& propagationDataP
 }
 
 } // namespace astrodynamics
-} // namespace stochastic_migration
+} // namespace stomi
 
-#endif // STOCHASTIC_MIGRATION_PROPAGATION_DATA_POINT_H
+#endif // STOMI_PROPAGATION_DATA_POINT_H
 
 /*    
  * The PropagationDataPoint data struct needs to be unit tested.
