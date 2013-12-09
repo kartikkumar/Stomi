@@ -1,7 +1,7 @@
-Stochastic Migration
+StoMi
 ===================
 
-A stochastic migration toolbox that treats the gravitational N-body problem as a superposition of multiple 3-body problems and a random walk model.
+StoMi is a toolbox that can be used to study stochastic migration procesess in the Solar System. StoMi treats the gravitational N-body problem as a superposition of multiple 3-body problems followed by a random walk.
 
 This toolbox can be used to study the stochastic migration of a massive body, orbiting a central body, due to the gravitational interactions with a ring of low-mass perturbers. 
 
