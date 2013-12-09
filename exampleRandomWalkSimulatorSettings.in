@@ -21,12 +21,12 @@
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator
 # application.
-DB                  : /Users/kartikkumar/Documents/Education/PhD/Simulations/Tudat/Workspace/tudatApplications/stochasticMigration/stochasticMigrationResults.sqlite
+DB                  :
 
 # Set the name for the random walk simulation case.
 # The value of this parameter is interpreted as a string. This case must already exist in the 
 # database. To populate a new case, use the Random Walk Database Generator application.
-CASE                : circular_equatorial_nominal
+CASE                :
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -49,7 +49,7 @@ CASE                : circular_equatorial_nominal
 # This parameter sets whether the output should be stored in the database or written to file.
 # By default, output is written to the database. To switch this to file, simply pass the parameter
 # as "file" (without quotation marks).
-OUTPUT              : file
+# OUTPUT              : database
 
 # Set the file output directory.
 # This parameter should only be set in case the OUTPUT parameter is set to "file". The parameter 
@@ -58,11 +58,11 @@ OUTPUT              : file
 # files generated are stored.
 # The default directory for the output files is the root directory of the Stochastic Migration
 # project.
-FILEOUTPUTDIR       : /Users/kartikkumar/Documents/Education/PhD/PhD Thesis/2_MabsOrbitalMotion/MabIcarusJournalPaper/Figures/Figure16
+# FILEOUTPUTDIR       :
 
 # Set the Monte carlo runs to execute.
 # This parameter sets the Monte Carlo runs to execute, based on the IDs in the input table 
 # in the database. To list multiple Monte Carlo run IDs, simply list the numbers, separated by 
 # spaces. An example of a list of IDs is provided.
 # The default setting is to run all incomplete Monte Carlo runs extracted from the database.
-MONTECARLORUNS         : 1
+# MONTECARLORUNS      : 1 2 3 4 5

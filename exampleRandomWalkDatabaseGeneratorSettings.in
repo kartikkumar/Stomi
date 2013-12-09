@@ -23,22 +23,22 @@
 
 # Set the absolute path to the database.
 # If the file doesn't exist, it will be created.
-DB                  : /Users/kartikkumar/Documents/University/PhD/Simulations/Tudat/Workspace/tudatApplications/stochasticMigration/stochasticMigrationResults.sqlite
+DB                  :
 
 # Set the name for the case.
 # The value of this parameter is interpreted as a string.
-CASE                : circular_equatorial_short
+CASE                :
 
 # Set the name for the test particle case.
 # The value of this parameter is interpreted as a string. 
 # This parameter refers to a case registered in database table containing test particle cases.
 # The case specified by this parameter is used to obtain the kick data used for the random walk
 # simulator.
-TPCASE              : circular_equatorial
+TPCASE              :
 
 # Set the size of the Monte Carlo population.
 # This parameter sets the number of Monte Carlo trials to execute.
-MCPOP               : 1000
+MCPOP               :
 
 # Set the perturber density.
 # This parameter sets the density of perturbers in the vicinity of the perturbed body. The
@@ -51,7 +51,7 @@ MCPOP               : 1000
 # number of available test particle simulations for the specified case. The available test
 # particle simulations are fetched from the input table in the SQLite database.
 # UNIT              : # of perturbers per R_Hill
-RHOPERTURBER        : 3.3333333333
+RHOPERTURBER        :
 
 # Set the perturber ring mass.
 # This parameter sets the total perturber ring mass in the vicinity of the perturbed body. This 
@@ -59,24 +59,24 @@ RHOPERTURBER        : 3.3333333333
 # being distributed based on the the density specified by RHOPERTURBER. The total perturber ring
 # mass is expressed in terms of the perturbed body's mass.
 # UNIT              : M_PERTURBED
-MPERTURBERRING      : 1.0
+MPERTURBERRING      :
 
 # Set the observation period.
 # This parameter sets the length of the observation period for the metrics used to track the 
 # random walk of the perturbed body. This should correspond to any real observations made.
 # UNIT              : yrs
-POBS                : 1.0
+POBS                :
 
 # Set the number of epochs.
 # This parameter sets the number of epochs at which the observation metrics are given within the
 # observation period. These epochs are equally spaced in time, within the observation period.
-NUMEPOCHS           : 2
+NUMEPOCHS           :
 
 # Set the epoch window size.
 # This parameter sets the size of the window about a given epoch within the observation period, 
 # used to average the variation of the perturbed body's orbital elements. 
 # UNIT              : days
-EPOCHSIZE           : 90.0
+EPOCHSIZE           :
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
