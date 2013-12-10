@@ -49,7 +49,6 @@ qtcreator-build/
 CMakeLists.txt.user
 *.sublime-*
 Documentation/
-inputFiles/
 plots/
 temp/
 databases/
