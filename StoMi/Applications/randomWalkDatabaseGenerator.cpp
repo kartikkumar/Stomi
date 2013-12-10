@@ -32,7 +32,7 @@
 #include <Tudat/InputOutput/separatedParser.h>
 #include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 
-#include <Assist/Astrodynamics/astrodynamicsbasics.h>
+#include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/InputOutput/basicInputOutput.h> 
 
