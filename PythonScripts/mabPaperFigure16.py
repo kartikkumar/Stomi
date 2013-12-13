@@ -175,17 +175,26 @@ for i in xrange(0, randomWalkCaseData['numberOfEpochWindows']):
 # Set font size for figures.
 matplotlib.rcParams.update({'font.size': fontSize})
 
+# Set figure labels.
+figures = ('16', '17', '18')
+
 # Set subfigure labels.
-subfigures = ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i')
+subfigures = ('a', 'b', 'c', 'd')
 
 # Set filename base.
-filenameBase  = outputPath + "/figure16%s_monteCarloRun" + str(monteCarloRunId)
+filenameBase  = outputPath + "/figure{0}{1}_monteCarloRun" + str(monteCarloRunId)
 
 # Set up plotting data.
 plotCentralEpoch = [centralEpoch/constants.julianYear for centralEpoch in centralEpochs]
 
 plotEpoch = keplerianActionElements['epoch']/constants.julianYear
 plotSemiMajorAxis = keplerianActionElements['semiMajorAxis']*constants.meterInKilometers
+
+plotLongitudeEpoch = longitudes['epoch']/constants.julianYear
+plotLongitude = longitudes['longitude']*constants.radiansInDegrees
+
+plotReducedLongitudeEpoch = reducedLongitudes['epoch']/constants.julianYear
+plotReducedLongitude = reducedLongitudes['longitude']*constants.radiansInDegrees
 
 plotLongitudeResidualEpoch = longitudeResiduals['epoch']/constants.julianYear
 plotLongitudeResidual = longitudeResiduals['longitudeResidual']*constants.radiansInDegrees
@@ -231,8 +240,31 @@ plt.plot([plotObservationPeriodEndEpoch, plotObservationPeriodEndEpoch], [ymin, 
          linestyle='dashed', color='k')
 # Save to file and close figure.
 plt.tight_layout(True)       
-outputFilenameBase = filenameBase % subfigures[0] 
+outputFilenameBase = filenameBase.format(figures[0],subfigures[0])
 plt.savefig(outputFilenameBase + "SemiMajorAxisHistory.pdf", dpi = figureDPI)    
+plt.close()
+
+# Plot time-history of Mab's longitude.
+fig = plt.figure()
+plt.xlabel("Epoch [Julian years]")
+plt.ylabel("$L_{Mab}$ [deg]")
+plt.ticklabel_format(style='sci', axis='y', scilimits=(0,0))
+# Plot longitude data.
+plt.plot(plotLongitudeEpoch, plotLongitude, 'k')
+# Plot reduced longitudes for the epoch windows.
+plt.plot(plotReducedLongitudeEpoch, plotReducedLongitude, \
+         marker='.', linestyle='none', color='k')
+# Get y-axis limits.
+ymin, ymax = plt.ylim()
+# Plot vertical lines to denote the observation period.
+plt.plot([plotObservationPeriodStartEpoch, plotObservationPeriodStartEpoch], [ymin, ymax], \
+         linestyle='dashed', color='k')
+plt.plot([plotObservationPeriodEndEpoch, plotObservationPeriodEndEpoch], [ymin, ymax], \
+         linestyle='dashed', color='k')
+# Save to file and close figure.
+plt.tight_layout(True)       
+outputFilenameBase = filenameBase.format(figures[0], subfigures[1]) 
+plt.savefig(outputFilenameBase + "LongitudeHistory.pdf", dpi = figureDPI)    
 plt.close()  
 
 # Plot epoch window data for longitude residuals.
@@ -257,7 +289,7 @@ for i in xrange(0,randomWalkCaseData['numberOfEpochWindows']):
 # Save to file and close figure. 
 plt.ylim(ymin, ymax)
 plt.tight_layout(True)       
-outputFilenameBase = filenameBase % subfigures[1] 
+outputFilenameBase = filenameBase.format(figures[0], subfigures[2])
 plt.savefig(outputFilenameBase + "LongitudeResidualEpochWindows.pdf", dpi = figureDPI)    
 plt.close()    
 
@@ -302,7 +334,7 @@ axes.fill_between(stepEpoch, ymin, stepLongitudeResidual, facecolor='0.75', alph
 # Save to file and close figure. 
 plt.ylim(ymin, ymax)
 plt.tight_layout(True)       
-outputFilenameBase = filenameBase % subfigures[2] 
+outputFilenameBase = filenameBase.format(figures[0], subfigures[3])
 plt.savefig(outputFilenameBase + "LongitudeResidualFirstEpochWindow.pdf", dpi = figureDPI)    
 plt.close()    
 
@@ -340,7 +372,7 @@ plt.plot([plotObservationPeriodEndEpoch, plotObservationPeriodEndEpoch], [ymin, 
          linestyle='dashed', color='k')
 # Save to file and close figure.
 plt.tight_layout(True)       
-outputFilenameBase = filenameBase % subfigures[3] 
+outputFilenameBase = filenameBase.format(figures[1], subfigures[0])
 plt.savefig(outputFilenameBase + "EccentricityHistory.pdf", dpi = figureDPI)    
 plt.close()  
 
@@ -383,7 +415,7 @@ for i in xrange(0,randomWalkCaseData['numberOfEpochWindows']):
 # Save to file and close figure. 
 plt.ylim(ymin, ymax)
 plt.tight_layout(True)       
-outputFilenameBase = filenameBase % subfigures[4] 
+outputFilenameBase = filenameBase.format(figures[1], subfigures[1]) 
 plt.savefig(outputFilenameBase + "EccentricityEpochWindows.pdf", dpi = figureDPI)    
 plt.close()  
 
@@ -429,7 +461,7 @@ axes.fill_between(stepEpoch, ymin, stepEccentricity, facecolor='0.75', alpha=0.5
 # Save to file and close figure. 
 plt.ylim(ymin, ymax)
 plt.tight_layout(True)       
-outputFilenameBase = filenameBase % subfigures[5] 
+outputFilenameBase = filenameBase.format(figures[1], subfigures[2])
 plt.savefig(outputFilenameBase + "EccentricityFirstEpochWindow.pdf", dpi = figureDPI)    
 plt.close()     
 
@@ -467,7 +499,7 @@ plt.plot([plotObservationPeriodEndEpoch, plotObservationPeriodEndEpoch], [ymin, 
          linestyle='dashed', color='k')
 # Save to file and close figure.
 plt.tight_layout(True)       
-outputFilenameBase = filenameBase % subfigures[6] 
+outputFilenameBase = filenameBase.format(figures[2], subfigures[0]) 
 plt.savefig(outputFilenameBase + "InclinationHistory.pdf", dpi = figureDPI)    
 plt.close()  
 
@@ -510,7 +542,7 @@ for i in xrange(0,randomWalkCaseData['numberOfEpochWindows']):
 # Save to file and close figure. 
 plt.ylim(ymin, ymax)
 plt.tight_layout(True)       
-outputFilenameBase = filenameBase % subfigures[7] 
+outputFilenameBase = filenameBase.format(figures[2], subfigures[1]) 
 plt.savefig(outputFilenameBase + "InclinationEpochWindows.pdf", dpi = figureDPI)    
 plt.close()  
 
@@ -556,7 +588,7 @@ axes.fill_between(stepEpoch, ymin, stepInclination, facecolor='0.75', alpha=0.5)
 # Save to file and close figure. 
 plt.ylim(ymin, ymax)
 plt.tight_layout(True)       
-outputFilenameBase = filenameBase % subfigures[8] 
+outputFilenameBase = filenameBase.format(figures[2], subfigures[2]) 
 plt.savefig(outputFilenameBase + "InclinationFirstEpochWindow.pdf", dpi = figureDPI)    
 plt.close()   
 
