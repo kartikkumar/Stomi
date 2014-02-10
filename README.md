@@ -18,4 +18,10 @@ This toolbox is written iuusing the following open-source libraries:
 - Tudat & Tudat Core (http://tudat.tudelft.nl)
 - Assist (http://www.github.com/kartikkumar/assist)
 
+
+Contact
+-------------------
+
 You can reach me at me [AT] kartikkumar {DOT} com.
+
+
