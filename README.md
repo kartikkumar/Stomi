@@ -9,9 +9,9 @@ Possible applications include:
 - Studying migration of Neptune due to interactions with the Kuiper belt
 - Studying migration of Ceres and Vesta due to interactions with the Main Asteroid belt
 - Studying migration of late-stage protoplanets due to scattering interactions with minor bodies
-- Studying migration of exoplanets embedded in ring of low-mass bodies 
+- Studying migration of exoplanets embedded in a ring of low-mass bodies 
 
-This toolbox is written iuusing the following open-source libraries:
+This toolbox is written using the following open-source libraries:
 
 - Eigen (http://eigen.tuxfamily.org/)
 - Boost (http://www.boost.org)
