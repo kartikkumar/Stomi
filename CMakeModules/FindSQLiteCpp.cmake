@@ -2,13 +2,13 @@
 # @ingroup SQLiteCpp
 # @brief   SQLiteCpp CMake module.
 #
-# Copyright (c) 2013 Kartik Kumar (me@kartikkumar.com)
+# Copyright (c) 2010-2014 Kartik Kumar (me@kartikkumar.com)
 #
 # Distributed under the MIT License (MIT) (See accompanying file LICENSE.txt
 # or copy at http://opensource.org/licenses/MIT)
 
 macro(_sqlitecpp_check_version)
-  file(READ "${SQLITECPP_INCLUDE_DIR}/SQLiteC++.h" _sqlitecpp_header)
+  file(READ "${SQLITECPP_INCLUDE_DIR}/SQLiteCpp.h" _sqlitecpp_header)
 
   string(REGEX MATCH "define[ \t]+SQLITECPP_VERSION_NUMBER[ \t]+([0-9]+)" 
          _sqlitecpp_version_match "${_sqlitecpp_header}")
@@ -24,7 +24,7 @@ macro(_sqlitecpp_check_version)
                    "but at least version ${SQLiteCpp_FIND_VERSION} is required!")
   endif(NOT SQLITECPP_VERSION_OK)
 
-  set(SQLITECPP_LIBRARY "sqlitecpp")
+  set(SQLITECPP_LIBRARY "SQLiteCpp")
   link_directories(${SQLITECPP_LIBRARY_DIR})
 endmacro(_sqlitecpp_check_version)
 
@@ -34,16 +34,17 @@ if(SQLITECPP_INCLUDE_DIR)
   set(SQLITECPP_FOUND ${SQLITECPP_VERSION_OK})
 
 else (SQLITECPP_INCLUDE_DIR)
-  find_path(SQLITECPP_BASE_PATH NAMES SQLiteC++.h
+  find_path(SQLITECPP_BASE_PATH NAMES SQLiteCpp.h
       PATHS
       ${PROJECT_SOURCE_DIR}
       ${PROJECT_SOURCE_DIR}/..
       ${PROJECT_SOURCE_DIR}/../..
       ${PROJECT_SOURCE_DIR}/../../..
-      PATH_SUFFIXES SQLiteCpp/src
+      ${PROJECT_SOURCE_DIR}/../../../..      
+      PATH_SUFFIXES SQLiteCpp/include/SQLiteCpp
     )
   set(SQLITECPP_INCLUDE_DIR ${SQLITECPP_BASE_PATH})
-  set(SQLITECPP_LIBRARY_DIR ${SQLITECPP_BASE_PATH}/../lib)
+  set(SQLITECPP_LIBRARY_DIR ${SQLITECPP_BASE_PATH}/../../build)
 
   if(SQLITECPP_INCLUDE_DIR)
     _sqlitecpp_check_version()
