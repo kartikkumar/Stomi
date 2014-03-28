@@ -284,41 +284,41 @@ target_link_libraries(testParticleDatabaseGenerator
                       ${SQLITE3_LIBRARY} 
                       ${Boost_LIBRARIES})
 
-# # Add test particle simulator (uses OpenMP).
-# add_executable(testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
-# setup_executable_target(testParticleSimulator)
-# target_link_libraries(testParticleSimulator 
-#                       stomi_astrodynamics stomi_basics stomi_database stomi_input_output 
-#                       assist_astrodynamics assist_basics assist_input_output
-#                       tudat_state_derivative_models tudat_basic_mathematics 
-#                       tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators 
-#                       tudat_input_output 
-#                       ${TUDAT_CORE_LIBRARIES} 
-#                       ${SQLITECPP_LIBRARY} 
-#                       ${SQLITE3_LIBRARY} 
-#                       ${Boost_LIBRARIES})
+# Add test particle simulator (uses OpenMP).
+add_executable(testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
+setup_executable_target(testParticleSimulator)
+target_link_libraries(testParticleSimulator 
+                      stomi_astrodynamics stomi_basics stomi_database stomi_input_output 
+                      assist_astrodynamics assist_basics assist_input_output
+                      tudat_state_derivative_models tudat_basic_mathematics 
+                      tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators 
+                      tudat_input_output 
+                      ${TUDAT_CORE_LIBRARIES} 
+                      ${SQLITECPP_LIBRARY} 
+                      ${SQLITE3_LIBRARY} 
+                      ${Boost_LIBRARIES})
 
-# # Add SQLite database generator for random walk simulatons.
-# add_executable(randomWalkDatabaseGenerator 
-#                "${SRCROOT}/Applications/randomWalkDatabaseGenerator.cpp")
-# setup_executable_target(randomWalkDatabaseGenerator)
-# target_link_libraries(randomWalkDatabaseGenerator 
-#                       stomi_astrodynamics stomi_database stomi_input_output   
-#                       assist_input_output assist_astrodynamics  
-#                       tudat_input_output 
-#                       ${TUDAT_CORE_LIBRARIES} 
-#                       ${SQLITECPP_LIBRARY} 
-#                       ${SQLITE3_LIBRARY} 
-#                       ${Boost_LIBRARIES})
+# Add SQLite database generator for random walk simulatons.
+add_executable(randomWalkDatabaseGenerator 
+               "${SRCROOT}/Applications/randomWalkDatabaseGenerator.cpp")
+setup_executable_target(randomWalkDatabaseGenerator)
+target_link_libraries(randomWalkDatabaseGenerator 
+                      stomi_astrodynamics stomi_database stomi_input_output   
+                      assist_input_output assist_astrodynamics  
+                      tudat_input_output 
+                      ${TUDAT_CORE_LIBRARIES} 
+                      ${SQLITECPP_LIBRARY} 
+                      ${SQLITE3_LIBRARY} 
+                      ${Boost_LIBRARIES})
 
-# # Add random walk application (uses OpenMP).
-# add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
-# setup_executable_target(randomWalkSimulator)
-# target_link_libraries(randomWalkSimulator
-#                       stomi_astrodynamics stomi_database stomi_input_output
-#                       assist_astrodynamics assist_basics assist_input_output assist_mathematics
-#                       tudat_input_output tudat_statistics
-#                       ${TUDAT_CORE_LIBRARIES} 
-#                       ${SQLITECPP_LIBRARY} 
-#                       ${SQLITE3_LIBRARY} 
-#                       ${Boost_LIBRARIES})
+# Add random walk application (uses OpenMP).
+add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
+setup_executable_target(randomWalkSimulator)
+target_link_libraries(randomWalkSimulator
+                      stomi_astrodynamics stomi_database stomi_input_output
+                      assist_astrodynamics assist_basics assist_input_output assist_mathematics
+                      tudat_input_output tudat_statistics
+                      ${TUDAT_CORE_LIBRARIES} 
+                      ${SQLITECPP_LIBRARY} 
+                      ${SQLITE3_LIBRARY} 
+                      ${Boost_LIBRARIES})
