@@ -15,7 +15,7 @@
 
 #include <Eigen/Core>
 
-#include <SQLiteC++.h> 
+#include <SQLiteCpp/SQLiteCpp.h> 
 
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 

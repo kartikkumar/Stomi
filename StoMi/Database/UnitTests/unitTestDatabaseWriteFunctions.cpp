@@ -17,7 +17,7 @@
 
 #include <Eigen/Core>
 
-#include <SQLiteC++.h>  
+#include <SQLiteCpp/SQLiteCpp.h>  
 
 #include <TudatCore/InputOutput/matrixTextFileReader.h>
 

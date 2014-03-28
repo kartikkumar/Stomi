@@ -16,7 +16,7 @@
 
 #include <Eigen/Core>
 
-#include <SQLiteC++.h> 
+#include <SQLiteCpp/SQLiteCpp.h> 
 
 #include "StoMi/Database/databaseReadFunctions.h"
 

@@ -10,7 +10,7 @@
 
 #include <boost/math/special_functions/fpclassify.hpp>
 
-#include <SQLiteC++.h> 
+#include <SQLiteCpp/SQLiteCpp.h> 
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 

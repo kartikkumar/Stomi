@@ -22,7 +22,7 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
-#include <SQLiteC++.h> 
+#include <SQLiteCpp/SQLiteCpp.h> 
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 #include <TudatCore/Mathematics/BasicMathematics/basicMathematicsFunctions.h>

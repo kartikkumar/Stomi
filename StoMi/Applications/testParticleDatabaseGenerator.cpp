@@ -19,7 +19,7 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <boost/random/variate_generator.hpp>
 
-#include <SQLiteC++.h>
+#include <SQLiteCpp/SQLiteCpp.h>
 
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/unitConversions.h>

@@ -49,7 +49,7 @@
 #include "StoMi/InputOutput/dictionaries.h"
 
 
-#include <SQLiteC++.h> 
+#include <SQLiteCpp/SQLiteCpp.h> 
 
 //! Execute random walk simulations.
 int main( const int numberOfInputs, const char* inputArguments[ ] )
