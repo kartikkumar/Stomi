@@ -5,7 +5,6 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/unitConversions.h>
 

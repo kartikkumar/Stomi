@@ -5,7 +5,6 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-
 #include <cmath>
 #include <cstdlib>
 #include <iomanip>

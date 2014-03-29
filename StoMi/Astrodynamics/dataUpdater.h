@@ -1,16 +1,8 @@
 /*    
  *    Copyright (c) 2010-2014, Delft University of Technology
+ *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
- *    See COPYING for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120817    K. Kumar          File created; migrated code from
- *                                  MabSimulations/Astrodynamics/body.h
- *    References
- *
- *    Notes
- *
+ *    See http://bit.ly/12SHPLR for license details.
  */
 
 #ifndef STOMI_DATA_UPDATER_H

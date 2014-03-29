@@ -5,7 +5,6 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-
 #ifndef STOMI_HILL_SPHERE_H
 #define STOMI_HILL_SPHERE_H
 

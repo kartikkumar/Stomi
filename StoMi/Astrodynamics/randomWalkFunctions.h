@@ -5,7 +5,6 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-
 #ifndef STOMI_RANDOM_WALK_FUNCTIONS_H
 #define STOMI_RANDOM_WALK_FUNCTIONS_H
 

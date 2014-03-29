@@ -1,21 +1,8 @@
 /*    
  *    Copyright (c) 2010-2014, Delft University of Technology
+ *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
  *    All rights reserved.
- *    See COPYING for license details.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120817    K. Kumar          File created.
- *      120820    K. Kumar          Completed Doxygen comments.
- *      120831    K. Kumar          Completed Doxygen comments for DataUpdater class.
- *      130211    K. Kumar          Moved to GeneralTools/Astrodynamics; removed everything other
- *                                  than Body class; wrapped code in new namespaces and updated
- *                                  include guards.
- *
- *    References
- *
- *    Notes
- *
+ *    See http://bit.ly/12SHPLR for license details.
  */
 
 #ifndef STOMI_BODY_H

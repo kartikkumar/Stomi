@@ -52,17 +52,17 @@ endif()
 # -------------------------------------------------------------------------------------------------
 
 # Load user specific settings. These can overwrite all previous settings.
-if (NOT stomi_USER_SETTINGS AND NOT DEFINED ENV{stomi_USER_SETTINGS})
+if (NOT STOMI_USER_SETTINGS AND NOT DEFINED ENV{STOMI_USER_SETTINGS})
   # Load from default paths, least important first.
   include( "../UserSettings.txt" OPTIONAL)
   include( "UserSettings.txt" OPTIONAL)
 else()
   MESSAGE(STATUS "Loading preset...")
   # Load the user specified file.
-  if (stomi_USER_SETTINGS)
-    include($stomi_USER_SETTINGS OPTIONAL)
+  if (STOMI_USER_SETTINGS)
+    include($STOMI_USER_SETTINGS OPTIONAL)
   else()
-    include($ENV{stomi_USER_SETTINGS} OPTIONAL)
+    include($ENV{STOMI_USER_SETTINGS} OPTIONAL)
   endif()
 endif()
 
@@ -160,8 +160,9 @@ endif()
 
 # Find Boost libraries on local system.
 find_package(Boost 1.52.0 
-             COMPONENTS thread date_time system unit_test_framework 
-                        filesystem regex serialization REQUIRED)
+             COMPONENTS 
+             thread date_time system unit_test_framework filesystem regex serialization 
+             REQUIRED)
 
 # Include Boost directories.
 # Set CMake flag to suppress Boost warnings (platform-dependent solution).
@@ -194,7 +195,7 @@ else( )
 endif( )
 
 # Find Assist library on local system.
-find_package(Assist 1.1 REQUIRED)
+find_package(Assist 1.2 REQUIRED)
 
 # Include Assist directories.
 # Set CMake flag to suppress Assist warnings (platform-dependent solution).
