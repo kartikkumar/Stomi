@@ -5,9 +5,6 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-
-#define BOOST_TEST_MAIN
-
 #include <iterator>
 
 #include <boost/test/unit_test.hpp>

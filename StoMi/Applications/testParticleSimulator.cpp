@@ -26,8 +26,6 @@
 #include <omp.h>
 
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
-#include <Assist/Astrodynamics/body.h>
-#include <Assist/Astrodynamics/dataUpdater.h>
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/Basics/basics.h>
 #include <Assist/Basics/commonTypedefs.h>
@@ -51,6 +49,8 @@
 #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaVariableStepSizeIntegrator.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
+#include "StoMi/Astrodynamics/body.h"
+#include "StoMi/Astrodynamics/dataUpdater.h"
 #include "StoMi/Astrodynamics/propagationDataPoint.h"
 #include "StoMi/Basics/basics.h"
 #include "StoMi/Database/databaseReadFunctions.h"
