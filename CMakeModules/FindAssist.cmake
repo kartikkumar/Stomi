@@ -1,34 +1,7 @@
- #    Copyright (c) 2010-2013, Delft University of Technology
- #    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
+ #    Copyright (c) 2010-2014, Delft University of Technology
+ #    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
  #    All rights reserved.
- #    See http://bit.ly/12SHPLR for license details.
- #
- #    Changelog
- #      YYMMDD    Author            Comment
- #      12xxxx    B. Tong Minh      File created based on FindEigen3.cmake.
- #      130211    K. Kumar          Updated for General Tools project. 
- #      130323    K. Kumar          Renamed file and updated for Assist project.
- #
- #    References
- #      FindEigen3.cmake.
- #
- #    Notes
- #      This script tries to find the Assist library. This module supports requiring a minimum 
- #      version, e.g. you can do version, e.g. you can do find_package(Assist 3.1.2) to require i
- #      version 3.1.2 or newer of Assist.
- #
- #      Once done, this will define:
- #
- #          ASSIST_FOUND - system has Assist lib with correct version;
- #          ASSIST_INCLUDE_DIR - the Assist include directory.
- #
- #      Original copyright statements (from FindEigen3.cmake:
- #          Copyright (c) 2006, 2007 Montel Laurent, <montel@kde.org>
- #          Copyright (c) 2008, 2009 Gael Guennebaud, <g.gael@free.fr>
- #          Copyright (c) 2009 Benoit Jacob <jacob.benoit.1@gmail.com>
- #
- #      FindEigen3.cmake states that redistribution and use is allowed according to the terms of
- #      the 2-clause BSD license.
+ #    See http://bit.ly/1jern3m for license details.
 
 macro(_assist_check_version)
   file(READ "${ASSIST_INCLUDE_DIR}/Assist/assistVersion.h" _assist_header)
@@ -84,3 +57,23 @@ else (ASSIST_INCLUDE_DIR)
   mark_as_advanced(ASSIST_INCLUDE_DIR)
 
 endif(ASSIST_INCLUDE_DIR)
+
+ #    References
+ #      FindEigen3.cmake.
+ #
+ #    This script tries to find the Assist library. This module supports requiring a minimum 
+ #    version, e.g. you can do version, e.g. you can do find_package(Assist 3.1.2) to require i
+ #    version 3.1.2 or newer of Assist.
+ #
+ #    Once done, this will define:
+ #
+ #        ASSIST_FOUND - system has Assist lib with correct version;
+ #        ASSIST_INCLUDE_DIR - the Assist include directory.
+ #
+ #    Original copyright statements (from FindEigen3.cmake:
+ #        Copyright (c) 2006, 2007 Montel Laurent, <montel@kde.org>
+ #        Copyright (c) 2008, 2009 Gael Guennebaud, <g.gael@free.fr>
+ #        Copyright (c) 2009 Benoit Jacob <jacob.benoit.1@gmail.com>
+ #
+ #    FindEigen3.cmake states that redistribution and use is allowed according to the terms of
+ #    the 2-clause BSD license.

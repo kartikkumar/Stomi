@@ -39,16 +39,19 @@ Icon?
 ehthumbs.db
 Thumbs.db
 
-# Miscellaneous #
+# Build system #
 ######################
-*.diff
 bin/
 build/
 lib/
 qtcreator-build/
 CMakeLists.txt.user
 *.sublime-*
+
+# Miscellaneous #
+######################
+*.diff
 Documentation/
+Databases/
 plots/
 temp/
-Databases/

@@ -27,7 +27,6 @@
 
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/unitConversions.h>
-#include <Assist/Basics/basics.h>
 #include <Assist/Basics/commonTypedefs.h>
 #include <Assist/InputOutput/basicInputOutput.h>
 

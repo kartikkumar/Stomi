@@ -1,22 +1,22 @@
-#    Copyright (c) 2010-2013, Delft University of Technology
-#    Copyright (c) 2010-2013, K. Kumar (me@kartikkumar.com)
+#    Copyright (c) 2010-2014, Delft University of Technology
+#    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
 #    All rights reserved.
 #    See http://bit.ly/12SHPLR for license details.
 #
-#    This is an example input file for the Random Walk Simulator application provided with the 
-#    Stochastic Migration project. 
+#    This is an example input file for the randomWalkSimulator application provided with the 
+#    StoMi project. 
 #
 #    All lines preceded by the '#' character are interpreted as comments.
 #    Each line must contain only a single parameter/value pair, separated by a ':' character.
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#
+####################################################################################################
 # REQUIRED PARAMETERS
 #
 # These parameters must be specified for the application to be executed.
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+###################################################################################################
+
 
 # Set the absolute path to the database.
 # The database must already exist. It can be created and populated using the Database Generator
@@ -29,14 +29,14 @@ DB                  :
 CASE                :
 
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#
+####################################################################################################
 # OPTIONAL PARAMETERS
 #
 # If these parameter are not uncommented and given specified values, default values are assumed.
 # DO NOT uncomment the UNIT lines; they are simply comment lines.
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+###################################################################################################
+
 
 # Set the number of parallel threads to run the application on.
 # This parameters sets the number of parallel threads to spawn using OpenMP, to run the 
@@ -54,10 +54,9 @@ CASE                :
 # Set the file output directory.
 # This parameter should only be set in case the OUTPUT parameter is set to "file". The parameter 
 # will be ignored if OUTPUT is set to "database".
-# With this parameter, the absolute path to the output directory can be specified, where the output  
-# files generated are stored.
-# The default directory for the output files is the root directory of the Stochastic Migration
-# project.
+# With this parameter, the absolute path to the output directory can be specified, where the   
+# output files generated are stored.
+# The default directory for the output files is the root directory of the StoMi project.
 # FILEOUTPUTDIR       :
 
 # Set the Monte carlo runs to execute.

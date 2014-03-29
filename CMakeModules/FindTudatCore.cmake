@@ -1,4 +1,4 @@
- #    Copyright (c) 2010-2013, Delft University of Technology
+ #    Copyright (c) 2010-2014, Delft University of Technology
  #    All rights reserved.
  #    See LICENSE for license details 
  #    (http://tudat.tudelft.nl/projects/tudat/repository/tudatcore/entry/trunk/LICENSE).
