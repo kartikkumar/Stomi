@@ -127,9 +127,9 @@ install(FILES ${CODEROOT}/LICENSE ${CODEROOT}/NOTICE ${CODEROOT}/README
 
 # Set the main sub-directories.
 set(ASTRODYNAMICSDIR "/Astrodynamics")
-set(BASICSDIR "/Basics")
 set(DATABASEDIR "/Database")
 set(INPUTOUTPUTDIR "/InputOutput")
+set(MATHEMATICSDIR "/Mathematics")
 
 # Include the top-level directories.
 include_directories(AFTER
@@ -265,7 +265,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # Set sub-directories.
-set(SUBDIRS ${ASTRODYNAMICSDIR} ${BASICSDIR} ${DATABASEDIR} ${INPUTOUTPUTDIR})
+set(SUBDIRS ${ASTRODYNAMICSDIR} ${DATABASEDIR} ${INPUTOUTPUTDIR} ${MATHEMATICSDIR})
 
 # Add sub-directories to CMake process.
 foreach(CURRENT_SUBDIR ${SUBDIRS})
@@ -289,7 +289,7 @@ target_link_libraries(testParticleDatabaseGenerator
 add_executable(testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
 setup_executable_target(testParticleSimulator)
 target_link_libraries(testParticleSimulator 
-                      stomi_astrodynamics stomi_basics stomi_database stomi_input_output 
+                      stomi_astrodynamics stomi_database stomi_input_output stomi_mathematics
                       assist_astrodynamics assist_basics assist_input_output
                       tudat_state_derivative_models tudat_basic_mathematics 
                       tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators 

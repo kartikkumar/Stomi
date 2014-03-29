@@ -51,13 +51,13 @@
 #include "StoMi/Astrodynamics/body.h"
 #include "StoMi/Astrodynamics/dataUpdater.h"
 #include "StoMi/Astrodynamics/propagationDataPoint.h"
-#include "StoMi/Basics/basics.h"
 #include "StoMi/Database/databaseReadFunctions.h"
 #include "StoMi/Database/databaseWriteFunctions.h"
 #include "StoMi/Database/testParticleCase.h"
 #include "StoMi/Database/testParticleInput.h"
 #include "StoMi/Database/testParticleKick.h"
 #include "StoMi/InputOutput/dictionaries.h"
+#include "StoMi/Mathematics/basicMathematics.h"
 
 //! Execute test particle simulations.
 int main( const int numberOfInputs, const char* inputArguments[ ] )
@@ -101,9 +101,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace tudat::state_derivative_models;
 
     using namespace stomi::astrodynamics;
-    using namespace stomi::basics;
     using namespace stomi::database;
     using namespace stomi::input_output;
+    using namespace stomi::mathematics;    
 
     // Typedefs.
     typedef CompositeStateDerivativeModel< double, Vector12d, Vector6d > 

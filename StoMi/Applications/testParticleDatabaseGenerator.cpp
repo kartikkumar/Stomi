@@ -21,6 +21,7 @@
 #include <SQLiteCpp/SQLiteCpp.h>
 
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
+#include <Assist/Astrodynamics/hillSphere.h> 
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/InputOutput/basicInputOutput.h>
 #include <Assist/Mathematics/statistics.h>
@@ -38,7 +39,6 @@
 #include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-#include "StoMi/Astrodynamics/hillSphere.h"
 #include "StoMi/InputOutput/dictionaries.h"
 
 //! Execute test particle database generator.
@@ -76,7 +76,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace tudat::input_output::field_types::general;
     using namespace tudat::input_output::parsed_data_vector_utilities;
 
-    using namespace stomi::astrodynamics;
     using namespace stomi::input_output;
 
     ///////////////////////////////////////////////////////////////////////////

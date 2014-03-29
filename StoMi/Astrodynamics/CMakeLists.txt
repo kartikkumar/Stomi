@@ -11,7 +11,6 @@ set(ASTRODYNAMICS_SOURCES
 
 # Set header files.
 set(ASTRODYNAMICS_HEADERS
-  "${SRCROOT}${ASTRODYNAMICSDIR}/hillSphere.h"
   "${SRCROOT}${ASTRODYNAMICSDIR}/propagationDataPoint.h"
   "${SRCROOT}${ASTRODYNAMICSDIR}/randomWalkFunctions.h"
 )

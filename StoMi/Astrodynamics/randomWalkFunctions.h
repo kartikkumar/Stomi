@@ -8,9 +8,6 @@
 #ifndef STOMI_RANDOM_WALK_FUNCTIONS_H
 #define STOMI_RANDOM_WALK_FUNCTIONS_H
 
-// #include <string>
-// #include <vector>
-
 #include <Eigen/Core>
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h> 

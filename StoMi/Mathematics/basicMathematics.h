@@ -14,7 +14,7 @@
 
 namespace stomi
 {
-namespace basics
+namespace mathematics
 {
 
 //! Get Runge-Kutta integrator coefficient set.
@@ -28,7 +28,7 @@ namespace basics
 tudat::numerical_integrators::RungeKuttaCoefficients getRungeKuttaCoefficients( 
     const database::NumericalIntegratorType coefficientSet );
 
-} // namespace basics
+} // namespace mathematics
 } // namespace stomi
 
 #endif // STOMI_BASICS_H

@@ -8,11 +8,11 @@
 #include <iostream>
 #include <stdexcept>
  
-#include "StoMi/Basics/basics.h"
+#include "StoMi/Mathematics/basicMathematics.h"
 
 namespace stomi
 {
-namespace basics
+namespace mathematics
 {
 
 using namespace tudat::numerical_integrators;
@@ -49,5 +49,5 @@ RungeKuttaCoefficients getRungeKuttaCoefficients( const NumericalIntegratorType 
     return rungeKuttaCoefficients;
 }
 
-} // namespace basics
+} // namespace mathematics
 } // namespace stomi

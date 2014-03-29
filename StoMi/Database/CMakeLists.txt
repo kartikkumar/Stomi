@@ -36,7 +36,7 @@ add_executable(test_DatabaseReadFunctions
                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseReadFunctions.cpp")
 setup_unit_test_target(test_DatabaseReadFunctions "${SRCROOT}${DATABASEDIR}")
 target_link_libraries(test_DatabaseReadFunctions 
-                      stomi_database stomi_basics 
+                      stomi_database stomi_input_output 
                       tudat_input_output
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 

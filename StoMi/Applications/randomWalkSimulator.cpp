@@ -22,6 +22,7 @@
 #include <boost/make_shared.hpp>
 
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
+#include <Assist/Astrodynamics/hillSphere.h>
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/Basics/commonTypedefs.h>
 #include <Assist/Basics/comparisonFunctions.h>
@@ -38,7 +39,6 @@
 #include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 #include <Tudat/Mathematics/Statistics/simpleLinearRegression.h>
 
-#include "StoMi/Astrodynamics/hillSphere.h"
 #include "StoMi/Astrodynamics/randomWalkFunctions.h"
 #include "StoMi/Database/databaseReadFunctions.h" 
 #include "StoMi/Database/databaseWriteFunctions.h"  
