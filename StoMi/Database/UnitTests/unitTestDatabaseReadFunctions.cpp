@@ -22,12 +22,12 @@
 #include <TudatCore/InputOutput/matrixTextFileReader.h>
 #include <TudatCore/Mathematics/BasicMathematics/mathematicalConstants.h>
 
-#include "StoMi/Basics/basics.h"
 #include "StoMi/Database/databaseReadFunctions.h"
 #include "StoMi/Database/randomWalkCase.h"
 #include "StoMi/Database/testParticleCase.h"
 #include "StoMi/Database/testParticleInput.h"
 #include "StoMi/Database/testParticleKick.h"
+#include "StoMi/InputOutput/rootPath.h"
 
 namespace stomi
 {
@@ -41,7 +41,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
 {
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
     using namespace tudat::basic_mathematics::mathematical_constants;
-    using namespace basics;
+    using namespace input_output;
     using namespace database;
 
     // Set absolute path to test database.
@@ -92,7 +92,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
 //! database.
 BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 {
-    using namespace basics;
+    using namespace input_output;
     using namespace database;
 
     // Set absolute path to test database.
@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionIncompleteSimulations )
 {
     using tudat::input_output::readMatrixFromFile;
-    using namespace basics;
+    using namespace input_output;
     using namespace database;
 
     // Set absolute path to test database.
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionIncompleteSimulations
 //! when requesting data for completed simulations.
 BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNoRows )
 {
-    using namespace basics;
+    using namespace input_output;
     using namespace database;
 
     // Set absolute path to test database.
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNoRows )
 BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionSpecificSimulations )
 {
     using tudat::input_output::readMatrixFromFile;
-    using namespace basics;
+    using namespace input_output;
     using namespace database;
 
     // Set absolute path to test database.
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionSpecificSimulations )
 //! when requesting non-existent test particle simulations.
 BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNonExistentSimulation )
 {
-    using namespace basics;
+    using namespace input_output;
     using namespace database;
 
     // Set absolute path to test database.
@@ -305,7 +305,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionSpecificSimulations )
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
     using tudat::input_output::readMatrixFromFile;
 
-    using namespace basics;
+    using namespace input_output;
     using namespace database;
 
     // Set absolute path to test database.
@@ -400,7 +400,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionNonExistentSimulation 
 {
     using boost::assign::list_of;
 
-    using namespace basics;
+    using namespace input_output;
     using namespace database;
 
     // Set absolute path to test database.
@@ -437,7 +437,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionNonExistentSimulation 
 //! Test implementation of function to get random walk case data from SQLite3 database.
 BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunction )
 {
-    using namespace basics;
+    using namespace input_output;
     using namespace database;
 
     // Set absolute path to test database.
@@ -464,7 +464,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunction )
 //! database.
 BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunctionExtraRow )
 {
-    using namespace basics;
+    using namespace input_output;
     using namespace database;
 
     // Set absolute path to test database.
@@ -504,7 +504,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunctionExtraRow )
 BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionIncompleteSimulations )
 {
 //     using tudat::input_output::readMatrixFromFile;
-//     using namespace basics;
+//     using namespace input_output;
 //     using namespace database;
 
 //     // Set absolute path to test database.
@@ -551,7 +551,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionIncompleteSimulations )
 // //! when requesting data for completed simulations.
 // BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNoRows )
 // {
-//     using namespace basics;
+//     using namespace input_output;
 //     using namespace database;
 
 //     // Set absolute path to test database.
@@ -593,7 +593,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionIncompleteSimulations )
 // //     using boost::assign::list_of;
 // //     using boost::assign::ptr_insert;
 
-// //     using namespace basics;
+// //     using namespace input_output;
 // //     using namespace database;
 
 // //     // Set absolute path to test database.
@@ -656,7 +656,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionIncompleteSimulations )
 // // {
 // //     using boost::assign::list_of;
 
-// //     using namespace basics;
+// //     using namespace input_output;
 // //     using namespace database;
 
 // //     // Set absolute path to test database.
@@ -692,7 +692,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionIncompleteSimulations )
 // // {
 // //     using tudat::input_output::readMatrixFromFile;
 
-// //     using namespace basics;
+// //     using namespace input_output;
 // //     using namespace database;
 
 // //     // Set absolute path to test database.
@@ -736,7 +736,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionIncompleteSimulations )
 // // {
 // //     using boost::assign::list_of;
 
-// //     using namespace basics;
+// //     using namespace input_output;
 // //     using namespace database;
 
 // //     // Set absolute path to test database.

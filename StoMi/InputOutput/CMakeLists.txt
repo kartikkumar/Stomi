@@ -11,17 +11,24 @@ set(INPUTOUTPUT_SOURCES
 
 # Set header files.
 set(INPUTOUTPUT_HEADERS
-#  "${SRCROOT}${INPUTOUTPUTDIR}/basicInputOutput.h"
   "${SRCROOT}${INPUTOUTPUTDIR}/dictionaries.h"
+  "${SRCROOT}${INPUTOUTPUTDIR}/rootPath.h"
+)
+
+# Set unit test files.
+set(INPUTOUTPUT_UNIT_TESTS
+    "${SRCROOT}${INPUTOUTPUTDIR}/UnitTests/unitTestInputOutput.cpp"
+    "${SRCROOT}${INPUTOUTPUTDIR}/UnitTests/unitTestRootPath.cpp"
 )
 
 # Add static library.
 add_library(stomi_input_output STATIC ${INPUTOUTPUT_SOURCES} ${INPUTOUTPUT_HEADERS})
-setup_library_target(stomi_input_output "${SRCROOT}${INPUTOUTPUTDIR}")
+setup_library_target(stomi_input_output)
 
-## Add unit tests.
-#add_executable(test_BasicInputOutput 
-#               "${SRCROOT}${INPUTOUTPUTDIR}/UnitTests/unitTestBasicInputOutput.cpp")
-#setup_unit_test_target(test_BasicInputOutput "${SRCROOT}${INPUTOUTPUTDIR}")
-#target_link_libraries(test_BasicInputOutput stomi_input_output 
-#                      stomi_database ${TUDAT_CORE_LIBRARIES} ${Boost_LIBRARIES})
+# Add unit tests.
+add_executable(test_InputOutput ${INPUTOUTPUT_UNIT_TESTS})
+setup_unit_test_target(test_InputOutput)
+target_link_libraries(test_InputOutput 
+                      stomi_input_output 
+                      ${TUDAT_CORE_LIBRARIES}
+                      ${Boost_LIBRARIES})
