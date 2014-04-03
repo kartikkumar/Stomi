@@ -5,8 +5,6 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-#define BOOST_TEST_MAIN
-
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -215,12 +213,8 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionSpecificSimulations )
             = getStoMiRootPath( )
             + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
-    // Set string of selected test particle simulation numbers.
+    // Set string of selected test particle simulation IDs.
     const std::string testParticleSimulationIds = "1 3 5 9";
-
-    // Set vector of selected test particle simulation numbers.
-    const std::vector< int > testParticleSimulationIdsVector
-            = boost::assign::list_of( 1 )( 3 )( 5 )( 9 );
 
     // Set requested test particle case ID.
     const int testParticleCaseId = 1;
@@ -446,7 +440,8 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunction )
 
     // Retrieve random walk case data.
     const RandomWalkCasePointer randomWalkCase 
-        = getRandomWalkCase( absolutePathToTestDatabase, "circular_equatorial_nominal", 
+        = getRandomWalkCase( absolutePathToTestDatabase, 
+                             "circular_equatorial_nominal", 
                              "random_walk_case" );
 
     // Check that the values read from the database are correct.
@@ -479,7 +474,8 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunctionExtraRow )
     {
         // Retrieve test particle case data.
         const RandomWalkCasePointer randomWalkCase
-                = getRandomWalkCase( absolutePathToTestDatabase, "circular_equatorial_nominal", 
+                = getRandomWalkCase( absolutePathToTestDatabase, 
+                                     "circular_equatorial_nominal", 
                                      "random_walk_case" );
     }
 
@@ -493,278 +489,284 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunctionExtraRow )
     BOOST_CHECK( isExtraRowPresent );
 }
 
-
-
-
-
-
-
 //! Test implementation of function to get incomplete simulations from random walk input table in
 //! SQLite3 database for a given case ID.
 BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionIncompleteSimulations )
 {
-//     using tudat::input_output::readMatrixFromFile;
-//     using namespace input_output;
-//     using namespace database;
+    using tudat::input_output::readMatrixFromFile;
+    using namespace input_output;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase
-//             = getStoMiRootPath( )
-//             + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStoMiRootPath( )
+            + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
-//     // Set requested test particle case ID.
-//     const int testParticleCaseId = 1;
+    // Set requested random walk case ID.
+    const int randomWalkCaseId = 1;
 
-//     // Retrieve table of input data for test particle simulations.
-//     const TestParticleInputTable testParticleInputTable
-//             = getCompleteTestParticleInputTable( 
-//                 absolutePathToTestDatabase, testParticleCaseId, "test_particle_input" );
+    // // Retrieve table of input data for test particle simulations.
+    const RandomWalkInputTable randomWalkInputTable 
+        = getCompleteRandomWalkInputTable(
+            absolutePathToTestDatabase, randomWalkCaseId,
+            "random_walk_input", "random_walk_perturbers" );
 
-//     // Read in table of test particle input data from test data file.
-//     const Eigen::Matrix< double, 10, 9 > testDataTestParticleInputTable
-//             = readMatrixFromFile( getStoMiRootPath( )
-//                                   + "/Database/UnitTests/testDataTestParticleInputTable.csv" );
+    // Read in table of random walk input data from test data file.
+    const Eigen::Matrix< double, 10, 4 > testDataRandomWalkInputTable
+            = readMatrixFromFile( getStoMiRootPath( )
+                                  + "/Database/UnitTests/testDataRandomWalkInputTable.csv" );
 
-//     // Check that the input data table retrieved matches the test data.
-//     unsigned int i = 0;
+    // Read in table of random walk perturber data from test data file.
+    const Eigen::Matrix< double, 1000, 3 > testDataRandomWalkPerturberTable
+            = readMatrixFromFile( getStoMiRootPath( )
+                                  + "/Database/UnitTests/testDataRandomWalkPerturberTable.csv" ); 
 
-//     for ( TestParticleInputTable::iterator iteratorInputTable = testParticleInputTable.begin( );
-//           iteratorInputTable != testParticleInputTable.end( ); iteratorInputTable++ )
-//     {
-//         BOOST_CHECK_EQUAL( iteratorInputTable->simulationId,
-//                            testDataTestParticleInputTable( i, 0 ) );
-//         BOOST_CHECK_EQUAL( iteratorInputTable->testParticleCaseId, testParticleCaseId );
-//         BOOST_CHECK_EQUAL( iteratorInputTable->isCompleted, false );
+    // Check that the input data table retrieved matches the test data.
+    unsigned int i = 0;
+    unsigned int j = 0;    
 
-//         {
-//             TUDAT_CHECK_MATRIX_CLOSE_FRACTION(
-//                         iteratorInputTable->initialStateInKeplerianElements,
-//                         testDataTestParticleInputTable.block( i, 3, 1, 6 ).transpose( ),
-//                         1.0e-14 );
-//         }
+    for ( RandomWalkInputTable::iterator iteratorInputTable = randomWalkInputTable.begin( );
+          iteratorInputTable != randomWalkInputTable.end( ); iteratorInputTable++ )
+    {
+        BOOST_CHECK_EQUAL( iteratorInputTable->monteCarloRunId,
+                           testDataRandomWalkInputTable( i, 0 ) );
+        BOOST_CHECK_EQUAL( iteratorInputTable->randomWalkCaseId, 
+                           testDataRandomWalkInputTable( i, 1 ) );
+        BOOST_CHECK_EQUAL( iteratorInputTable->isCompleted, false );
+        BOOST_CHECK_CLOSE_FRACTION( 
+                           iteratorInputTable->observationPeriodStartEpoch,
+                           testDataRandomWalkInputTable( i, 3 ),
+                           1.0e-14 );
 
-//         i++;
-//     }
+        for ( std::vector< int >::const_iterator iteratorTestParticleSimulationIds
+                = iteratorInputTable->testParticleSimulationIds.begin( );
+              iteratorTestParticleSimulationIds 
+                != iteratorInputTable->testParticleSimulationIds.end( );
+              iteratorTestParticleSimulationIds++  )
+        {           
+            BOOST_CHECK_EQUAL( *iteratorTestParticleSimulationIds,
+                               testDataRandomWalkPerturberTable( j, 2 ) );  
+
+            j++;                                      
+        }
+
+        i++;
+    }
 }
 
-// //! Test run-time error in case of no fetched test particle input data from SQLite3 database,
-// //! when requesting data for completed simulations.
-// BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNoRows )
-// {
-//     using namespace input_output;
-//     using namespace database;
+//! Test run-time error in case of no fetched random wlak input data from SQLite3 database,
+//! when requesting data for completed simulations.
+BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionNoRows )
+{
+    using namespace input_output;
+    using namespace database;
 
-//     // Set absolute path to test database.
-//     const std::string absolutePathToTestDatabase
-//             = getStoMiRootPath( )
-//             + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
-
-//     // Try to retrieve test particle input data.
-//     bool isNoRowPresent = false;
-
-//     try
-//     {
-//         // Retrieve all input data for test particle simulations that are complete.
-//         const TestParticleInputTable testParticleInputTable
-//                 = getCompleteTestParticleInputTable( 
-//                     absolutePathToTestDatabase, 1, "test_particle_input", true );
-//     }
-
-//     // Catch expected run-time error.
-//     catch( std::runtime_error& )
-//     {
-//         isNoRowPresent = true;
-//     }
-
-//     // Check that the expected run-time error was thrown.
-//     BOOST_CHECK( isNoRowPresent );
-// }
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStoMiRootPath( )
+            + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
 
+    // Try to retrieve random walk input data.
+    bool isNoRowPresent = false;
 
+    try
+    {
+        // Retrieve all input data for random walk simulations that are complete.
+        const RandomWalkInputTable randomWalkInputTable
+                = getCompleteRandomWalkInputTable( 
+                    absolutePathToTestDatabase, 1, 
+                    "random_walk_input", "random_walk_perturbers", true );
+    }
 
+    // Catch expected run-time error.
+    catch( std::runtime_error& )
+    {
+        isNoRowPresent = true;
+    }
 
+    // Check that the expected run-time error was thrown.
+    BOOST_CHECK( isNoRowPresent );
+}
 
+//! Test implementation of function to get selected random walk Monte Carlo run data from SQLite3
+//! database.
+BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionSpecificRuns )
+{
+    using tudat::input_output::readMatrixFromFile;
+    using namespace input_output;
+    using namespace database;
 
-// // //! Test implementation of function to get selected random walk Monte Carlo run data from SQLite3
-// // //! database.
-// // BOOST_AUTO_TEST_CASE( testGetRandomWalkMonteCarloRunTableFunctionSpecificRuns )
-// // {
-// //     using boost::assign::list_of;
-// //     using boost::assign::ptr_insert;
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStoMiRootPath( )
+            + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
-// //     using namespace input_output;
-// //     using namespace database;
+    // Set vector of selected Monte Carlo run IDs.
+    const std::string monteCarloRunIds = "1 3 5 9";
 
-// //     // Set absolute path to test database.
-// //     const std::string absolutePathToTestDatabase = getStoMiRootPath( )
-// //             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.sqlite";
+    // Set requested random walk case ID.
+    const int randomWalkCaseId = 1;
 
-// //     // Set vector of selected Monte Carlo runs.
-// //     const std::vector< unsigned int > monteCarloRuns = list_of( 1 )( 5 )( 1001 )( 1005 );
+    // Retrieve table of random walk Monte Carlo runs.
+    const RandomWalkInputTable randomWalkInputTable
+            = getSelectedRandomWalkInputTable( 
+                absolutePathToTestDatabase, randomWalkCaseId, monteCarloRunIds,
+                "random_walk_input", "random_walk_perturbers" );         
 
-// //     // Retrieve table of random walk Monte Carlo runs.
-// //     const RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable
-// //             = getRandomWalkMonteCarloRunsTable( absolutePathToTestDatabase, monteCarloRuns );
+    // Read in table of random walk input data from test data file.
+    const Eigen::Matrix< double, 4, 4 > testDataRandomWalkInputTable = readMatrixFromFile(
+                getStoMiRootPath( )
+                + "/Database/UnitTests/testDataSelectedRandomWalkInputTable.csv" ); 
 
-// //     // Set expected random walk Monte Carlo run table.
-// //     RandomWalkMonteCarloRunTable expectedRandomWalkMonteCarloRunTable;
-// //     expectedRandomWalkMonteCarloRunTable.insert( 
-// //         new RandomWalkMonteCarloRun( 1, 100, "EQUAL", 0.001, 0.0, 94672800.0, 7776000.0, 4 ) );
-// //     expectedRandomWalkMonteCarloRunTable.insert( 
-// //         new RandomWalkMonteCarloRun( 5, 100, "EQUAL", 0.001, 0.0, 94672800.0, 7776000.0, 4 ) );
-// //     expectedRandomWalkMonteCarloRunTable.insert( 
-// //         new RandomWalkMonteCarloRun( 1001, 1000, "EQUAL", 0.0001, 0.0, 
-// //                                      94672800.0, 7776000.0, 4 ) );
-// //     expectedRandomWalkMonteCarloRunTable.insert( 
-// //         new RandomWalkMonteCarloRun( 1005, 1000, "EQUAL", 0.0001, 0.0, 
-// //                                      94672800.0, 7776000.0, 4 ) );
+    // Read in table of random walk perturber data from test data file.
+    const Eigen::Matrix< double, 400, 3 > testDataRandomWalkPerturberTable
+            = readMatrixFromFile( 
+                getStoMiRootPath( )
+                + "/Database/UnitTests/testDataSelectedRandomWalkPerturberTable.csv" ); 
 
-// //     // Check that the random walk Monte Carlo run table retrieved matches the test data.
-// //     RandomWalkMonteCarloRunTable::iterator iteratorExpectedMonteCarloRunTable 
-// //         = expectedRandomWalkMonteCarloRunTable.begin( );
+    // Check that the input data table retrieved matches the test data.
+    unsigned int i = 0;
+    unsigned int j = 0;    
 
-// //     for ( RandomWalkMonteCarloRunTable::iterator iteratorMonteCarloRunTable 
-// //           = randomWalkMonteCarloRunTable.begin( );
-// //           iteratorMonteCarloRunTable != randomWalkMonteCarloRunTable.end( );
-// //           iteratorMonteCarloRunTable++ )
-// //     {
-// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->monteCarloRun,
-// //                            iteratorExpectedMonteCarloRunTable->monteCarloRun );
-// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->perturberPopulation,
-// //                            iteratorExpectedMonteCarloRunTable->perturberPopulation );
-// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionType,
-// //                            iteratorExpectedMonteCarloRunTable->massDistributionType );
-// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionParameter1,
-// //                            iteratorExpectedMonteCarloRunTable->massDistributionParameter1 );
-// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->massDistributionParameter2,
-// //                            iteratorExpectedMonteCarloRunTable->massDistributionParameter2 );
-// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->observationPeriod,
-// //                            iteratorExpectedMonteCarloRunTable->observationPeriod );
-// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->epochWindowSize,
-// //                            iteratorExpectedMonteCarloRunTable->epochWindowSize );
-// //         BOOST_CHECK_EQUAL( iteratorMonteCarloRunTable->numberOfEpochWindows,
-// //                            iteratorExpectedMonteCarloRunTable->numberOfEpochWindows );
+    for ( RandomWalkInputTable::iterator iteratorInputTable = randomWalkInputTable.begin( );
+          iteratorInputTable != randomWalkInputTable.end( ); iteratorInputTable++ )
+    {
+        BOOST_CHECK_EQUAL( iteratorInputTable->monteCarloRunId,
+                           testDataRandomWalkInputTable( i, 0 ) );
+        BOOST_CHECK_EQUAL( iteratorInputTable->randomWalkCaseId, 
+                           testDataRandomWalkInputTable( i, 1 ) );
+        BOOST_CHECK_EQUAL( iteratorInputTable->isCompleted, false );
+        BOOST_CHECK_CLOSE_FRACTION( 
+                           iteratorInputTable->observationPeriodStartEpoch,
+                           testDataRandomWalkInputTable( i, 3 ),
+                           1.0e-14 );
 
-// //         iteratorExpectedMonteCarloRunTable++;
-// //     }
-// // }
+        for ( std::vector< int >::const_iterator iteratorTestParticleSimulationIds
+                = iteratorInputTable->testParticleSimulationIds.begin( );
+              iteratorTestParticleSimulationIds 
+                != iteratorInputTable->testParticleSimulationIds.end( );
+              iteratorTestParticleSimulationIds++  )
+        {           
+            BOOST_CHECK_EQUAL( *iteratorTestParticleSimulationIds,
+                               testDataRandomWalkPerturberTable( j, 2 ) );  
 
-// // //! Test expected run-time error thrown by function to get selected random walk Monte Carlo data
-// // //! from SQLite3 database.
-// // BOOST_AUTO_TEST_CASE( testGetRandomWalkMonteCarloRunTableFunctionNonExistentRun )
-// // {
-// //     using boost::assign::list_of;
+            j++;                                      
+        }
 
-// //     using namespace input_output;
-// //     using namespace database;
+        i++;
+    }    
+}
 
-// //     // Set absolute path to test database.
-// //     const std::string absolutePathToTestDatabase = getStoMiRootPath( )
-// //             + "/Database/UnitTests/testDatabaseRandomWalkMonteCarloRunTable.sqlite";
+//! Test run-time error in case of no fetched random walk input data from SQLite3 database,
+//! when requesting non-existent random walk Monte Carlo runs.
+BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionSpecificNonExistentRun )
+{
+    using namespace input_output;
+    using namespace database;
 
-// //     // Set vector of selected Monte Carlo runs.
-// //     const std::vector< unsigned int > monteCarloRuns = list_of( 1 )( 99999 );
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStoMiRootPath( )
+            + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
-// //     // Try to retrieve table of random walk Monte Carlo run data, and catch expected error.
-// //     bool isRunTimeErrorThrown = false;
+    // Set vector of selected Monte Carlo run IDs.
+    const std::string monteCarloRunIds = "1 99999";
 
-// //     try
-// //     {
-// //         // Retrieve table of random walk Monte Carlo runs.
-// //         const RandomWalkMonteCarloRunTable randomWalkMonteCarloRunTable
-// //                 = getRandomWalkMonteCarloRunsTable( absolutePathToTestDatabase, monteCarloRuns );
-// //     }
+    // Set requested random walk case ID.
+    const int randomWalkCaseId = 1;
 
-// //     catch( std::runtime_error& )
-// //     {
-// //         isRunTimeErrorThrown = true;
-// //     }
+    // Try to retrieve table of random walk Monte Carlo run data, and catch expected error.
+    bool isRunTimeErrorThrown = false;
 
-// //     // Check that expected run-time error was thrown due to request for non-existent Monte Carlo
-// //     // run.
-// //     BOOST_CHECK( isRunTimeErrorThrown );
-// // }
+    try
+    {
+        const RandomWalkInputTable randomWalkInputTable
+                = getSelectedRandomWalkInputTable( 
+                    absolutePathToTestDatabase, randomWalkCaseId, monteCarloRunIds,
+                    "random_walk_input", "random_walk_perturbers" );    
+    }
 
-// // //! Test implementation of function to get selected random walk perturber data from SQLite3
-// // //! database.
-// // BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturberTableFunctionSpecificRun )
-// // {
-// //     using tudat::input_output::readMatrixFromFile;
+    catch( std::runtime_error& )
+    {
+        isRunTimeErrorThrown = true;
+    }
 
-// //     using namespace input_output;
-// //     using namespace database;
+    // Check that expected run-time error was thrown due to request for non-existent Monte Carlo
+    // run.
+    BOOST_CHECK( isRunTimeErrorThrown );
+}
 
-// //     // Set absolute path to test database.
-// //     const std::string absolutePathToTestDatabase = getStoMiRootPath( )
-// //             + "/Database/UnitTests/testDatabaseRandomWalkPerturberTable.sqlite";
+//! Test implementation of function to get selected random walk perturbers from SQLite3
+//! database.
+BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturbersFunctionSpecificRun )
+{
+    using tudat::input_output::readMatrixFromFile;
+    using namespace input_output;
+    using namespace database;
 
-// //     // Set Monte Carlo run to retrieve data for.
-// //     const unsigned int monteCarloRun = 1;
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStoMiRootPath( )
+            + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
-// //     // Retrieve table of perturbers for random walk.
-// //     const RandomWalkPerturberTable randomWalkPerturberTable = getRandomWalkPerturberTable(
-// //                 absolutePathToTestDatabase, monteCarloRun );
+    // Set Monte Carlo run to retrieve data for.
+    const unsigned int monteCarloRun = 1;
 
-// //     // Read in table of random walk perturber data from test data file.
-// //     const Eigen::MatrixXd testRandomWalkPerturberData = readMatrixFromFile(
-// //                 getStoMiRootPath( )
-// //                 + "/Database/UnitTests/testDataRandomWalkPerturberTable.csv" );
+    // Retrieve list of perturbers, expressed as vector of test particle simulation IDs for random 
+    // walk.
+    const std::vector< int > randomWalkPerturberList 
+        = getRandomWalkPerturberList(
+                absolutePathToTestDatabase, monteCarloRun, "random_walk_perturbers" );
 
-// //     // Check that the random walk perturber table retrieved matches the test data.
-// //     unsigned int i = 0;
+    // Read in list of random walk perturbers from test data file.
+    const Eigen::MatrixXd testRandomWalkPerturberData
+        = readMatrixFromFile(
+                getStoMiRootPath( )
+                + "/Database/UnitTests/testDataRandomWalkSinglePerturberList.csv" );
 
-// //     for ( RandomWalkPerturberTable::iterator iteratorPerturberTable 
-// //           = randomWalkPerturberTable.begin( );
-// //           iteratorPerturberTable != randomWalkPerturberTable.end( );
-// //           iteratorPerturberTable++ )
-// //     {
-// //         BOOST_CHECK_EQUAL( iteratorPerturberTable->monteCarloRun,
-// //                            testRandomWalkPerturberData( i, 1 ) );
-// //         BOOST_CHECK_EQUAL( iteratorPerturberTable->testParticleSimulationId,
-// //                            testRandomWalkPerturberData( i, 2 ) );
-// //         BOOST_CHECK_EQUAL( iteratorPerturberTable->massRatio,
-// //                            testRandomWalkPerturberData( i, 3 ) );
+    // Check that the random walk perturber list retrieved matches the test data.
+    for ( unsigned int i = 0; i < randomWalkPerturberList.size( ); i++ )
+    {
+        BOOST_CHECK_EQUAL( randomWalkPerturberList.at( i ), testRandomWalkPerturberData( i, 2 ) );
+    }
+}
 
-// //         i++;
-// //     }
-// // }
+//! Test expected run-time error thrown by function to get random walk perturber data from SQLite3
+//! database.
+BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturbersFunctionNonExistentRun )
+{
+    using namespace input_output;
+    using namespace database;
 
-// // //! Test expected run-time error thrown by function to get random walk perturber data from SQLite3
-// // //! database.
-// // BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturberTableFunctionNonExistentMonteCarloRun )
-// // {
-// //     using boost::assign::list_of;
+    // Set absolute path to test database.
+    const std::string absolutePathToTestDatabase
+            = getStoMiRootPath( )
+            + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
-// //     using namespace input_output;
-// //     using namespace database;
+    // Set selected Monte Carlo run ID.
+    const unsigned int monteCarloRun = 999999;
 
-// //     // Set absolute path to test database.
-// //     const std::string absolutePathToTestDatabase = getStoMiRootPath( )
-// //             + "/Database/UnitTests/testDatabaseRandomWalkPerturberTable.sqlite";
+    // Try to retrieve list of random walk perturbers, and catch expected error.
+    bool isRunTimeErrorThrown = false;
 
-// //     // Set selected Monte Carlo run.
-// //     const unsigned int monteCarloRun = 999999;
+    try
+    {
+        // Retrieve list of perturbers for Monte Carlo run.
+        const std::vector< int > randomWalkPerturberList 
+            = getRandomWalkPerturberList(
+                    absolutePathToTestDatabase, monteCarloRun, "random_walk_perturbers" );        
+    }
 
-// //     // Try to retrieve table of random walk perturber data, and catch expected error.
-// //     bool isRunTimeErrorThrown = false;
+    catch( std::runtime_error& )
+    {
+        isRunTimeErrorThrown = true;
+    }
 
-// //     try
-// //     {
-// //         // Retrieve table of perturbers for random walk.
-// //         const RandomWalkPerturberTable randomWalkPerturberTable = getRandomWalkPerturberTable(
-// //                     absolutePathToTestDatabase, monteCarloRun );
-// //     }
-
-// //     catch( std::runtime_error& )
-// //     {
-// //         isRunTimeErrorThrown = true;
-// //     }
-
-// //     // Check that expected run-time error was thrown due to request for non-existent Monte Carlo
-// //     // run.
-// //     BOOST_CHECK( isRunTimeErrorThrown );
-// // }
+    // Check that expected run-time error was thrown due to request for non-existent Monte Carlo
+    // run.
+    BOOST_CHECK( isRunTimeErrorThrown );
+}
 
 BOOST_AUTO_TEST_SUITE_END( )
 

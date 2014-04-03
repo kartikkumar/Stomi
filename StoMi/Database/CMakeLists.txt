@@ -7,7 +7,6 @@
 set(DATABASE_SOURCES
   "${SRCROOT}${DATABASEDIR}/databaseReadFunctions.cpp"
   "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.cpp"
-#  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.cpp"
   "${SRCROOT}${DATABASEDIR}/randomWalkCase.cpp"
   "${SRCROOT}${DATABASEDIR}/randomWalkInput.cpp"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.cpp"
@@ -19,7 +18,6 @@ set(DATABASE_SOURCES
 set(DATABASE_HEADERS
   "${SRCROOT}${DATABASEDIR}/databaseReadFunctions.h"
   "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.h"
-#  "${SRCROOT}${DATABASEDIR}/randomWalkPerturber.h"
   "${SRCROOT}${DATABASEDIR}/randomWalkCase.h"
   "${SRCROOT}${DATABASEDIR}/randomWalkInput.h"
   "${SRCROOT}${DATABASEDIR}/testParticleCase.h"
@@ -27,78 +25,62 @@ set(DATABASE_HEADERS
   "${SRCROOT}${DATABASEDIR}/testParticleKick.h"
 )
 
+# Set unit test files.
+set(DATABASE_UNIT_TESTS
+  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabase.cpp"  
+  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseReadFunctions.cpp"
+  # "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseWriteFunctions.h"  
+)
+
 # Add static library.
 add_library(stomi_database STATIC ${DATABASE_SOURCES} ${DATABASE_HEADERS})
-setup_library_target(stomi_database "${SRCROOT}${DATABASEDIR}")
+setup_library_target(stomi_database)
 
 # Add unit tests.
-add_executable(test_DatabaseReadFunctions 
-               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseReadFunctions.cpp")
-setup_unit_test_target(test_DatabaseReadFunctions "${SRCROOT}${DATABASEDIR}")
-target_link_libraries(test_DatabaseReadFunctions 
-                      stomi_database stomi_input_output 
+add_executable(test_Database ${DATABASE_UNIT_TESTS})
+setup_unit_test_target(test_Database)
+target_link_libraries(test_Database 
+                      stomi_database stomi_input_output
                       tudat_input_output
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 
                       ${SQLITE3_LIBRARY}  
                       ${Boost_LIBRARIES})
 
-#add_executable(test_DatabaseWriteFunctions 
-#               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseWriteFunctions.cpp")
-#setup_unit_test_target(test_DatabaseWriteFunctions "${SRCROOT}${DATABASEDIR}")
-#target_link_libraries(test_DatabaseWriteFunctions 
-#                      stomi_database stomi_basics 
-#                      ${TUDAT_CORE_LIBRARIES}
-#                      ${SQLITECPP_LIBRARY} 
-#                      ${SQLITE3_LIBRARY} 
-#                      ${Boost_LIBRARIES})
+# add_executable(test_RandomWalkCase 
+#                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestRandomWalkCase.cpp")
+# setup_unit_test_target(test_RandomWalkCase "${SRCROOT}${DATABASEDIR}")
+# target_link_libraries(test_RandomWalkCase
+#                       stomi_database 
+#                       assist_basics 
+#                       ${TUDAT_CORE_LIBRARIES} 
+#                       ${Boost_LIBRARIES})
 
-# add_executable(test_RandomWalkMonteCarloRun
-#                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestRandomWalkMonteCarloRun.cpp")
-# setup_unit_test_target(test_RandomWalkMonteCarloRun "${SRCROOT}${DATABASEDIR}")
-# target_link_libraries(test_RandomWalkMonteCarloRun stomi_database assist_basics
-#                       ${TUDAT_CORE_LIBRARIES} ${SQLITE3_LIBRARY} ${Boost_LIBRARIES})
-                      
-# add_executable(test_RandomWalkPerturber 
-#                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestRandomWalkPerturber.cpp")
-# setup_unit_test_target(test_RandomWalkPerturber "${SRCROOT}${DATABASEDIR}")
-# target_link_libraries(test_RandomWalkPerturber stomi_database assist_basics
-#                       ${TUDAT_CORE_LIBRARIES} ${SQLITE3_LIBRARY} ${Boost_LIBRARIES})
+# add_executable(test_TestParticleCase 
+#                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleCase.cpp")
+# setup_unit_test_target(test_TestParticleCase "${SRCROOT}${DATABASEDIR}")
+# target_link_libraries(test_TestParticleCase 
+#                       stomi_database 
+#                       assist_basics 
+#                       tudat_basic_mathematics 
+#                       ${TUDAT_CORE_LIBRARIES} 
+#                       ${Boost_LIBRARIES})
 
-add_executable(test_RandomWalkCase 
-               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestRandomWalkCase.cpp")
-setup_unit_test_target(test_RandomWalkCase "${SRCROOT}${DATABASEDIR}")
-target_link_libraries(test_RandomWalkCase
-                      stomi_database 
-                      assist_basics 
-                      ${TUDAT_CORE_LIBRARIES} 
-                      ${Boost_LIBRARIES})
+# add_executable(test_TestParticleInput 
+#                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleInput.cpp")
+# setup_unit_test_target(test_TestParticleInput "${SRCROOT}${DATABASEDIR}")
+# target_link_libraries(test_TestParticleInput 
+#                       stomi_database 
+#                       assist_basics
+#                       tudat_basic_mathematics
+#                       ${TUDAT_CORE_LIBRARIES} 
+#                       ${Boost_LIBRARIES})
 
-add_executable(test_TestParticleCase 
-               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleCase.cpp")
-setup_unit_test_target(test_TestParticleCase "${SRCROOT}${DATABASEDIR}")
-target_link_libraries(test_TestParticleCase 
-                      stomi_database 
-                      assist_basics 
-                      tudat_basic_mathematics 
-                      ${TUDAT_CORE_LIBRARIES} 
-                      ${Boost_LIBRARIES})
-
-add_executable(test_TestParticleInput 
-               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleInput.cpp")
-setup_unit_test_target(test_TestParticleInput "${SRCROOT}${DATABASEDIR}")
-target_link_libraries(test_TestParticleInput 
-                      stomi_database 
-                      assist_basics
-                      tudat_basic_mathematics
-                      ${TUDAT_CORE_LIBRARIES} 
-                      ${Boost_LIBRARIES})
-
-add_executable(test_TestParticleKick 
-               "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleKick.cpp")
-setup_unit_test_target(test_TestParticleKick "${SRCROOT}${DATABASEDIR}")
-target_link_libraries(test_TestParticleKick 
-                      stomi_database 
-                      assist_basics 
-                      ${TUDAT_CORE_LIBRARIES} 
-                      ${Boost_LIBRARIES})
+# add_executable(test_TestParticleKick 
+#                "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleKick.cpp")
+# setup_unit_test_target(test_TestParticleKick "${SRCROOT}${DATABASEDIR}")
+# target_link_libraries(test_TestParticleKick 
+#                       stomi_database 
+#                       assist_basics 
+#                       ${TUDAT_CORE_LIBRARIES} 
+#                       ${Boost_LIBRARIES})
