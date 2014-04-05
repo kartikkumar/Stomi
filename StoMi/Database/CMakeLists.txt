@@ -29,7 +29,7 @@ set(DATABASE_HEADERS
 set(DATABASE_UNIT_TESTS
   "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabase.cpp"  
   "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseReadFunctions.cpp"
-  # "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseWriteFunctions.h"  
+  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseWriteFunctions.cpp"  
 )
 
 # Add static library.

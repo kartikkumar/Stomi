@@ -32,7 +32,7 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
                                     const std::string& testParticleKickTableName, 
                                     const std::string& testParticleInputTableName );
 
-//! Populate random walk output tables.
+//! Populate random walk output table.
 /*!
  * Populates table of random walk output data in SQLite database.
  * \param databaseAbsolutePath Absolute path to simulation database.
