@@ -273,10 +273,10 @@ add_subdirectory("${SRCROOT}${CURRENT_SUBDIR}")
 endforeach(CURRENT_SUBDIR)
 
 # Add SQLite database generator for test particle simulations.
-add_executable(testParticleDatabaseGenerator 
+add_executable(stomi_testParticleDatabaseGenerator 
                "${SRCROOT}/Applications/testParticleDatabaseGenerator.cpp")
-setup_executable_target(testParticleDatabaseGenerator)
-target_link_libraries(testParticleDatabaseGenerator 
+setup_executable_target(stomi_testParticleDatabaseGenerator)
+target_link_libraries(stomi_testParticleDatabaseGenerator 
                       stomi_astrodynamics stomi_input_output 
                       assist_astrodynamics assist_input_output assist_mathematics  
                       tudat_basic_astrodynamics tudat_input_output
@@ -286,9 +286,9 @@ target_link_libraries(testParticleDatabaseGenerator
                       ${Boost_LIBRARIES})
 
 # Add test particle simulator (uses OpenMP).
-add_executable(testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
-setup_executable_target(testParticleSimulator)
-target_link_libraries(testParticleSimulator 
+add_executable(stomi_testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
+setup_executable_target(stomi_testParticleSimulator)
+target_link_libraries(stomi_testParticleSimulator 
                       stomi_astrodynamics stomi_database stomi_input_output stomi_mathematics
                       assist_astrodynamics assist_basics assist_input_output
                       tudat_state_derivative_models tudat_basic_mathematics 
@@ -300,10 +300,10 @@ target_link_libraries(testParticleSimulator
                       ${Boost_LIBRARIES})
 
 # Add SQLite database generator for random walk simulatons.
-add_executable(randomWalkDatabaseGenerator 
+add_executable(stomi_randomWalkDatabaseGenerator 
                "${SRCROOT}/Applications/randomWalkDatabaseGenerator.cpp")
-setup_executable_target(randomWalkDatabaseGenerator)
-target_link_libraries(randomWalkDatabaseGenerator 
+setup_executable_target(stomi_randomWalkDatabaseGenerator)
+target_link_libraries(stomi_randomWalkDatabaseGenerator 
                       stomi_astrodynamics stomi_database stomi_input_output   
                       assist_input_output assist_astrodynamics  
                       tudat_input_output 
@@ -313,9 +313,9 @@ target_link_libraries(randomWalkDatabaseGenerator
                       ${Boost_LIBRARIES})
 
 # Add random walk application (uses OpenMP).
-add_executable(randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
-setup_executable_target(randomWalkSimulator)
-target_link_libraries(randomWalkSimulator
+add_executable(stomi_randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
+setup_executable_target(stomi_randomWalkSimulator)
+target_link_libraries(stomi_randomWalkSimulator
                       stomi_astrodynamics stomi_database stomi_input_output
                       assist_astrodynamics assist_basics assist_input_output assist_mathematics
                       tudat_input_output tudat_statistics
