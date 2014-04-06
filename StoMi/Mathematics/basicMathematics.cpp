@@ -43,7 +43,8 @@ RungeKuttaCoefficients getRungeKuttaCoefficients( const NumericalIntegratorType 
 
     else
     {
-        throw std::runtime_error( "Invalid coefficient set specified for numerical integrator." );
+        throw std::runtime_error( 
+            "ERROR: Invalid coefficient set specified for numerical integrator!" );
     }
 
     return rungeKuttaCoefficients;

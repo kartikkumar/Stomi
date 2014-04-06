@@ -42,9 +42,9 @@ add_library(stomi_database STATIC ${DATABASE_SOURCES} ${DATABASE_HEADERS})
 setup_library_target(stomi_database)
 
 # Add unit tests.
-add_executable(test_Database ${DATABASE_UNIT_TESTS})
-setup_unit_test_target(test_Database)
-target_link_libraries(test_Database 
+add_executable(stomi_test_Database ${DATABASE_UNIT_TESTS})
+setup_unit_test_target(stomi_test_Database)
+target_link_libraries(stomi_test_Database 
                       stomi_database stomi_input_output
                       tudat_input_output
                       ${TUDAT_CORE_LIBRARIES} 

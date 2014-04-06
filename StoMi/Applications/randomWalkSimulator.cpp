@@ -902,5 +902,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     ///////////////////////////////////////////////////////////////////////////
 
+    // If program is successfully completed, return 0.
     return EXIT_SUCCESS;
 }

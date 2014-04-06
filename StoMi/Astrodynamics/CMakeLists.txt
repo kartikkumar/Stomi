@@ -28,9 +28,9 @@ add_library(stomi_astrodynamics STATIC ${ASTRODYNAMICS_SOURCES} ${ASTRODYNAMICS_
 setup_library_target(stomi_astrodynamics)
 
 # Add unit tests.
-add_executable(test_Astrodynamics ${ASTRODYNAMICS_UNIT_TESTS})
-setup_unit_test_target(test_Astrodynamics)
-target_link_libraries(test_Astrodynamics 
+add_executable(stomi_test_Astrodynamics ${ASTRODYNAMICS_UNIT_TESTS})
+setup_unit_test_target(stomi_test_Astrodynamics)
+target_link_libraries(stomi_test_Astrodynamics 
                       stomi_astrodynamics stomi_database
                       assist_astrodynamics assist_basics 
                       ${TUDAT_CORE_LIBRARIES} 

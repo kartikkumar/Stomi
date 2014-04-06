@@ -7,12 +7,7 @@
 
 #include <cmath>
 #include <stdexcept>
-// #include <iomanip>
-// #include <iostream>
 #include <iterator>
-// #include <limits>
-// #include <numeric>
-// #include <sstream>
 
 #include <boost/math/special_functions/fpclassify.hpp>
 
@@ -20,7 +15,6 @@
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/astrodynamicsFunctions.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
-// #include <TudatCore/Mathematics/BasicMathematics/mathematicalConstants.h>
 
 #include "StoMi/Astrodynamics/randomWalkFunctions.h"
 

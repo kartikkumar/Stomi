@@ -5,7 +5,6 @@
 
 # Set source files.
 set(INPUTOUTPUT_SOURCES
-#  "${SRCROOT}${INPUTOUTPUTDIR}/basicInputOutput.cpp"
   "${SRCROOT}${INPUTOUTPUTDIR}/dictionaries.cpp"
 )
 
@@ -26,9 +25,9 @@ add_library(stomi_input_output STATIC ${INPUTOUTPUT_SOURCES} ${INPUTOUTPUT_HEADE
 setup_library_target(stomi_input_output)
 
 # Add unit tests.
-add_executable(test_InputOutput ${INPUTOUTPUT_UNIT_TESTS})
-setup_unit_test_target(test_InputOutput)
-target_link_libraries(test_InputOutput 
+add_executable(stomi_test_InputOutput ${INPUTOUTPUT_UNIT_TESTS})
+setup_unit_test_target(stomi_test_InputOutput)
+target_link_libraries(stomi_test_InputOutput 
                       stomi_input_output 
                       ${TUDAT_CORE_LIBRARIES}
                       ${Boost_LIBRARIES})
