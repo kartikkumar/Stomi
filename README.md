@@ -29,8 +29,7 @@ Requirements
 | [Boost](http://www.boost.org "Boost's homepage")                         | 1.55.0        |
 | [SQLite](https://sqlite.org/ "SQLite homepage")                          | 3.7.11        |
 | [SQLiteCpp](http://srombauts.github.com/SQLiteCpp "SQLite project")      | [d42964](https://github.com/kartikkumar/SQLiteCpp/tree/60b6593998e396f14010e8c82618a7196fd42964)    |
-| [Tudat & Tudat Core](http://tudat.tudelft.nl "Tudat project homepage")   | [2a2720](https://github.com/kartikkumar/tudat-svn-mirror/tree/54dc69cd91e84c2a9cddc4caf9f0e86aba2a2720) 
-  & [bec885](https://github.com/kartikkumar/tudatCore-svn-mirror/tree/184a180d7213aeb021d672b7b92b0733a4bec885)                                    |
+| [Tudat & Tudat Core](http://tudat.tudelft.nl "Tudat project homepage")   | [2a2720](https://github.com/kartikkumar/tudat-svn-mirror/tree/54dc69cd91e84c2a9cddc4caf9f0e86aba2a2720) & [bec885](https://github.com/kartikkumar/tudatCore-svn-mirror/tree/184a180d7213aeb021d672b7b92b0733a4bec885)                                    |
 | [Assist](https://github.com/kartikkumar/assist "Assist project")         | [f9c915](https://github.com/kartikkumar/assist/tree/c3f8281dc21d0d7364aecd63c8ea68e929f9c915)       |
 
 Alternative C++ compilers may be used, however they haven't been tested to date.
