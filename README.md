@@ -1,9 +1,14 @@
 Stomi
 ===================
 
-Stomi is a toolbox that can be used to study stochastic migration procesess in the Solar System. Stomi models the process of stochastic migration by simplifying the gravitational N-body problem as a superposition of multiple 3-body problems followed by a random walk.
+Stomi is a toolbox that can be used to study stochastic migration procesess in the Solar System. The toolbox breaks down the full N-body problem into a two-stage sequence:
 
-This toolbox can be used to study the stochastic migration of a massive body, orbiting a central body, due to the gravitational interactions with a ring of low-mass perturbers. 
+1. Test particle simulator, implementing the Restricted 3-Body Problem
+2. Random walk simulator, aggregating the back-reaction of a cloud of perturbers (using the test particle simulation data) on the large migrating body
+
+For an example use of this toolbox, take a look at (Kumar et al., 2014).
+
+Stomi can be used to study the stochastic migration of a massive body, orbiting a central body, due to the gravitational interactions with a ring of low-mass perturbers. 
 
 Possible applications include:
 - Studying migration of Neptune due to interactions with the Kuiper belt
@@ -14,7 +19,7 @@ Possible applications include:
 Requirements
 ------
 
-`stomi` requires the following libraries/tools. The listed versions are not necessarily essential, however `Stomi` is known to build succesfully when these are used.
+`Stomi` requires the following libraries/tools. The listed versions are not necessarily essential, however `Stomi` is known to build succesfully when these are used.
 
 | Name                                                                     | Version       |
 | -------------                                                            |:-------------:|
