@@ -5,8 +5,6 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
-#define BOOST_TEST_MAIN
-
 #include <typeinfo>
 
 #include <boost/make_shared.hpp>

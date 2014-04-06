@@ -5,6 +5,7 @@
  *    See http://bit.ly/12SHPLR for license details.
  */
 
+#include <stdexcept>
 #include <string>
  
 #include <Assist/Basics/comparisonFunctions.h>
@@ -30,7 +31,14 @@ RandomWalkInput::RandomWalkInput( const int aMonteCarloRunId,
     observationPeriodStartEpoch( checkPositive( anObservationPeriodStartEpoch, 
                                                 "Observation period start epoch [s]" ) ),
     testParticleSimulationIds( someTestParticleSimulationIds )
-{ }    
+{ 
+  // Check that vector of test particule simulation IDs is not empty.
+  if ( testParticleSimulationIds.size( ) == 0 )
+  {
+    throw std::runtime_error( 
+      "ERROR: Vector of test particle simulation IDs for random walk perturbers empty!" );
+  }
+}    
 
 //! Overload == operator.
 bool operator==( const RandomWalkInput& randomWalkInput1,

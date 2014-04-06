@@ -11,6 +11,8 @@
 #include <boost/make_shared.hpp>
 #include <boost/test/unit_test.hpp>
 
+#include <Assist/Basics/operatorOverloadFunctions.h>
+
 #include "StoMi/Database/randomWalkInput.h"
 
 namespace stomi
@@ -87,6 +89,166 @@ BOOST_AUTO_TEST_CASE( testRandomWalkInputStructContruction )
         BOOST_CHECK_EQUAL( randomWalkInput->testParticleSimulationIds.at( i ), 
                            testParticleSimulationIds.at( i ) );         
     }     
+}
+
+//! Test initialization of random walk input Monte Carlo run ID with non-positive number.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputMonteCarloRunIdNonPositiveNumberError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
+
+    // Set Monte Carlo run ID to invalid (non-positive) number.
+    monteCarloRunId = -1;
+
+    // Try to create random walk input.
+    try { database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( ); }
+
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
+
+    // Check that construction of random walk input failed.
+    BOOST_CHECK( isError );
+}
+
+//! Test initialization of random walk input case ID with non-positive number.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputCaseIdNonPositiveNumberError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
+
+    // Set case ID to invalid (non-positive) number.
+    randomWalkCaseId = -1;
+
+    // Try to create random walk input.
+    try { database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( ); }
+
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
+
+    // Check that construction of random walk input failed.
+    BOOST_CHECK( isError );
+}
+
+//! Test initialization of random walk input observation period epoch with non-positive number.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputObservationPeriodEpochNonPositiveNumberError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
+
+    // Set observation period epoch to invalid (non-positive) number.
+    observationPeriodStartEpoch = -1;
+
+    // Try to create random walk input.
+    try { database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( ); }
+
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
+
+    // Check that construction of random walk input failed.
+    BOOST_CHECK( isError );
+}
+
+//! Test initialization of random walk input empty test particle simulation IDs list.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputTestParticleSimulationIdsEmptyError )
+{
+    // Set flag to indicate if error is thrown to false.
+    bool isError = false;
+
+    // Set test particle simulations ID list to empty.
+    testParticleSimulationIds = std::vector< int >( );
+
+    // Try to create random walk input.
+    try { database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( ); }
+
+    // Catch expected run-time error.
+    catch ( std::runtime_error& error ) { isError = true; }
+
+    // Check that construction of random walk input failed.
+    BOOST_CHECK( isError );
+}
+
+//! Test comparison of RandomWalkInput pointers using overloaded == operator.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputEqualComparison )
+{
+    // Create RandomWalkInput pointers.
+    database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
+    database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
+
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *randomWalkInput == *randomWalkInput2 );
+}
+
+//! Test comparison of RandomWalkInput pointers using overloaded != operator.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputNonEqualComparison )
+{
+    using namespace assist::basics::operator_overload_functions;
+
+    // Create RandomWalkInput pointers.
+    database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
+
+    monteCarloRunId = 2;
+    database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
+
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *randomWalkInput != *randomWalkInput2 );
+}
+
+//! Test comparison of RandomWalkInput pointers using overloaded < operator.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputLessThanComparison )
+{
+    // Create RandomWalkInput pointers.
+    database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
+
+    monteCarloRunId = 2;
+    database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
+
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *randomWalkInput < *randomWalkInput2 );
+}
+
+//! Test comparison of RandomWalkInput pointers using overloaded > operator.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputGreaterThanComparison )
+{
+    using namespace assist::basics::operator_overload_functions;
+
+    // Create RandomWalkInput pointers.
+    database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
+
+    monteCarloRunId = 2;
+    database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
+
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *randomWalkInput2 > *randomWalkInput );
+}
+
+//! Test comparison of RandomWalkInput pointers using overloaded <= operator.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputLessThanOrEqualComparison )
+{
+    using namespace assist::basics::operator_overload_functions;
+
+    // Create RandomWalkInput pointers.
+    database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
+
+    monteCarloRunId = 2;
+    database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
+
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *randomWalkInput <= *randomWalkInput2 );
+}
+
+//! Test comparison of RandomWalkInput pointers using overloaded >= operator.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputGreaterThanOrEqualComparison )
+{
+    using namespace assist::basics::operator_overload_functions;
+
+    // Create RandomWalkInput pointers.
+    database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
+
+    monteCarloRunId = 2;
+    database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
+
+    // Check that operator is overloaded correctly.
+    BOOST_CHECK( *randomWalkInput2 >= *randomWalkInput );
 }
 
 BOOST_AUTO_TEST_SUITE_END( )
