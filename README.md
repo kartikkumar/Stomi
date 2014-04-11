@@ -1,14 +1,14 @@
 Stomi
 ===================
 
-Stomi is a toolbox that can be used to study stochastic migration procesess in the Solar System. The toolbox breaks down the full N-body problem into a two-stage sequence:
+`Stomi` is a toolbox that can be used to study stochastic migration procesess in the Solar System. The toolbox breaks down the full N-body problem into a two-stage sequence:
 
 1. Test particle simulator, implementing the Restricted 3-Body Problem
 2. Random walk simulator, aggregating the back-reaction of a cloud of perturbers (using the test particle simulation data) on the large migrating body
 
 For an example use of this toolbox, take a look at (Kumar et al., 2014).
 
-Stomi can be used to study the stochastic migration of a massive body, orbiting a central body, due to the gravitational interactions with a ring of low-mass perturbers. 
+`Stomi` can be used to study the stochastic migration of a massive body, orbiting a central body, due to the gravitational interactions with a ring of low-mass perturbers. 
 
 Possible applications include:
 - Studying migration of Neptune due to interactions with the Kuiper belt
@@ -37,7 +37,7 @@ Alternative C++ compilers may be used, however they haven't been tested to date.
 Installation
 ------
 
-The easiest way to install Stomi is to simply clone the repository and run `CMake`. This assumes that the above mentioned libraries/tools have been installed and can either be found through the system path or through relative paths (see `CMakeModules` directory included in the Stomi project).
+The easiest way to install `Stomi` is to simply clone the repository and run `CMake`. This assumes that the above mentioned libraries/tools have been installed and can either be found through the system path or through relative paths (see `CMakeModules` directory included in the `Stomi` project).
 
 In addition, you must have a C++ compiler and the [CMake](http://www.cmake.org/ "CMake homepage") tool needs to be installed on the system path. 
 
@@ -89,8 +89,7 @@ Once you've made your great commits:
 1. [Fork](https://github.com/kartikkumar/Stomi/fork) Stomi
 2. Create a topic branch - `git checkout -b my_branch`
 3. Push to your branch - `git push origin my_branch`
-4. Create a [Pull Request](http://help.github.com/pull-requests/) from your
-   branch
+4. Create a [Pull Request](http://help.github.com/pull-requests/) from your branch
 5. That's it!
 
 License
@@ -101,7 +100,7 @@ See [COPYING](https://github.com/kartikkumar/Stomi/blob/master/COPYING).
 Disclaimer
 ------
 
-I am not liable for silly use of the Stomi project.
+I am not liable for silly use of the `Stomi` project.
 
 Contact
 ------
