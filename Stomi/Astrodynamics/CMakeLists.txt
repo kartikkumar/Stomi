@@ -32,7 +32,6 @@ add_executable(stomi_test_Astrodynamics ${ASTRODYNAMICS_UNIT_TESTS})
 setup_unit_test_target(stomi_test_Astrodynamics)
 target_link_libraries(stomi_test_Astrodynamics 
                       stomi_astrodynamics stomi_database
-                      assist_astrodynamics assist_basics 
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 
                       ${SQLITE3_LIBRARY}  

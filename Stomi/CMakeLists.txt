@@ -102,29 +102,6 @@ macro(setup_unit_test_target target_name)
   add_test("${target_name}" "${BIN_ROOT}/unit_tests/${target_name}")
 endmacro(setup_unit_test_target)
 
-if(NOT TUDAT_BUNDLE_DISTRIBUTION_PATH)
-    set(TUDAT_BUNDLE_DISTRIBUTION_PATH "${CODEROOT}")
-endif(NOT TUDAT_BUNDLE_DISTRIBUTION_PATH)
-
-if(NOT STOMI_DISTRIBUTION_PATH)
-    set(STOMI_DISTRIBUTION_PATH 
-        "${TUDAT_BUNDLE_DISTRIBUTION_PATH}/tudatApplications/stomi")
-endif(NOT STOMI_DISTRIBUTION_PATH)
-
-# Install files.
-install(DIRECTORY "${SRCROOT}/"
-        DESTINATION "${STOMI_DISTRIBUTION_PATH}/stomi"
-        PATTERN ".DS_STORE" EXCLUDE
-        PATTERN "CMakeLists.txt.user" EXCLUDE
-        PATTERN ".svn" EXCLUDE
-        PATTERN ".git" EXCLUDE
-        PATTERN ".bzr" EXCLUDE
-)
-
-install(FILES ${CODEROOT}/LICENSE ${CODEROOT}/NOTICE ${CODEROOT}/README 
-              ${CODEROOT}/UserSettings.txt.example
-        DESTINATION "${STOMI_DISTRIBUTION_PATH}")
-
 # Set the main sub-directories.
 set(ASTRODYNAMICSDIR "/Astrodynamics")
 set(DATABASEDIR "/Database")
@@ -278,7 +255,7 @@ add_executable(stomi_testParticleDatabaseGenerator
 setup_executable_target(stomi_testParticleDatabaseGenerator)
 target_link_libraries(stomi_testParticleDatabaseGenerator 
                       stomi_astrodynamics stomi_input_output 
-                      assist_astrodynamics assist_input_output assist_mathematics  
+                      assist_input_output assist_mathematics  
                       tudat_basic_astrodynamics tudat_input_output
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY}
@@ -290,7 +267,7 @@ add_executable(stomi_testParticleSimulator "${SRCROOT}/Applications/testParticle
 setup_executable_target(stomi_testParticleSimulator)
 target_link_libraries(stomi_testParticleSimulator 
                       stomi_astrodynamics stomi_database stomi_input_output stomi_mathematics
-                      assist_astrodynamics assist_basics assist_input_output
+                      assist_input_output
                       tudat_state_derivative_models tudat_basic_mathematics 
                       tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators 
                       tudat_input_output 
@@ -305,7 +282,7 @@ add_executable(stomi_randomWalkDatabaseGenerator
 setup_executable_target(stomi_randomWalkDatabaseGenerator)
 target_link_libraries(stomi_randomWalkDatabaseGenerator 
                       stomi_astrodynamics stomi_database stomi_input_output   
-                      assist_input_output assist_astrodynamics  
+                      assist_input_output  
                       tudat_input_output 
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 
@@ -317,7 +294,7 @@ add_executable(stomi_randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimu
 setup_executable_target(stomi_randomWalkSimulator)
 target_link_libraries(stomi_randomWalkSimulator
                       stomi_astrodynamics stomi_database stomi_input_output
-                      assist_astrodynamics assist_basics assist_input_output assist_mathematics
+                      assist_input_output assist_mathematics
                       tudat_input_output tudat_statistics
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY} 
