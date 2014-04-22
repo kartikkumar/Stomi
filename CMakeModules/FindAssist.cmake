@@ -4,7 +4,7 @@
  #    See http://bit.ly/1jern3m for license details.
 
 macro(_assist_check_version)
-  file(READ "${ASSIST_INCLUDE_DIR}/Assist/assistVersion.h" _assist_header)
+  file(READ "${ASSIST_BASE_PATH}/assistVersion.h" _assist_header)
 
   string(REGEX MATCH "define[ \t]+ASSIST_VERSION_MAJOR[ \t]+([0-9]+)" _assist_major_version_match "${_assist_header}")
   set(ASSIST_MAJOR_VERSION "${CMAKE_MATCH_1}")
@@ -25,38 +25,40 @@ macro(_assist_check_version)
   endif(NOT ASSIST_VERSION_OK)
 
   set(ASSIST_LIBRARIES "assist")
+  set(ASSIST_INCLUDE_DIR ${ASSIST_BASE_PATH}/..)
+  set(ASSIST_LIBRARIES_DIR ${ASSIST_BASE_PATH}/../lib)  
   link_directories(${ASSIST_LIBRARIES_DIR})
 endmacro(_assist_check_version)
 
-if (ASSIST_INCLUDE_DIR)
-
+if (ASSIST_BASE_PATH)
   # in cache already
   _assist_check_version()
   set(ASSIST_FOUND ${ASSIST_VERSION_OK})
 
-else (ASSIST_INCLUDE_DIR)
-
+else (ASSIST_BASE_PATH)
   find_path(ASSIST_BASE_PATH NAMES assistVersion.h
       PATHS
-      ${PROJECT_SOURCE_DIR}/../assist
-      ${PROJECT_SOURCE_DIR}/../../assist
-      ${PROJECT_SOURCE_DIR}/../../../assist
-      ${PROJECT_SOURCE_DIR}/../../../../assist
-      PATH_SUFFIXES Assist 
+      C:
+      "$ENV{ProgramFiles}"
+      /usr/local
+      ${PROJECT_SOURCE_DIR}
+      ${PROJECT_SOURCE_DIR}/..
+      ${PROJECT_SOURCE_DIR}/../..
+      ${PROJECT_SOURCE_DIR}/../../..
+      ${PROJECT_SOURCE_DIR}/../../../..
+      PATH_SUFFIXES assist/Assist
     )
-  set(ASSIST_INCLUDE_DIR ${ASSIST_BASE_PATH}/../)
-  set(ASSIST_LIBRARIES_DIR ${ASSIST_BASE_PATH}/../lib)
 
-  if(ASSIST_INCLUDE_DIR)
+  if(ASSIST_BASE_PATH)
     _assist_check_version()
-  endif(ASSIST_INCLUDE_DIR)
+  endif(ASSIST_BASE_PATH)
 
   include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(Assist DEFAULT_MSG ASSIST_INCLUDE_DIR ASSIST_VERSION_OK)
+  find_package_handle_standard_args(Assist DEFAULT_MSG ASSIST_BASE_PATH ASSIST_VERSION_OK)
 
-  mark_as_advanced(ASSIST_INCLUDE_DIR)
+  mark_as_advanced(ASSIST_BASE_PATH)
 
-endif(ASSIST_INCLUDE_DIR)
+endif(ASSIST_BASE_PATH)
 
  #    References
  #      FindEigen3.cmake.

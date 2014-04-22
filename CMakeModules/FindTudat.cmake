@@ -29,7 +29,7 @@
  #      the 2-clause BSD license.
 
 macro(_tudat_check_version)
-  file(READ "${TUDAT_INCLUDE_DIR}/Tudat/tudatVersion.h" _tudat_header)
+  file(READ "${TUDAT_BASE_PATH}/tudatVersion.h" _tudat_header)
 
   string(REGEX MATCH "define[ \t]+TUDAT_VERSION_MAJOR[ \t]+([0-9]+)" _tudat_major_version_match "${_tudat_header}")
   set(TUDAT_MAJOR_VERSION "${CMAKE_MATCH_1}")
@@ -50,39 +50,38 @@ macro(_tudat_check_version)
   endif(NOT TUDAT_VERSION_OK)
 
   set(TUDAT_LIBRARIES "tudat")
+  set(TUDAT_INCLUDE_DIR ${TUDAT_BASE_PATH}/..)
+  set(TUDAT_LIBRARIES_DIR ${TUDAT_BASE_PATH}/../lib)  
   link_directories(${TUDAT_LIBRARIES_DIR})
 endmacro(_tudat_check_version)
 
-if (TUDAT_INCLUDE_DIR)
-
+if (TUDAT_BASE_PATH)
   # in cache already
   _tudat_check_version()
   set(TUDAT_FOUND ${TUDAT_VERSION_OK})
 
-else (TUDAT_INCLUDE_DIR)
-
+else (TUDAT_BASE_PATH)
   find_path(TUDAT_BASE_PATH NAMES tudatVersion.h
       PATHS
-      ${PROJECT_SOURCE_DIR}/External
-      ${PROJECT_SOURCE_DIR}/../../../tudat/trunk
-      ${PROJECT_SOURCE_DIR}/../../tudat/trunk
-      ${PROJECT_SOURCE_DIR}/../../tudat
-      ${PROJECT_SOURCE_DIR}/../../../tudat
-      ${PROJECT_SOURCE_DIR}/../../../../tudat/trunk
-      ${PROJECT_SOURCE_DIR}/../../../../../tudat/trunk
+      C:
+      "$ENV{ProgramFiles}"
+      /usr/local
+      ${PROJECT_SOURCE_DIR}
+      ${PROJECT_SOURCE_DIR}/..
+      ${PROJECT_SOURCE_DIR}/../..
+      ${PROJECT_SOURCE_DIR}/../../..
+      ${PROJECT_SOURCE_DIR}/../../../..
       ${CMAKE_INSTALL_PREFIX}/include
-      PATH_SUFFIXES Tudat
+      PATH_SUFFIXES tudat/Tudat
     )
-  set(TUDAT_INCLUDE_DIR ${TUDAT_BASE_PATH}/..)
-  set(TUDAT_LIBRARIES_DIR ${TUDAT_BASE_PATH}/../lib)
 
-  if(TUDAT_INCLUDE_DIR)
+  if(TUDAT_BASE_PATH)
     _tudat_check_version()
-  endif(TUDAT_INCLUDE_DIR)
+  endif(TUDAT_BASE_PATH)
 
   include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(Tudat DEFAULT_MSG TUDAT_INCLUDE_DIR TUDAT_VERSION_OK)
+  find_package_handle_standard_args(Tudat DEFAULT_MSG TUDAT_BASE_PATH TUDAT_VERSION_OK)
 
-  mark_as_advanced(TUDAT_INCLUDE_DIR)
+  mark_as_advanced(TUDAT_BASE_PATH)
 
-endif(TUDAT_INCLUDE_DIR)
+endif(TUDAT_BASE_PATH)

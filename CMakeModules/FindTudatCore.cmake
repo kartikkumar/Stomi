@@ -57,24 +57,23 @@ macro(_tudat_core_check_version)
 endmacro(_tudat_core_check_version)
 
 if (TUDAT_CORE_BASE_PATH)
-
   # in cache already
   _tudat_core_check_version( )
   set(TUDAT_CORE_FOUND ${TUDAT_CORE_VERSION_OK})
 
 else (TUDAT_CORE_BASE_PATH)
-
   find_path(TUDAT_CORE_BASE_PATH NAMES tudatCoreVersion.h
       PATHS
-      ${PROJECT_SOURCE_DIR}/External
-      ${PROJECT_SOURCE_DIR}/../../../tudatCore/trunk
-      ${PROJECT_SOURCE_DIR}/../../tudatCore/trunk
-      ${PROJECT_SOURCE_DIR}/../../tudatCore
-      ${PROJECT_SOURCE_DIR}/../../../tudatCore
-      ${PROJECT_SOURCE_DIR}/../../../../tudatCore/trunk
-      ${PROJECT_SOURCE_DIR}/../../../../../tudatCore/trunk
+      C:
+      "$ENV{ProgramFiles}"
+      /usr/local
+      ${PROJECT_SOURCE_DIR}
+      ${PROJECT_SOURCE_DIR}/..
+      ${PROJECT_SOURCE_DIR}/../..
+      ${PROJECT_SOURCE_DIR}/../../..
+      ${PROJECT_SOURCE_DIR}/../../../.. 
       ${CMAKE_INSTALL_PREFIX}/include
-      PATH_SUFFIXES TudatCore
+      PATH_SUFFIXES tudatCore/TudatCore
     )
 
   if(TUDAT_CORE_BASE_PATH)
@@ -82,7 +81,8 @@ else (TUDAT_CORE_BASE_PATH)
   endif(TUDAT_CORE_BASE_PATH)
 
   include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(TudatCore DEFAULT_MSG TUDAT_CORE_BASE_PATH TUDAT_CORE_VERSION_OK)
+  find_package_handle_standard_args(TudatCore DEFAULT_MSG TUDAT_CORE_BASE_PATH
+                                              TUDAT_CORE_VERSION_OK)
 
   mark_as_advanced(TUDAT_CORE_BASE_PATH)
 
