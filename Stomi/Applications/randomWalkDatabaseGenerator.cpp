@@ -37,9 +37,9 @@
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/InputOutput/basicInputOutput.h> 
 
-#include "StoMi/Database/databaseReadFunctions.h" 
-#include "StoMi/Database/testParticleCase.h" 
-#include "StoMi/InputOutput/dictionaries.h"
+#include "Stomi/Database/databaseReadFunctions.h" 
+#include "Stomi/Database/testParticleCase.h" 
+#include "Stomi/InputOutput/dictionaries.h"
 
 //! Execute random walk database generator.
 int main( const int numberOfInputs, const char* inputArguments[ ] )

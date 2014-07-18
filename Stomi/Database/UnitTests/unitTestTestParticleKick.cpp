@@ -21,7 +21,7 @@
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
 
-#include "StoMi/Database/testParticleKick.h"
+#include "Stomi/Database/testParticleKick.h"
 
 namespace stomi
 {

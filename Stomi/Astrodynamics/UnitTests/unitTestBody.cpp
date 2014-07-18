@@ -15,7 +15,7 @@
 
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-#include "StoMi/Astrodynamics/body.h"
+#include "Stomi/Astrodynamics/body.h"
 
 namespace stomi
 {

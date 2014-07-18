@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 # Specify project name.
-project(StoMi)
+project(Stomi)
 
 # Set module path to local CMake scripts.
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../CMakeModules)
@@ -194,7 +194,7 @@ else()
 endif()
 
 # Find SQLiteCpp library on local system.
-find_package(SQLiteCpp 0.070 REQUIRED)
+find_package(SQLiteCpp 0.099 REQUIRED)
 
 # Include SQLiteCpp directories.
 # Set CMake flag to suppress SQLiteCpp warnings (platform-dependent solution).
@@ -248,6 +248,8 @@ set(SUBDIRS ${ASTRODYNAMICSDIR} ${DATABASEDIR} ${INPUTOUTPUTDIR} ${MATHEMATICSDI
 foreach(CURRENT_SUBDIR ${SUBDIRS})
 add_subdirectory("${SRCROOT}${CURRENT_SUBDIR}")
 endforeach(CURRENT_SUBDIR)
+
+message(${SQLITECPP_INCLUDE_DIR})
 
 # Add SQLite database generator for test particle simulations.
 add_executable(stomi_testParticleDatabaseGenerator 

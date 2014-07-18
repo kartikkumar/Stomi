@@ -19,7 +19,7 @@
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/Basics/comparisonFunctions.h>
 
-#include "StoMi/Database/testParticleCase.h"
+#include "Stomi/Database/testParticleCase.h"
 
 namespace stomi
 {

@@ -15,8 +15,8 @@
 
 #include <TudatCore/Basics/testMacros.h>
 
-#include "StoMi/Astrodynamics/randomWalkFunctions.h"
-#include "StoMi/Database/testParticleKick.h"
+#include "Stomi/Astrodynamics/randomWalkFunctions.h"
+#include "Stomi/Database/testParticleKick.h"
 
 namespace stomi
 {

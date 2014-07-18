@@ -20,12 +20,12 @@
 #include <TudatCore/InputOutput/matrixTextFileReader.h>
 #include <TudatCore/Mathematics/BasicMathematics/mathematicalConstants.h>
 
-#include "StoMi/Database/databaseReadFunctions.h"
-#include "StoMi/Database/randomWalkCase.h"
-#include "StoMi/Database/testParticleCase.h"
-#include "StoMi/Database/testParticleInput.h"
-#include "StoMi/Database/testParticleKick.h"
-#include "StoMi/InputOutput/rootPath.h"
+#include "Stomi/Database/databaseReadFunctions.h"
+#include "Stomi/Database/randomWalkCase.h"
+#include "Stomi/Database/testParticleCase.h"
+#include "Stomi/Database/testParticleInput.h"
+#include "Stomi/Database/testParticleKick.h"
+#include "Stomi/InputOutput/rootPath.h"
 
 namespace stomi
 {

@@ -14,7 +14,7 @@
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 
-#include "StoMi/Database/databaseWriteFunctions.h"
+#include "Stomi/Database/databaseWriteFunctions.h"
 
 namespace stomi
 {

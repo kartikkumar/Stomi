@@ -13,7 +13,7 @@
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/Basics/comparisonFunctions.h>
 
-#include "StoMi/Database/testParticleKick.h"
+#include "Stomi/Database/testParticleKick.h"
 
 namespace stomi
 {

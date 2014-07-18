@@ -13,7 +13,7 @@
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
 
-#include "StoMi/Database/randomWalkInput.h"
+#include "Stomi/Database/randomWalkInput.h"
 
 namespace stomi
 {

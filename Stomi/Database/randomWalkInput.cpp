@@ -10,7 +10,7 @@
  
 #include <Assist/Basics/comparisonFunctions.h>
 
-#include "StoMi/Database/randomWalkInput.h"
+#include "Stomi/Database/randomWalkInput.h"
 
 namespace stomi
 {

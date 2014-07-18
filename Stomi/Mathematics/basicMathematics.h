@@ -10,7 +10,7 @@
 
 #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaCoefficients.h>
 
-#include "StoMi/Database/testParticleCase.h"
+#include "Stomi/Database/testParticleCase.h"
 
 namespace stomi
 {

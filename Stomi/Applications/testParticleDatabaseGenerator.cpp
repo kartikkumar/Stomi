@@ -39,7 +39,7 @@
 #include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-#include "StoMi/InputOutput/dictionaries.h"
+#include "Stomi/InputOutput/dictionaries.h"
 
 //! Execute test particle database generator.
 int main( const int numberOfInputs, const char* inputArguments[ ] )

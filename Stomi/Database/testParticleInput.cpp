@@ -10,7 +10,7 @@
 
 #include <Assist/Basics/comparisonFunctions.h>
 
-#include "StoMi/Database/testParticleInput.h"
+#include "Stomi/Database/testParticleInput.h"
 
 namespace stomi
 {

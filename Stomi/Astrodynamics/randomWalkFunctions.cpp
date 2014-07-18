@@ -16,7 +16,7 @@
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/astrodynamicsFunctions.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 
-#include "StoMi/Astrodynamics/randomWalkFunctions.h"
+#include "Stomi/Astrodynamics/randomWalkFunctions.h"
 
 namespace stomi
 {

@@ -7,7 +7,7 @@
 
 #include <string>
 
-#include "StoMi/Database/testParticleKick.h"
+#include "Stomi/Database/testParticleKick.h"
 
 #ifndef STOMI_DATABASE_WRITE_FUNCTIONS_H
 #define STOMI_DATABASE_WRITE_FUNCTIONS_H

@@ -22,7 +22,7 @@
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
 
-#include "StoMi/Database/testParticleCase.h"
+#include "Stomi/Database/testParticleCase.h"
 
 namespace stomi
 {

@@ -12,7 +12,7 @@
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
 
-#include "StoMi/Database/randomWalkCase.h"
+#include "Stomi/Database/randomWalkCase.h"
  
 namespace stomi
 {

@@ -13,8 +13,8 @@
 
 #include <TudatCore/Basics/testMacros.h>
 
-#include "StoMi/Astrodynamics/body.h"
-#include "StoMi/Astrodynamics/dataUpdater.h"
+#include "Stomi/Astrodynamics/body.h"
+#include "Stomi/Astrodynamics/dataUpdater.h"
 
 namespace stomi
 {

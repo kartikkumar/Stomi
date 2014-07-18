@@ -20,7 +20,7 @@
 
 #include <Assist/Basics/operatorOverloadFunctions.h>
 
-#include "StoMi/Database/testParticleInput.h"
+#include "Stomi/Database/testParticleInput.h"
 
 namespace stomi
 {

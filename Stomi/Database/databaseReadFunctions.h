@@ -11,11 +11,11 @@
 #include <string>
 #include <vector>
 
-#include "StoMi/Database/randomWalkCase.h"
-#include "StoMi/Database/randomWalkInput.h"
-#include "StoMi/Database/testParticleCase.h"
-#include "StoMi/Database/testParticleInput.h"
-#include "StoMi/Database/testParticleKick.h"
+#include "Stomi/Database/randomWalkCase.h"
+#include "Stomi/Database/randomWalkInput.h"
+#include "Stomi/Database/testParticleCase.h"
+#include "Stomi/Database/testParticleInput.h"
+#include "Stomi/Database/testParticleKick.h"
 
 namespace stomi
 {

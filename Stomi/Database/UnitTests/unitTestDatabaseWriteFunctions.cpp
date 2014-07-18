@@ -18,10 +18,10 @@
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 #include <TudatCore/InputOutput/matrixTextFileReader.h>
 
-#include "StoMi/InputOutput/rootPath.h"
+#include "Stomi/InputOutput/rootPath.h"
 
-#include "StoMi/Database/databaseWriteFunctions.h"
-#include "StoMi/Database/testParticleKick.h"
+#include "Stomi/Database/databaseWriteFunctions.h"
+#include "Stomi/Database/testParticleKick.h"
 
 namespace stomi
 {

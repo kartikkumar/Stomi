@@ -12,7 +12,7 @@
 
 #include "Assist/Basics/commonTypedefs.h"
 
-#include "StoMi/Astrodynamics/body.h"
+#include "Stomi/Astrodynamics/body.h"
 
 namespace stomi
 {

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <stdexcept>
  
-#include "StoMi/Mathematics/basicMathematics.h"
+#include "Stomi/Mathematics/basicMathematics.h"
 
 namespace stomi
 {

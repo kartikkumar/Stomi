@@ -14,7 +14,7 @@
 
 #include <Assist/Basics/commonTypedefs.h> 
  
-#include "StoMi/Database/testParticleKick.h"
+#include "Stomi/Database/testParticleKick.h"
 
 namespace stomi
 {

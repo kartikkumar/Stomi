@@ -10,7 +10,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/test/unit_test.hpp>
 
-#include "StoMi/InputOutput/rootPath.h"
+#include "Stomi/InputOutput/rootPath.h"
 
 namespace stomi
 {

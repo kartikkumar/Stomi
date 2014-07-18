@@ -18,7 +18,7 @@
 
 #include <SQLiteCpp/SQLiteCpp.h> 
 
-#include "StoMi/Database/databaseReadFunctions.h"
+#include "Stomi/Database/databaseReadFunctions.h"
 
 namespace stomi
 {

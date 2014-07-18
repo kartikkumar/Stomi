@@ -48,16 +48,16 @@
 #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaVariableStepSizeIntegrator.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
-#include "StoMi/Astrodynamics/body.h"
-#include "StoMi/Astrodynamics/dataUpdater.h"
-#include "StoMi/Astrodynamics/propagationDataPoint.h"
-#include "StoMi/Database/databaseReadFunctions.h"
-#include "StoMi/Database/databaseWriteFunctions.h"
-#include "StoMi/Database/testParticleCase.h"
-#include "StoMi/Database/testParticleInput.h"
-#include "StoMi/Database/testParticleKick.h"
-#include "StoMi/InputOutput/dictionaries.h"
-#include "StoMi/Mathematics/basicMathematics.h"
+#include "Stomi/Astrodynamics/body.h"
+#include "Stomi/Astrodynamics/dataUpdater.h"
+#include "Stomi/Astrodynamics/propagationDataPoint.h"
+#include "Stomi/Database/databaseReadFunctions.h"
+#include "Stomi/Database/databaseWriteFunctions.h"
+#include "Stomi/Database/testParticleCase.h"
+#include "Stomi/Database/testParticleInput.h"
+#include "Stomi/Database/testParticleKick.h"
+#include "Stomi/InputOutput/dictionaries.h"
+#include "Stomi/Mathematics/basicMathematics.h"
 
 //! Execute test particle simulations.
 int main( const int numberOfInputs, const char* inputArguments[ ] )

@@ -39,14 +39,14 @@
 #include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 #include <Tudat/Mathematics/Statistics/simpleLinearRegression.h>
 
-#include "StoMi/Astrodynamics/randomWalkFunctions.h"
-#include "StoMi/Database/databaseReadFunctions.h" 
-#include "StoMi/Database/databaseWriteFunctions.h"  
-#include "StoMi/Database/testParticleCase.h"
-#include "StoMi/Database/testParticleKick.h"
-#include "StoMi/Database/randomWalkCase.h"
-#include "StoMi/Database/randomWalkInput.h"
-#include "StoMi/InputOutput/dictionaries.h"
+#include "Stomi/Astrodynamics/randomWalkFunctions.h"
+#include "Stomi/Database/databaseReadFunctions.h" 
+#include "Stomi/Database/databaseWriteFunctions.h"  
+#include "Stomi/Database/testParticleCase.h"
+#include "Stomi/Database/testParticleKick.h"
+#include "Stomi/Database/randomWalkCase.h"
+#include "Stomi/Database/randomWalkInput.h"
+#include "Stomi/InputOutput/dictionaries.h"
 
 
 #include <SQLiteCpp/SQLiteCpp.h> 

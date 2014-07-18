@@ -8,7 +8,7 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/make_shared.hpp>
 
-#include "StoMi/InputOutput/dictionaries.h"
+#include "Stomi/InputOutput/dictionaries.h"
 
 namespace stomi
 {

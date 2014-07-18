@@ -11,7 +11,7 @@
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/Basics/comparisonFunctions.h>
 
-#include "StoMi/Astrodynamics/propagationDataPoint.h"
+#include "Stomi/Astrodynamics/propagationDataPoint.h"
 
 namespace stomi
 {
