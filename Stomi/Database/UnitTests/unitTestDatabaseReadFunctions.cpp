@@ -43,7 +43,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunction )
     using namespace database;
 
     // Set absolute path to test database.
-    const std::string absolutePathToTestDatabase = getStoMiRootPath( )
+    const std::string absolutePathToTestDatabase = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseTestParticleCase.sqlite";
 
     // Retrieve test particle case data.
@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleCaseFunctionExtraRow )
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseTestParticleCaseMultipleError.sqlite";
 
     // Try to retrieve case data.
@@ -129,7 +129,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionIncompleteSimulations
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
     // Set requested test particle case ID.
@@ -142,7 +142,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionIncompleteSimulations
 
     // Read in table of test particle input data from test data file.
     const Eigen::Matrix< double, 10, 9 > testDataTestParticleInputTable
-            = readMatrixFromFile( getStoMiRootPath( )
+            = readMatrixFromFile( getStomiRootPath( )
                                   + "/Database/UnitTests/testDataTestParticleInputTable.csv" );
 
     // Check that the input data table retrieved matches the test data.
@@ -176,7 +176,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNoRows )
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
     // Try to retrieve test particle input data.
@@ -210,7 +210,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionSpecificSimulations )
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
     // Set string of selected test particle simulation IDs.
@@ -226,7 +226,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionSpecificSimulations )
 
     // Read in table of test particle input data from test data file.
     const Eigen::Matrix< double, 4, 9 > testDataTestParticleInputTable = readMatrixFromFile(
-                getStoMiRootPath( )
+                getStomiRootPath( )
                 + "/Database/UnitTests/testDataSelectedTestParticleInputTable.csv" ); 
 
     // Check that the input data table retrieved matches the test data.
@@ -260,7 +260,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleInputTableFunctionNonExistentSimulation
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseTestParticleInputTable.sqlite";
 
     // Set string of selected test particle simulation numbers.
@@ -303,7 +303,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionSpecificSimulations )
     using namespace database;
 
     // Set absolute path to test database.
-    const std::string absolutePathToTestDatabase = getStoMiRootPath( )
+    const std::string absolutePathToTestDatabase = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseTestParticleKickTable.sqlite";
 
     // Set random walk simulation period [s].
@@ -320,7 +320,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionSpecificSimulations )
     // Read in table of test particle kick data from test data file.
     const Eigen::MatrixXd testDataTestParticleKickTable
             = readMatrixFromFile( 
-                getStoMiRootPath( )
+                getStomiRootPath( )
                 + "/Database/UnitTests/testDataSelectedTestParticleKickTable.csv" );
 
     // Check that the kick data table retrieved matches the test data.
@@ -398,7 +398,7 @@ BOOST_AUTO_TEST_CASE( testGetTestParticleKickTableFunctionNonExistentSimulation 
     using namespace database;
 
     // Set absolute path to test database.
-    const std::string absolutePathToTestDatabase = getStoMiRootPath( )
+    const std::string absolutePathToTestDatabase = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseTestParticleKickTable.sqlite";
 
     // Set random walk simulation period [s].
@@ -435,7 +435,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunction )
     using namespace database;
 
     // Set absolute path to test database.
-    const std::string absolutePathToTestDatabase = getStoMiRootPath( )
+    const std::string absolutePathToTestDatabase = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseRandomWalkCase.sqlite";
 
     // Retrieve random walk case data.
@@ -464,7 +464,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkCaseFunctionExtraRow )
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseRandomWalkCaseMultipleError.sqlite";
 
     // Try to retrieve case data.
@@ -499,7 +499,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionIncompleteSimulations )
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
     // Set requested random walk case ID.
@@ -513,12 +513,12 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionIncompleteSimulations )
 
     // Read in table of random walk input data from test data file.
     const Eigen::Matrix< double, 10, 4 > testDataRandomWalkInputTable
-            = readMatrixFromFile( getStoMiRootPath( )
+            = readMatrixFromFile( getStomiRootPath( )
                                   + "/Database/UnitTests/testDataRandomWalkInputTable.csv" );
 
     // Read in table of random walk perturber data from test data file.
     const Eigen::Matrix< double, 1000, 3 > testDataRandomWalkPerturberTable
-            = readMatrixFromFile( getStoMiRootPath( )
+            = readMatrixFromFile( getStomiRootPath( )
                                   + "/Database/UnitTests/testDataRandomWalkPerturberTable.csv" ); 
 
     // Check that the input data table retrieved matches the test data.
@@ -563,7 +563,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionNoRows )
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
 
@@ -599,7 +599,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionSpecificRuns )
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
     // Set vector of selected Monte Carlo run IDs.
@@ -616,13 +616,13 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionSpecificRuns )
 
     // Read in table of random walk input data from test data file.
     const Eigen::Matrix< double, 4, 4 > testDataRandomWalkInputTable = readMatrixFromFile(
-                getStoMiRootPath( )
+                getStomiRootPath( )
                 + "/Database/UnitTests/testDataSelectedRandomWalkInputTable.csv" ); 
 
     // Read in table of random walk perturber data from test data file.
     const Eigen::Matrix< double, 400, 3 > testDataRandomWalkPerturberTable
             = readMatrixFromFile( 
-                getStoMiRootPath( )
+                getStomiRootPath( )
                 + "/Database/UnitTests/testDataSelectedRandomWalkPerturberTable.csv" ); 
 
     // Check that the input data table retrieved matches the test data.
@@ -667,7 +667,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkInputTableFunctionSpecificNonExistentRun 
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
     // Set vector of selected Monte Carlo run IDs.
@@ -707,7 +707,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturbersFunctionSpecificRun )
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
     // Set Monte Carlo run to retrieve data for.
@@ -722,7 +722,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturbersFunctionSpecificRun )
     // Read in list of random walk perturbers from test data file.
     const Eigen::MatrixXd testRandomWalkPerturberData
         = readMatrixFromFile(
-                getStoMiRootPath( )
+                getStomiRootPath( )
                 + "/Database/UnitTests/testDataRandomWalkSinglePerturberList.csv" );
 
     // Check that the random walk perturber list retrieved matches the test data.
@@ -741,7 +741,7 @@ BOOST_AUTO_TEST_CASE( testGetRandomWalkPerturbersFunctionNonExistentRun )
 
     // Set absolute path to test database.
     const std::string absolutePathToTestDatabase
-            = getStoMiRootPath( )
+            = getStomiRootPath( )
             + "/Database/UnitTests/testDatabaseRandomWalkInputTable.sqlite";
 
     // Set selected Monte Carlo run ID.

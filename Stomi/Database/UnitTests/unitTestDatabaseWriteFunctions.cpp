@@ -39,11 +39,11 @@ BOOST_AUTO_TEST_CASE( testWriteTestParticleKickFunction )
     using namespace input_output;
 
     // Set absolute path to empty test database.
-    const std::string absolutePathToEmptyTestDatabase = getStoMiRootPath( )
+    const std::string absolutePathToEmptyTestDatabase = getStomiRootPath( )
         + "/Database/UnitTests/testDatabaseEmptyTestParticleKickTable.sqlite";
 
     // Copy empty test database to temporary file.
-    const std::string absolutePathToTestDatabase = getStoMiRootPath( )
+    const std::string absolutePathToTestDatabase = getStomiRootPath( )
         + "/Database/UnitTests/testDatabaseWritableTestParticleKickTable.sqlite";
 
     boost::filesystem::copy_file( absolutePathToEmptyTestDatabase, absolutePathToTestDatabase,
@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE( testWriteTestParticleKickFunction )
 
     // Read in table of test particle kick data from test data file.
     const Eigen::Matrix< double, 266, 20 > testDataTestParticleKickTable
-            = readMatrixFromFile( getStoMiRootPath( )
+            = readMatrixFromFile( getStomiRootPath( )
                                   + "/Database/UnitTests/testDataWriteTestParticleKickTable.csv" );
 
     // Set test particle simulation ID.
@@ -178,11 +178,11 @@ BOOST_AUTO_TEST_CASE( testWriteRandomWalkOutputFunction )
     using namespace input_output;
 
     // Set absolute path to empty test database.
-    const std::string absolutePathToEmptyTestDatabase = getStoMiRootPath( )
+    const std::string absolutePathToEmptyTestDatabase = getStomiRootPath( )
         + "/Database/UnitTests/testDatabaseEmptyRandomWalkOutputTable.sqlite";
 
     // Copy empty test database to temporary file.
-    const std::string absolutePathToTestDatabase = getStoMiRootPath( )
+    const std::string absolutePathToTestDatabase = getStomiRootPath( )
         + "/Database/UnitTests/testDatabaseWritableRandomWalkOutputTable.sqlite";
 
     boost::filesystem::copy_file( absolutePathToEmptyTestDatabase, absolutePathToTestDatabase,
@@ -192,7 +192,7 @@ BOOST_AUTO_TEST_CASE( testWriteRandomWalkOutputFunction )
 
     // Read in table of random walk output data from test data file.
     const Eigen::Matrix< double, 1, 8 > testDataRandomWalkOutputTable
-            = readMatrixFromFile( getStoMiRootPath( )
+            = readMatrixFromFile( getStomiRootPath( )
                                   + "/Database/UnitTests/testDataWriteRandomWalkOutputTable.csv" );
 
     // Set Monte Carlo run ID.

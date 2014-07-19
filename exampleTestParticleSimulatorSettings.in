@@ -4,7 +4,7 @@
 #    See http://bit.ly/12SHPLR for license details.
 #
 #    This is an example input file for the testParticleSimulator application provided with the 
-#    StoMi project. 
+#    Stomi project. 
 #
 #    All lines preceded by the '#' character are interpreted as comments.
 #    Each line must contain only a single parameter/value pair, separated by a ':' character.
@@ -55,7 +55,7 @@ DB                  :
 # will be ignored if OUTPUT is set to "database".
 # With this parameter, the absolute path to the output directory can be specified, where the output  
 # files generated are stored.
-# The default directory for the output files is the root directory of the StoMi
+# The default directory for the output files is the root directory of the Stomi
 # project.
 # FILEOUTPUTDIR       :
 

@@ -4,7 +4,7 @@
 #    See http://bit.ly/12SHPLR for license details.
 #
 #    This is an example input file for the testParticleDatabaseGenerator application provided  
-#    with the StoMi project. 
+#    with the Stomi project. 
 #
 #    All lines preceded by the '#' character are interpreted as comments.
 #    Each line must contain only a single parameter/value pair, separated by a ':' character.

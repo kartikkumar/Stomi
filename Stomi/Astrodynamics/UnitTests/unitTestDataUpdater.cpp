@@ -76,5 +76,5 @@ BOOST_AUTO_TEST_SUITE_END( )
 
 /*
  *  The unit tests in this file are not strictly "unit tests", but rather system tests, since
- *  they depend on the code implemented in StoMi/Astrodynamics/body.h.
+ *  they depend on the code implemented in Stomi/Astrodynamics/body.h.
  */

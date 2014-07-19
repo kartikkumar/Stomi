@@ -15,13 +15,13 @@ namespace stomi
 namespace input_output
 {
 
-//! Get root-path for StoMi directory.
+//! Get root-path for Stomi directory.
 /*!
- * Returns root-path corresponding with root-directory of StoMi as a string with
+ * Returns root-path corresponding with root-directory of Stomi as a string with
  * trailing slash included.
- * \return StoMi root-path.
+ * \return Stomi root-path.
  */
-static inline std::string getStoMiRootPath( )
+static inline std::string getStomiRootPath( )
 {
 #ifdef STOMI_CUSTOM_ROOT_PATH
     return std::string( STOMI_CUSTOM_ROOT_PATH );
