@@ -54,13 +54,11 @@ DictionaryPointer getTestParticleDatabaseGeneratorDictionary( )
     addEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE",      0, 0,
                 list_of( "DOPPOSITION ") );
     addEntry( dictionary, "ECCENTRICITYDISTRIBUTIONMEAN",          0, 0, list_of( "ECCMEAN" ) );
-    addEntry( dictionary, "ECCENTRICITYDISTRIBUTIONANGLE",         0, 0, list_of( "ECCANGLE" ) );
-    addEntry( dictionary, "ECCENTRICITYDISTRIBUTIONFULLWIDTHHALFMAXIMUM", 
-                0, 0, list_of( "ECCFWHM" ) );
+    addEntry( dictionary, "ECCENTRICITYDISTRIBUTIONSTANDARDDEVIATION", 
+                0, 0, list_of( "ECCSIGMA" ) );
     addEntry( dictionary, "INCLINATIONDISTRIBUTIONMEAN",           0, 0, list_of( "INCMEAN" ) );
-    addEntry( dictionary, "INCLINATIONDISTRIBUTIONANGLE",          0, 0, list_of( "INCANGLE" ) );
-    addEntry( dictionary, "INCLINATIONDISTRIBUTIONFULLWIDTHHALFMAXIMUM",                       
-                0, 0, list_of( "INCFWHM" ) );
+    addEntry( dictionary, "INCLINATIONDISTRIBUTIONSTANDARDDEVIATION",                       
+                0, 0, list_of( "INCSIGMA" ) );
     addEntry( dictionary, "NUMERICALINTEGRATORTYPE",               0, 0, list_of( "INTEGRATOR" ) );
     addEntry( dictionary, "INITIALSTEPSIZE",                       0, 0, list_of( "STEPSIZE0" ) );
     addEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE",      0, 0, list_of( "RELTOL" ) );

@@ -133,36 +133,32 @@ SMALIMIT            :
 # DOPPOSITION         : 75% of 2 * SMA0
 
 # Set the parameters of the distibution of initial eccentricities for the test particles.
-# The following parameters describe the distribution of eccentricities that the test particles
-# are seeded with. 
-# The Full-Width Half-Maximum is equivalent to 2 * sqrt( 2 * ln( 2 ) ) * sigma,
-# in the case of a normal distribution for the x- and y-components of the eccentricities (sigma 
-# = standard deviation). The joint probability distribution of two orthogonal vector components 
+# The following parameters describe the normal distributions of the orthogonal components of
+# the eccentricity vectors that the test particles are seeded with: mu = mean, sigma = standard
+# deviation. The joint probability distribution of two orthogonal vector components 
 # that are normally distributed yields a Rayleigh distribution of the magnitude of the 
-# eccentricities and a uniform distribution of the associated angle, i.e., the argument of 
+# eccentricity vectors and a uniform distribution of the associated angles, i.e., the argument of 
 # periapsis.
 # With the default settings, the test particles are all placed on circular orbits, with the
 # argument of periapses arbitrarily set to zero.
 # Both parameters have default values, which can be overwritten.
-# UNIT                : ECCMEAN -> -, ECCFWHM -> -
+# UNIT                : ECCMEAN -> -, ECCSIGMA -> -
 # ECCMEAN             : 0.0
-# ECCFWHM             : 0.0
+# ECCSIGMA            : 0.0
 
 # Set the parameters of the distibution of initial inclinations for the test particles.
-# The following parameters describe the distribution of inclinations that the test particles
-# are seeded with. 
-# The Full-Width Half-Maximum is equivalent to 2 * sqrt( 2 * ln( 2 ) ) * sigma,
-# in the case of a normal distribution for the x- and y-components of the inclinations (sigma 
-# = standard deviation). The joint probability distribution of two orthogonal vector components 
+# The following parameters describe the normal distributions of the orthogonal components of
+# the inclination vectors that the test particles are seeded with: mu = mean, sigma = standard
+# deviation. The joint probability distribution of two orthogonal vector components 
 # that are normally distributed yields a Rayleigh distribution of the magnitude of the 
-# inclinations and a uniform distribution of the associated angle, i.e., the longitude of the
-# ascending node.
-# With the default settings, the test particles are all placed on equatorial orbits, with the
+# inclination vectors and a uniform distribution of the associated angles, i.e., the longitude of
+# the ascending node.
+# With the default settings, the test particles are all placed on circular orbits, with the
 # longitudes of the ascending node arbitrarily set to zero.
 # Both parameters have default values, which can be overwritten.
-# UNIT                : INCMEAN -> deg, INCFWHM -> deg
+# UNIT                : INCMEAN -> deg, INCSIGMA -> deg
 # INCMEAN             : 0.0
-# INCFWHM             : 0.0
+# INCSIGMA            : 0.0
 
 # Set the numerical integrator and its parameters.
 # The following parameters set the numerical integrator used for the test particle simulations,

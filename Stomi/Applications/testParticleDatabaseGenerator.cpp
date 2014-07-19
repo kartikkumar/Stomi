@@ -275,11 +275,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << "Eccentricity distribution mean                            " 
          << eccentricityDistributionMean << endl;
 
-    const double eccentricityDistributionFullWidthHalfMaxmimum = extractParameterValue< double >(
+    const double eccentricityDistributionStandardDeviation = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "ECCENTRICITYDISTRIBUTIONFULLWIDTHHALFMAXIMUM" ), 0.0 );
-    cout << "Eccentricity distribution Full-Width Half-Maximum         " 
-         << eccentricityDistributionFullWidthHalfMaxmimum << endl;
+                findEntry( dictionary, "ECCENTRICITYDISTRIBUTIONSTANDARDDEVIATION" ), 0.0 );
+    cout << "Eccentricity distribution standard deviation              " 
+         << eccentricityDistributionStandardDeviation << endl;
 
     const double inclinationDistributionMean = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
@@ -288,12 +288,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << "Inclination distribution mean                             "
          << convertRadiansToDegrees( inclinationDistributionMean ) << " deg" << endl;
 
-    const double inclinationDistributionFullWidthHalfMaxmimum = extractParameterValue< double >(
+    const double inclinationDistributionStandardDeviation = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "INCLINATIONDISTRIBUTIONFULLWIDTHHALFMAXIMUM" ), 0.0,
+                findEntry( dictionary, "INCLINATIONDISTRIBUTIONSTANDARDDEVIATION" ), 0.0,
                 &convertDegreesToRadians< double > );
-    cout << "Inclination distribution Full-Width Half-Maximum          " 
-         << convertRadiansToDegrees( inclinationDistributionFullWidthHalfMaxmimum ) 
+    cout << "Inclination distribution standard deviation               " 
+         << convertRadiansToDegrees( inclinationDistributionStandardDeviation ) 
          << " deg" << endl;
 
     const string numericalIntegratorType = extractParameterValue< string >(
@@ -385,8 +385,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // vector (h_e = e*cos( AoP ), k_e = e*sin( AoP ) ).
     normal_distribution< > distributionOfEccentricityVectorComponent(
                 eccentricityDistributionMean * std::sqrt( 2 ) * 0.5,
-                convertFullWidthHalfMaximumToStandardDeviation( 
-                    eccentricityDistributionFullWidthHalfMaxmimum ) );
+                eccentricityDistributionStandardDeviation );
 
     // Define variate generator for h_e- and k_e-values using the random number generator
     // and normal distribution of h_e- and k_e-values.
@@ -398,8 +397,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // vector (h_i = i*cos( RAAN ), k_i = i*sin( RAAN ) ).
     normal_distribution< > distributionOfInclinationVectorComponent(
                 inclinationDistributionMean * std::sqrt( 2 ) * 0.5,
-                convertFullWidthHalfMaximumToStandardDeviation( 
-                    inclinationDistributionFullWidthHalfMaxmimum ) );
+                inclinationDistributionStandardDeviation );
 
     // Define variate generator for h_i- and k_i-values using the random number generator
     // and normal distribution of h_i- and k_i-values.
@@ -475,9 +473,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << "\"conjunctionEventDetectionDistance\" REAL NOT NULL,"
             << "\"oppositionEventDetectionDistance\" REAL NOT NULL,"
             << "\"eccentricityDistributionMean\" REAL NOT NULL,"
-            << "\"eccentricityDistributionFullWidthHalfMaxmimum\" REAL NOT NULL,"
+            << "\"eccentricityDistributionStandardDeviation\" REAL NOT NULL,"
             << "\"inclinationDistributionMean\" REAL NOT NULL,"
-            << "\"inclinationDistributionFullWidthHalfMaxmimum\" REAL NOT NULL,"
+            << "\"inclinationDistributionStandardDeviation\" REAL NOT NULL,"
             << "\"numericalIntegratorType\" TEXT NOT NULL,"
             << "\"numericalIntegratorInitialStepSize\" REAL NOT NULL,"
             << "\"numericalIntegratorRelativeTolerance\" REAL NOT NULL,"
@@ -563,9 +561,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             << conjunctionEventDetectionDistance << ","
             << oppositionEventDetectionDistance << ","            
             << eccentricityDistributionMean << ","
-            << eccentricityDistributionFullWidthHalfMaxmimum << ","
+            << eccentricityDistributionStandardDeviation << ","
             << inclinationDistributionMean << ","
-            << inclinationDistributionFullWidthHalfMaxmimum << ",";
+            << inclinationDistributionStandardDeviation << ",";
         testParticleCaseDataInsert    
             << "\"" << numericalIntegratorType << "\",";
         testParticleCaseDataInsert
