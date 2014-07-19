@@ -28,9 +28,9 @@ Requirements
 | [Eigen](http://eigen.tuxfamily.org "Eigen's homepage")                   | 3.2.1         |
 | [Boost](http://www.boost.org "Boost's homepage")                         | 1.55.0        |
 | [SQLite](https://sqlite.org/ "SQLite homepage")                          | 3.7.11        |
-| [SQLiteCpp](http://srombauts.github.com/SQLiteCpp "SQLite project")      | [d42964](https://github.com/kartikkumar/SQLiteCpp/tree/60b6593998e396f14010e8c82618a7196fd42964)    |
-| [Tudat & Tudat Core](http://tudat.tudelft.nl "Tudat project homepage")   | [2a2720](https://github.com/kartikkumar/tudat-svn-mirror/tree/54dc69cd91e84c2a9cddc4caf9f0e86aba2a2720) & [bec885](https://github.com/kartikkumar/tudatCore-svn-mirror/tree/184a180d7213aeb021d672b7b92b0733a4bec885)                                    |
-| [Assist](https://github.com/kartikkumar/assist "Assist project")         | [f9c915](https://github.com/kartikkumar/assist/tree/c3f8281dc21d0d7364aecd63c8ea68e929f9c915)       |
+| [SQLiteCpp](http://srombauts.github.com/SQLiteCpp "SQLite project")      | [cd68064537](https://github.com/kartikkumar/SQLiteCpp/tree/cd6806453779b1450617a2b62f89ca2bbab8a92d)    |
+| [Tudat & Tudat Core](http://tudat.tudelft.nl "Tudat project homepage")   | [54a5bcbe16](https://github.com/kartikkumar/tudat-svn-mirror/tree/54a5bcbe16c5e7fa238c04a164d6efb1748100df) & [8303aaeead](https://github.com/kartikkumar/tudatCore-svn-mirror/tree/8303aaeeadaa1f9adedec3e40c1a3e6f8d2f828b)                                    |
+| [Assist](https://github.com/kartikkumar/assist "Assist project")         | [4964886d30](https://github.com/kartikkumar/assist/tree/4964886d308a1feff7c229a4dd70bc63a1eba6b5)       |
 
 Alternative C++ compilers may be used, however they haven't been tested to date.
 
@@ -79,7 +79,7 @@ The applications reside in `bin/applications` directory, relative to the project
 Documentation
 -------------
 
-You can pass the `-DBUILD_DOCUMENTATION=on` option to `CMake` to build the [Doxygen](http://www.doxygen.org "Doxygen homepage") documentation locally.
+You can pass the `-DBUILD_DOCUMENTATION=on` option to `CMake` to build the [Doxygen](http://www.doxygen.org "Doxygen homepage") documentation locally. This requires that `Doxygen` is locally installed first. The configuration file is currently based on version 1.8.7.
 
 Contributing
 ------------
