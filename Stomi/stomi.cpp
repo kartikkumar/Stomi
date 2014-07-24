@@ -11,6 +11,7 @@
 #include <string>
 
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/timer/timer.hpp>
 
 #include <Assist/InputOutput/basicInputOutput.h>
 
@@ -28,6 +29,13 @@
 //! Execute Stomi.
 int main( const int numberOfInputs, const char* inputArguments[ ] )
 {
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Start timer. Timer automatically ends when this object goes out of scope.
+    boost::timer::auto_cpu_timer timer;
+
+    ///////////////////////////////////////////////////////////////////////////
+
     ///////////////////////////////////////////////////////////////////////////
 
     // Declare using-statements.
@@ -133,6 +141,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     ///////////////////////////////////////////////////////////////////////////
 
+    // Print timing information.
+    cout << "Timing information: ";
+    
     // If program is successfully completed, return 0.
     return EXIT_SUCCESS;
 

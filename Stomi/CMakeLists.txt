@@ -123,7 +123,8 @@ endif()
 # Find Boost libraries on local system.
 find_package(Boost 1.52.0 
              COMPONENTS 
-             thread date_time system unit_test_framework filesystem regex serialization 
+             thread date_time system unit_test_framework filesystem regex serialization chrono
+             timer 
              REQUIRED)
 
 # Include Boost directories.
