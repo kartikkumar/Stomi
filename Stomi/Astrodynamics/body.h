@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #ifndef STOMI_BODY_H
@@ -24,7 +24,7 @@ namespace astrodynamics
 
 //! Body class.
 /*!
- * This class functions as a container for body properties. At the moment, the state of a body can
+ * This class serves as a container for body properties. At the moment, the state of a body can
  * be stored in this class, and accompanying set- and get-functions are provided to use in
  * conjunction with acceleration models and the Cartesian state derivative model in Tudat.
  * \sa AccelerationModel, CartesianStateDerivativeModel.

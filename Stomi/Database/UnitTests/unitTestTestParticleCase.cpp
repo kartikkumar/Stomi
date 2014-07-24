@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <iostream>
@@ -42,8 +42,8 @@ public:
 
     //! Constructor initializing valid parameters.
     TestParticleCaseFixture( )
-        : caseId( 1 ),
-          caseName( "test_case" ),
+        : testParticleCaseId( 1 ),
+          testParticleCaseName( "test_case" ),
           randomWalkSimulationPeriod( 1.2345e6 ),
           centralBodyGravitationalParameter( 2.345e10 ),
           perturbedBodyRadius( 2.345e6 ),
@@ -58,9 +58,9 @@ public:
           conjunctionEventDetectionDistance( 1.234e5 ),
           oppositionEventDetectionDistance( 1.234e5 ),
           eccentricityDistributionMean( 1.0e-3 ),
-          eccentricityDistributionFullWidthHalfMaximum( 1.0e-4 ),
+          eccentricityDistributionStandardDeviation( 1.0e-4 ),
           inclinationDistributionMean( 1.0e-3 ),
-          inclinationDistributionFullWidthHalfMaximum( 1.0e-4 ),          
+          inclinationDistributionStandardDeviation( 1.0e-4 ),          
           numericalIntegratorType( "DOPRI853" ),
           numericalIntegratorInitialStepSize( 60.0 ),          
           numericalIntegratorRelativeTolerance( 1.0e-12 ),
@@ -71,11 +71,11 @@ public:
 
     // Required parameters.
 
-    //! Case ID.
-    int caseId;
+    //! Test particle case ID.
+    int testParticleCaseId;
 
-    //! Case name.
-    std::string caseName;
+    //! Test particle case name.
+    std::string testParticleCaseName;
 
     //! Random walk simulation period [s].
     double randomWalkSimulationPeriod;
@@ -115,17 +115,17 @@ public:
     //! Distance used to detect start and end of opposition events [m].
     double oppositionEventDetectionDistance;
 
-    //! Mean eccentricity value for distribution.
+    //! Mean eccentricity for distribution.
     double eccentricityDistributionMean;
 
-    //! FWHM eccentricity value for distribution.
-    double eccentricityDistributionFullWidthHalfMaximum;
+    //! Standard deviation of eccentricity for distribution.
+    double eccentricityDistributionStandardDeviation;
 
-    //! Mean inclination value for distribution [rad].
+    //! Mean inclination for distribution [rad].
     double inclinationDistributionMean;
 
-    //! FWHM inclination value for distribution [rad].
-    double inclinationDistributionFullWidthHalfMaximum;
+    //! Standard deviation of inclination for distribution [rad].
+    double inclinationDistributionStandardDeviation;
 
     //! Numerical integrator type.
     std::string numericalIntegratorType;
@@ -144,14 +144,14 @@ public:
     {
         return boost::make_shared< database::TestParticleCase >(
             database::TestParticleCase( 
-                caseId, caseName, randomWalkSimulationPeriod, centralBodyGravitationalParameter,
-                perturbedBodyRadius, perturbedBodyBulkDensity, 
+                testParticleCaseId, testParticleCaseName, randomWalkSimulationPeriod,
+                centralBodyGravitationalParameter, perturbedBodyRadius, perturbedBodyBulkDensity, 
                 perturbedBodyStateInKeplerianElementsAtT0, semiMajorAxisDistributionLimit, 
                 synodicPeriodMaximum, startUpIntegrationPeriod, centralBodyJ2GravityCoefficient, 
                 centralBodyEquatorialRadius, conjunctionEventDetectionDistance, 
                 oppositionEventDetectionDistance, eccentricityDistributionMean, 
-                eccentricityDistributionFullWidthHalfMaximum, inclinationDistributionMean,
-                inclinationDistributionFullWidthHalfMaximum, numericalIntegratorType, 
+                eccentricityDistributionStandardDeviation, inclinationDistributionMean,
+                inclinationDistributionStandardDeviation, numericalIntegratorType, 
                 numericalIntegratorInitialStepSize, numericalIntegratorRelativeTolerance,
                 numericalIntegratorAbsoluteTolerance ) );
     }
@@ -172,8 +172,8 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseStructContruction )
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
     // Check that the test particle case created contains all the data as required.
-    BOOST_CHECK_EQUAL( testParticleCase->caseId, caseId );    
-    BOOST_CHECK_EQUAL( testParticleCase->caseName, caseName );      
+    BOOST_CHECK_EQUAL( testParticleCase->testParticleCaseId, testParticleCaseId );    
+    BOOST_CHECK_EQUAL( testParticleCase->testParticleCaseName, testParticleCaseName );      
     BOOST_CHECK_EQUAL( testParticleCase->randomWalkSimulationPeriod, 
                        randomWalkSimulationPeriod );
     BOOST_CHECK_EQUAL( testParticleCase->centralBodyGravitationalParameter, 
@@ -201,12 +201,12 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseStructContruction )
                        oppositionEventDetectionDistance );
     BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionMean, 
                        eccentricityDistributionMean );
-    BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionFullWidthHalfMaximum,
-                       eccentricityDistributionFullWidthHalfMaximum );
+    BOOST_CHECK_EQUAL( testParticleCase->eccentricityDistributionStandardDeviation,
+                       eccentricityDistributionStandardDeviation );
     BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionMean, 
                        inclinationDistributionMean );
-    BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionFullWidthHalfMaximum,
-                       inclinationDistributionFullWidthHalfMaximum );
+    BOOST_CHECK_EQUAL( testParticleCase->inclinationDistributionStandardDeviation,
+                       inclinationDistributionStandardDeviation );
     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorType, DOPRI853 );
     BOOST_CHECK_EQUAL( testParticleCase->numericalIntegratorInitialStepSize, 
                        numericalIntegratorInitialStepSize );    
@@ -222,8 +222,8 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseIdNonPositiveNumberError )
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set case ID to invalid (non-positive) number.
-    caseId = -1;
+    // Set test particle case ID to invalid (non-positive) number.
+    testParticleCaseId = -1;
 
     // Try to create test particle case.
     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
@@ -242,7 +242,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseNameEmpty )
     bool isError = false;
 
     // Set case name to empty string.
-    caseName = "";
+    testParticleCaseName = "";
 
     // Try to create test particle case.
     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
@@ -546,14 +546,14 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionMea
     BOOST_CHECK( isError );
 }
 
-//! Test initialization of test particle case with non-positive eccentricity distribution FWHM .
-BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityDistributionFWHMError )
+//! Test initialization of test particle case with non-positive eccentricity standard deviation.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveEccentricityStandardDeviationError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set eccentricity distribution FWHM to invalid (non-positive) value.
-    eccentricityDistributionFullWidthHalfMaximum = -1.0;
+    // Set eccentricity standard deviation to invalid (non-positive) value.
+    eccentricityDistributionStandardDeviation = -1.0;
 
     // Try to create test particle case.
     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
@@ -584,14 +584,14 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationDistributionMean
     BOOST_CHECK( isError );
 }
 
-//! Test initialization of test particle case with non-positive inclination distribution FWHM.
-BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationDistributionFWHMError )
+//! Test initialization of test particle case with non-positive inclination standard deviation.
+BOOST_AUTO_TEST_CASE( testTestParticleCaseNonPositiveInclinationStandardDeviationError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set inclination distribution FWHM to invalid (non-positive) value.
-    inclinationDistributionFullWidthHalfMaximum = -1.0;
+    // Set inclination distribution standard deviation to invalid (non-positive) value.
+    inclinationDistributionStandardDeviation = -1.0;
 
     // Try to create test particle case.
     try { database::TestParticleCasePointer testParticleCase = getTestParticleCase( ); }
@@ -700,7 +700,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseNonEqualComparison )
     // Create TestParticleCase pointers.
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-    caseId = 2;
+    testParticleCaseId = 2;
     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
     // Check that operator is overloaded correctly.
@@ -713,7 +713,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseLessThanComparison )
     // Create TestParticleCase pointers.
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-    caseId = 2;
+    testParticleCaseId = 2;
     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
     // Check that operator is overloaded correctly.
@@ -728,7 +728,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseGreaterThanComparison )
     // Create TestParticleCase pointers.
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-    caseId = 2;
+    testParticleCaseId = 2;
     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
     // Check that operator is overloaded correctly.
@@ -743,7 +743,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseLessThanOrEqualComparison )
     // Create TestParticleCase pointers.
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-    caseId = 2;
+    testParticleCaseId = 2;
     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
     // Check that operator is overloaded correctly.
@@ -758,7 +758,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleCaseGreaterThanOrEqualComparison )
     // Create TestParticleCase pointers.
     database::TestParticleCasePointer testParticleCase = getTestParticleCase( );
 
-    caseId = 2;
+    testParticleCaseId = 2;
     database::TestParticleCasePointer testParticleCase2 = getTestParticleCase( );
 
     // Check that operator is overloaded correctly.

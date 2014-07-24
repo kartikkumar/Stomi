@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <string>
@@ -60,11 +60,11 @@ BOOST_AUTO_TEST_CASE( testWriteTestParticleKickFunction )
     const unsigned int testParticleSimulationId = 1;
 
     // Create table of test particle kicks from test data matrix.
-    TestParticleKickTable kickTable;
+    TestParticleKickTable testParticleKickTable;
 
     for ( int i = 0; i < testDataTestParticleKickTable.rows( ); i++ ) 
     {
-        kickTable.insert(
+        testParticleKickTable.insert(
             new TestParticleKick( 
                 testDataTestParticleKickTable( i, 0 ),
                 testDataTestParticleKickTable( i, 1 ),
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE( testWriteTestParticleKickFunction )
     // Write kick table to test database.
     populateTestParticleKickTable( absolutePathToTestDatabase,
                                    testParticleSimulationId,
-                                   kickTable,
+                                   testParticleKickTable,
                                    "test_particle_kicks",
                                    "test_particle_input" );
 
@@ -103,15 +103,16 @@ BOOST_AUTO_TEST_CASE( testWriteTestParticleKickFunction )
     SQLite::Statement query( database, "SELECT * FROM \"test_particle_kicks\"" );    
 
     // Loop through the kick table and compare to the data retrieved from the database.
-    for ( TestParticleKickTable::iterator iteratorKickTable = kickTable.begin( );
-          iteratorKickTable != kickTable.end( ); 
+    for ( TestParticleKickTable::iterator iteratorKickTable = testParticleKickTable.begin( );
+          iteratorKickTable != testParticleKickTable.end( ); 
           iteratorKickTable++ )
     {
         // Step through data retrieved.
         query.executeStep( );
 
         // Check that data retrieved matches kick table.
-        BOOST_CHECK_EQUAL( iteratorKickTable->kickId, static_cast< int >( query.getColumn( 0 ) ) );
+        BOOST_CHECK_EQUAL( iteratorKickTable->testParticleKickId, 
+                           static_cast< int >( query.getColumn( 0 ) ) );
         BOOST_CHECK_EQUAL( iteratorKickTable->testParticleSimulationId, 
                            static_cast< int >( query.getColumn( 1 ) ) );
         BOOST_CHECK_EQUAL( iteratorKickTable->conjunctionEpoch, 
@@ -195,12 +196,12 @@ BOOST_AUTO_TEST_CASE( testWriteRandomWalkOutputFunction )
             = readMatrixFromFile( getStomiRootPath( )
                                   + "/Database/UnitTests/testDataWriteRandomWalkOutputTable.csv" );
 
-    // Set Monte Carlo run ID.
-    const unsigned int monteCarloRunId = 1;
+    // Set random walk simulation ID.
+    const unsigned int randomWalkSimulationId = 1;
 
     // Write output table to test database.
     populateRandomWalkOutputTable( absolutePathToTestDatabase, 
-                                   monteCarloRunId,
+                                   randomWalkSimulationId,
                                    testDataRandomWalkOutputTable( 0, 2 ),
                                    testDataRandomWalkOutputTable( 0, 3 ),
                                    testDataRandomWalkOutputTable( 0, 4 ),
@@ -221,7 +222,7 @@ BOOST_AUTO_TEST_CASE( testWriteRandomWalkOutputFunction )
     // Check that data retrieved matches kick table.    
     BOOST_CHECK_EQUAL( testDataRandomWalkOutputTable( 0, 0 ), 
                        static_cast< int >( query.getColumn( 0 ) ) );   
-    BOOST_CHECK_EQUAL( monteCarloRunId, static_cast< int >( query.getColumn( 1 ) ) ); 
+    BOOST_CHECK_EQUAL( randomWalkSimulationId, static_cast< int >( query.getColumn( 1 ) ) ); 
     BOOST_CHECK_EQUAL( testDataRandomWalkOutputTable( 0, 2 ),
                        static_cast< double >( query.getColumn( 2 ) ) );   
     BOOST_CHECK_EQUAL( testDataRandomWalkOutputTable( 0, 3 ),

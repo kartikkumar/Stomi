@@ -4,10 +4,9 @@
  * All rights reserved.
  * See http://bit.ly/12SHPLR for license details.
  */
-
  
 #define BOOST_TEST_MAIN
-#define BOOST_TEST_MODULE InputOutput
+#define BOOST_TEST_MODULE ApplicationModes
 
 #include <boost/test/unit_test.hpp>
  

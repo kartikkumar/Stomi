@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <Eigen/Core>
@@ -24,7 +24,7 @@ using namespace assist::basics;
 using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
 //! Default constructor, taking input values for all elements of kick.
-TestParticleKick::TestParticleKick( const int aKickId,
+TestParticleKick::TestParticleKick( const int aTestParticleKickId,
                                     const int aTestParticleSimulationId,
                                     const double aConjunctionEpoch,
                                     const double aConjunctionDistance,
@@ -36,7 +36,7 @@ TestParticleKick::TestParticleKick( const int aKickId,
                                     const double aPostConjunctionDistance,
                                     const tudat::basic_mathematics::Vector6d 
                                             aPostConjunctionStateInKeplerianElements )
-    : kickId( checkPositive( aKickId, "Kick ID" ) ),
+    : testParticleKickId( checkPositive( aTestParticleKickId, "Test particle kick ID" ) ),
       testParticleSimulationId( checkPositive( aTestParticleSimulationId, 
                                                "Test particle simulation ID" ) ),
       conjunctionEpoch( checkPositive( aConjunctionEpoch, "Conjunction epoch" ) ),
@@ -76,7 +76,7 @@ TestParticleKick::TestParticleKick( const int aKickId,
 bool operator==( const TestParticleKick& testParticleKick1,
                  const TestParticleKick& testParticleKick2 )
 {
-    return ( testParticleKick1.kickId == testParticleKick2.kickId
+    return ( testParticleKick1.testParticleKickId == testParticleKick2.testParticleKickId
              && testParticleKick1.testParticleSimulationId == testParticleKick2.testParticleSimulationId
              && testParticleKick1.conjunctionEpoch == testParticleKick2.conjunctionEpoch
              && testParticleKick1.conjunctionDistance == testParticleKick2.conjunctionDistance
@@ -107,9 +107,9 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleKick& te
     using namespace tudat::basic_astrodynamics::unit_conversions;
     using namespace assist::astrodynamics;
 
-    // Write contents of TestParticleKickPointer object to output stream.
+    // Write contents of TestParticleKick object to output stream.
     outputStream << "Test particle kick ID: "
-                 << testParticleKick.kickId << endl;
+                 << testParticleKick.testParticleKickId << endl;
     outputStream << "Test particle simulation ID: "
                  << testParticleKick.testParticleSimulationId << endl;
     outputStream << "Conjunction epoch (since start) [Jyr]: "

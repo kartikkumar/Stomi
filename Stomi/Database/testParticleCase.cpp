@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #define NEGATIVE_ZERO -std::numeric_limits< double >::min( )
@@ -29,11 +29,11 @@ namespace database
 using namespace assist::basics;
 using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
-//! Constructor taking all case data as input.
+//! Constructor taking all test particle case data as input.
 TestParticleCase::TestParticleCase(
     // Required parameters.
-    const int aCaseId,
-    const std::string& aCaseName,
+    const int aTestParticleCaseId,
+    const std::string& aTestParticleCaseName,
     const double aRandomWalkSimulationPeriod,
     const double aCentralBodyGravitationalParameter,
     const double aPerturbedBodyRadius,
@@ -48,15 +48,15 @@ TestParticleCase::TestParticleCase(
     const double aConjunctionEventDetectionDistance,
     const double anOppositionEventDetectionDistance,
     const double anEccentricityDistributionMean,
-    const double anEccentricityDistributionFullWidthHalfMaximum,
+    const double anEccentricityDistributionStandardDeviation,
     const double anInclinationDistributionMean,
-    const double anInclinationDistributionFullWidthHalfMaximum,
+    const double anInclinationDistributionStandardDeviation,
     const std::string& aNumericalIntegratorType,
     const double aNumericalIntegratorInitialStepSize,
     const double aNumericalIntegratorRelativeTolerance,
     const double aNumericalIntegratorAbsoluteTolerance )
-        : caseId( checkPositive( aCaseId, "Case ID" ) ),
-          caseName( aCaseName ),
+        : testParticleCaseId( checkPositive( aTestParticleCaseId, "Test particle case ID" ) ),
+          testParticleCaseName( aTestParticleCaseName ),
           randomWalkSimulationPeriod( 
             checkPositive( aRandomWalkSimulationPeriod, "Random walk period [s]" ) ),
           centralBodyGravitationalParameter( 
@@ -97,16 +97,16 @@ TestParticleCase::TestParticleCase(
           eccentricityDistributionMean( 
             checkGreaterThan( anEccentricityDistributionMean, 
                               "Eccentricity distribution mean [-]", NEGATIVE_ZERO ) ),
-          eccentricityDistributionFullWidthHalfMaximum( 
-            checkGreaterThan( anEccentricityDistributionFullWidthHalfMaximum, 
-                              "Eccentricity distribution Full-Width Half-Maximum [-]",
+          eccentricityDistributionStandardDeviation( 
+            checkGreaterThan( anEccentricityDistributionStandardDeviation, 
+                              "Eccentricity distribution standard deviation [-]",
                               NEGATIVE_ZERO ) ),
           inclinationDistributionMean( 
             checkGreaterThan( anInclinationDistributionMean, 
                               "Inclination distribution mean [rad]", NEGATIVE_ZERO ) ),
-          inclinationDistributionFullWidthHalfMaximum( 
-            checkGreaterThan( anInclinationDistributionFullWidthHalfMaximum, 
-                              "Inclination distribution Full-Width Half-Maximum [rad]",
+          inclinationDistributionStandardDeviation( 
+            checkGreaterThan( anInclinationDistributionStandardDeviation, 
+                              "Inclination distribution standard deviation [rad]",
                               NEGATIVE_ZERO ) ),
           numericalIntegratorInitialStepSize( checkPositive( 
             aNumericalIntegratorInitialStepSize, "Numerical integrator initial step size [s]" ) ),
@@ -117,9 +117,9 @@ TestParticleCase::TestParticleCase(
             checkPositive( aNumericalIntegratorAbsoluteTolerance, 
                            "Numerical integrator absolute tolerance [-]" ) )
 {
-    if ( caseName.empty( ) )
+    if ( testParticleCaseName.empty( ) )
     {
-        throw std::runtime_error( "Case name is empty!" );
+        throw std::runtime_error( "Test particle case name is empty!" );
     } 
 
     if ( aNumericalIntegratorType.empty( ) )
@@ -147,8 +147,8 @@ TestParticleCase::TestParticleCase(
 bool operator==( const TestParticleCase& testParticleCase1,
                  const TestParticleCase& testParticleCase2 )
 {
-    return ( testParticleCase1.caseId == testParticleCase2.caseId
-             && testParticleCase1.caseName == testParticleCase2.caseName
+    return ( testParticleCase1.testParticleCaseId == testParticleCase2.testParticleCaseId
+             && testParticleCase1.testParticleCaseName == testParticleCase2.testParticleCaseName
              && testParticleCase1.randomWalkSimulationPeriod
              == testParticleCase2.randomWalkSimulationPeriod
              && testParticleCase1.centralBodyGravitationalParameter
@@ -173,12 +173,12 @@ bool operator==( const TestParticleCase& testParticleCase1,
              == testParticleCase2.oppositionEventDetectionDistance
              && testParticleCase1.eccentricityDistributionMean 
              == testParticleCase2.eccentricityDistributionMean
-             && testParticleCase1.eccentricityDistributionFullWidthHalfMaximum
-             == testParticleCase2.eccentricityDistributionFullWidthHalfMaximum
+             && testParticleCase1.eccentricityDistributionStandardDeviation
+             == testParticleCase2.eccentricityDistributionStandardDeviation
              && testParticleCase1.inclinationDistributionMean 
              == testParticleCase2.inclinationDistributionMean
-             && testParticleCase1.inclinationDistributionFullWidthHalfMaximum
-             == testParticleCase2.inclinationDistributionFullWidthHalfMaximum
+             && testParticleCase1.inclinationDistributionStandardDeviation
+             == testParticleCase2.inclinationDistributionStandardDeviation
              && testParticleCase1.numericalIntegratorType
              == testParticleCase2.numericalIntegratorType
              && testParticleCase1.numericalIntegratorInitialStepSize 
@@ -193,7 +193,7 @@ bool operator==( const TestParticleCase& testParticleCase1,
 bool operator<( const TestParticleCase& testParticleCase1,
                 const TestParticleCase& testParticleCase2 )
 {
-    return testParticleCase1.caseId < testParticleCase2.caseId;
+    return testParticleCase1.testParticleCaseId < testParticleCase2.testParticleCaseId;
 }
 
 //! Overload << operator.
@@ -213,8 +213,8 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
     outputStream << "********************************************************************" << endl;
     outputStream << endl;
 
-    outputStream << "Case ID: " << testParticleCase.caseId << endl;
-    outputStream << "Case: " << testParticleCase.caseName << endl;    
+    outputStream << "Test particle case ID: " << testParticleCase.testParticleCaseId << endl;
+    outputStream << "Test particle case: " << testParticleCase.testParticleCaseName << endl;    
     outputStream << "Random walk simulation period [Jyr]: "
                  << convertSecondsToJulianYears( 
                         testParticleCase.randomWalkSimulationPeriod ) << endl;
@@ -273,14 +273,14 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
                  << testParticleCase.oppositionEventDetectionDistance << endl;
     outputStream << "Eccentricity distribution mean [-]: "
                  << testParticleCase.eccentricityDistributionMean << endl;
-    outputStream << "Eccentricity distribution Full-Width Half-Maximum [-]: "
-                 << testParticleCase.eccentricityDistributionFullWidthHalfMaximum << endl;
+    outputStream << "Eccentricity distribution standard deviation [-]: "
+                 << testParticleCase.eccentricityDistributionStandardDeviation << endl;
     outputStream << "Inclination distribution mean [deg]: "
                  << convertRadiansToDegrees( testParticleCase.inclinationDistributionMean ) 
                  << endl;           
-    outputStream << "Inclination distribution Full-Width Half-Maximum [deg]: "
+    outputStream << "Inclination distribution standard deviation [deg]: "
                  << convertRadiansToDegrees(
-                        testParticleCase.inclinationDistributionFullWidthHalfMaximum )
+                        testParticleCase.inclinationDistributionStandardDeviation )
                  << endl;
 
     outputStream << "Numerical integration type: ";

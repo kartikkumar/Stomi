@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #ifndef STOMI_ROOT_PATH_H
@@ -17,8 +17,8 @@ namespace input_output
 
 //! Get root-path for Stomi directory.
 /*!
- * Returns root-path corresponding with root-directory of Stomi as a string with
- * trailing slash included.
+ * Returns root-path corresponding with root-directory of Stomi as a string with trailing slash 
+ * included.
  * \return Stomi root-path.
  */
 static inline std::string getStomiRootPath( )

@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #ifndef STOMI_TEST_PARTICLE_INPUT_H
@@ -24,9 +24,9 @@ namespace stomi
 namespace database
 {
 
-//! Data struct that contains input data for one test particle simulation.
+//! Struct that contains input data for one test particle simulation.
 /*!
- * This data struct contains input data, stored in an SQLite3 database. The data stored is used to
+ * This struct contains input data, stored in an SQLite3 database. The data stored is used to
  * set up a test particle simulation.
  */
 struct TestParticleInput
@@ -38,13 +38,13 @@ public:
 
     //! Default constructor, initializing class members.
     TestParticleInput(
-            const int aSimulationId,
+            const int aTestParticleSimulationId,
             const int aTestParticleCaseId,
             const bool aCompletedFlag,
             const tudat::basic_mathematics::Vector6d& anInitialStateInKeplerianElements );
 
-    //! Simulation ID.
-    const int simulationId;
+    //! Test particle simulation ID.
+    const int testParticleSimulationId;
 
     //! Test particle case ID.
     const int testParticleCaseId;
@@ -84,9 +84,9 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleInput& t
 #endif // STOMI_TEST_PARTICLE_INPUT_H
 
 /*
- *    References
- *      sbi. C++ Operator Overloading, Stack Overflow,
- *          http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
- *          9th March, 2013.
+ * References
+ *  sbi. C++ Operator Overloading, Stack Overflow,
+ *      http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
+ *      9th March, 2013.
  */
  

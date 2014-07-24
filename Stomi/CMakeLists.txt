@@ -1,7 +1,7 @@
- #    Copyright (c) 2010-2014, Delft University of Technology
- #    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- #    All rights reserved.
- #    See http://bit.ly/12SHPLR for license details.
+# Copyright (c) 2010-2014, Delft University of Technology
+# Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+# All rights reserved.
+# See http://bit.ly/12SHPLR for license details.
 
 # Specify minimum CMake version required.
 cmake_minimum_required(VERSION 2.6)
@@ -9,14 +9,14 @@ cmake_minimum_required(VERSION 2.6)
 # Specify project name.
 project(Stomi)
 
-# Set module path to local CMake scripts.
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/../CMakeModules)
-
 # Define the directory with the source code.
-set(SRCROOT "${CMAKE_CURRENT_SOURCE_DIR}")
+set(SOURCE_ROOT "${CMAKE_CURRENT_SOURCE_DIR}")
 
-# Define the code root directory.
-set(CODEROOT "${CMAKE_CURRENT_SOURCE_DIR}/..")
+# Define the project root directory.
+set(PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/..")
+
+# Set path to local CMake modules.
+set(CMAKE_MODULE_PATH ${PROJECT_ROOT}/CMakeModules)
 
 # Set testing options based on platform.
 enable_testing()
@@ -47,29 +47,10 @@ endif()
 # -------------------------------------------------------------------------------------------------
 # DO NOT MANUALLY EDIT ANY SETTINGS AFTER THIS POINT IN THE FILE.
 # 
-# Pass any additional settings directly to CMake (e.g., via command-line) or by using a config file
-# (e.g., UserSettings.txt).
+# Pass any additional settings directly to CMake (e.g., via command-line).
 # -------------------------------------------------------------------------------------------------
 
-# Load user specific settings. These can overwrite all previous settings.
-if (NOT STOMI_USER_SETTINGS AND NOT DEFINED ENV{STOMI_USER_SETTINGS})
-  # Load from default paths, least important first.
-  include( "../UserSettings.txt" OPTIONAL)
-  include( "UserSettings.txt" OPTIONAL)
-else()
-  MESSAGE(STATUS "Loading preset...")
-  # Load the user specified file.
-  if (STOMI_USER_SETTINGS)
-    include($STOMI_USER_SETTINGS OPTIONAL)
-  else()
-    include($ENV{STOMI_USER_SETTINGS} OPTIONAL)
-  endif()
-endif()
-
-# Set CMake build-type. If it not supplied by the user (either directly as an argument of through
-# the "UserSettings.txt" file, the default built type is "Release". NB: It is important this
-# section is placed AFTER the "UserSettings.txt" file is included, to ensure that that the correct
-# indiciation is given for which build type has been selected.
+# Set CMake build-type. If it not supplied by the user, the default built type is "Release". 
 if((NOT CMAKE_BUILD_TYPE) OR (CMAKE_BUILD_TYPE STREQUAL "Release"))
     message(STATUS "WARNING: building release version!")
     set(CMAKE_BUILD_TYPE Release)
@@ -77,18 +58,21 @@ elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "WARNING: building debug version!")
 endif()
 
-# Set lib and bin directories where static libraries and unit tests are built.
+# Set lib and bin directories where static libraries, executable, unit tests are built.
 if(NOT LIB_ROOT)
-  set(LIB_ROOT "${PROJECT_BINARY_DIR}/../lib")
+  set(LIB_ROOT "${PROJECT_ROOT}/lib")
 endif()
 if(NOT BIN_ROOT)
-  set(BIN_ROOT "${PROJECT_BINARY_DIR}/../bin")
+  set(BIN_ROOT "${PROJECT_ROOT}/bin")
+endif()
+if(NOT TEST_ROOT)
+  set(TEST_ROOT "${PROJECT_ROOT}/tests")
 endif()
 
 # Set the global macros for setting up targets.
 macro(setup_executable_target target_name)
-  set_property(TARGET ${target_name} PROPERTY RUNTIME_OUTPUT_DIRECTORY "${BIN_ROOT}/applications")
-  install(TARGETS ${target_name} RUNTIME DESTINATION "${BIN_ROOT}/applications")
+  set_property(TARGET ${target_name} PROPERTY RUNTIME_OUTPUT_DIRECTORY "${BIN_ROOT}")
+  install(TARGETS ${target_name} RUNTIME DESTINATION "${BIN_ROOT}")
 endmacro(setup_executable_target)
 
 macro(setup_library_target target_name)
@@ -97,20 +81,21 @@ macro(setup_library_target target_name)
 endmacro(setup_library_target)
 
 macro(setup_unit_test_target target_name)
-  set_property(TARGET ${target_name} PROPERTY RUNTIME_OUTPUT_DIRECTORY "${BIN_ROOT}/unit_tests")
+  set_property(TARGET ${target_name} PROPERTY RUNTIME_OUTPUT_DIRECTORY "${TEST_ROOT}")
   get_property(CUSTOM_TEST_PROGRAM_NAME TARGET ${target_name} PROPERTY OUTPUT_NAME)
-  add_test("${target_name}" "${BIN_ROOT}/unit_tests/${target_name}")
+  add_test("${target_name}" "${TEST_ROOT}/${target_name}")
 endmacro(setup_unit_test_target)
 
 # Set the main sub-directories.
-set(ASTRODYNAMICSDIR "/Astrodynamics")
-set(DATABASEDIR "/Database")
-set(INPUTOUTPUTDIR "/InputOutput")
-set(MATHEMATICSDIR "/Mathematics")
+set(APPLICATIONMODES_DIR "/ApplicationModes")
+set(ASTRODYNAMICS_DIR "/Astrodynamics")
+set(DATABASE_DIR "/Database")
+set(INPUTOUTPUT_DIR "/InputOutput")
+set(MATHEMATICS_DIR "/Mathematics")
 
 # Include the top-level directories.
 include_directories(AFTER
-  "${CODEROOT}"
+  "${PROJECT_ROOT}"
 )
 
 # Find Eigen3 library on local system.
@@ -214,7 +199,7 @@ if(BUILD_DOCUMENTATION)
   endif()
 
   # Configure the Template Doxyfile for our specific project.
-  configure_file(${CODEROOT}/Doxyfile.in 
+  configure_file(${PROJECT_ROOT}/Doxyfile.in 
                  ${PROJECT_BINARY_DIR}/Doxyfile @ONLY IMMEDIATE)
 
   # Add a custom target to run Doxygen when ever the project is built.
@@ -223,10 +208,6 @@ if(BUILD_DOCUMENTATION)
   add_custom_target (docs ALL COMMAND ${DOXYGEN_EXECUTABLE} 
                      ${PROJECT_BINARY_DIR}/Doxyfile 
                      SOURCES ${PROJECT_BINARY_DIR}/Doxyfile)
-
-  # Install documentation.
-  install(DIRECTORY "${CODEROOT}/Documentation" 
-          DESTINATION "${STOMI_DISTRIBUTION_PATH}")
 endif()
 
 # Set flags to compile using openmp.
@@ -242,63 +223,26 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # Set sub-directories.
-set(SUBDIRS ${ASTRODYNAMICSDIR} ${DATABASEDIR} ${INPUTOUTPUTDIR} ${MATHEMATICSDIR})
+set(SUBDIRS ${APPLICATIONMODES_DIR} ${ASTRODYNAMICS_DIR} 
+            ${DATABASE_DIR} ${INPUTOUTPUT_DIR} ${MATHEMATICS_DIR})  
 
 # Add sub-directories to CMake process.
 foreach(CURRENT_SUBDIR ${SUBDIRS})
-add_subdirectory("${SRCROOT}${CURRENT_SUBDIR}")
+add_subdirectory("${SOURCE_ROOT}${CURRENT_SUBDIR}")
 endforeach(CURRENT_SUBDIR)
 
-message(${SQLITECPP_INCLUDE_DIR})
-
-# Add SQLite database generator for test particle simulations.
-add_executable(stomi_testParticleDatabaseGenerator 
-               "${SRCROOT}/Applications/testParticleDatabaseGenerator.cpp")
-setup_executable_target(stomi_testParticleDatabaseGenerator)
-target_link_libraries(stomi_testParticleDatabaseGenerator 
-                      stomi_astrodynamics stomi_input_output 
+# Add Stomi application.
+add_executable(stomi "${SOURCE_ROOT}/stomi.cpp")
+setup_executable_target(stomi)
+target_link_libraries(stomi
+                      stomi_application_modes 
+                      stomi_astrodynamics stomi_database  
+                      stomi_input_output stomi_mathematics
                       assist_input_output assist_mathematics  
-                      tudat_basic_astrodynamics tudat_input_output
+                      tudat_basic_astrodynamics tudat_basic_mathematics tudat_gravitation 
+                      tudat_input_output tudat_numerical_integrators tudat_statistics
+                      tudat_state_derivative_models  
                       ${TUDAT_CORE_LIBRARIES} 
                       ${SQLITECPP_LIBRARY}
-                      ${SQLITE3_LIBRARY} 
-                      ${Boost_LIBRARIES})
-
-# Add test particle simulator (uses OpenMP).
-add_executable(stomi_testParticleSimulator "${SRCROOT}/Applications/testParticleSimulator.cpp")
-setup_executable_target(stomi_testParticleSimulator)
-target_link_libraries(stomi_testParticleSimulator 
-                      stomi_astrodynamics stomi_database stomi_input_output stomi_mathematics
-                      assist_input_output
-                      tudat_state_derivative_models tudat_basic_mathematics 
-                      tudat_basic_astrodynamics tudat_gravitation tudat_numerical_integrators 
-                      tudat_input_output 
-                      ${TUDAT_CORE_LIBRARIES} 
-                      ${SQLITECPP_LIBRARY} 
-                      ${SQLITE3_LIBRARY} 
-                      ${Boost_LIBRARIES})
-
-# Add SQLite database generator for random walk simulatons.
-add_executable(stomi_randomWalkDatabaseGenerator 
-               "${SRCROOT}/Applications/randomWalkDatabaseGenerator.cpp")
-setup_executable_target(stomi_randomWalkDatabaseGenerator)
-target_link_libraries(stomi_randomWalkDatabaseGenerator 
-                      stomi_astrodynamics stomi_database stomi_input_output   
-                      assist_input_output  
-                      tudat_input_output 
-                      ${TUDAT_CORE_LIBRARIES} 
-                      ${SQLITECPP_LIBRARY} 
-                      ${SQLITE3_LIBRARY} 
-                      ${Boost_LIBRARIES})
-
-# Add random walk application (uses OpenMP).
-add_executable(stomi_randomWalkSimulator "${SRCROOT}/Applications/randomWalkSimulator.cpp")
-setup_executable_target(stomi_randomWalkSimulator)
-target_link_libraries(stomi_randomWalkSimulator
-                      stomi_astrodynamics stomi_database stomi_input_output
-                      assist_input_output assist_mathematics
-                      tudat_input_output tudat_statistics
-                      ${TUDAT_CORE_LIBRARIES} 
-                      ${SQLITECPP_LIBRARY} 
                       ${SQLITE3_LIBRARY} 
                       ${Boost_LIBRARIES})

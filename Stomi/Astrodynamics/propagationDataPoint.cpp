@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
@@ -22,8 +22,7 @@ namespace astrodynamics
 PropagationDataPoint& PropagationDataPoint::operator=( 
     const PropagationDataPoint& sourceDataPoint )
 {
-    // Check for self-assignment by comparing the address of the
-    // implicit object and the parameter.
+    // Check for self-assignment by comparing the address of the implicit object and the parameter.
     if ( this == &sourceDataPoint )
     {
         return *this;
@@ -32,10 +31,8 @@ PropagationDataPoint& PropagationDataPoint::operator=(
     // Else, do the copy.
     epoch = sourceDataPoint.epoch;
     mutualDistance = sourceDataPoint.mutualDistance;
-    testParticleStateInKeplerianElements 
-        = sourceDataPoint.testParticleStateInKeplerianElements;
-    perturbedBodyStateInKeplerianElements 
-        = sourceDataPoint.perturbedBodyStateInKeplerianElements;
+    testParticleStateInKeplerianElements = sourceDataPoint.testParticleStateInKeplerianElements;
+    perturbedBodyStateInKeplerianElements = sourceDataPoint.perturbedBodyStateInKeplerianElements;
 
     // Return the existing object.
     return *this;

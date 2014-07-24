@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <iostream>
@@ -24,20 +24,20 @@ namespace database
 using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
 //! Populate test particle kick table.
-void populateTestParticleKickTable( const std::string& databaseAbsolutePath, 
-                                    const int simulationId,
-                                    const TestParticleKickTable& kickTable,
+void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
+                                    const int testParticleSimulationId,
+                                    const TestParticleKickTable& testParticleKickTable,
                                     const std::string& testParticleKickTableName, 
                                     const std::string& testParticleInputTableName )
 {  
     // Set completed status variable to 1 (completed), unless table is empty (then set it to -1).
-    const int isCompleted = ( kickTable.size( ) > 0 ) ? 1 : -1;
+    const int isCompleted = ( testParticleKickTable.size( ) > 0 ) ? 1 : -1;
 
     // Set up update statement for test particle input table.
     std::ostringstream inputTableUpdate;
     inputTableUpdate << "UPDATE " << testParticleInputTableName << " SET \"completed\" = " 
-                     << isCompleted << " WHERE \"simulationId\" = " << simulationId << ";" 
-                     << std::endl;
+                     << isCompleted << " WHERE \"testParticleSimulationId\" = " 
+                     << testParticleSimulationId << ";" << std::endl;
 
     // Open database in write mode.          
     SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READWRITE );    
@@ -58,12 +58,13 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
     else if ( isCompleted == 1 )
     {
         // Set up database transaction.
-        SQLite::Transaction kickTableTransaction( database );
+        SQLite::Transaction testParticleKickTableTransaction( database );
 
         // Set up insert statement for test particle kick table.
-        std::ostringstream kickTableInsert;
-        kickTableInsert << "INSERT INTO " << testParticleKickTableName << " "
-                        << "VALUES (NULL, :simulationId, :conjunctionEpoch, :conjunctionDistance, "
+        std::ostringstream testParticleKickTableInsert;
+        testParticleKickTableInsert << "INSERT INTO " << testParticleKickTableName << " "
+                        << "VALUES (NULL, :testParticleSimulationId, :conjunctionEpoch, "
+                        << ":conjunctionDistance, "
                         << ":preConjunctionEpoch, :preConjunctionDistance, "
                         << ":preConjunctionSemiMajorAxis, :preConjunctionEccentricity, "
                         << ":preConjunctionInclination, :preConjunctionArgumentOfPeriapsis, "
@@ -71,74 +72,79 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
                         << ":postConjunctionEpoch, :postConjunctionDistance, "
                         << ":postConjunctionSemiMajorAxis, :postConjunctionEccentricity, "
                         << ":postConjunctionInclination, :postConjunctionArgumentOfPeriapsis, "
-                        << ":postConjunctionLongitudeOfAscendingNode, :postConjunctionTrueAnomaly);";
+                        << ":postConjunctionLongitudeOfAscendingNode, "
+                        << ":postConjunctionTrueAnomaly);";
 
         // Compile a SQL query.
-        SQLite::Statement kickTableInsertQuery( database, kickTableInsert.str( ).c_str( ) );
+        SQLite::Statement testParticleKickTableInsertQuery( 
+            database, testParticleKickTableInsert.str( ).c_str( ) );
 
         // Loop over kick table and add data rows to database table.
-        for ( TestParticleKickTable::iterator iteratorKickTable = kickTable.begin( );
-              iteratorKickTable != kickTable.end( ); 
+        for ( TestParticleKickTable::iterator iteratorKickTable = testParticleKickTable.begin( );
+              iteratorKickTable != testParticleKickTable.end( ); 
               iteratorKickTable++ )
         {
             // Bind values to prepared SQLite statement.
-            kickTableInsertQuery.bind( ":simulationId", 
+            testParticleKickTableInsertQuery.bind( ":testParticleSimulationId", 
                                        iteratorKickTable->testParticleSimulationId );
-            kickTableInsertQuery.bind( ":conjunctionEpoch", iteratorKickTable->conjunctionEpoch );
-            kickTableInsertQuery.bind( ":conjunctionDistance", 
+            testParticleKickTableInsertQuery.bind( ":conjunctionEpoch", 
+                iteratorKickTable->conjunctionEpoch );
+            testParticleKickTableInsertQuery.bind( ":conjunctionDistance", 
                 iteratorKickTable->conjunctionDistance );
-            kickTableInsertQuery.bind( ":preConjunctionEpoch", 
+            testParticleKickTableInsertQuery.bind( ":preConjunctionEpoch", 
                 iteratorKickTable->preConjunctionEpoch );
-            kickTableInsertQuery.bind( ":preConjunctionDistance", 
+            testParticleKickTableInsertQuery.bind( ":preConjunctionDistance", 
                 iteratorKickTable->preConjunctionDistance );
-            kickTableInsertQuery.bind( ":preConjunctionSemiMajorAxis", 
+            testParticleKickTableInsertQuery.bind( ":preConjunctionSemiMajorAxis", 
                 iteratorKickTable->preConjunctionStateInKeplerianElements( semiMajorAxisIndex ) );
-            kickTableInsertQuery.bind( ":preConjunctionEccentricity", 
+            testParticleKickTableInsertQuery.bind( ":preConjunctionEccentricity", 
                 iteratorKickTable->preConjunctionStateInKeplerianElements( eccentricityIndex ) );
-            kickTableInsertQuery.bind( ":preConjunctionInclination", 
+            testParticleKickTableInsertQuery.bind( ":preConjunctionInclination", 
                 iteratorKickTable->preConjunctionStateInKeplerianElements( inclinationIndex ) );
-            kickTableInsertQuery.bind( ":preConjunctionArgumentOfPeriapsis", 
+            testParticleKickTableInsertQuery.bind( ":preConjunctionArgumentOfPeriapsis", 
                 iteratorKickTable->preConjunctionStateInKeplerianElements( 
                     argumentOfPeriapsisIndex ) );
-            kickTableInsertQuery.bind( ":preConjunctionLongitudeOfAscendingNode", 
+            testParticleKickTableInsertQuery.bind( ":preConjunctionLongitudeOfAscendingNode", 
                 iteratorKickTable->preConjunctionStateInKeplerianElements( 
                     longitudeOfAscendingNodeIndex ) );
-            kickTableInsertQuery.bind( ":preConjunctionTrueAnomaly", 
-                iteratorKickTable->preConjunctionStateInKeplerianElements( trueAnomalyIndex ) );                                            
-            kickTableInsertQuery.bind( ":postConjunctionEpoch", 
+            testParticleKickTableInsertQuery.bind( ":preConjunctionTrueAnomaly", 
+                iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                    trueAnomalyIndex ) );                                            
+            testParticleKickTableInsertQuery.bind( ":postConjunctionEpoch", 
                 iteratorKickTable->postConjunctionEpoch );
-            kickTableInsertQuery.bind( ":postConjunctionDistance", 
+            testParticleKickTableInsertQuery.bind( ":postConjunctionDistance", 
                 iteratorKickTable->postConjunctionDistance );
-            kickTableInsertQuery.bind( ":postConjunctionSemiMajorAxis", 
+            testParticleKickTableInsertQuery.bind( ":postConjunctionSemiMajorAxis", 
                 iteratorKickTable->postConjunctionStateInKeplerianElements( semiMajorAxisIndex ) );
-            kickTableInsertQuery.bind( ":postConjunctionEccentricity", 
+            testParticleKickTableInsertQuery.bind( ":postConjunctionEccentricity", 
                 iteratorKickTable->postConjunctionStateInKeplerianElements( eccentricityIndex ) );
-            kickTableInsertQuery.bind( ":postConjunctionInclination", 
+            testParticleKickTableInsertQuery.bind( ":postConjunctionInclination", 
                 iteratorKickTable->postConjunctionStateInKeplerianElements( inclinationIndex ) );
-            kickTableInsertQuery.bind( ":postConjunctionArgumentOfPeriapsis", 
+            testParticleKickTableInsertQuery.bind( ":postConjunctionArgumentOfPeriapsis", 
                 iteratorKickTable->postConjunctionStateInKeplerianElements( 
                     argumentOfPeriapsisIndex ) );
-            kickTableInsertQuery.bind( ":postConjunctionLongitudeOfAscendingNode", 
+            testParticleKickTableInsertQuery.bind( ":postConjunctionLongitudeOfAscendingNode", 
                 iteratorKickTable->postConjunctionStateInKeplerianElements( 
                     longitudeOfAscendingNodeIndex ) );
-            kickTableInsertQuery.bind( ":postConjunctionTrueAnomaly", 
-                iteratorKickTable->preConjunctionStateInKeplerianElements( trueAnomalyIndex ) );     
+            testParticleKickTableInsertQuery.bind( ":postConjunctionTrueAnomaly", 
+                iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                    trueAnomalyIndex ) );     
 
             // Execute insert query.
-            kickTableInsertQuery.exec( );
+            testParticleKickTableInsertQuery.exec( );
 
             // Reset query.
-            kickTableInsertQuery.reset( );
+            testParticleKickTableInsertQuery.reset( );
         }
 
         // Commit transaction.
-        kickTableTransaction.commit( );
+        testParticleKickTableTransaction.commit( );
     }
 }
 
 //! Populate random walk output tables.
 void populateRandomWalkOutputTable(
-        const std::string& databaseAbsolutePath, const int monteCarloRunId,
+        const std::string& databaseAbsolutePath, const int randomWalkSimulationId,
         const double averageLongitudeResidual, const double maximumLongitudeResidualChange,
         const double averageEccentricity, const double maximumEccentricityChange,
         const double averageInclination, const double maximumInclinationChange,
@@ -157,8 +163,8 @@ void populateRandomWalkOutputTable(
     // Set up update statement for random walk input table.
     std::ostringstream inputTableUpdate;
     inputTableUpdate << "UPDATE " << randomWalkInputTableName << " SET \"completed\" = " 
-                     << isCompleted << " WHERE \"monteCarloRunId\" = " << monteCarloRunId << ";" 
-                     << std::endl;
+                     << isCompleted << " WHERE \"randomWalkSimulationId\" = " 
+                     << randomWalkSimulationId << ";" << std::endl;
 
     // Open database in write mode.          
     SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READWRITE );     
@@ -184,7 +190,7 @@ void populateRandomWalkOutputTable(
         // Set up insert statement for test particle kick table.
         std::ostringstream outputTableInsert;
         outputTableInsert << "INSERT INTO " << randomWalkOutputTableName << " "
-                          << "VALUES (NULL, " << monteCarloRunId << ", "
+                          << "VALUES (NULL, " << randomWalkSimulationId << ", "
                           << averageLongitudeResidual << ", " 
                           << maximumLongitudeResidualChange << ", "
                           << averageEccentricity << ", "

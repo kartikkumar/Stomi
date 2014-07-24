@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #ifndef STOMI_RANDOM_WALK_FUNCTIONS_H
@@ -23,17 +23,17 @@ namespace astrodynamics
 
 //! Execute kick.
 /*!
- * Executes kick on perturbed body, specified by row data from an aggregate kick table and returns
- * perturbed body's state after the kick. Only the change in the action variables is computed 
- * (semi-major axis, eccentricity, inclination).
+ * Executes kick on perturbed body, specified by row data from an aggregate test particle kick 
+ * table and returns perturbed body's state after the kick. Only the change in the action 
+ * variables is computed (semi-major axis, eccentricity, inclination).
  * \param stateInKeplerianElementsBeforeKick Perturbed body's state in Keplerian elements before 
  *          kick (only action variables).
- * \param kick Row data from aggregate kick table.
+ * \param testParticleKick Row data from aggregate test particle kick table.
  * \param perturberMassRatio Mass ratio between perturber and perturbed body.
  * \return Perturbed body's state in Keplerian elements after kick (only action variables).
  */
 Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBeforeKick,
-                             const database::TestParticleKickTable::iterator kick, 
+                             const database::TestParticleKickTable::iterator testParticleKick, 
                              const double perturberMassRatio );
 
 //! Compute longitude history.
@@ -72,5 +72,9 @@ assist::basics::DoubleKeyDoubleValueMap reduceLongitudeHistory(
 
 } // namespace astrodynamics
 } // namespace stomi
+
+/*
+ *  The computeLongitudeHistory() and reduceLongitudeHistory() require unit tests.
+ */
 
 #endif // STOMI_RANDOM_WALK_FUNCTIONS_H

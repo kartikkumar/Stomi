@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <stdexcept>
@@ -20,13 +20,14 @@ namespace database
 using namespace assist::basics;
 
 //! Default constructor, initializing class members with specified values.
-RandomWalkInput::RandomWalkInput( const int aMonteCarloRunId,
-                                  const int aRandomWalkCaseId,
+RandomWalkInput::RandomWalkInput( const int aRandomWalkSimulationId,
+                                  const int aRandomWalkRunId,
                                   const bool aCompletedFlag,
                                   const double anObservationPeriodStartEpoch,
                                   const std::vector< int >& someTestParticleSimulationIds )
-  : monteCarloRunId( checkPositive( aMonteCarloRunId, "Monte Carlo run ID" ) ),
-    randomWalkCaseId( checkPositive( aRandomWalkCaseId, "Random walk case ID" ) ),
+  : randomWalkSimulationId( 
+      checkPositive( aRandomWalkSimulationId, "Rnadom walk simulation ID" ) ),
+    randomWalkRunId( checkPositive( aRandomWalkRunId, "Random walk run ID" ) ),
     isCompleted( aCompletedFlag ),
     observationPeriodStartEpoch( checkPositive( anObservationPeriodStartEpoch, 
                                                 "Observation period start epoch [s]" ) ),
@@ -36,7 +37,7 @@ RandomWalkInput::RandomWalkInput( const int aMonteCarloRunId,
   if ( testParticleSimulationIds.size( ) == 0 )
   {
     throw std::runtime_error( 
-      "ERROR: Vector of test particle simulation IDs for random walk perturbers empty!" );
+      "ERROR: Vector of test particle simulation IDs for random walk perturbers is empty!" );
   }
 }    
 
@@ -44,8 +45,8 @@ RandomWalkInput::RandomWalkInput( const int aMonteCarloRunId,
 bool operator==( const RandomWalkInput& randomWalkInput1,
                  const RandomWalkInput& randomWalkInput2 )
 {
-    return ( randomWalkInput1.monteCarloRunId == randomWalkInput2.monteCarloRunId
-             && randomWalkInput1.randomWalkCaseId == randomWalkInput2.randomWalkCaseId
+    return ( randomWalkInput1.randomWalkSimulationId == randomWalkInput2.randomWalkSimulationId
+             && randomWalkInput1.randomWalkRunId == randomWalkInput2.randomWalkRunId
              && randomWalkInput1.isCompleted == randomWalkInput2.isCompleted
              && randomWalkInput1.observationPeriodStartEpoch 
              == randomWalkInput2.observationPeriodStartEpoch 
@@ -57,12 +58,11 @@ bool operator==( const RandomWalkInput& randomWalkInput1,
 bool operator<( const RandomWalkInput& randomWalkInput1,
                 const RandomWalkInput& randomWalkInput2 )
 {
-    return randomWalkInput1.monteCarloRunId < randomWalkInput2.monteCarloRunId;    
+    return randomWalkInput1.randomWalkSimulationId < randomWalkInput2.randomWalkSimulationId;    
 }
 
 //! Overload << operator.
-std::ostream& operator<<( std::ostream& outputStream, 
-                          const RandomWalkInput& randomWalkInput )
+std::ostream& operator<<( std::ostream& outputStream, const RandomWalkInput& randomWalkInput )
 { 
     using std::endl; 
 
@@ -80,8 +80,9 @@ std::ostream& operator<<( std::ostream& outputStream,
     }    
 
     // Write contents of RandomWalkInput object to output stream.
-    outputStream << "Monte Carlo run ID: " << randomWalkInput.monteCarloRunId << endl;
-    outputStream << "Random walk case ID: " << randomWalkInput.randomWalkCaseId << endl;
+    outputStream << "Random walk simulation ID: " 
+                 << randomWalkInput.randomWalkSimulationId << endl;
+    outputStream << "Random walk run ID: " << randomWalkInput.randomWalkRunId << endl;
     outputStream << "Random walk simulation completed?: " << completedStatus << endl;    
     outputStream << "Observation period start epoch [s]: " 
                  << randomWalkInput.observationPeriodStartEpoch << endl;

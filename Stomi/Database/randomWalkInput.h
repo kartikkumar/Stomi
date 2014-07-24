@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #ifndef STOMI_RANDOM_WALK_INPUT_H
@@ -21,27 +21,27 @@ namespace stomi
 namespace database
 {
 
-//! Data struct that contains data for a single random walk Monte Carlo run.
+//! Struct that contains data for a single random walk simulation.
 /*!
- * This data struct contains all of the data for a single random walk Monte Carlo run, stored in an
- * SQLite3 database. The data stored is metadata for the random walk simulations conducted.
+ * This struct contains all of the data for a single random walk simulation, stored in an 
+ * SQLite3 database. The data stored is meta-data for the random walk simulations conducted.
  */
 struct RandomWalkInput
 {
 public:
 
     //! Default constructor, initializing class members with specified values.
-    RandomWalkInput( const int aMonteCarloRunId,
-                     const int aRandomWalkCaseId,
+    RandomWalkInput( const int aRandomWalkSimulationId,
+                     const int aRandomWalkRunId,
                      const bool aCompletedFlag,
                      const double anObservationPeriodStartEpoch,
                      const std::vector< int >& someTestParticleSimulationIds );
 
-    //! Monte Carlo run ID.
-    const int monteCarloRunId;
+    //! Random walk simulation ID.
+    const int randomWalkSimulationId;
 
-    //! Random walk case ID.
-    const int randomWalkCaseId;
+    //! Random walk run ID.
+    const int randomWalkRunId;
 
     //! Flag indicating if simulation has been completed/executed and stored in database.
     const bool isCompleted;    
@@ -59,7 +59,7 @@ private:
 //! Typedef for shared-pointer to RandomWalkInput object.
 typedef boost::shared_ptr< RandomWalkInput > RandomWalkInputPointer;
 
-//! Typedef for table of random walk Monte Carlo runs (pointers).
+//! Typedef for input table (pointers) for random walk simulations.
 typedef boost::ptr_set< RandomWalkInput > RandomWalkInputTable;
 
 // Define all of the operator overloads as non-member functions (sbi, 2010).
@@ -82,8 +82,8 @@ std::ostream& operator<<( std::ostream& outputStream,
 #endif // STOMI_RANDOM_WALK_INPUT_H
 
 /*
- *    References
- *      sbi. C++ Operator Overloading, Stack Overflow,
- *          http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
- *          9th March, 2013.
+ * References
+ *   sbi. C++ Operator Overloading, Stack Overflow,
+ *      http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
+ *      9th March, 2013.
  */

@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <algorithm>
@@ -10,8 +10,9 @@
 #include <fstream> 
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <limits>
-#include <string>
+#include <sstream>
 #include <utility>
 
 #include <Eigen/Core>
@@ -28,11 +29,9 @@
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/unitConversions.h>
 #include <Assist/Basics/commonTypedefs.h>
-#include <Assist/InputOutput/basicInputOutput.h>
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/astrodynamicsFunctions.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
-#include <TudatCore/Astrodynamics/BasicAstrodynamics/physicalConstants.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/unitConversions.h>
 
 #include <Tudat/Astrodynamics/BasicAstrodynamics/accelerationModel.h>
@@ -41,13 +40,11 @@
 #include <Tudat/Astrodynamics/StateDerivativeModels/cartesianStateDerivativeModel.h>
 #include <Tudat/Astrodynamics/StateDerivativeModels/compositeStateDerivativeModel.h>
 #include <Tudat/InputOutput/dictionaryTools.h>
-#include <Tudat/InputOutput/fieldType.h>
-#include <Tudat/InputOutput/parsedDataVectorUtilities.h>
-#include <Tudat/InputOutput/separatedParser.h>
 #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaCoefficients.h>
 #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaVariableStepSizeIntegrator.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
+#include "Stomi/ApplicationModes/testParticleSimulator.h"
 #include "Stomi/Astrodynamics/body.h"
 #include "Stomi/Astrodynamics/dataUpdater.h"
 #include "Stomi/Astrodynamics/propagationDataPoint.h"
@@ -59,18 +56,32 @@
 #include "Stomi/InputOutput/dictionaries.h"
 #include "Stomi/Mathematics/basicMathematics.h"
 
-//! Execute test particle simulations.
-int main( const int numberOfInputs, const char* inputArguments[ ] )
+namespace stomi
+{
+namespace application_modes
+{
+
+//! Execute test particle simulator application mode.
+void executeTestParticleSimulator( 
+    const std::string databasePath, 
+    const tudat::input_output::parsed_data_vector_utilities::ParsedDataVectorPtr parsedData )
 {
 
     ///////////////////////////////////////////////////////////////////////////
 
     // Declare using-statements and type definitions.
+    
     using std::advance;
+    using std::cerr;
     using std::cout;
     using std::endl;
     using std::fabs;
+    using std::max_element;
+    using std::min_element;
     using std::numeric_limits;
+    using std::ofstream;
+    using std::ostringstream;
+    using std::setprecision;
     using std::string;
     using std::make_pair;
 
@@ -85,18 +96,13 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     using namespace assist::astrodynamics;
     using namespace assist::basics;
-    using namespace assist::input_output;
 
     using namespace tudat::basic_astrodynamics;
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
-    using namespace tudat::basic_astrodynamics::physical_constants;
     using namespace tudat::basic_astrodynamics::unit_conversions;
     using namespace tudat::basic_mathematics;
     using namespace tudat::gravitation;
-    using namespace tudat::input_output;
     using namespace tudat::input_output::dictionary;
-    using namespace tudat::input_output::field_types::general;
-    using namespace tudat::input_output::parsed_data_vector_utilities;
     using namespace tudat::numerical_integrators;
     using namespace tudat::state_derivative_models;
 
@@ -107,49 +113,28 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Typedefs.
     typedef CompositeStateDerivativeModel< double, Vector12d, Vector6d > 
-            CompositeStateDerivativeModel12d;
+        CompositeStateDerivativeModel12d;
     typedef shared_ptr< CompositeStateDerivativeModel12d > CompositeStateDerivativeModel12dPointer;
 
     ///////////////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////////////
 
-    // Set up input deck.
-
-    // Check number of input parameters is correct (the numberOfInputs variable includes the
-    // application itself, so one is subtracted from this number).
-    checkNumberOfInputArguments( numberOfInputs - 1 );
-
-    // Get input parameter dictionary.
-    const DictionaryPointer dictionary = getTestParticleSimulatorDictionary( );
-
-    // Read and filter input stream.
-    string filteredInput = readAndFilterInputFile( inputArguments[ 1 ] );
-
-    // Declare a separated parser.
-    SeparatedParser parser( string( ": " ), 2, parameterName, parameterValue );
-
-    // Parse filtered data.
-    const ParsedDataVectorPtr parsedData = parser.parse( filteredInput );
-
-    cout << endl;
-    cout << "****************************************************************************" << endl;
-    cout << "Input parameters" << endl;
-    cout << "****************************************************************************" << endl;
-    cout << endl;
-
     // Extract input parameters.
 
-    // Extract required parameters.
-    const string databasePath = extractParameterValue< string >(
-                parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "DATABASE" ) );
-    cout << "Database                                                  "
+    // Get dictionary.
+    const DictionaryPointer dictionary = getTestParticleSimulatorDictionary( );
+
+    // Print database path to console.
+    cout << "Database                                                  " 
          << databasePath << endl;
 
-    const string caseName = extractParameterValue< string >(
-                parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "CASE" ) );
+    // Extract required parameters.
+    const string testParticleCaseName = extractParameterValue< string >(
+                parsedData->begin( ), parsedData->end( ), 
+                findEntry( dictionary, "TESTPARTICLECASE" ) );
     cout << "Test particle case                                        " 
-         << caseName << endl; 
+         << testParticleCaseName << endl; 
 
     // Extract optional parameters. 
     const int numberOfThreads = extractParameterValue< int >(
@@ -170,11 +155,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << "File output directory                                     "
          << fileOutputDirectory << endl;
 
-    const string simulationsToExecute = extractParameterValue< string >(
+    const string testParticleSimulations = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "SIMULATIONSTOEXECUTE" ), "ALL" );
+                findEntry( dictionary, "TESTPARTICLESIMULATIONS" ), "ALL" );
     cout << "Simulations to execute                                    "
-         << simulationsToExecute << endl;
+         << testParticleSimulations << endl;
          
     const double outputInterval = extractParameterValue< double >(
             parsedData->begin( ), parsedData->end( ),
@@ -203,32 +188,32 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Retrieve and store test particle case data from database.
     TestParticleCasePointer testParticleCase;
 
-    // Case data is extracted in local scope from the database, with overwritten parameters 
-    // extracted from the input file, to ensure that none of these parameters are used globally
-    // elsewhere in this file.
+    // Test particle case data is extracted in local scope from the database, with overwritten 
+    // parameters extracted from the configuration file, to ensure that none of these parameters 
+    // are used globally elsewhere in this file.
     {
-        const TestParticleCasePointer caseDataFromDatabase = getTestParticleCase(
-                databasePath, caseName, testParticleCaseTableName );
+        const TestParticleCasePointer retrievedTestParticleCase = getTestParticleCase(
+                databasePath, testParticleCaseName, testParticleCaseTableName );
 
-        // Check if any case parameters are overwritten by user input.
+        // Check if any test particle case parameters are overwritten by user input.
         const double randomWalkSimulationPeriod = extractParameterValue< double >(
             parsedData->begin( ), parsedData->end( ),
             findEntry( dictionary, "RANDOMWALKSIMULATIONPERIOD" ),
-            caseDataFromDatabase->randomWalkSimulationPeriod, &convertJulianYearsToSeconds );
+            retrievedTestParticleCase->randomWalkSimulationPeriod, &convertJulianYearsToSeconds );
         cout << "Random walk simulation period                             " 
-             << randomWalkSimulationPeriod / JULIAN_YEAR << " yrs" << endl;
+             << convertSecondsToJulianYears( randomWalkSimulationPeriod ) << " yrs" << endl;
 
         const double centralBodyGravitationalParameter = extractParameterValue< double >(
             parsedData->begin( ), parsedData->end( ),
             findEntry( dictionary, "CENTRALBODYGRAVITATIONALPARAMETER" ),
-            caseDataFromDatabase->centralBodyGravitationalParameter );
+            retrievedTestParticleCase->centralBodyGravitationalParameter );
         cout << "Central body gravitational parameter                      " 
              << centralBodyGravitationalParameter << " m^3 s^-2" << endl;  
 
         const double perturbedBodyRadius = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "PERTURBEDBODYRADIUS" ),
-                    caseDataFromDatabase->perturbedBodyRadius, 
+                    retrievedTestParticleCase->perturbedBodyRadius, 
                     &convertKilometersToMeters< double > );
         cout << "Perturbed body radius                                     " 
              << convertMetersToKilometers( perturbedBodyRadius ) << " km" << endl;
@@ -236,7 +221,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         const double perturbedBodyBulkDensity = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "PERTURBEDBODYBULKDENSITY" ),
-                    caseDataFromDatabase->perturbedBodyBulkDensity );
+                    retrievedTestParticleCase->perturbedBodyBulkDensity );
         cout << "Perturbed body bulk density                               " 
              << perturbedBodyBulkDensity << " kg m^-3" << endl;                
 
@@ -246,7 +231,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "PERTURBEDBODYSEMIMAJORAXISATT0" ),
-                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                    retrievedTestParticleCase->perturbedBodyStateInKeplerianElementsAtT0( 
                         semiMajorAxisIndex ),
                     &convertKilometersToMeters< double > );
         cout << "Perturbed body semi-major axis at TO                      "
@@ -258,7 +243,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "PERTURBEDBODYECCENTRICITYATT0" ), 
-                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                    retrievedTestParticleCase->perturbedBodyStateInKeplerianElementsAtT0( 
                         eccentricityIndex ) );
         cout << "Perturbed body eccentricity at TO                         "
              << perturbedBodyStateInKeplerianElementsAtT0( eccentricityIndex ) << endl;
@@ -267,7 +252,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 = extractParameterValue< double >( 
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "PERTURBEDBODYINCLINATIONATT0" ),
-                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                    retrievedTestParticleCase->perturbedBodyStateInKeplerianElementsAtT0( 
                         inclinationIndex ),
                      &convertDegreesToRadians< double > );
         cout << "Perturbed body inclination at TO                          "
@@ -279,7 +264,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 = extractParameterValue< double >( 
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "PERTURBEDBODYARGUMENTOFPERIAPSISATT0" ),
-                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                    retrievedTestParticleCase->perturbedBodyStateInKeplerianElementsAtT0( 
                         argumentOfPeriapsisIndex ),
                     &convertDegreesToRadians< double > );
         cout << "Perturbed body argument of periapsis at TO                "
@@ -291,7 +276,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 = extractParameterValue< double >( 
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "PERTURBEDBODYLONGITUDEOFASCENDINGNODEATT0" ),
-                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0( 
+                    retrievedTestParticleCase->perturbedBodyStateInKeplerianElementsAtT0( 
                         longitudeOfAscendingNodeIndex ),
                     &convertDegreesToRadians< double > );
         cout << "Perturbed body longitude of ascending node at TO          "
@@ -303,7 +288,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "PERTURBEDBODYTRUEANOMALYATT0" ),
-                    caseDataFromDatabase->perturbedBodyStateInKeplerianElementsAtT0(
+                    retrievedTestParticleCase->perturbedBodyStateInKeplerianElementsAtT0(
                         trueAnomalyIndex ),
                      &convertDegreesToRadians< double > );
         cout << "Perturbed body true anomaly at TO                         "
@@ -314,54 +299,54 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         const double synodicPeriodMaximum = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "SYNODICPERIODMAXIMUM" ),
-                    caseDataFromDatabase->synodicPeriodMaximum, &convertJulianYearsToSeconds );
+                    retrievedTestParticleCase->synodicPeriodMaximum, &convertJulianYearsToSeconds );
         cout << "Synodic period limit                                      " 
-             << synodicPeriodMaximum / JULIAN_YEAR << " yrs" << endl;
+             << convertSecondsToJulianYears( synodicPeriodMaximum ) << " yrs" << endl;
 
         const double startUpIntegrationPeriod = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "STARTUPINTEGRATIONPERIOD" ),
-                    caseDataFromDatabase->startUpIntegrationPeriod, 
+                    retrievedTestParticleCase->startUpIntegrationPeriod, 
                     &convertJulianYearsToSeconds );
         cout << "Start-up integration duration                             " 
-             << startUpIntegrationPeriod / JULIAN_YEAR << " yrs" << endl;
+             << convertSecondsToJulianYears( startUpIntegrationPeriod ) << " yrs" << endl;
 
         const double centralBodyJ2GravityCoefficient = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "CENTRALBODYJ2GRAVITYCOEFFICIENT" ), 
-                    caseDataFromDatabase->centralBodyJ2GravityCoefficient );
+                    retrievedTestParticleCase->centralBodyJ2GravityCoefficient );
         cout << "Central body J2 gravity coefficient                       "
              << centralBodyJ2GravityCoefficient << endl;
 
         const double centralBodyEquatorialRadius = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "CENTRALBODYEQUATORIALRADIUS" ),
-                    caseDataFromDatabase->centralBodyEquatorialRadius );
+                    retrievedTestParticleCase->centralBodyEquatorialRadius );
         cout << "Central body equatorial radius                            "
              << convertMetersToKilometers( centralBodyEquatorialRadius ) << " km" << endl;    
 
         const double conjunctionEventDetectionDistance = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "CONJUNCTIONEVENTDETECTIONDISTANCE" ), 
-                    caseDataFromDatabase->conjunctionEventDetectionDistance );
+                    retrievedTestParticleCase->conjunctionEventDetectionDistance );
         cout << "Conjunction event detection distance                      " 
              << convertMetersToKilometers( conjunctionEventDetectionDistance ) << " km" << endl;
 
         const double oppositionEventDetectionDistance = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "OPPOSITIONEVENTDETECTIONDISTANCE" ),
-                    caseDataFromDatabase->oppositionEventDetectionDistance );
+                    retrievedTestParticleCase->oppositionEventDetectionDistance );
         cout << "Opposition event detection distance                       " 
              << convertMetersToKilometers( oppositionEventDetectionDistance ) << " km" << endl;
 
         string defaultNumericalIntegratorType;
 
-        if ( caseDataFromDatabase->numericalIntegratorType == DOPRI853 )
+        if ( retrievedTestParticleCase->numericalIntegratorType == DOPRI853 )
         {
             defaultNumericalIntegratorType = "DOPRI853";
         }
 
-        else if ( caseDataFromDatabase->numericalIntegratorType == RKF78 )
+        else if ( retrievedTestParticleCase->numericalIntegratorType == RKF78 )
         {
             defaultNumericalIntegratorType = "RKF78";
         }
@@ -376,39 +361,40 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         const double numericalIntegratorInitialStepSize = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "INITIALSTEPSIZE" ), 
-                    caseDataFromDatabase->numericalIntegratorInitialStepSize );
+                    retrievedTestParticleCase->numericalIntegratorInitialStepSize );
         cout << "Initial step size                                         "
              << numericalIntegratorInitialStepSize << " s" << endl;
 
         const double numericalIntegratorRelativeTolerance = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "RUNGEKUTTARELATIVEERRORTOLERANCE" ),
-                    caseDataFromDatabase->numericalIntegratorRelativeTolerance );
+                    retrievedTestParticleCase->numericalIntegratorRelativeTolerance );
         cout << "Numerical integrator relative tolerance                   " 
              << numericalIntegratorRelativeTolerance << endl;
 
         const double numericalIntegratorAbsoluteTolerance = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
                     findEntry( dictionary, "RUNGEKUTTAABSOLUTEERRORTOLERANCE" ), 
-                    caseDataFromDatabase->numericalIntegratorAbsoluteTolerance );
+                    retrievedTestParticleCase->numericalIntegratorAbsoluteTolerance );
         cout << "Numerical integrator absolute tolerance                   " 
              << numericalIntegratorAbsoluteTolerance << endl;             
 
     // Store case data with possible overwritten data.
     testParticleCase = make_shared< TestParticleCase >(
         TestParticleCase( 
-            caseDataFromDatabase->caseId, caseName, randomWalkSimulationPeriod, 
-            centralBodyGravitationalParameter, perturbedBodyRadius, perturbedBodyBulkDensity, 
-            perturbedBodyStateInKeplerianElementsAtT0, 
-            caseDataFromDatabase->semiMajorAxisDistributionLimit,
+            retrievedTestParticleCase->testParticleCaseId, testParticleCaseName, 
+            randomWalkSimulationPeriod, centralBodyGravitationalParameter, perturbedBodyRadius, 
+            perturbedBodyBulkDensity, perturbedBodyStateInKeplerianElementsAtT0, 
+            retrievedTestParticleCase->semiMajorAxisDistributionLimit,
             synodicPeriodMaximum, startUpIntegrationPeriod, centralBodyJ2GravityCoefficient, 
             centralBodyEquatorialRadius, conjunctionEventDetectionDistance, 
-            oppositionEventDetectionDistance, caseDataFromDatabase->eccentricityDistributionMean, 
-            caseDataFromDatabase->eccentricityDistributionFullWidthHalfMaximum,
-            caseDataFromDatabase->inclinationDistributionMean, 
-            caseDataFromDatabase->inclinationDistributionFullWidthHalfMaximum, 
+            oppositionEventDetectionDistance, 
+            retrievedTestParticleCase->eccentricityDistributionMean, 
+            retrievedTestParticleCase->eccentricityDistributionStandardDeviation,
+            retrievedTestParticleCase->inclinationDistributionMean, 
+            retrievedTestParticleCase->inclinationDistributionStandardDeviation, 
             numericalIntegratorType, numericalIntegratorInitialStepSize, 
-            numericalIntegratorRelativeTolerance, numericalIntegratorRelativeTolerance ) );             
+            numericalIntegratorRelativeTolerance, numericalIntegratorRelativeTolerance ) );
     }
 
     // Check that all required parameters have been set.
@@ -464,16 +450,16 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << "Fetching test particle input data from database ..." << endl;    
 
     // Check if all incomplete simulations are to be run and fetch the input table, else only fetch
-    // the requested test particle simulation numbers.
+    // the requested test particle simulation IDs.
     TestParticleInputTable testParticleInputTable;
 
-    if ( iequals( simulationsToExecute, "ALL" )  )
+    if ( iequals( testParticleSimulations, "ALL" )  )
     {
         cout << "Fetching all incomplete test particle simulations ..." << endl;    
 
         // Get entire test particle input table from database.
         testParticleInputTable = getCompleteTestParticleInputTable(
-                    databasePath, testParticleCase->caseId, testParticleInputTableName );
+             databasePath, testParticleCase->testParticleCaseId, testParticleInputTableName );
     }
 
     else
@@ -482,8 +468,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Get selected test particle input table from database.
         testParticleInputTable = getSelectedTestParticleInputTable(
-                    databasePath, testParticleCase->caseId, 
-                    simulationsToExecute, testParticleInputTableName );
+            databasePath, testParticleCase->testParticleCaseId, 
+            testParticleSimulations, testParticleInputTableName );
     }
 
     cout << "Test particle input data (" << testParticleInputTable.size( )
@@ -501,13 +487,14 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Execute simulation loop.
     cout << "Starting simulation loop ... " << endl;
-    cout << testParticleInputTable.size( ) << " simulations queued for execution ..." << endl;
+    cout << testParticleInputTable.size( ) << " test particle simulations queued for execution ..."
+         << endl;
     cout << endl;
 
 #pragma omp parallel for num_threads( numberOfThreads )
     for ( unsigned int i = 0; i < testParticleInputTable.size( ); i++ )
     {
-        ///////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////
 
         // Set input table iterator and emit output message.
 
@@ -518,8 +505,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Emit output message.
 #pragma omp critical( outputToConsole )
         {
-            cout << "Simulation ID " << iteratorInputTable->simulationId << " on thread "
-                 << omp_get_thread_num( ) + 1 << " / " << omp_get_num_threads( ) << endl;
+            cout << "Test particle simulation ID " << iteratorInputTable->testParticleSimulationId
+                 << " on thread " << omp_get_thread_num( ) + 1 << " / " << omp_get_num_threads( ) 
+                 << endl;
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -530,21 +518,21 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         // Convert test particle initial state in Keplerian elements to Cartesian elements.
         const Vector6d testParticleInitialState
-                = convertKeplerianToCartesianElements(
-                    iteratorInputTable->initialStateInKeplerianElements,
-                    testParticleCase->centralBodyGravitationalParameter );
+            = convertKeplerianToCartesianElements(
+                iteratorInputTable->initialStateInKeplerianElements,
+                testParticleCase->centralBodyGravitationalParameter );
 
         // Convert perturbed body initial state in Keplerian elements to Cartesian elements.
         const Vector6d perturbedBodyInitialState
-                = convertKeplerianToCartesianElements(
-                    testParticleCase->perturbedBodyStateInKeplerianElementsAtT0,
-                    testParticleCase->centralBodyGravitationalParameter );
+            = convertKeplerianToCartesianElements(
+                testParticleCase->perturbedBodyStateInKeplerianElementsAtT0,
+                testParticleCase->centralBodyGravitationalParameter );
 
         // Create perturbed body and test particle.
         BodyPointer perturbedBody = make_shared< Body >(
-                    "Perturbed body", perturbedBodyInitialState );
+            "Perturbed body", perturbedBodyInitialState );
         BodyPointer testParticle = make_shared< Body >(
-                    "Test particle", testParticleInitialState );
+            "Test particle", testParticleInitialState );
 
         ///////////////////////////////////////////////////////////////////////////
 
@@ -746,11 +734,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         PropagationDataPointTable conjunctionEvents; 
 
         // Set up output files.
-        std::ofstream mutualDistanceFile;
-        std::ofstream keplerianElementsFile;
-        std::ofstream cartesianElementsFile;
-        std::ofstream keplerianElementsPerturbedBodyFile;
-        std::ofstream cartesianElementsPerturbedBodyFile;            
+        ofstream mutualDistanceFile;
+        ofstream keplerianElementsFile;
+        ofstream cartesianElementsFile;
+        ofstream keplerianElementsPerturbedBodyFile;
+        ofstream cartesianElementsPerturbedBodyFile;            
 
         // Check if output mode is set to "FILE".
         // If so, open output files and write header content.
@@ -760,59 +748,62 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             // Check if output directory exists.
             if ( !exists( fileOutputDirectory ) )
             {
-               std::cerr << "Directory does not exist. Will be created." << std::endl;
+               cerr << "Directory does not exist. Will be created." << endl;
                create_directories( fileOutputDirectory );
             }
 
-            std::ostringstream mutualDistanceFilename;
-            mutualDistanceFilename << fileOutputDirectory << "simulation" 
-                                   << iteratorInputTable->simulationId << "_mutualDistance.csv";            
+            ostringstream mutualDistanceFilename;
+            mutualDistanceFilename << fileOutputDirectory << "testParticleSimulation" 
+                                   << iteratorInputTable->testParticleSimulationId
+                                   << "_mutualDistance.csv";            
             mutualDistanceFile.open( mutualDistanceFilename.str( ).c_str( ) );
-            mutualDistanceFile << "epoch,mutualDistance" << std::endl;
-            mutualDistanceFile << "# [s],[m]" << std::endl;
+            mutualDistanceFile << "epoch,mutualDistance" << endl;
+            mutualDistanceFile << "# [s],[m]" << endl;
 
-            std::ostringstream keplerianElementsFilename;
-            keplerianElementsFilename << fileOutputDirectory << "simulation" 
-                                      << iteratorInputTable->simulationId 
+            ostringstream keplerianElementsFilename;
+            keplerianElementsFilename << fileOutputDirectory << "testParticleSimulation" 
+                                      << iteratorInputTable->testParticleSimulationId 
                                       << "_keplerianElements.csv";
             keplerianElementsFile.open( keplerianElementsFilename.str( ).c_str( ) );
             keplerianElementsFile << "epoch,semiMajorAxis,eccentricity,inclination,"
                                   << "argumentofPeriapsis,longitudeOfAscendingNode,trueAnomaly"
-                                  << std::endl;
-            keplerianElementsFile << "# [s],[m],[-],[deg],[deg],[deg],[deg]" << std::endl;
+                                  << endl;
+            keplerianElementsFile << "# [s],[m],[-],[deg],[deg],[deg],[deg]" << endl;
 
-            std::ostringstream cartesianElementsFilename;
-            cartesianElementsFilename << fileOutputDirectory << "simulation" 
-                                      << iteratorInputTable->simulationId 
+            ostringstream cartesianElementsFilename;
+            cartesianElementsFilename << fileOutputDirectory << "testParticleSimulation" 
+                                      << iteratorInputTable->testParticleSimulationId 
                                       << "_cartesianElements.csv";
             cartesianElementsFile.open( cartesianElementsFilename.str( ).c_str( ) );
             cartesianElementsFile << "epoch,xPosition,yPosition,zPosition,"
                                   << "xVelocity,yVelocity,zVelocity"
-                                  << std::endl;
-            cartesianElementsFile << "# [s],[m],[m],[m],[m s^-1],[m s^-1],[m s^-1]" << std::endl;     
+                                  << endl;
+            cartesianElementsFile << "# [s],[m],[m],[m],[m s^-1],[m s^-1],[m s^-1]" << endl;     
 
-            std::ostringstream keplerianElementsPerturbedBodyFilename;
-            keplerianElementsPerturbedBodyFilename << fileOutputDirectory << "simulation" 
-                                                   << iteratorInputTable->simulationId 
+            ostringstream keplerianElementsPerturbedBodyFilename;
+            keplerianElementsPerturbedBodyFilename << fileOutputDirectory 
+                                                   << "testParticleSimulation" 
+                                                   << iteratorInputTable->testParticleSimulationId 
                                                    << "_keplerianElementsPerturbedBody.csv";
             keplerianElementsPerturbedBodyFile.open( 
                 keplerianElementsPerturbedBodyFilename.str( ).c_str( ) );
-            keplerianElementsPerturbedBodyFile << "epoch,semiMajorAxis,eccentricity,inclination,"
-                                  << "argumentofPeriapsis,longitudeOfAscendingNode,trueAnomaly"
-                                  << std::endl;
+            keplerianElementsPerturbedBodyFile 
+                << "epoch,semiMajorAxis,eccentricity,inclination,"
+                << "argumentofPeriapsis,longitudeOfAscendingNode,trueAnomaly" << endl;
             keplerianElementsPerturbedBodyFile << "# [s],[m],[-],[deg],[deg],[deg],[deg]" 
-                                               << std::endl;
+                                               << endl;
 
-            std::ostringstream cartesianElementsPerturbedBodyFilename;
-            cartesianElementsPerturbedBodyFilename << fileOutputDirectory << "simulation" 
-                                                   << iteratorInputTable->simulationId 
+            ostringstream cartesianElementsPerturbedBodyFilename;
+            cartesianElementsPerturbedBodyFilename << fileOutputDirectory 
+                                                   << "testParticleSimulation" 
+                                                   << iteratorInputTable->testParticleSimulationId 
                                                    << "_cartesianElementsPerturbedBody.csv";
             cartesianElementsPerturbedBodyFile.open( 
                 cartesianElementsPerturbedBodyFilename.str( ).c_str( ) );
             cartesianElementsPerturbedBodyFilename << "epoch,xPosition,yPosition,zPosition,"
-                                                   << "xVelocity,yVelocity,zVelocity" << std::endl;
+                                                   << "xVelocity,yVelocity,zVelocity" << endl;
             cartesianElementsPerturbedBodyFilename 
-                << "# [s],[m],[m],[m],[m s^-1],[m s^-1],[m s^-1]" << std::endl;                                               
+                << "# [s],[m],[m],[m],[m s^-1],[m s^-1],[m s^-1]" << endl;
         }
 
         // Set output counter.
@@ -835,7 +826,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 isOppositionEventDetected = false;
 
                 // Find data point at opposition event.
-                iteratorDataPoint = std::max_element( 
+                iteratorDataPoint = max_element( 
                     dataPoints.begin( ), dataPoints.end( ), compareMutualDistances );
 
                 // Add opposition event to table.
@@ -853,8 +844,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 // Set flag to true.
                 isOppositionEventDetected = true;
 
-                // Find data point at conjunctiion event.
-                iteratorDataPoint = std::min_element( 
+                // Find data point at conjunction event.
+                iteratorDataPoint = min_element( 
                     dataPoints.begin( ), dataPoints.end( ), compareMutualDistances );
 
                 // Add conjunction event to table.
@@ -905,12 +896,12 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 if ( iteratorDataPoint->epoch > outputInterval * outputCounter - synodicPeriod )
                 {
                     mutualDistanceFile 
-                         << std::setprecision( std::numeric_limits< double >::digits10 )
+                         << setprecision( numeric_limits< double >::digits10 )
                          << iteratorDataPoint->epoch << "," 
-                         << iteratorDataPoint->mutualDistance << std::endl;
+                         << iteratorDataPoint->mutualDistance << endl;
 
                     keplerianElementsFile 
-                         << std::setprecision( std::numeric_limits< double >::digits10 )
+                         << setprecision( numeric_limits< double >::digits10 )
                          << iteratorDataPoint->epoch << "," 
                          << iteratorDataPoint->testParticleStateInKeplerianElements( 
                                 semiMajorAxisIndex ) << ","
@@ -923,20 +914,20 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                          << iteratorDataPoint->testParticleStateInKeplerianElements( 
                                 longitudeOfAscendingNodeIndex ) << ","
                          << iteratorDataPoint->testParticleStateInKeplerianElements( 
-                                trueAnomalyIndex ) << std::endl; 
+                                trueAnomalyIndex ) << endl; 
 
                     cartesianElementsFile 
-                         << std::setprecision( std::numeric_limits< double >::digits10 )
+                         << setprecision( numeric_limits< double >::digits10 )
                          << iteratorDataPoint->epoch << "," 
                          << testParticle->getCurrentState( )( xPositionIndex ) << ","
                          << testParticle->getCurrentState( )( yPositionIndex ) << ","
                          << testParticle->getCurrentState( )( zPositionIndex ) << ","
                          << testParticle->getCurrentState( )( xVelocityIndex ) << ","
                          << testParticle->getCurrentState( )( yVelocityIndex ) << ","
-                         << testParticle->getCurrentState( )( zVelocityIndex ) << std::endl;                                            
+                         << testParticle->getCurrentState( )( zVelocityIndex ) << endl;                                            
 
                     keplerianElementsPerturbedBodyFile 
-                         << std::setprecision( std::numeric_limits< double >::digits10 )
+                         << setprecision( numeric_limits< double >::digits10 )
                          << iteratorDataPoint->epoch << "," 
                          << iteratorDataPoint->perturbedBodyStateInKeplerianElements( 
                                 semiMajorAxisIndex ) << ","
@@ -949,17 +940,17 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                          << iteratorDataPoint->perturbedBodyStateInKeplerianElements( 
                                 longitudeOfAscendingNodeIndex ) << ","
                          << iteratorDataPoint->perturbedBodyStateInKeplerianElements( 
-                                trueAnomalyIndex ) << std::endl;        
+                                trueAnomalyIndex ) << endl;        
 
                     cartesianElementsPerturbedBodyFile 
-                         << std::setprecision( std::numeric_limits< double >::digits10 )
+                         << setprecision( numeric_limits< double >::digits10 )
                          << iteratorDataPoint->epoch << "," 
                          << testParticle->getCurrentState( )( xPositionIndex ) << ","
                          << testParticle->getCurrentState( )( yPositionIndex ) << ","
                          << testParticle->getCurrentState( )( zPositionIndex ) << ","
                          << testParticle->getCurrentState( )( xVelocityIndex ) << ","
                          << testParticle->getCurrentState( )( yVelocityIndex ) << ","
-                         << testParticle->getCurrentState( )( zVelocityIndex ) << std::endl; 
+                         << testParticle->getCurrentState( )( zVelocityIndex ) << endl; 
 
                     outputCounter++;
                 }               
@@ -981,8 +972,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // In case this is true, emit a warning message and skip the current simulation.
         if ( conjunctionEvents.size( ) == 0 || oppositionEvents.size( ) == 0 ) 
         {
-             std::cerr << "WARNING: Zero conjunction or opposition events were detected!"
-                       << std::endl;
+             cerr << "WARNING: Zero conjunction or opposition events were detected!" << endl;
         }      
 
         // Check if epoch of last conjunction event is greater than that of the last opposition 
@@ -1037,13 +1027,13 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         if ( iequals( outputMode, "FILE" ) )
         {
             // Set up and populate opposition events output file.
-            std::ostringstream oppositionEventsFilename;
-            oppositionEventsFilename << fileOutputDirectory << "simulation" 
-                                     << iteratorInputTable->simulationId 
+            ostringstream oppositionEventsFilename;
+            oppositionEventsFilename << fileOutputDirectory << "testParticleSimulation" 
+                                     << iteratorInputTable->testParticleSimulationId 
                                      << "_oppositionEvents.csv";
-            std::ofstream oppositionEventsFile( oppositionEventsFilename.str( ).c_str( ) );
-            oppositionEventsFile << "epoch,mutualDistance" << std::endl;
-            oppositionEventsFile << "# [s],[m]" << std::endl;        
+            ofstream oppositionEventsFile( oppositionEventsFilename.str( ).c_str( ) );
+            oppositionEventsFile << "epoch,mutualDistance" << endl;
+            oppositionEventsFile << "# [s],[m]" << endl;        
 
             for ( PropagationDataPointTable::iterator iteratorOppositionEvents 
                   = oppositionEvents.begin( );
@@ -1051,21 +1041,21 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                   iteratorOppositionEvents++ )
             {
                 oppositionEventsFile 
-                    << std::setprecision( std::numeric_limits< double >::digits10 )
+                    << setprecision( numeric_limits< double >::digits10 )
                     << iteratorOppositionEvents->epoch << "," 
-                    << iteratorOppositionEvents->mutualDistance << std::endl;
+                    << iteratorOppositionEvents->mutualDistance << endl;
             }
 
             oppositionEventsFile.close( );
 
             // Set up and populate conjunction events output file.
-            std::ostringstream conjunctionEventsFilename;
-            conjunctionEventsFilename << fileOutputDirectory << "simulation" 
-                                      << iteratorInputTable->simulationId 
+            ostringstream conjunctionEventsFilename;
+            conjunctionEventsFilename << fileOutputDirectory << "testParticleSimulation" 
+                                      << iteratorInputTable->testParticleSimulationId 
                                       << "_conjunctionEvents.csv";
-            std::ofstream conjunctionEventsFile( conjunctionEventsFilename.str( ).c_str( ) );
-            conjunctionEventsFile << "epoch,mutualDistance" << std::endl;
-            conjunctionEventsFile << "# [s],[m]" << std::endl;        
+            ofstream conjunctionEventsFile( conjunctionEventsFilename.str( ).c_str( ) );
+            conjunctionEventsFile << "epoch,mutualDistance" << endl;
+            conjunctionEventsFile << "# [s],[m]" << endl;        
 
             for ( PropagationDataPointTable::iterator iteratorConjunctionEvents 
                   = conjunctionEvents.begin( );
@@ -1073,9 +1063,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                   iteratorConjunctionEvents++ )
             {
                 conjunctionEventsFile 
-                    << std::setprecision( std::numeric_limits< double >::digits10 )
+                    << setprecision( numeric_limits< double >::digits10 )
                     << iteratorConjunctionEvents->epoch << "," 
-                    << iteratorConjunctionEvents->mutualDistance << std::endl;
+                    << iteratorConjunctionEvents->mutualDistance << endl;
             }
 
             conjunctionEventsFile.close( );
@@ -1083,13 +1073,13 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
         ///////////////////////////////////////////////////////////////////////////
 
-        // Generate kick table from conjunction and opposition events.
+        // Generate test particle kick table from conjunction and opposition events.
 
-        // Declare kick table.
-        TestParticleKickTable kickTable;
+        // Declare test particle kick table.
+        TestParticleKickTable testParticleKickTable;
 
-        // Loop through tables of conjunction and opposition events to generate entries in kick 
-        // table.
+        // Loop through tables of conjunction and opposition events to generate entries in test 
+        // particle kick table.
         PropagationDataPointTable::iterator iteratorOppositionEventBefore 
             = oppositionEvents.begin( );
         PropagationDataPointTable::iterator iteratorOppositionEventAfter 
@@ -1102,8 +1092,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
               iteratorConjunctionEvents++ )
         {
             // Add new test particle kick to table.
-            kickTable.insert( new TestParticleKick( 
-                0, iteratorInputTable->simulationId, 
+            testParticleKickTable.insert( new TestParticleKick( 
+                0, iteratorInputTable->testParticleSimulationId, 
                 iteratorConjunctionEvents->epoch, iteratorConjunctionEvents->mutualDistance,  
                 iteratorOppositionEventBefore->epoch,
                 iteratorOppositionEventBefore->mutualDistance,
@@ -1117,69 +1107,72 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
             iteratorOppositionEventAfter++;
         }
 
-        // Write kick table to database or file based on OUTPUTMODE parameter value.
+        // Write test particle kick table to database or file based on OUTPUTMODE parameter value.
 
         // Check if output mode is set to "FILE".
         if ( iequals( outputMode, "FILE" ) )
         {
-            // Set up kick table output file.
-            std::ostringstream kickTableFilename;
-            kickTableFilename << fileOutputDirectory << "simulation" 
-                              << iteratorInputTable->simulationId << "_kickTable.csv";
-            std::ofstream kickTableFile( kickTableFilename.str( ).c_str( ) );
-            kickTableFile << "conjunctionEpoch,conjunctionDistance,preConjunctionEpoch,"
-                          << "preConjunctionDistance,preConjunctionSemiMajorAxis,"
-                          << "preConjunctionEccentricity,preConjunctionInclination," 
-                          << "preConjunctionArgumentOfPeriapsis, "
-                          << "preConjunctionLongitudeOfAscendingNode,preConjunctionTrueAnomaly, "
-                          << "postConjunctionEpoch,postConjunctionDistance,"
-                          << "postConjunctionSemiMajorAxis,postConjunctionEccentricity,"
-                          << "postConjunctionInclination,postConjunctionArgumentOfPeriapsis, "
-                          << "postConjunctionLongitudeOfAscendingNode,postConjunctionTrueAnomaly, "
-                          << std::endl;
-            kickTableFile << "# [s],[m],[s],[m],[m],[-],[rad],[rad],[rad],[rad], "
-                          << "[s],[m],[m],[-],[rad],[rad],[rad],[rad]" << std::endl;        
+            // Set up test particle kick table output file.
+            ostringstream testParticleKickTableFilename;
+            testParticleKickTableFilename << fileOutputDirectory << "testParticleSimulation" 
+                              << iteratorInputTable->testParticleSimulationId << "_kickTable.csv";
+            ofstream testParticleKickTableFile( testParticleKickTableFilename.str( ).c_str( ) );
+            testParticleKickTableFile 
+                << "conjunctionEpoch,conjunctionDistance,preConjunctionEpoch,"
+                << "preConjunctionDistance,preConjunctionSemiMajorAxis,"
+                << "preConjunctionEccentricity,preConjunctionInclination," 
+                << "preConjunctionArgumentOfPeriapsis, "
+                << "preConjunctionLongitudeOfAscendingNode,preConjunctionTrueAnomaly, "
+                << "postConjunctionEpoch,postConjunctionDistance,"
+                << "postConjunctionSemiMajorAxis,postConjunctionEccentricity,"
+                << "postConjunctionInclination,postConjunctionArgumentOfPeriapsis, "
+                << "postConjunctionLongitudeOfAscendingNode,postConjunctionTrueAnomaly, "
+                << endl;
+            testParticleKickTableFile << "# [s],[m],[s],[m],[m],[-],[rad],[rad],[rad],[rad], "
+                                      << "[s],[m],[m],[-],[rad],[rad],[rad],[rad]" << endl;        
 
-            // Loop through kick table and write data to file.
-            for ( TestParticleKickTable::iterator iteratorKickTable = kickTable.begin( );
-                  iteratorKickTable != kickTable.end( );
+            // Loop through test particle kick table and write data to file.
+            for ( TestParticleKickTable::iterator iteratorKickTable 
+                    = testParticleKickTable.begin( );
+                  iteratorKickTable != testParticleKickTable.end( );
                   iteratorKickTable++ )
             {
-                kickTableFile << std::setprecision( std::numeric_limits< double >::digits10 )
-                              << iteratorKickTable->conjunctionEpoch << "," 
-                              << iteratorKickTable->conjunctionDistance << ","
-                              << iteratorKickTable->preConjunctionEpoch << ","
-                              << iteratorKickTable->preConjunctionDistance << ","
-                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
-                                                        semiMajorAxisIndex ) << ","
-                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
-                                                        eccentricityIndex ) << ","
-                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
-                                                        inclinationIndex ) << ","
-                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
-                                                        argumentOfPeriapsisIndex ) << ","
-                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
-                                                        longitudeOfAscendingNodeIndex ) << ","
-                              << iteratorKickTable->preConjunctionStateInKeplerianElements( 
-                                                        trueAnomalyIndex ) << ","                                                                                                                                                                                                      
-                              << iteratorKickTable->postConjunctionEpoch << ","
-                              << iteratorKickTable->postConjunctionDistance << ","
-                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
-                                                        semiMajorAxisIndex ) << ","
-                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
-                                                        eccentricityIndex ) << ","
-                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
-                                                        inclinationIndex ) << ","
-                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
-                                                        argumentOfPeriapsisIndex ) << ","
-                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
-                                                        longitudeOfAscendingNodeIndex ) << ","
-                              << iteratorKickTable->postConjunctionStateInKeplerianElements( 
-                                                        trueAnomalyIndex ) << std::endl;
+                testParticleKickTableFile 
+                    << setprecision( numeric_limits< double >::digits10 )
+                    << iteratorKickTable->conjunctionEpoch << "," 
+                    << iteratorKickTable->conjunctionDistance << ","
+                    << iteratorKickTable->preConjunctionEpoch << ","
+                    << iteratorKickTable->preConjunctionDistance << ","
+                    << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                            semiMajorAxisIndex ) << ","
+                    << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                            eccentricityIndex ) << ","
+                    << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                            inclinationIndex ) << ","
+                    << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                            argumentOfPeriapsisIndex ) << ","
+                    << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                            longitudeOfAscendingNodeIndex ) << ","
+                    << iteratorKickTable->preConjunctionStateInKeplerianElements( 
+                                            trueAnomalyIndex ) << ","
+                    << iteratorKickTable->postConjunctionEpoch << ","
+                    << iteratorKickTable->postConjunctionDistance << ","
+                    << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                            semiMajorAxisIndex ) << ","
+                    << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                            eccentricityIndex ) << ","
+                    << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                            inclinationIndex ) << ","
+                    << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                            argumentOfPeriapsisIndex ) << ","
+                    << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                            longitudeOfAscendingNodeIndex ) << ","
+                    << iteratorKickTable->postConjunctionStateInKeplerianElements( 
+                                            trueAnomalyIndex ) << endl;
             }
 
             // Close output file.
-            kickTableFile.close( );
+            testParticleKickTableFile.close( );
         }
 
         // Else, check if output mode is set to "DATABASE".
@@ -1190,14 +1183,17 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 #pragma omp critical( writeKickTableToDatabase )
             {
                 // Write kick table to database.
-                populateTestParticleKickTable( databasePath, iteratorInputTable->simulationId, 
-                    kickTable, testParticleKickTableName, testParticleInputTableName );
+                populateTestParticleKickTable( databasePath, 
+                    iteratorInputTable->testParticleSimulationId, testParticleKickTable, 
+                    testParticleKickTableName, testParticleInputTableName );
             }
         }
 
         ///////////////////////////////////////////////////////////////////////////
-    } // outer for-loop
+    } // simulation for-loop
 
-    // If program is successfully completed, return 0.
-    return EXIT_SUCCESS;
+    ///////////////////////////////////////////////////////////////////////////
 }
+
+} // namespace application_modes
+} // namespace stomi

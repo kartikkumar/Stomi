@@ -45,13 +45,20 @@ bin/
 build/
 lib/
 qtcreator-build/
+debug/
 CMakeLists.txt.user
 *.sublime-*
+
+# Documentation #
+######################
+documentation/
+Documentation/
+docs/
+doc/
 
 # Miscellaneous #
 ######################
 *.diff
-Documentation/
-Databases/
-plots/
 temp/
+tests/
+test/

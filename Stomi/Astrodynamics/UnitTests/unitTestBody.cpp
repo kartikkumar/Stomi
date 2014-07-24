@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <string>
@@ -24,7 +24,7 @@ namespace unit_tests
 
 BOOST_AUTO_TEST_SUITE( test_body )
 
-//! Test implementation of  body containing 3D state (position, velocity) and time.
+//! Test implementation of body containing 3D state (position, velocity) and time.
 BOOST_AUTO_TEST_CASE( testBodyCreationAndUpdatingWithTime )
 {
     // Set name of body.
@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE( testBodyCreationAndUpdatingWithTime )
     BOOST_CHECK_EQUAL( testBody->getCurrentTime( ), updatedTime );
 }
 
-//! Test implementation of  body containing 3D state (position, velocity) and no time.
+//! Test implementation of body containing 3D state (position, velocity) and no time.
 BOOST_AUTO_TEST_CASE( testBodyCreationAndUpdatingWithoutTime )
 {
     // Set name of body.

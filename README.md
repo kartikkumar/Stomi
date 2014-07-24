@@ -4,7 +4,7 @@ Stomi
 `Stomi` is a toolbox that can be used to study stochastic migration procesess in the Solar System. The toolbox breaks down the full N-body problem into a two-stage sequence:
 
 1. Test particle simulator, implementing the Restricted 3-Body Problem
-2. Random walk simulator, aggregating the back-reaction of a cloud of perturbers (using the test particle simulation data) on the large migrating body
+2. Random walk simulator, aggregating the back-reaction of a cloud of perturbers (using test particle simulation data) on the large migrating body
 
 For an example use of this toolbox, take a look at (Kumar et al., 2014).
 
@@ -47,7 +47,14 @@ To clone the `Stomi` toolbox, simply execute the following from your terminal:
 > git clone https://github.com/kartikkumar/Stomi.git
 ```
 
-Move into the `Stomi` directory and create a `build` directory:
+Move into the `Stomi` directory and initialize submodules:
+
+```
+> git submodule init
+> git submodule update
+```
+
+This will ensure that all submodules are downloaded into the relevant sub-directories. Next, create a `build` directory:
 
 ```
 > mkdir build
@@ -96,6 +103,15 @@ License
 ------
 
 See [COPYING](https://github.com/kartikkumar/Stomi/blob/master/COPYING).
+
+Version
+------
+
+This section defines the current version of Stomi using CMake variables.
+
+Stomi_VERSION_MAJOR 2
+Stomi_VERSION_MINOR 0
+Stomi_VERSION_PATCH 0
 
 Disclaimer
 ------

@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <stdexcept>
@@ -25,16 +25,15 @@ namespace stomi
 namespace database
 {
 
-
 //! Get test particle case data.
 TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolutePath, 
-                                             const int caseId,
+                                             const int testParticleCaseId,
                                              const std::string& testParticleCaseTableName )
 {
     // Set stream with database query.
     std::ostringstream testParticleCaseQuery;
     testParticleCaseQuery << "SELECT * FROM " <<  testParticleCaseTableName 
-                          << " WHERE \"caseId\" = \"" << caseId << "\";";
+                          << " WHERE \"testParticleCaseId\" = \"" << testParticleCaseId << "\";";
 
     // Open database in read-only mode.          
     SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY );
@@ -70,13 +69,14 @@ TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolute
 
 //! Get test particle case data.
 TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolutePath, 
-                                             const std::string& caseName,
+                                             const std::string& testParticleCaseName,
                                              const std::string& testParticleCaseTableName )
 {
     // Set stream with database query.
     std::ostringstream testParticleCaseIdQuery;
-    testParticleCaseIdQuery << "SELECT caseId FROM " << testParticleCaseTableName 
-                            << " WHERE \"caseName\" = \"" << caseName << "\";";
+    testParticleCaseIdQuery << "SELECT testParticleCaseId FROM " << testParticleCaseTableName 
+                            << " WHERE \"testParticleCaseName\" = \"" 
+                            << testParticleCaseName << "\";";
 
     // Open database in read-only mode.          
     SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY ); 
@@ -87,7 +87,7 @@ TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolute
     // Get row of case data.
     query.executeStep( );
 
-    const int caseId = query.getColumn( 0 );
+    const int testParticleCaseId = query.getColumn( 0 );
 
     // Throw an error if there are multiple rows present in the table.
     if ( query.executeStep( ) )
@@ -96,18 +96,19 @@ TestParticleCasePointer getTestParticleCase( const std::string& databaseAbsolute
     }
     
     // Get test particle case from database and return data object.
-    return getTestParticleCase( databaseAbsolutePath, caseId, testParticleCaseTableName );   
+    return getTestParticleCase( 
+        databaseAbsolutePath, testParticleCaseId, testParticleCaseTableName );   
 }
 
-// //! Get test particle input table.
+//! Get complete test particle input table.
 TestParticleInputTable getCompleteTestParticleInputTable(
-        const std::string& databaseAbsolutePath, const int caseId,
+        const std::string& databaseAbsolutePath, const int testParticleCaseId,
         const std::string& testParticleInputTableName, bool isCompleted )
 {
     // Set stream with query.
     std::ostringstream testParticleInputQuery;
     testParticleInputQuery << "SELECT * FROM " << testParticleInputTableName
-                           << " WHERE \"testParticleCaseId\" = " << caseId 
+                           << " WHERE \"testParticleCaseId\" = " << testParticleCaseId 
                            << " AND \"completed\" = " << isCompleted << ";";
 
     // Open database in read-only mode.          
@@ -146,16 +147,16 @@ TestParticleInputTable getCompleteTestParticleInputTable(
     return testParticleInputTable;
 }
 
-//! Get test particle input table.
+//! Get selected test particle input table.
 TestParticleInputTable getSelectedTestParticleInputTable(
-        const std::string& databaseAbsolutePath, const int caseId,
+        const std::string& databaseAbsolutePath, const int testParticleCaseId,
         const std::string& testParticleSimulationIds,
         const std::string& testParticleInputTableName )
 { 
     // Cast simulation IDs to vector of string tokens.
     std::vector< std::string > testParticleSimulationIdTokens;
     boost::split( testParticleSimulationIdTokens, testParticleSimulationIds,
-                  boost::is_any_of( " " ), boost::token_compress_on );
+                  boost::is_any_of( " " ), boost::token_compress_on );    
 
     // Populate vector of test particle simulation IDs.
     std::vector< int > testParticleSimulationIdsVector;
@@ -175,8 +176,8 @@ TestParticleInputTable getSelectedTestParticleInputTable(
     // Set up query statement.
     std::ostringstream testParticleInputQuery;
     testParticleInputQuery << "SELECT * FROM " << testParticleInputTableName
-                           << " WHERE \"testParticleCaseId\" == " << caseId
-                           << " AND \"simulationId\" == :simulationId;";
+                           << " WHERE \"testParticleCaseId\" == " << testParticleCaseId
+                           << " AND \"testParticleSimulationId\" == :testParticleSimulationId;";
 
     // Compile a SQL query.
     SQLite::Statement query( database, testParticleInputQuery.str( ).c_str( ) );
@@ -188,7 +189,7 @@ TestParticleInputTable getSelectedTestParticleInputTable(
     for ( unsigned int i = 0; i < testParticleSimulationIdsVector.size( ); i++ )
     {
         // Bind simulation ID to query.
-        query.bind( ":simulationId", testParticleSimulationIdsVector.at( i ) );
+        query.bind( ":testParticleSimulationId", testParticleSimulationIdsVector.at( i ) );
 
         // Execute select query.
         // A run-time error will be thrown if the requested simulation ID can't be found.
@@ -207,7 +208,8 @@ TestParticleInputTable getSelectedTestParticleInputTable(
         else
         {
             std::ostringstream errorMessage;
-            errorMessage << "ERROR: Simulation " << testParticleSimulationIdsVector.at( i ) 
+            errorMessage << "ERROR: Test particle simulation " 
+                         << testParticleSimulationIdsVector.at( i ) 
                          << " could not be found in input table!";
             throw std::runtime_error( errorMessage.str( ) );
         }
@@ -226,7 +228,7 @@ TestParticleInputTable getSelectedTestParticleInputTable(
 //! Get test particle kick table.
 TestParticleKickTable getTestParticleKickTable(
         const std::string& databaseAbsolutePath, const double randomWalkSimulationPeriod, 
-        const std::vector< int >& selectedSimulationIds, 
+        const std::vector< int >& selectedTestParticleSimulationIds, 
         const std::string& testParticleKickTableName )
 {
     // Open database in read-only mode.          
@@ -238,7 +240,7 @@ TestParticleKickTable getTestParticleKickTable(
     // Set up query statement.
     std::ostringstream testParticleKickQuery;
     testParticleKickQuery << "SELECT * FROM " << testParticleKickTableName
-                          << " WHERE \"testParticleSimulationId\" == :simulationId"
+                          << " WHERE \"testParticleSimulationId\" == :testParticleSimulationId"
                           << " AND \"conjunctionEpoch\" > 0.0"
                           << " AND \"conjunctionEpoch\" < " << randomWalkSimulationPeriod << ";";
 
@@ -249,10 +251,10 @@ TestParticleKickTable getTestParticleKickTable(
     TestParticleKickTable testParticleKickTable;
     
     // Loop through the table retrieved from the database, step-by-step.
-    for ( unsigned int i = 0; i < selectedSimulationIds.size( ); i++ )
+    for ( unsigned int i = 0; i < selectedTestParticleSimulationIds.size( ); i++ )
     {
         // Bind simulation ID to query.
-        query.bind( ":simulationId", selectedSimulationIds.at( i ) );
+        query.bind( ":testParticleSimulationId", selectedTestParticleSimulationIds.at( i ) );
 
         // Set flag to indicate if at least one row has been found for the selected simulation ID.
         bool isSimulationIdFound = false;
@@ -260,7 +262,7 @@ TestParticleKickTable getTestParticleKickTable(
         // Execute select query.
         while ( query.executeStep( ) )
         {
-            // Set flag indicating that simulation ID was found to true.
+            // Set flag indicating that test particle simulation ID was found to true.
             isSimulationIdFound = true;
 
             // Store fetched row in test particle input struct.
@@ -280,7 +282,8 @@ TestParticleKickTable getTestParticleKickTable(
         if ( !isSimulationIdFound )
         {
             std::ostringstream errorMessage;
-            errorMessage << "ERROR: Simulation " << selectedSimulationIds.at( i )
+            errorMessage << "ERROR: Test particle simulation " 
+                         << selectedTestParticleSimulationIds.at( i )
                          << " could not be found in kick table!";
             throw std::runtime_error( errorMessage.str( ) );
         }
@@ -296,27 +299,27 @@ TestParticleKickTable getTestParticleKickTable(
     return testParticleKickTable;
 }
 
-//! Get random walk case data.
-RandomWalkCasePointer getRandomWalkCase( const std::string& databaseAbsolutePath, 
-                                         const std::string& caseName,
-                                         const std::string& randomWalkCaseTableName )
+//! Get random walk run data.
+RandomWalkRunPointer getRandomWalkRun( const std::string& databaseAbsolutePath, 
+                                       const std::string& randomWalkRunName,
+                                       const std::string& randomWalkRunTableName )
 {
     // Set stream with database query.
-    std::ostringstream randomWalkCaseQuery;
-    randomWalkCaseQuery << "SELECT * FROM " <<  randomWalkCaseTableName 
-                        << " WHERE \"caseName\" = \"" << caseName << "\";";
+    std::ostringstream randomWalkRunQuery;
+    randomWalkRunQuery << "SELECT * FROM " <<  randomWalkRunTableName 
+                        << " WHERE \"randomWalkRunName\" = \"" << randomWalkRunName << "\";";
 
     // Open database in read-only mode.          
     SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY );
 
     // Set up database query.
-    SQLite::Statement query( database, randomWalkCaseQuery.str( ).c_str( ));
+    SQLite::Statement query( database, randomWalkRunQuery.str( ).c_str( ));
 
-    // Get row of case data.
+    // Get row of run data.
     query.executeStep( );
 
-    // Store data in random walk case object.
-    const RandomWalkCasePointer randomWalkCase = boost::make_shared< RandomWalkCase >(
+    // Store data in random walk run object.
+    const RandomWalkRunPointer randomWalkRun = boost::make_shared< RandomWalkRun >(
         query.getColumn( 0 ), query.getColumn( 1 ), query.getColumn( 2 ),  
         query.getColumn( 3 ), query.getColumn( 4 ), query.getColumn( 5 ),
         query.getColumn( 6 ), query.getColumn( 7 ) );
@@ -324,22 +327,22 @@ RandomWalkCasePointer getRandomWalkCase( const std::string& databaseAbsolutePath
     // Throw an error if there are multiple rows present in the table.
     if ( query.executeStep( ) )
     {
-        throw std::runtime_error( "ERROR: Multiple rows for case in table!" );
+        throw std::runtime_error( "ERROR: Multiple rows for random walk run in table!" );
     }
 
-    return randomWalkCase;    
+    return randomWalkRun;    
 }
 
 //! Get complete random walk input table.
 RandomWalkInputTable getCompleteRandomWalkInputTable(
-        const std::string& databaseAbsolutePath, const int caseId,
+        const std::string& databaseAbsolutePath, const int randomWalkRunId,
         const std::string& randomWalkInputTableName, 
         const std::string& randomWalkPerturberTableName, bool isCompleted )
 {
     // Set stream with input table query.
     std::ostringstream randomWalkInputQuery;
     randomWalkInputQuery << "SELECT * FROM " << randomWalkInputTableName
-                         << " WHERE \"randomWalkCaseId\" = " << caseId 
+                         << " WHERE \"randomWalkRunId\" = " << randomWalkRunId 
                          << " AND \"completed\" = " << isCompleted << ";";
 
     // Open database in read-only mode.          
@@ -357,12 +360,12 @@ RandomWalkInputTable getCompleteRandomWalkInputTable(
     // Loop through the table retrieved from the database, step-by-step.
     while ( query.executeStep( ) )
     {
-        // Store Monte Carlo run ID.
-        const int monteCarloRunId = query.getColumn( 0 );
+        // Store random walk simulation ID.
+        const int randomWalkSimulationId = query.getColumn( 0 );
 
         // Fetch list of perturbers.
         const std::vector< int > perturbers = getRandomWalkPerturberList( 
-            databaseAbsolutePath, monteCarloRunId, randomWalkPerturberTableName );
+            databaseAbsolutePath, randomWalkSimulationId, randomWalkPerturberTableName );
 
         // Store fetched row in random walk input struct.
         randomWalkInputTable.insert(
@@ -387,23 +390,23 @@ RandomWalkInputTable getCompleteRandomWalkInputTable(
 
 //! Get selected random walk input table.
 RandomWalkInputTable getSelectedRandomWalkInputTable(
-        const std::string& databaseAbsolutePath, const int caseId,
-        const std::string& monteCarloRunIds,
-        const std::string& randomWalkInputTableName, 
+        const std::string& databaseAbsolutePath, const int randomWalkRunId,
+        const std::string& randomWalkSimulationIds,
+        const std::string& randomWalkInputTableName,
         const std::string& randomWalkPerturberTableName )
 {
-    // Cast Monte Carlo run IDs to vector of string tokens.
-    std::vector< std::string > monteCarloRunIdTokens;
-    boost::split( monteCarloRunIdTokens, monteCarloRunIds,
+    // Cast random walk simulation IDs to vector of string tokens.
+    std::vector< std::string > randomWalkSimulationIdTokens;
+    boost::split( randomWalkSimulationIdTokens, randomWalkSimulationIds,
                   boost::is_any_of( " " ), boost::token_compress_on );
 
-    // Populate vector of random walk monte Carlo Run IDs.
-    std::vector< int > monteCarloRunIdsVector;
+    // Populate vector of random walk simulation IDs.
+    std::vector< int > randomWalkSimulationIdsVector;
 
-    for ( unsigned int i = 0; i < monteCarloRunIdTokens.size( ); i++ )
+    for ( unsigned int i = 0; i < randomWalkSimulationIdTokens.size( ); i++ )
     {
-        monteCarloRunIdsVector.push_back(
-                    boost::lexical_cast< int >( monteCarloRunIdTokens.at( i ) ) );
+        randomWalkSimulationIdsVector.push_back(
+                    boost::lexical_cast< int >( randomWalkSimulationIdTokens.at( i ) ) );
     }
 
     // Open database in read-only mode.          
@@ -415,8 +418,8 @@ RandomWalkInputTable getSelectedRandomWalkInputTable(
     // Set up query statement.
     std::ostringstream randomWalkInputQuery;
     randomWalkInputQuery << "SELECT * FROM " << randomWalkInputTableName
-                         << " WHERE \"randomWalkCaseId\" = " << caseId
-                         << " AND \"monteCarloRunId\" = :monteCarloRunId;";         
+                         << " WHERE \"randomWalkRunId\" = " << randomWalkRunId
+                         << " AND \"randomWalkSimulationId\" = :randomWalkSimulationId;";         
 
     // Compile a SQL query.
     SQLite::Statement query( database, randomWalkInputQuery.str( ).c_str( ) );
@@ -425,10 +428,10 @@ RandomWalkInputTable getSelectedRandomWalkInputTable(
     RandomWalkInputTable randomWalkInputTable;
 
     // Loop through the table retrieved from the database, step-by-step.
-    for ( unsigned int i = 0; i < monteCarloRunIdsVector.size( ); i++ )
+    for ( unsigned int i = 0; i < randomWalkSimulationIdsVector.size( ); i++ )
     {
-        // Bind Monte Carlo run ID to query.
-        query.bind( ":monteCarloRunId", monteCarloRunIdsVector.at( i ) );
+        // Bind random walk simulation ID to query.
+        query.bind( ":randomWalkSimulationId", randomWalkSimulationIdsVector.at( i ) );
 
         // Execute select query.
         // A run-time error will be thrown if the requested simulation ID can't be found.
@@ -436,7 +439,7 @@ RandomWalkInputTable getSelectedRandomWalkInputTable(
 
         // Fetch list of perturbers.
         const std::vector< int > perturbers = getRandomWalkPerturberList( 
-            databaseAbsolutePath, monteCarloRunIdsVector.at( i ), 
+            databaseAbsolutePath, randomWalkSimulationIdsVector.at( i ), 
             randomWalkPerturberTableName );
 
         // Store fetched row in random walk input struct.
@@ -456,15 +459,16 @@ RandomWalkInputTable getSelectedRandomWalkInputTable(
     return randomWalkInputTable;
 }
 
-//! Get list of selected test particle simulation IDs for random walk Monte Carlo run.
+//! Get list of selected perturbers for random walk simulation.
 std::vector< int > getRandomWalkPerturberList(
-        const std::string& databaseAbsolutePath, const unsigned int monteCarloRunId,
+        const std::string& databaseAbsolutePath, const unsigned int randomWalkSimulationId,
         const std::string& randomWalkPerturberTableName )
 {
     // Set stream with perturber table query.
     std::ostringstream randomWalkPerturberQuery;
     randomWalkPerturberQuery << "SELECT * FROM " << randomWalkPerturberTableName
-                             << " WHERE \"monteCarloRunId\" = " << monteCarloRunId << ";";
+                             << " WHERE \"randomWalkSimulationId\" = " << randomWalkSimulationId 
+                             << ";";
 
     // Open database in read-only mode.          
     SQLite::Database database( databaseAbsolutePath.c_str( ), SQLITE_OPEN_READONLY );
@@ -491,7 +495,7 @@ std::vector< int > getRandomWalkPerturberList(
     if ( perturbers.size( ) == 0 )
     {
         // Throw run-time error.
-        throw std::runtime_error( "ERROR: List of perturbers is empty!" );
+        throw std::runtime_error( "ERROR: List of random walk perturbers is empty!" );
     }                    
 
     // Return perturber list.

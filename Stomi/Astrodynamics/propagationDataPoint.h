@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #ifndef STOMI_PROPAGATION_DATA_POINT_H
@@ -47,7 +47,7 @@ struct PropagationDataPoint
     //! Overload assignment-operator.
     PropagationDataPoint& operator=( const PropagationDataPoint& sourceDataPoint );
 
-    //! Wpoch.
+    //! Epoch.
     double epoch;
 
     //! Mutual distance.
@@ -66,7 +66,7 @@ typedef boost::shared_ptr< PropagationDataPoint > PropagationDataPointPointer;
 //! Typedef for table of propgation data points test particle simulations.
 typedef std::set< PropagationDataPoint > PropagationDataPointTable;
 
-// // Define all of the operator overloads as non-member functions (sbi, 2010).
+// Define all of the operator overloads as non-member functions (sbi, 2010).
 
 //! Overload == operator.
 bool operator==( const PropagationDataPoint& propagationDataPoint1,

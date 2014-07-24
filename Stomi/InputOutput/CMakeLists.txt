@@ -1,23 +1,23 @@
- #    Copyright (c) 2010-2014, Delft University of Technology
- #    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- #    All rights reserved.
- #    See http://bit.ly/12SHPLR for license details.
+# Copyright (c) 2010-2014, Delft University of Technology
+# Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+# All rights reserved.
+# See http://bit.ly/12SHPLR for license details.
 
 # Set source files.
 set(INPUTOUTPUT_SOURCES
-  "${SRCROOT}${INPUTOUTPUTDIR}/dictionaries.cpp"
+  "${SOURCE_ROOT}${INPUTOUTPUT_DIR}/dictionaries.cpp"
 )
 
 # Set header files.
 set(INPUTOUTPUT_HEADERS
-  "${SRCROOT}${INPUTOUTPUTDIR}/dictionaries.h"
-  "${SRCROOT}${INPUTOUTPUTDIR}/rootPath.h"
+  "${SOURCE_ROOT}${INPUTOUTPUT_DIR}/dictionaries.h"
+  "${SOURCE_ROOT}${INPUTOUTPUT_DIR}/rootPath.h"
 )
 
 # Set unit test files.
 set(INPUTOUTPUT_UNIT_TESTS
-    "${SRCROOT}${INPUTOUTPUTDIR}/UnitTests/unitTestInputOutput.cpp"
-    "${SRCROOT}${INPUTOUTPUTDIR}/UnitTests/unitTestRootPath.cpp"
+    "${SOURCE_ROOT}${INPUTOUTPUT_DIR}/UnitTests/unitTestInputOutput.cpp"
+    "${SOURCE_ROOT}${INPUTOUTPUT_DIR}/UnitTests/unitTestRootPath.cpp"
 )
 
 # Add static library.

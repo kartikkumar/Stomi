@@ -1,17 +1,15 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <cmath>
-#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
-#include <string>
 
 #include <boost/filesystem.hpp>
 #include <boost/random/normal_distribution.hpp>
@@ -23,26 +21,28 @@
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/hillSphere.h> 
 #include <Assist/Astrodynamics/unitConversions.h>
-#include <Assist/InputOutput/basicInputOutput.h>
-#include <Assist/Mathematics/statistics.h>
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/astrodynamicsFunctions.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/unitConversions.h>
 #include <TudatCore/Mathematics/BasicMathematics/basicMathematicsFunctions.h>
-#include <TudatCore/Mathematics/BasicMathematics/mathematicalConstants.h>
 
 #include <Tudat/Astrodynamics/BasicAstrodynamics/convertMeanAnomalyToEccentricAnomaly.h>
 #include <Tudat/InputOutput/dictionaryTools.h>
-#include <Tudat/InputOutput/fieldType.h>
-#include <Tudat/InputOutput/separatedParser.h>
-#include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 #include <Tudat/Mathematics/BasicMathematics/linearAlgebraTypes.h>
 
+#include "Stomi/ApplicationModes/testParticleDatabaseGenerator.h"
 #include "Stomi/InputOutput/dictionaries.h"
 
-//! Execute test particle database generator.
-int main( const int numberOfInputs, const char* inputArguments[ ] )
+namespace stomi
+{
+namespace application_modes
+{
+
+//! Execute test particle database generator application mode.
+void executeTestParticleDatabaseGenerator( 
+    const std::string databasePath, 
+    const tudat::input_output::parsed_data_vector_utilities::ParsedDataVectorPtr parsedData )
 {
     ///////////////////////////////////////////////////////////////////////////
 
@@ -63,18 +63,13 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace SQLite;
 
     using namespace assist::astrodynamics;
-    using namespace assist::input_output;
-    using namespace assist::mathematics;
 
     using namespace tudat::basic_astrodynamics;
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
     using namespace tudat::basic_astrodynamics::unit_conversions;
     using namespace tudat::basic_mathematics;
     using namespace tudat::basic_mathematics::mathematical_constants;
-    using namespace tudat::input_output::dictionary;
-    using namespace tudat::input_output;
-    using namespace tudat::input_output::field_types::general;
-    using namespace tudat::input_output::parsed_data_vector_utilities;
+    using namespace tudat::input_output::dictionary;    
 
     using namespace stomi::input_output;
 
@@ -82,48 +77,27 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     ///////////////////////////////////////////////////////////////////////////
 
-    // Set up input deck.
-
-    // Check number of input parameters is correct (the numberOfInputs variable includes the
-    // application itself, so one is subtracted from this number).
-    checkNumberOfInputArguments( numberOfInputs - 1 );
-
-    // Get input parameter dictionary.
-    DictionaryPointer dictionary = getTestParticleDatabaseGeneratorDictionary( );
-
-    // Read and filter input stream (this can't be declared const because the parser's parse
-    // function is not const-correct at the moment).
-    string filteredInput = readAndFilterInputFile( inputArguments[ 1 ] );
-
-    // Declare a separated parser.
-    SeparatedParser parser( string( ": " ), 2, parameterName, parameterValue );
-
-    // Parse filtered data.
-    const ParsedDataVectorPtr parsedData = parser.parse( filteredInput );
-
-    cout << endl;
-    cout << "****************************************************************************" << endl;
-    cout << "Input parameters" << endl;
-    cout << "****************************************************************************" << endl;
-    cout << endl;
-
     // Extract input parameters.
 
+    // Get dictionary.
+    const DictionaryPointer dictionary = getTestParticleDatabaseGeneratorDictionary( );
+
+    // Print database path to console.
+    cout << "Database                                                  " 
+         << databasePath << endl;
+
     // Extract required parameters.
-    const string databasePath = extractParameterValue< string >(
+    const string testParticleCaseName = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ), 
-                findEntry( dictionary, "DATABASEPATH" ) );
-    cout << "Database                                                  " << databasePath << endl;
+                findEntry( dictionary, "TESTPARTICLECASE" ) );
+    cout << "Test particle case                                        " 
+         << testParticleCaseName << endl;
 
-    const string caseName = extractParameterValue< string >(
-                parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "CASE" ) );
-    cout << "Case                                                      " << caseName << endl;
-
-    const double numberOfSimulations = extractParameterValue< double >(
+    const double monteCarloPopulation = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "NUMBEROFSIMULATIONS" ) );
-    cout << "Number of simulations                                     "
-         << numberOfSimulations << endl;
+                findEntry( dictionary, "MONTECARLOPOPULATION" ) );
+    cout << "Monte Carlo population                                    "
+         << monteCarloPopulation << endl;
 
     const double randomWalkSimulationPeriod = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
@@ -227,7 +201,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
          << semiMajorAxisDistributionLimit << " m" << endl;
 
     // Extract optional parameters (parameters that take on default values if they are not  
-    // specified in the input file).
+    // specified in the configuration file).
 
     const double synodicPeriodMaximum = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
@@ -453,8 +427,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         ostringstream testParticleCaseTableCreate;
         testParticleCaseTableCreate
             << "CREATE TABLE IF NOT EXISTS " << testParticleCaseTableName << " ("
-            << "\"caseId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"                
-            << "\"caseName\" TEXT NOT NULL,"
+            << "\"testParticleCaseId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"                
+            << "\"testParticleCaseName\" TEXT NOT NULL,"
             << "\"randomWalkSimulationPeriod\" REAL NOT NULL,"
             << "\"centralBodyGravitationalParameter\" REAL NOT NULL,"
             << "\"perturbedBodyRadius\" REAL NOT NULL,"
@@ -493,7 +467,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         else
         {
             ostringstream tableCreateError;
-            tableCreateError << "Error: Creating table '" << testParticleCaseTableName 
+            tableCreateError << "ERROR: Creating table '" << testParticleCaseTableName 
                              << "'' failed!";
             throw runtime_error( tableCreateError.str( ).c_str( ) );
         }
@@ -510,28 +484,31 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Check if case is already present in table.
     ostringstream testParticleCaseCheck;
     testParticleCaseCheck << "SELECT COUNT(*) FROM " << testParticleCaseTableName 
-                          << " WHERE \"caseName\" = \"" << caseName << "\"";
+                          << " WHERE \"testParticleCaseName\" = \"" 
+                          << testParticleCaseName << "\"";
     int numberOfCaseRows = database.execAndGet( testParticleCaseCheck.str( ).c_str( ) );
 
     if ( numberOfCaseRows > 1 )
     {
         ostringstream numberOfCaseRowsError;
-        numberOfCaseRowsError << "Error: Table '" << testParticleCaseTableName << "' contains " 
-                              << numberOfCaseRows << " rows for case '" << caseName << "'!";
+        numberOfCaseRowsError << "ERROR: Table '" << testParticleCaseTableName << "' contains " 
+                              << numberOfCaseRows << " rows for test particle case '" 
+                              << testParticleCaseName << "'!";
         throw runtime_error( numberOfCaseRowsError.str( ).c_str( ) );
     }
 
     else if ( numberOfCaseRows == 1 )
     {
-        cout << "Table '" << testParticleCaseTableName << "' contains 1 row of data for case '" 
-             << caseName << "' ... " << "skipping populating table ... " << endl;
+        cout << "Table '" << testParticleCaseTableName 
+             << "' contains 1 row of data for test particle case '" << testParticleCaseName 
+             << "' ... " << "skipping populating table ... " << endl;
     }
 
     // Write test particle case data to table.
     else if ( numberOfCaseRows == 0 )
     {
-        cout << "No data present in table '" << testParticleCaseTableName << "' for case '" 
-             << caseName << "' ... " << endl;
+        cout << "No data present in table '" << testParticleCaseTableName 
+             << "' for test particle case '" << testParticleCaseName << "' ... " << endl;
         cout << "Populating table ... " << endl;
 
         // Create stringstream with test particle case data insert command.
@@ -540,7 +517,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         testParticleCaseDataInsert
             << "INSERT INTO " << testParticleCaseTableName << " VALUES ("
             << "NULL,"
-            << "\"" << caseName << "\",";
+            << "\"" << testParticleCaseName << "\",";
         testParticleCaseDataInsert 
             << std::setprecision( std::numeric_limits< double >::digits10 )
             << randomWalkSimulationPeriod << ","
@@ -586,18 +563,21 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         else
         {
             ostringstream numberOfCaseRowsError;
-            numberOfCaseRowsError << "Error: Table '" << testParticleCaseTableName << "' contains "
-                                  << numberOfCaseRows << " rows for case '" << caseName << "'!";
+            numberOfCaseRowsError << "ERROR: Table '" << testParticleCaseTableName << "' contains "
+                                  << numberOfCaseRows << " rows for test particle case '" 
+                                  << testParticleCaseName << "'!";
             throw runtime_error( numberOfCaseRowsError.str( ).c_str( ) );
         }
     }
 
     // Retrieve and output case id.
-    ostringstream testParticleCaseId;          
-    testParticleCaseId << "SELECT \"caseId\" FROM " << testParticleCaseTableName 
-                       << " WHERE \"caseName\" = \"" << caseName << "\"";
-    const int caseId = database.execAndGet( testParticleCaseId.str( ).c_str( ) );
-    cout << "Case ID is " << caseId << " for case '" << caseName << "'" << endl;
+    ostringstream testParticleCaseIdQuery;          
+    testParticleCaseIdQuery << "SELECT \"testParticleCaseId\" FROM " << testParticleCaseTableName 
+                            << " WHERE \"testParticleCaseName\" = \"" << testParticleCaseName 
+                            << "\"";
+    const int testParticleCaseId = database.execAndGet( testParticleCaseIdQuery.str( ).c_str( ) );
+    cout << "Test Particle case ID is " << testParticleCaseId << " for case '" 
+         << testParticleCaseName << "'" << endl;
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -613,7 +593,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         ostringstream testParticleInputTableCreate;
         testParticleInputTableCreate
             << "CREATE TABLE IF NOT EXISTS " << testParticleInputTableName << " ("
-            << "\"simulationId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"testParticleSimulationId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             << "\"testParticleCaseId\" INTEGER NOT NULL,"
             << "\"completed\" INTEGER NOT NULL,"
             << "\"semiMajorAxis\" REAL NOT NULL,"
@@ -635,7 +615,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         else
         {
             ostringstream tableCreateError;
-            tableCreateError << "Error: Creating table '" << testParticleInputTableName
+            tableCreateError << "ERROR: Creating table '" << testParticleInputTableName
                              << "'' failed!";
             throw runtime_error( tableCreateError.str( ).c_str( ) );
         }
@@ -652,113 +632,118 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Check how many rows are present in table.
     ostringstream testParticleInputRowCount;
     testParticleInputRowCount << "SELECT COUNT(*) FROM " << testParticleInputTableName 
-                              << " WHERE \"caseId\" = " << caseId;
+                              << " WHERE \"testParticleCaseId\" = " << testParticleCaseId;
     const int inputTableRows = database.execAndGet( testParticleInputRowCount.str( ).c_str( ) );
 
     if ( inputTableRows > 0 )
     {
-        cout << "Table '" << testParticleInputTableName << "' contains " << inputTableRows 
-             << " rows for case '" << caseName << "' ... " << endl;
+        cout << "Table '" << testParticleInputTableName << "' already contains " << inputTableRows 
+             << " rows for test particle case '" << testParticleCaseName 
+             << "' ... skipping populating table ..." << endl;
     }
 
-    // Populate table.
-    cout << "Populating input table with " << numberOfSimulations << " new simulations ... " 
-         << endl;
-
-    // Set up database transaction.
-    Transaction testParticleInputTableTransaction( database );
-
-    // Set up test particle input table insert statement.
-    ostringstream testParticleInputTableInsert;
-    testParticleInputTableInsert << "INSERT INTO " << testParticleInputTableName
-                                 << " VALUES (NULL, " << caseId << ", 0, :semiMajorAxis, "
-                                 << ":eccentricity, :inclination, :argumentOfPeriapsis, "
-                                 << ":longitudeOfAscendingNode, :trueAnomaly);";
-
-    // Compile a SQL query.
-    Statement testParticleInputTableInsertQuery( 
-        database, testParticleInputTableInsert.str( ).c_str( ) );
-
-    // Generate test particle input data and populate table.
-    for ( int simulationNumber = 0; simulationNumber < numberOfSimulations; simulationNumber++ )
+    else
     {
-        // Set random eccentricity vector.
-        const Eigen::Vector2d eccentricityVector( generateEccentricityVectorComponent( ),
-                                                  generateEccentricityVectorComponent( ) );
+        // Populate table.
+        cout << "Populating input table with " << monteCarloPopulation << " new simulations ... " 
+             << endl;
 
-        // Compute eccentricity [-].
-        const double eccentricity = eccentricityVector.norm( );
+        // Set up database transaction.
+        Transaction testParticleInputTableTransaction( database );
 
-        // Compute argument of periapsis [rad].
-        const double argumentOfPeriapsis = std::atan2( eccentricityVector.y( ),
-                                                       eccentricityVector.x( ) );
+        // Set up test particle input table insert statement.
+        ostringstream testParticleInputTableInsert;
+        testParticleInputTableInsert << "INSERT INTO " << testParticleInputTableName
+                                     << " VALUES (NULL, " << testParticleCaseId 
+                                     << ", 0, :semiMajorAxis, "
+                                     << ":eccentricity, :inclination, :argumentOfPeriapsis, "
+                                     << ":longitudeOfAscendingNode, :trueAnomaly);";
 
-        // Set random inclination vector.
-        const Eigen::Vector2d inclinationVector( generateInclinationVectorComponent( ),
-                                                 generateInclinationVectorComponent( ) );
+        // Compile a SQL query.
+        Statement testParticleInputTableInsertQuery( 
+            database, testParticleInputTableInsert.str( ).c_str( ) );
 
-        // Compute inclination [rad].
-        const double inclination = inclinationVector.norm( );
-
-        // Compute longitude ascension of ascending node [rad].
-        const double longitudeOfAscendingNode = std::atan2( inclinationVector.y( ),
-                                                            inclinationVector.x( ) );
-
-        // Set random mean anomaly [rad].
-        const double meanAnomaly = generateMeanAnomaly( );
-
-        // Convert mean anomaly to eccentric anomaly [rad].
-        ConvertMeanAnomalyToEccentricAnomaly convertMeanAnomalyToEccentricAnomaly(
-                    eccentricity, meanAnomaly );
-        const double eccentricAnomaly = convertMeanAnomalyToEccentricAnomaly.convert( );
-
-        // Convert eccentric anomaly to true anomaly.
-        const double trueAnomaly = convertEccentricAnomalyToTrueAnomaly(
-                    eccentricAnomaly, eccentricity );
-
-        // Compute orbital period of perturbed body.
-        const double orbitalPeriodOfPerturbedBody = computeKeplerOrbitalPeriod(
-                    perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ),
-                    centralBodyGravitationalParameter );
-
-        // Set random semi-major axis [m].
-        // If synodic period is too long, i.e., test particle semi-major axis is too close to
-        // perturbed body, regenerate value.
-        double synodicPeriodOfTestParticle = TUDAT_NAN;
-        double semiMajorAxis = TUDAT_NAN;
-        do
+        // Generate test particle input data and populate table.
+        for ( int simulationId = 0; simulationId < monteCarloPopulation; simulationId++ )
         {
+            // Set random eccentricity vector.
+            const Eigen::Vector2d eccentricityVector( generateEccentricityVectorComponent( ),
+                                                      generateEccentricityVectorComponent( ) );
+
+            // Compute eccentricity [-].
+            const double eccentricity = eccentricityVector.norm( );
+
+            // Compute argument of periapsis [rad].
+            const double argumentOfPeriapsis = std::atan2( eccentricityVector.y( ),
+                                                           eccentricityVector.x( ) );
+
+            // Set random inclination vector.
+            const Eigen::Vector2d inclinationVector( generateInclinationVectorComponent( ),
+                                                     generateInclinationVectorComponent( ) );
+
+            // Compute inclination [rad].
+            const double inclination = inclinationVector.norm( );
+
+            // Compute longitude ascension of ascending node [rad].
+            const double longitudeOfAscendingNode = std::atan2( inclinationVector.y( ),
+                                                                inclinationVector.x( ) );
+
+            // Set random mean anomaly [rad].
+            const double meanAnomaly = generateMeanAnomaly( );
+
+            // Convert mean anomaly to eccentric anomaly [rad].
+            ConvertMeanAnomalyToEccentricAnomaly convertMeanAnomalyToEccentricAnomaly(
+                        eccentricity, meanAnomaly );
+            const double eccentricAnomaly = convertMeanAnomalyToEccentricAnomaly.convert( );
+
+            // Convert eccentric anomaly to true anomaly.
+            const double trueAnomaly = convertEccentricAnomalyToTrueAnomaly(
+                        eccentricAnomaly, eccentricity );
+
+            // Compute orbital period of perturbed body.
+            const double orbitalPeriodOfPerturbedBody = computeKeplerOrbitalPeriod(
+                        perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ),
+                        centralBodyGravitationalParameter );
+
             // Set random semi-major axis [m].
-            semiMajorAxis = generateSemiMajorAxis( );
+            // If synodic period is too long, i.e., test particle semi-major axis is too close to
+            // perturbed body, regenerate value.
+            double synodicPeriodOfTestParticle = TUDAT_NAN;
+            double semiMajorAxis = TUDAT_NAN;
+            do
+            {
+                // Set random semi-major axis [m].
+                semiMajorAxis = generateSemiMajorAxis( );
 
-            // Compute orbital period of test particle [s].
-            const double orbitalPeriodOfTestParticle = computeKeplerOrbitalPeriod(
-                        semiMajorAxis, centralBodyGravitationalParameter );
+                // Compute orbital period of test particle [s].
+                const double orbitalPeriodOfTestParticle = computeKeplerOrbitalPeriod(
+                            semiMajorAxis, centralBodyGravitationalParameter );
 
-            // Compute synodic period of test particle's motion with respect to perturbed body [s].
-            synodicPeriodOfTestParticle = computeSynodicPeriod(
-                        orbitalPeriodOfPerturbedBody, orbitalPeriodOfTestParticle );
+                // Compute synodic period of test particle's motion with respect to perturbed body [s].
+                synodicPeriodOfTestParticle = computeSynodicPeriod(
+                            orbitalPeriodOfPerturbedBody, orbitalPeriodOfTestParticle );
+            }
+            while ( synodicPeriodOfTestParticle > synodicPeriodMaximum );
+
+            // Bind values to prepared SQLite statement.
+            testParticleInputTableInsertQuery.bind( ":semiMajorAxis", semiMajorAxis );
+            testParticleInputTableInsertQuery.bind( ":eccentricity", eccentricity );
+            testParticleInputTableInsertQuery.bind( ":inclination", inclination );
+            testParticleInputTableInsertQuery.bind( ":argumentOfPeriapsis", argumentOfPeriapsis );
+            testParticleInputTableInsertQuery.bind( 
+                ":longitudeOfAscendingNode", longitudeOfAscendingNode );
+            testParticleInputTableInsertQuery.bind( ":trueAnomaly", trueAnomaly );
+
+            // Execute insert query.
+            testParticleInputTableInsertQuery.exec( );
+
+            // Reset query.
+            testParticleInputTableInsertQuery.reset( );
         }
-        while ( synodicPeriodOfTestParticle > synodicPeriodMaximum );
 
-        // Bind values to prepared SQLite statement.
-        testParticleInputTableInsertQuery.bind( ":semiMajorAxis", semiMajorAxis );
-        testParticleInputTableInsertQuery.bind( ":eccentricity", eccentricity );
-        testParticleInputTableInsertQuery.bind( ":inclination", inclination );
-        testParticleInputTableInsertQuery.bind( ":argumentOfPeriapsis", argumentOfPeriapsis );
-        testParticleInputTableInsertQuery.bind( 
-            ":longitudeOfAscendingNode", longitudeOfAscendingNode );
-        testParticleInputTableInsertQuery.bind( ":trueAnomaly", trueAnomaly );
-
-        // Execute insert query.
-        testParticleInputTableInsertQuery.exec( );
-
-        // Reset query.
-        testParticleInputTableInsertQuery.reset( );
+        // Commit transaction.
+        testParticleInputTableTransaction.commit( );
     }
-
-    // Commit transaction.
-    testParticleInputTableTransaction.commit( );
 
     ///////////////////////////////////////////////////////////////////////////
     
@@ -774,7 +759,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         ostringstream testParticleKickTableCreate;
         testParticleKickTableCreate
             << "CREATE TABLE IF NOT EXISTS " << testParticleKickTableName << " ("
-            << "\"kickId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"testParticleKick\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
             << "\"testParticleSimulationId\" INTEGER NOT NULL,"
             << "\"conjunctionEpoch\" REAL NOT NULL,"
             << "\"conjunctionDistance\" REAL NOT NULL,"
@@ -807,7 +792,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         else
         {
             ostringstream tableCreateError;
-            tableCreateError << "Error: Creating table '" << testParticleKickTableName 
+            tableCreateError << "ERROR: Creating table '" << testParticleKickTableName 
                              << "'' failed!";
             throw runtime_error( tableCreateError.str( ).c_str( ) );
         }
@@ -829,19 +814,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // (when object goes out of scope its destructor will be called).
     cout << "SQLite database file '" << database.getFilename( ).c_str( ) 
          << "' closed successfully ..." << endl;
-    cout << endl;
 
     ///////////////////////////////////////////////////////////////////////////
-
-    // If program is successfully completed, return 0.
-    return EXIT_SUCCESS;
 }
 
-/*    
- *    TODO:
- *      - encapsulate code in try-catch blocks to capture exceptions.
- *      - execute verification of existing case data against input parameters provided to
- *        ensure consistency of inputs and possibly warn user.
- *      - expand code to enable interactive interface for user to provide inputs and select
- *        options (capture command line user input). 
- */ 
+} // namespace application_modes
+} // namespace stomi

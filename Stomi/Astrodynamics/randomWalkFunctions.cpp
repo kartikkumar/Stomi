@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <cmath>
@@ -30,7 +30,7 @@ using namespace tudat::orbital_element_conversions;
 
 //! Execute kick.
 Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBeforeKick,
-                             const database::TestParticleKickTable::iterator kick, 
+                             const database::TestParticleKickTable::iterator testParticleKick, 
                              const double perturberMassRatio )
 {
     // Declare state in Keplerian elements after kick.
@@ -38,21 +38,21 @@ Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBefo
 
     // Declare and set pre- and post-conjunction semi-major axes of perturber.
     const double preConjunctionSemiMajorAxis 
-        = kick->preConjunctionStateInKeplerianElements( semiMajorAxisIndex );
+        = testParticleKick->preConjunctionStateInKeplerianElements( semiMajorAxisIndex );
     const double postConjunctionSemiMajorAxis 
-        = kick->postConjunctionStateInKeplerianElements( semiMajorAxisIndex );
+        = testParticleKick->postConjunctionStateInKeplerianElements( semiMajorAxisIndex );
 
     // Declare and set pre- and post-conjunction eccentricities of perturber.
     const double preConjunctionEccentricity 
-        = kick->preConjunctionStateInKeplerianElements( eccentricityIndex );
+        = testParticleKick->preConjunctionStateInKeplerianElements( eccentricityIndex );
     const double postConjunctionEccentricity 
-        = kick->postConjunctionStateInKeplerianElements( eccentricityIndex );
+        = testParticleKick->postConjunctionStateInKeplerianElements( eccentricityIndex );
 
     // Declare and set pre- and post-conjunction inclinations of perturber.
     const double preConjunctionInclination 
-        = kick->preConjunctionStateInKeplerianElements( inclinationIndex );
+        = testParticleKick->preConjunctionStateInKeplerianElements( inclinationIndex );
     const double postConjunctionInclination 
-        = kick->postConjunctionStateInKeplerianElements( inclinationIndex );
+        = testParticleKick->postConjunctionStateInKeplerianElements( inclinationIndex );
 
     // Compute semi-major axis after kick by using conservation of energy.
     stateInKeplerianElementsAfterKick( semiMajorAxisIndex )
@@ -64,7 +64,8 @@ Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBefo
     // Check that semi-major axis after kick is valid (has to be positive for bounded orbit).
     if ( stateInKeplerianElementsAfterKick( semiMajorAxisIndex ) < 0.0 )
     {
-        throw std::runtime_error( "Semi-major axis of perturbed body after kick is erroneous!" );
+        throw std::runtime_error( 
+            "ERROR: Semi-major axis of perturbed body after kick is erroneous!" );
     }
 
     // Compute angular momentum of perturbed body before conjunction.
@@ -98,7 +99,8 @@ Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBefo
          || stateInKeplerianElementsAfterKick( eccentricityIndex ) > 1.0
          || boost::math::isnan( stateInKeplerianElementsAfterKick( eccentricityIndex ) ) )
     {
-        throw std::runtime_error( "Eccentricity of perturbed body after kick is erroneous!" );
+        throw std::runtime_error( 
+            "ERROR: Eccentricity of perturbed body after kick is erroneous!" );
     }            
 
     // Compute angular momentum of perturbed body after kick.
@@ -119,7 +121,8 @@ Eigen::Vector3d executeKick( const Eigen::Vector3d& stateInKeplerianElementsBefo
     // Check that inclination after kick is valid (must not be NaN).
     if ( boost::math::isnan( stateInKeplerianElementsAfterKick( inclinationIndex ) ) )
     {
-        throw std::runtime_error( "Inclination of perturbed body after kick is erroneous!" );
+        throw std::runtime_error( 
+            "ERROR: Inclination of perturbed body after kick is erroneous!" );
     }
 
     // Return state in Keplerian elements after kick.

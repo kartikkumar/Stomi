@@ -1,20 +1,17 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <algorithm>
-#include <cmath>
-#include <cstdlib>
 #include <iomanip>
 #include <iostream>
 #include <iterator>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
-#include <string> 
 #include <vector>
 
 #include <boost/filesystem.hpp> 
@@ -28,32 +25,38 @@
 #include <TudatCore/Mathematics/BasicMathematics/basicMathematicsFunctions.h>
 
 #include <Tudat/InputOutput/dictionaryTools.h>
-#include <Tudat/InputOutput/fieldType.h>
-#include <Tudat/InputOutput/separatedParser.h>
-#include <Tudat/InputOutput/parsedDataVectorUtilities.h>
 
 #include <Assist/Astrodynamics/astrodynamicsBasics.h>
 #include <Assist/Astrodynamics/hillSphere.h>
 #include <Assist/Astrodynamics/unitConversions.h>
-#include <Assist/InputOutput/basicInputOutput.h> 
 
+#include "Stomi/ApplicationModes/randomWalkDatabaseGenerator.h"
 #include "Stomi/Database/databaseReadFunctions.h" 
 #include "Stomi/Database/testParticleCase.h" 
 #include "Stomi/InputOutput/dictionaries.h"
 
-//! Execute random walk database generator.
-int main( const int numberOfInputs, const char* inputArguments[ ] )
+namespace stomi
+{
+namespace application_modes
 {
 
+//! Execute random walk database generator.
+void executeRandomWalkDatabaseGenerator( 
+    const std::string databasePath, 
+    const tudat::input_output::parsed_data_vector_utilities::ParsedDataVectorPtr parsedData )
+{
     ///////////////////////////////////////////////////////////////////////////
 
     // Declare using-statements.
 
+    using std::advance;
     using std::cout;
     using std::endl;
     using std::generate;
     using std::ostringstream;
+    using std::numeric_limits;
     using std::runtime_error;
+    using std::setprecision;
     using std::string;
     using std::vector;
 
@@ -63,14 +66,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     using namespace SQLite;
 
     using namespace assist::astrodynamics;
-    using namespace assist::input_output;
+    // using namespace assist::input_output;
 
     using namespace tudat::basic_astrodynamics::orbital_element_conversions;
     using namespace tudat::basic_mathematics;
     using namespace tudat::input_output::dictionary;
-    using namespace tudat::input_output;
-    using namespace tudat::input_output::field_types::general;
-    using namespace tudat::input_output::parsed_data_vector_utilities;
 
     using namespace stomi::database;
     using namespace stomi::input_output;    
@@ -79,40 +79,21 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     ///////////////////////////////////////////////////////////////////////////
 
-    // Set up input deck.
+    // Extract input parameters.
 
-    // Check number of input parameters is correct (the numberOfInputs variable includes the
-    // application itself, so one is subtracted from this number).
-    checkNumberOfInputArguments( numberOfInputs - 1 );
+    // Get dictionary.
+    const DictionaryPointer dictionary = getRandomWalkDatabaseGeneratorDictionary( );
 
-    // Get input parameter dictionary.
-    DictionaryPointer dictionary = getRandomWalkDatabaseGeneratorDictionary( );
-
-    // Read and filter input stream (this can't be declared const because the parser's parse
-    // function is not const-correct at the moment).
-    string filteredInput = readAndFilterInputFile( inputArguments[ 1 ] );
-
-    // Declare a separated parser.
-    SeparatedParser parser( string( ": " ), 2, parameterName, parameterValue );
-
-    // Parse filtered data.
-    const ParsedDataVectorPtr parsedData = parser.parse( filteredInput );
-
-    cout << endl;
-    cout << "****************************************************************************" << endl;
-    cout << "Input parameters" << endl;
-    cout << "****************************************************************************" << endl;
-    cout << endl;
+    // Print database path to console.
+    cout << "Database                                                  " 
+         << databasePath << endl;
 
     // Extract required parameters.
-    const string databasePath = extractParameterValue< string >(
+    const string randomWalkRunName = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ), 
-                findEntry( dictionary, "DATABASEPATH" ) );
-    cout << "Database                                                  " << databasePath << endl;
-
-    const string caseName = extractParameterValue< string >(
-                parsedData->begin( ), parsedData->end( ), findEntry( dictionary, "CASE" ) );
-    cout << "Case                                                      " << caseName << endl;
+                findEntry( dictionary, "RANDOMWALKRUN" ) );
+    cout << "Run                                                       " 
+         << randomWalkRunName << endl;
 
     const string testParticleCaseName = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ), 
@@ -126,11 +107,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << "Monte Carlo population                                    "
          << monteCarloPopulation << endl;    
 
-    const double perturberDensity = extractParameterValue< double >(
+    const double perturberRingNumberDensity = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "PERTURBERDENSITY" ) );    
-    cout << "Perturber density                                         "
-         << perturberDensity << " perturbers per R_Hill" << endl;                         
+                findEntry( dictionary, "PERTURBERRINGNUMBERDENSITY" ) );    
+    cout << "Perturber ring number density                             " 
+         << perturberRingNumberDensity << " perturbers per R_Hill" << endl;
 
     const double perturberRingMass = extractParameterValue< double >(
                 parsedData->begin( ), parsedData->end( ),
@@ -159,14 +140,14 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
          << convertSecondsToJulianDays( epochWindowSize ) << " days" << endl;                    
 
     // Extract optional parameters (parameters that take on default values if they are not  
-    // specified in the input file).
+    // specified in the configuration file).
 
-    const string randomWalkCaseTableName = extractParameterValue< string >(
+    const string randomWalkRunTable = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "RANDOMWALKCASETABLENAME" ),
-                "random_walk_case" );
-    cout << "Random walk case table                                    " 
-         << randomWalkCaseTableName << endl;
+                findEntry( dictionary, "RANDOMWALKRUNTABLENAME" ),
+                "random_walk_run" );
+    cout << "Random walk run table                                     " 
+         << randomWalkRunTable << endl;
 
     const string randomWalkInputTableName = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
@@ -174,13 +155,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
                 "random_walk_input" );
     cout << "Random walk input table                                   " 
          << randomWalkInputTableName << endl;          
-
-    const string randomWalkWindowsTableName = extractParameterValue< string >(
-                parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "RANDOMWALKWINDOWSTABLENAME" ),
-                "random_walk_windows" );
-    cout << "Random walk windows table                                 " 
-         << randomWalkWindowsTableName << endl;      
 
     const string randomWalkPerturberTableName = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
@@ -243,27 +217,29 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     if ( isDatabaseCreated ) { cout << "' created &"; }
     cout << " opened successfully ..." << endl;
 
-    // Fetch case and input data from database.
+    // Fetch test particle case and input data from database.
 
     // Generate output message.
     cout << "Fetching test particle case data from database ..." << endl;   
 
-    // Retrieve and store case data.
+    // Retrieve and store test particle case data.
     const TestParticleCasePointer testParticleCaseData = getTestParticleCase( 
         databasePath, testParticleCaseName, testParticleCaseTableName ); 
 
-    // Generate output message to indicate that case data was fetched successfully.
+    // Generate output message to indicate that test particle case data was fetched successfully.
     cout << "Test particle case data fetched successfully from database!" << endl;   
 
     // Generate output message.
     cout << "Fetching test particle input data from database ..." << endl;   
 
     // Get entire test particle input table from database. Only test particle simulations that 
-    // are complete are fetched for the given case ID.
-    const TestParticleInputTable testParticleInputTable = getCompleteTestParticleInputTable(
-                databasePath, testParticleCaseData->caseId, testParticleInputTableName, true );    
+    // are complete are fetched for the given test particle case ID.
+    const TestParticleInputTable testParticleInputTable 
+        = getCompleteTestParticleInputTable( 
+            databasePath, testParticleCaseData->testParticleCaseId, 
+            testParticleInputTableName, true );    
 
-    // Generate output message to indicate that input table was fetched successfully.
+    // Generate output message to indicate that test particle input table was fetched successfully.
     cout << "Test particle input data (" << testParticleInputTable.size( )
          << " rows) fetched successfully from database!" << endl; 
 
@@ -289,10 +265,10 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         testParticleCaseData->centralBodyGravitationalParameter, 
         perturbedBodyGravitationalParameter, 
         testParticleCaseData->perturbedBodyStateInKeplerianElementsAtT0( semiMajorAxisIndex ) );
-    const double perturberDensityInMeters = perturberDensity / convertHillRadiiToMeters( 1.0 );
+    const double perturberRingNumberDensityInMeters = perturberRingNumberDensity / convertHillRadiiToMeters( 1.0 );
     const unsigned int perturberPopulation = std::floor( 
         2.0 * testParticleCaseData->semiMajorAxisDistributionLimit 
-        * perturberDensityInMeters + 0.5 );
+        * perturberRingNumberDensityInMeters + 0.5 );
 
     // Check if desired perturber population is greater than number of completed simulations 
     // fetched, from the database input table, throw a run-time error.
@@ -329,8 +305,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     uniform_int_distribution< > testParticleSimulationIdIndexDistribution( 
         0, testParticleInputTable.size( ) - 1 );
 
-    // Define variate generator for simulation ID indices using the random number
-    // generator and uniform distribution of simulation ID indices in input table.
+    // Define variate generator for test particle simulation ID indices using the random number
+    // generator and uniform distribution of test particle simulation ID indices in input table.
     variate_generator< GlobalRandomNumberGeneratorType&, uniform_int_distribution< > > 
     generateTestParticleSimulationId( randomNumberGenerator, 
         testParticleSimulationIdIndexDistribution );
@@ -339,38 +315,38 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     ///////////////////////////////////////////////////////////////////////////
 
-    // Set up random walk case table.
-    if ( !database.tableExists( randomWalkCaseTableName.c_str( ) ) )
+    // Set up random walk run table.
+    if ( !database.tableExists( randomWalkRunTable.c_str( ) ) )
     {
-        cout << "Table '" << randomWalkCaseTableName << "' does not exist ..." << endl;
+        cout << "Table '" << randomWalkRunTable << "' does not exist ..." << endl;
         cout << "Creating table ... " << endl;
 
         // Create table.
-        ostringstream randomWalkCaseTableCreate;
-        randomWalkCaseTableCreate
-            << "CREATE TABLE IF NOT EXISTS " << randomWalkCaseTableName << " ("
-            << "\"caseId\" INTEGER PRIMARY KEY NOT NULL,"
-            << "\"caseName\" TEXT NOT NULL,"
+        ostringstream randomWalkRunTableCreate;
+        randomWalkRunTableCreate
+            << "CREATE TABLE IF NOT EXISTS " << randomWalkRunTable << " ("
+            << "\"randomWalkRunId\" INTEGER PRIMARY KEY NOT NULL,"
+            << "\"randomWalkRunName\" TEXT NOT NULL,"
             << "\"testParticleCaseId\" INTEGER NOT NULL,"
-            << "\"perturberDensity\" INTEGER NOT NULL,"
+            << "\"perturberRingNumberDensity\" INTEGER NOT NULL,"
             << "\"perturberRingMass\" INTEGER NOT NULL,"            
             << "\"observationPeriod\" REAL NOT NULL,"
             << "\"numberOfEpochWindows\" INTEGER NOT NULL,"
             << "\"epochWindowSize\" REAL NOT NULL);";
 
         // Execute command to create table.
-        database.exec( randomWalkCaseTableCreate.str( ).c_str( ) );
+        database.exec( randomWalkRunTableCreate.str( ).c_str( ) );
 
         // Check that the table was created successfully.
-        if ( database.tableExists( randomWalkCaseTableName.c_str( ) ) )
+        if ( database.tableExists( randomWalkRunTable.c_str( ) ) )
         {
-            cout << "Table '" << randomWalkCaseTableName << "' successfully created!" << endl; 
+            cout << "Table '" << randomWalkRunTable << "' successfully created!" << endl; 
         }
 
         else
         {
             ostringstream tableCreateError;
-            tableCreateError << "Error: Creating table '" << randomWalkCaseTableName 
+            tableCreateError << "ERROR: Creating table '" << randomWalkRunTable 
                              << "'' failed!";
             throw runtime_error( tableCreateError.str( ).c_str( ) );
         }
@@ -378,84 +354,87 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     else
     {
-        cout << "Table '" << randomWalkCaseTableName 
+        cout << "Table '" << randomWalkRunTable 
              << "' already exists ... skipping creating table ..." << endl;
     }
 
     // Check data present in table.
 
-    // Check if case is already present in table.
-    ostringstream randomWalkCaseCheck;
-    randomWalkCaseCheck << "SELECT COUNT(*) FROM " << randomWalkCaseTableName 
-                        << " WHERE \"caseName\" = \"" << caseName << "\"";
-    int numberOfCaseRows = database.execAndGet( randomWalkCaseCheck.str( ).c_str( ) );
+    // Check if run is already present in table.
+    ostringstream randomWalkRunCheck;
+    randomWalkRunCheck << "SELECT COUNT(*) FROM " << randomWalkRunTable 
+                        << " WHERE \"randomWalkRunName\" = \"" << randomWalkRunName << "\"";
+    int numberOfRunRows = database.execAndGet( randomWalkRunCheck.str( ).c_str( ) );
 
-    if ( numberOfCaseRows > 1 )
+    if ( numberOfRunRows > 1 )
     {
-        ostringstream numberOfCaseRowsError;
-        numberOfCaseRowsError << "Error: Table '" << randomWalkCaseTableName << "' contains " 
-                              << numberOfCaseRows << " rows for case '" << caseName << "'!";
-        throw runtime_error( numberOfCaseRowsError.str( ).c_str( ) );
+        ostringstream numberOfRunRowsError;
+        numberOfRunRowsError << "ERROR: Table '" << randomWalkRunTable << "' contains " 
+                              << numberOfRunRows << " rows for random walk run '" 
+                              << randomWalkRunName << "'!";
+        throw runtime_error( numberOfRunRowsError.str( ).c_str( ) );
     }
 
-    else if ( numberOfCaseRows == 1 )
+    else if ( numberOfRunRows == 1 )
     {
-        cout << "Table '" << randomWalkCaseTableName << "' contains 1 row of data for case '" 
-             << caseName << "' ... " << "skipping populating table ... " << endl;
+        cout << "Table '" << randomWalkRunTable << "' contains 1 row of data for run '" 
+             << randomWalkRunName << "' ... " << "skipping populating table ... " << endl;
     }
 
-    // Write test particle case data to table.
-    else if ( numberOfCaseRows == 0 )
+    // Write random walk run data to table.
+    else if ( numberOfRunRows == 0 )
     {
-        cout << "No data present in table '" << randomWalkCaseTableName << "' for case '" 
-             << caseName << "' ... " << endl;
+        cout << "No data present in table '" << randomWalkRunTable << "' for random walk run '" 
+             << randomWalkRunName << "' ... " << endl;
         cout << "Populating table ... " << endl;
 
-        // Create stringstream with random walk case data insert command.
+        // Create stringstream with random walk run data insert command.
         // For floating-point values, ensure the data is written to the stream at full precision.
-        ostringstream randomWalkCaseDataInsert;
-        randomWalkCaseDataInsert
-            << "INSERT INTO " << randomWalkCaseTableName << " VALUES ("
+        ostringstream randomWalkRunDataInsert;
+        randomWalkRunDataInsert
+            << "INSERT INTO " << randomWalkRunTable << " VALUES ("
             << "NULL,"
-            << "\"" << caseName << "\","
-            << testParticleCaseData->caseId << ",";
-        randomWalkCaseDataInsert 
-            << std::setprecision( std::numeric_limits< double >::digits10 )
-            << perturberDensity << ","
+            << "\"" << randomWalkRunName << "\","
+            << testParticleCaseData->testParticleCaseId << ",";
+        randomWalkRunDataInsert 
+            << setprecision( numeric_limits< double >::digits10 )
+            << perturberRingNumberDensity << ","
             << perturberRingMass << ","
             << observationPeriod << ",";
-        randomWalkCaseDataInsert
+        randomWalkRunDataInsert
             << numberOfEpochWindows << ",";
-        randomWalkCaseDataInsert
-            << std::setprecision( std::numeric_limits< double >::digits10 )
+        randomWalkRunDataInsert
+            << setprecision( numeric_limits< double >::digits10 )
             << epochWindowSize
             << ");";
 
-        // Insert random walk case data.
-        database.exec( randomWalkCaseDataInsert.str( ).c_str( ) );
+        // Insert random walk run data.
+        database.exec( randomWalkRunDataInsert.str( ).c_str( ) );
 
         // Check that there is only one row present in the table.
-        numberOfCaseRows = database.execAndGet( randomWalkCaseCheck.str( ).c_str( ) );
-        if ( numberOfCaseRows == 1 )
+        numberOfRunRows = database.execAndGet( randomWalkRunCheck.str( ).c_str( ) );
+        if ( numberOfRunRows == 1 )
         {
-            cout << "Table '" << randomWalkCaseTableName << "' populated successfully!" << endl; 
+            cout << "Table '" << randomWalkRunTable << "' populated successfully!" << endl; 
         }
 
         else
         {
-            ostringstream numberOfCaseRowsError;
-            numberOfCaseRowsError << "Error: Table '" << randomWalkCaseTableName << "' contains "
-                                  << numberOfCaseRows << " rows for case '" << caseName << "'!";
-            throw runtime_error( numberOfCaseRowsError.str( ).c_str( ) );
+            ostringstream numberOfRunRowsError;
+            numberOfRunRowsError << "ERROR: Table '" << randomWalkRunTable << "' contains "
+                                 << numberOfRunRows << " rows for random walk run '" 
+                                 << randomWalkRunName << "'!";
+            throw runtime_error( numberOfRunRowsError.str( ).c_str( ) );
         }
     }    
 
-    // Retrieve and output case id.
-    ostringstream randomWalkCaseId;          
-    randomWalkCaseId << "SELECT \"caseId\" FROM " << randomWalkCaseTableName 
-                     << " WHERE \"caseName\" = \"" << caseName << "\"";
-    const int caseId = database.execAndGet( randomWalkCaseId.str( ).c_str( ) );
-    cout << "Case ID is " << caseId << " for case '" << caseName << "'" << endl;
+    // Retrieve and output run id.
+    ostringstream randomWalkRunIdQuery;          
+    randomWalkRunIdQuery << "SELECT \"randomWalkRunId\" FROM " << randomWalkRunTable 
+                         << " WHERE \"randomWalkRunName\" = \"" << randomWalkRunName << "\"";
+    const int randomWalkRunId = database.execAndGet( randomWalkRunIdQuery.str( ).c_str( ) );
+    cout << "Run ID is " << randomWalkRunId << " for random walk run '" 
+         << randomWalkRunName << "'" << endl;
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -471,8 +450,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         ostringstream randomWalkPerturberTableCreate;
         randomWalkPerturberTableCreate
             << "CREATE TABLE IF NOT EXISTS " << randomWalkPerturberTableName << " ("
-            << "\"perturberId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            << "\"monteCarloRunId\" INTEGER NOT NULL,"
+            << "\"randomWalkPerturberId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"randomWalkSimulationId\" INTEGER NOT NULL,"
             << "\"testParticleSimulationId\" INTEGER NOT NULL);";
 
         // Execute command to create table.
@@ -481,13 +460,14 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Check that the table was created successfully.
         if ( database.tableExists( randomWalkPerturberTableName.c_str( ) ) )
         {
-            cout << "Table '" << randomWalkPerturberTableName << "' successfully created!" << endl; 
+            cout << "Table '" << randomWalkPerturberTableName << "' successfully created!" 
+                 << endl; 
         }
 
         else
         {
             ostringstream tableCreateError;
-            tableCreateError << "Error: Creating table '" << randomWalkPerturberTableName 
+            tableCreateError << "ERROR: Creating table '" << randomWalkPerturberTableName 
                              << "'' failed!";
             throw runtime_error( tableCreateError.str( ).c_str( ) );
         }
@@ -512,11 +492,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         // Create table.
         ostringstream randomWalkInputTableCreate;
         randomWalkInputTableCreate
-        << "CREATE TABLE IF NOT EXISTS " << randomWalkInputTableName << " ("
-        << "\"monteCarloRunId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-        << "\"randomWalkCaseId\" INTEGER NOT NULL,"
-        << "\"completed\" INTEGER NOT NULL,"
-        << "\"observationPeriodStartEpoch\" REAL NOT NULL);";
+            << "CREATE TABLE IF NOT EXISTS " << randomWalkInputTableName << " ("
+            << "\"randomWalkSimulationId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"randomWalkRunId\" INTEGER NOT NULL,"
+            << "\"completed\" INTEGER NOT NULL,"
+            << "\"observationPeriodStartEpoch\" REAL NOT NULL);";
 
         // Execute command to create table.
         database.exec( randomWalkInputTableCreate.str( ).c_str( ) );
@@ -530,7 +510,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         else
         {
             ostringstream tableCreateError;
-            tableCreateError << "Error: Creating table '" << randomWalkInputTableName 
+            tableCreateError << "ERROR: Creating table '" << randomWalkInputTableName 
                              << "'' failed!";
             throw runtime_error( tableCreateError.str( ).c_str( ) );
         }
@@ -547,130 +527,137 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Check how many rows are present in table.
     ostringstream randomWalkInputRowCount;
     randomWalkInputRowCount << "SELECT COUNT(*) FROM " << randomWalkInputTableName 
-                            << " WHERE \"randomWalkCaseId\" == " << caseId;
+                            << " WHERE \"randomWalkRunId\" == " << randomWalkRunId;
     const int inputTableRows = database.execAndGet( randomWalkInputRowCount.str( ).c_str( ) );
 
     if ( inputTableRows > 0 )
     {
         cout << "Table '" << randomWalkInputTableName << "' contains " << inputTableRows 
-             << " rows for case '" << caseName << "' ... " << endl;
+             << " rows for random walk run '" << randomWalkRunName 
+             << "' ... skipping populating table ..." << endl;
     }
 
-    // Populate table.
-    // Table containing list of perturbers is populated simultaneously.
-    cout << "Populating input table with " << monteCarloPopulation 
-         << " new Monte Carlo simulations ... " << endl;
-    cout << "Populating perturber table with " << monteCarloPopulation 
-         << " new data for Monte Carlo simulations ... " << endl;         
+    else
+    {
+        // Populate table.
+        // Table containing list of random walk perturbers is populated simultaneously.
+        cout << "Populating input table with " << monteCarloPopulation 
+             << " new random walk simulations ... " << endl;
+        cout << "Populating perturber table with " << monteCarloPopulation 
+             << " new data for random walk simulations ... " << endl;         
 
-    // Set up database transaction.
-    Transaction randomWalkInputTableTransaction( database );
+        // Set up database transaction.
+        Transaction randomWalkInputTableTransaction( database );
 
-    // Set up random walk input table insert statement.
-    ostringstream randomWalkInputTableInsert;
-    randomWalkInputTableInsert << "INSERT INTO " << randomWalkInputTableName
-                               << " VALUES (NULL, " << caseId 
-                               << ", 0, :observationPeriodStartEpoch);";
+        // Set up random walk input table insert statement.
+        ostringstream randomWalkInputTableInsert;
+        randomWalkInputTableInsert << "INSERT INTO " << randomWalkInputTableName
+                                   << " VALUES (NULL, " << randomWalkRunId 
+                                   << ", 0, :observationPeriodStartEpoch);";
 
-    // Compile a SQL query.
-    Statement randomWalkInputTableInsertQuery( 
-        database, randomWalkInputTableInsert.str( ).c_str( ) );
+        // Compile a SQL query.
+        Statement randomWalkInputTableInsertQuery( 
+            database, randomWalkInputTableInsert.str( ).c_str( ) );
 
-    // Set up random walk perturber table insert statement.
-    ostringstream randomWalkPerturberTableInsert;
-    randomWalkPerturberTableInsert << "INSERT INTO " << randomWalkPerturberTableName
-                                   << " VALUES (NULL, :monteCarloRunId" 
-                                   << ", :testParticleSimulationId);";
+        // Set up random walk perturber table insert statement.
+        ostringstream randomWalkPerturberTableInsert;
+        randomWalkPerturberTableInsert << "INSERT INTO " << randomWalkPerturberTableName
+                                       << " VALUES (NULL, :randomWalkSimulationId" 
+                                       << ", :testParticleSimulationId);";
 
-    // Compile a SQL query.
-    Statement randomWalkPerturberTableInsertQuery( 
-        database, randomWalkPerturberTableInsert.str( ).c_str( ) );
+        // Compile a SQL query.
+        Statement randomWalkPerturberTableInsertQuery( 
+            database, randomWalkPerturberTableInsert.str( ).c_str( ) );
 
-    // Generate random walk input data and populate table.
-    // Also populate perturber table for each Monte Carlo run.
-    for ( unsigned int monteCarloRun = 0; monteCarloRun < monteCarloPopulation; monteCarloRun++ )
-    { 
-        // Bind values to prepared SQLite statement.
-        randomWalkInputTableInsertQuery.bind( ":observationPeriodStartEpoch", 
-                                              generateObservationPeriodStartEpoch( ) );
-
-        // Execute insert query.
-        randomWalkInputTableInsertQuery.exec( );
-
-        // Reset query.
-        randomWalkInputTableInsertQuery.reset( );
-
-        // Get row ID for last input row inserted in table.
-        const int lastInputTableRowId = database.getLastInsertRowid( );
-
-        // Get Monte Carlo run ID corresponding to row ID.
-        ostringstream randomWalkMonteCarloRowIdQuery;
-        randomWalkMonteCarloRowIdQuery << "SELECT \"monteCarloRunId\" FROM " 
-                                       << randomWalkInputTableName 
-                                       << " WHERE rowid == " << lastInputTableRowId;
-        const int monteCarloRunId = database.execAndGet( 
-            randomWalkMonteCarloRowIdQuery.str( ).c_str( ) );
-
-        // Select simulation ID indices (test particle simulation indices in input 
-        // table retrieved from database) to generate list of perturbers.
-
-        // Declare vector containing test particle simulation IDs.
-        vector< unsigned int > testParticleSimulationIdIndices( perturberPopulation );
-
-        // Generate vector of randomly selected test particle simulation IDs.
-        generate( testParticleSimulationIdIndices.begin( ), testParticleSimulationIdIndices.end( ),
-                  generateTestParticleSimulationId );
-
-        // Check if the test particle simulation IDs are unique, and if not, generate new random
-        // number.
-        for ( unsigned int i = 0; i < testParticleSimulationIdIndices.size( ); i++ )
-        {
-            for ( unsigned int j = 0; j < testParticleSimulationIdIndices.size( ); j++ )
-            {
-                // If inner and outer loop point to the same element, skip.
-                if ( i == j )
-                {
-                    continue;
-                }
-
-                // Else, check if the elements are equal, and if they are generate a new 
-                // simulation ID index and restart looping.
-                else if ( testParticleSimulationIdIndices.at( j ) 
-                          == testParticleSimulationIdIndices.at( i ) )
-                {
-                    testParticleSimulationIdIndices.at( j ) = generateTestParticleSimulationId( );
-                    i = 0;
-                    break;
-                }
-            }
-        }       
-
-        // Loop through list of test particle simulation ID indices and write data to perturber 
-        // table.
-        for ( unsigned int k = 0; k < testParticleSimulationIdIndices.size( ); k++ ) 
-        {
+        // Generate random walk input data and populate table.
+        // Also populate perturber table for each random walk simulation.
+        for ( unsigned int randomWalkSimulation = 0; 
+              randomWalkSimulation < monteCarloPopulation; randomWalkSimulation++ )
+        { 
             // Bind values to prepared SQLite statement.
-            randomWalkPerturberTableInsertQuery.bind( ":monteCarloRunId", monteCarloRunId );
-            
-            TestParticleInputTable::iterator iteratorTestParticleInputTable 
-                = testParticleInputTable.begin( );
-            std::advance( iteratorTestParticleInputTable, 
-                testParticleSimulationIdIndices.at( k ) );
-
-            randomWalkPerturberTableInsertQuery.bind( 
-                ":testParticleSimulationId",
-                 iteratorTestParticleInputTable->simulationId );  
+            randomWalkInputTableInsertQuery.bind( ":observationPeriodStartEpoch", 
+                                                  generateObservationPeriodStartEpoch( ) );
 
             // Execute insert query.
-            randomWalkPerturberTableInsertQuery.exec( );
+            randomWalkInputTableInsertQuery.exec( );
 
             // Reset query.
-            randomWalkPerturberTableInsertQuery.reset( );            
-        }
-    }
+            randomWalkInputTableInsertQuery.reset( );
 
-    // Commit transaction.
-    randomWalkInputTableTransaction.commit( );
+            // Get row ID for last input row inserted in table.
+            const int lastInputTableRowId = database.getLastInsertRowid( );
+
+            // Get random walk simulation ID corresponding to row ID.
+            ostringstream randomWalkSimulationRowIdQuery;
+            randomWalkSimulationRowIdQuery << "SELECT \"randomWalkSimulationId\" FROM " 
+                                           << randomWalkInputTableName 
+                                           << " WHERE rowid == " << lastInputTableRowId;
+            const int randomWalkSimulationId = database.execAndGet( 
+                randomWalkSimulationRowIdQuery.str( ).c_str( ) );
+
+            // Select test particle simulation ID indices to generate list of random walk 
+            // perturbers.
+
+            // Declare vector containing test particle simulation IDs.
+            vector< unsigned int > testParticleSimulationIdIndices( perturberPopulation );
+
+            // Generate vector of randomly selected test particle simulation IDs.
+            generate( testParticleSimulationIdIndices.begin( ), 
+                      testParticleSimulationIdIndices.end( ),
+                      generateTestParticleSimulationId );
+
+            // Check if the test particle simulation IDs are unique, and if not, generate new 
+            // random number.
+            for ( unsigned int i = 0; i < testParticleSimulationIdIndices.size( ); i++ )
+            {
+                for ( unsigned int j = 0; j < testParticleSimulationIdIndices.size( ); j++ )
+                {
+                    // If inner and outer loop point to the same element, skip.
+                    if ( i == j )
+                    {
+                        continue;
+                    }
+
+                    // Else, check if the elements are equal, and if they are generate a new 
+                    // test particle simulation ID index and restart looping.
+                    else if ( testParticleSimulationIdIndices.at( j ) 
+                              == testParticleSimulationIdIndices.at( i ) )
+                    {
+                        testParticleSimulationIdIndices.at( j ) 
+                            = generateTestParticleSimulationId( );
+                        i = 0;
+                        break;
+                    }
+                }
+            }       
+
+            // Loop through list of test particle simulation ID indices and write data to 
+            // random walk perturber table.
+            for ( unsigned int k = 0; k < testParticleSimulationIdIndices.size( ); k++ ) 
+            {
+                // Bind values to prepared SQLite statement.
+                randomWalkPerturberTableInsertQuery.bind( 
+                    ":randomWalkSimulationId", randomWalkSimulationId );
+                
+                TestParticleInputTable::iterator iteratorTestParticleInputTable 
+                    = testParticleInputTable.begin( );
+                advance( iteratorTestParticleInputTable, testParticleSimulationIdIndices.at( k ) );
+
+                randomWalkPerturberTableInsertQuery.bind( 
+                    ":testParticleSimulationId",
+                     iteratorTestParticleInputTable->testParticleSimulationId );  
+
+                // Execute insert query.
+                randomWalkPerturberTableInsertQuery.exec( );
+
+                // Reset query.
+                randomWalkPerturberTableInsertQuery.reset( );            
+            }
+        }
+
+        // Commit transaction.
+        randomWalkInputTableTransaction.commit( );
+    }
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -686,8 +673,8 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         ostringstream randomWalkOutputTableCreate;
         randomWalkOutputTableCreate
             << "CREATE TABLE IF NOT EXISTS " << randomWalkOutputTableName << " ("
-            << "\"key\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-            << "\"monteCarloRunId\" INTEGER NOT NULL,"
+            << "\"randomWalkOutputId\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+            << "\"randomWalkSimulationId\" INTEGER NOT NULL,"
             << "\"averageLongitudeResidual\" REAL NOT NULL,"
             << "\"maximumLongitudeResidualChange\" REAL NOT NULL,"            
             << "\"averageEccentricity\" REAL NOT NULL,"            
@@ -707,7 +694,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         else
         {
             ostringstream tableCreateError;
-            tableCreateError << "Error: Creating table '" << randomWalkOutputTableName
+            tableCreateError << "ERROR: Creating table '" << randomWalkOutputTableName
                              << "'' failed!";
             throw runtime_error( tableCreateError.str( ).c_str( ) );
         }
@@ -729,19 +716,9 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // (when object goes out of scope its destructor will be called).
     cout << "SQLite database file '" << database.getFilename( ).c_str( ) 
          << "' closed successfully ..." << endl;
-    cout << endl;
 
     ///////////////////////////////////////////////////////////////////////////
-
-    // If program is successfully completed, return 0.
-    return EXIT_SUCCESS;
 }
 
-/*    
- *    TODO:
- *      - encapsulate code in try-catch blocks to capture exceptions.
- *      - execute verification of existing case data against input parameters provided to
- *        ensure consistency of inputs and possibly warn user.
- *      - expand code to enable interactive interface for user to provide inputs and select
- *        options (capture command line user input). 
- */ 
+} // namespace application_modes
+} // namespace stomi 

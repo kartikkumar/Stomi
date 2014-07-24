@@ -1,12 +1,12 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
-#ifndef STOMI_BASICS_H
-#define STOMI_BASICS_H
+#ifndef STOMI_BASIC_MATHEMATICS_H
+#define STOMI_BASIC_MATHEMATICS_H
 
 #include <Tudat/Mathematics/NumericalIntegrators/rungeKuttaCoefficients.h>
 
@@ -31,8 +31,8 @@ tudat::numerical_integrators::RungeKuttaCoefficients getRungeKuttaCoefficients(
 } // namespace mathematics
 } // namespace stomi
 
-#endif // STOMI_BASICS_H
+#endif // STOMI_BASIC_MATHEMATICS_H
 
 /*
- *    Unit tests are needed for the getRungeKuttaCoefficients() function.
+ *  Unit tests are needed for the getRungeKuttaCoefficients() function.
  */

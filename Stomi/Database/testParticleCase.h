@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #ifndef STOMI_TEST_PARTICLE_CASE_H
@@ -26,10 +26,10 @@ namespace database
 
  enum NumericalIntegratorType { DOPRI853, RKF78 };   
 
-//! Data struct that contains all of the case information for a set of test particle simulations.
+//! Struct that contains all of the case information for a set of test particle simulations.
 /*!
- * This data struct contains all of the case information for a set of test particle simulations,
- * stored in an SQLite3 database. The data stored is, in essence, metadata for test particle
+ * This struct contains all of the case information for a set of test particle simulations,
+ * stored in an SQLite3 database. The data stored is, in essence, meta-data for test particle
  * simulations.
  */
 struct TestParticleCase
@@ -39,11 +39,11 @@ public:
     // Set Eigen macro to correctly align class with fixed-size vectorizable types.
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
-    //! Constructor taking all case data as input.
+    //! Constructor taking all test particle case data as input.
     TestParticleCase(
             // Required parameters.
-            const int aCaseId,
-            const std::string& aCaseName,
+            const int aTestParticleCaseId,
+            const std::string& aTestParticleCaseName,
             const double aRandomWalkSimulationPeriod,
             const double aCentralBodyGravitationalParameter,
             const double aPerturbedBodyRadius,
@@ -58,9 +58,9 @@ public:
             const double aConjunctionEventDetectionDistance,
             const double anOppositionEventDetectionDistance,
             const double anEccentricityDistributionMean,
-            const double anEccentricityDistributionFullWidthHalfMaximum,
+            const double anEccentricityDistributionStandardDeviation,
             const double anInclinationDistributionMean,
-            const double anInclinationDistributionFullWidthHalfMaximum,
+            const double anInclinationDistributionStandardDeviation,
             const std::string& aNumericalIntegratorType,
             const double aNumericalIntegratorInitialStepSize,
             const double aNumericalIntegratorRelativeTolerance,
@@ -68,11 +68,11 @@ public:
 
     // Required parameters.
 
-    //! Case ID.
-    const int caseId;
+    //! Test particle case ID.
+    const int testParticleCaseId;
 
-    //! Case name.
-    const std::string caseName;
+    //! Test particle case name.
+    const std::string testParticleCaseName;
 
     //! Random walk simulation period [s].
     const double randomWalkSimulationPeriod;
@@ -112,17 +112,17 @@ public:
     //! Distance used to detect start and end of opposition events [m].
     const double oppositionEventDetectionDistance;
 
-    //! Mean eccentricity value for distribution.
+    //! Mean eccentricity for distribution.
     const double eccentricityDistributionMean;
 
-    //! FWHM eccentricity value for distribution.
-    const double eccentricityDistributionFullWidthHalfMaximum;
+    //! Standard deviation of eccentricity for distribution.
+    const double eccentricityDistributionStandardDeviation;
 
-    //! Mean inclination value for distribution [rad].
+    //! Mean inclination for distribution [rad].
     const double inclinationDistributionMean;
 
-    //! FWHM inclination value for distribution [rad].
-    const double inclinationDistributionFullWidthHalfMaximum;
+    //! Standard deviation of inclination for distribution [rad].
+    const double inclinationDistributionStandardDeviation;
 
     //! Numerical integrator type.
     NumericalIntegratorType numericalIntegratorType;
@@ -162,8 +162,8 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleCase& te
 #endif // STOMI_TEST_PARTICLE_CASE_H
 
 /*
- *    References
- *      sbi. C++ Operator Overloading, Stack Overflow,
- *          http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
- *          9th March, 2013.
+ * References
+ *   sbi. C++ Operator Overloading, Stack Overflow,
+ *      http://stackoverflow.com/questions/4421706/operator-overloading, 2010, last accessed:
+ *      9th March, 2013.
  */

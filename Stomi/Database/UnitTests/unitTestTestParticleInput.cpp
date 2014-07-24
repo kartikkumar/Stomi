@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <typeinfo>
@@ -39,15 +39,15 @@ public:
 
     //! Constructor initializing valid parameters.
     TestParticleInputFixture( )
-        : simulationId( 1 ),
+        : testParticleSimulationId( 1 ),
           testParticleCaseId( 1 ),
           isCompleted( true ),
           initialStateInKeplerianElements(
               ( Eigen::VectorXd( 6 ) << 1234.5, 0.55, 0.975, 1.234, 4.567, 3.456 ).finished( ) )
     { }
 
-    //! Simulation number.
-    int simulationId;
+    //! Test particle simulation ID.
+    int testParticleSimulationId;
 
     //! Test particle case ID.
     int testParticleCaseId;
@@ -62,7 +62,7 @@ public:
     database::TestParticleInputPointer getTestParticleInput( )
     {
         return boost::make_shared< database::TestParticleInput >(
-                    simulationId, testParticleCaseId, 
+                    testParticleSimulationId, testParticleCaseId, 
                     isCompleted, initialStateInKeplerianElements );
     }
 
@@ -87,7 +87,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputStructContruction )
     database::TestParticleInputPointer testParticleInput = getTestParticleInput( );
 
     // Check that the test particle input created contains all the data as required.
-    BOOST_CHECK_EQUAL( testParticleInput->simulationId, simulationId );
+    BOOST_CHECK_EQUAL( testParticleInput->testParticleSimulationId, testParticleSimulationId );
     BOOST_CHECK_EQUAL( testParticleInput->testParticleCaseId, testParticleCaseId );
     BOOST_CHECK_EQUAL( testParticleInput->isCompleted, isCompleted );
 
@@ -100,14 +100,14 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputStructContruction )
     }
 }
 
-//! Test initialization of test particle input with non-positive simulation ID.
-BOOST_AUTO_TEST_CASE( testTestParticleInputNonPositiveSimulationIdError )
+//! Test initialization of test particle input with non-positive test particle simulation ID.
+BOOST_AUTO_TEST_CASE( testTestParticleInputNonPositiveTestParticleSimulationIdError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set simulation ID to invalid (non-positive) number.
-    simulationId = -1;
+    // Set test particle simulation ID to invalid (non-positive) number.
+    testParticleSimulationId = -1;
 
     // Try to create test particle input.
     try { database::TestParticleInputPointer testParticleInput = getTestParticleInput( ); }
@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputNonEqualComparison )
     // Create TestParticleInput pointers.
     database::TestParticleInputPointer testParticleInput = getTestParticleInput( );
 
-    simulationId = 2;
+    testParticleSimulationId = 2;
     database::TestParticleInputPointer testParticleInput2 = getTestParticleInput( );
 
     // Check that operator is overloaded correctly.
@@ -246,7 +246,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputLessThanComparison )
     // Create TestParticleInput pointers.
     database::TestParticleInputPointer testParticleInput = getTestParticleInput( );
 
-    simulationId = 2;
+    testParticleSimulationId = 2;
     database::TestParticleInputPointer testParticleInput2 = getTestParticleInput( );
 
     // Check that operator is overloaded correctly.
@@ -261,7 +261,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputLessThanComparisonPointers )
     // Create TestParticleInput pointers.
     const database::TestParticleInputPointer testParticleInput = getTestParticleInput( );
 
-    simulationId = 2;
+    testParticleSimulationId = 2;
     const database::TestParticleInputPointer testParticleInput2 = getTestParticleInput( );
 
     // Check that operator is overloaded correctly.
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputGreaterThanComparison )
     // Create TestParticleInput pointers.
     database::TestParticleInputPointer testParticleInput = getTestParticleInput( );
 
-    simulationId = 2;
+    testParticleSimulationId = 2;
     database::TestParticleInputPointer testParticleInput2 = getTestParticleInput( );
 
     // Check that operator is overloaded correctly.
@@ -291,7 +291,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputLessThanOrEqualComparison )
     // Create TestParticleInput pointers.
     database::TestParticleInputPointer testParticleInput = getTestParticleInput( );
 
-    simulationId = 2;
+    testParticleSimulationId = 2;
     database::TestParticleInputPointer testParticleInput2 = getTestParticleInput( );
 
     // Check that operator is overloaded correctly.
@@ -306,7 +306,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputGreaterThanOrEqualComparison )
     // Create TestParticleInput pointers.
     database::TestParticleInputPointer testParticleInput = getTestParticleInput( );
 
-    simulationId = 2;
+    testParticleSimulationId = 2;
     database::TestParticleInputPointer testParticleInput2 = getTestParticleInput( );
 
     // Check that operator is overloaded correctly.
@@ -322,23 +322,23 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputTableSorting )
     // Insert input struct.
     inputTable.insert( new database::TestParticleInput( *getTestParticleInput( ) ) );
 
-    // Insert input struct with another simulation number.
-    simulationId = 3;
+    // Insert input struct with another test particle simulation ID.
+    testParticleSimulationId = 3;
     inputTable.insert( new database::TestParticleInput( *getTestParticleInput( ) ) );
 
-    // Insert input struct with another simulation number.
-    simulationId = 2;
+    // Insert input struct with another test particle simulation ID.
+    testParticleSimulationId = 2;
     inputTable.insert( new database::TestParticleInput( *getTestParticleInput( ) ) );
 
-    // Check that the table is sorted according to simulation number.
+    // Check that the table is sorted according to test particle simulation ID.
     database::TestParticleInputTable::iterator iteratorInputTable = inputTable.begin( );
-    BOOST_CHECK_EQUAL( iteratorInputTable->simulationId, 1 );
+    BOOST_CHECK_EQUAL( iteratorInputTable->testParticleSimulationId, 1 );
 
     iteratorInputTable++;
-    BOOST_CHECK_EQUAL( iteratorInputTable->simulationId, 2 );
+    BOOST_CHECK_EQUAL( iteratorInputTable->testParticleSimulationId, 2 );
 
     iteratorInputTable++;
-    BOOST_CHECK_EQUAL( iteratorInputTable->simulationId, 3 );
+    BOOST_CHECK_EQUAL( iteratorInputTable->testParticleSimulationId, 3 );
 }
 
 BOOST_AUTO_TEST_SUITE_END( )

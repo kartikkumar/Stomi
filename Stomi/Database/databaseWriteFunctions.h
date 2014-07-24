@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <string>
@@ -21,14 +21,15 @@ namespace database
 /*!
  * Populates table of test particle kicks in SQLite database.
  * \param databaseAbsolutePath Absolute path to simulation database.
- * \param simulationId Test particle simulation ID associated with kick table.
- * \param kickTable Table containing kick data as set of pointers to TestParticleKick objects.
+ * \param testParticleSimulationId Test particle simulation ID associated with kick table.
+ * \param testParticleKickTable Table containing kick data as set of pointers to TestParticleKick 
+ *          objects.
  * \param testParticleKickTableName String name of test particle kick table in database.
  * \param testParticleInputTableName String name of test particle input table in database.
  */
 void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
-                                    const int simulationId,
-                                    const TestParticleKickTable& kickTable,
+                                    const int testParticleSimulationId,
+                                    const TestParticleKickTable& testParticleKickTable,
                                     const std::string& testParticleKickTableName, 
                                     const std::string& testParticleInputTableName );
 
@@ -36,24 +37,23 @@ void populateTestParticleKickTable( const std::string& databaseAbsolutePath,
 /*!
  * Populates table of random walk output data in SQLite database.
  * \param databaseAbsolutePath Absolute path to simulation database.
- * \param monteCarloRunId Random walk Monte Carlo run ID associated with output table.
+ * \param randomWalkSimulationId Random walk simulation ID associated with output table.
  * \param averageLongitudeResidual Average longitude residual of perturbed body during random
- *           walk Monte  Carlo simulation. 
+ *           walk simulation. 
  * \param maximumLongitudeResidualChange Maximum longitude residual change that perturbed body 
- *          underwent during random walk Monte Carlo simulation.
+ *          underwent during random walk simulation.
  * \param averageEccentricity Average eccentricity of perturbed body during random walk Monte 
  *          Carlo simulation. 
  * \param maximumEccentricityChange Maximum eccentricity change that perturbed body underwent
- *          during random walk Monte Carlo simulation.
- * \param averageInclination Average inclination of perturbed body during random walk Monte 
- *          Carlo simulation. 
+ *          during random walk simulation.
+ * \param averageInclination Average inclination of perturbed body during random walk simulation. 
  * \param maximumInclinationChange Maximum inclination change that perturbed body underwent
- *          during random walk Monte Carlo simulation.
+ *          during random walk simulation.
  * \param randomWalkOutputTableName String name of random walk output table in database.
  * \param randomWalkInputTableName String name of random walk input table in database.
  */
 void populateRandomWalkOutputTable(
-        const std::string& databaseAbsolutePath, const int monteCarloRunId,
+        const std::string& databaseAbsolutePath, const int randomWalkSimulationId,
         const double averageLongitudeResidual, const double maximumLongitudeResidualChange,
         const double averageEccentricity, const double maximumEccentricityChange,
         const double averageInclination, const double maximumInclinationChange,

@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <vector>
@@ -27,8 +27,8 @@ public:
 
     //! Constructor initializing valid parameters.
     RandomWalkInputFixture( )
-        : monteCarloRunId( 1 ),
-          randomWalkCaseId( 1 ),
+        : randomWalkSimulationId( 1 ),
+          randomWalkRunId( 1 ),
           isCompleted( false ),
           observationPeriodStartEpoch( 1.23 ),
           testParticleSimulationIds( boost::assign::list_of( 1 )( 2 )
@@ -39,11 +39,11 @@ public:
 
     // Required parameters.
 
-    //! Monte Carlo run ID.
-    int monteCarloRunId;
+    //! Random walk simulation ID.
+    int randomWalkSimulationId;
 
-    //! Random walk case ID.
-    int randomWalkCaseId;
+    //! Random walk run ID.
+    int randomWalkRunId;
 
     //! Flag indicating if simulation has been completed/executed and stored in database.
     bool isCompleted;    
@@ -58,7 +58,7 @@ public:
     database::RandomWalkInputPointer getRandomWalkInput( )
     {
         return boost::make_shared< database::RandomWalkInput >(
-            monteCarloRunId, randomWalkCaseId, isCompleted, observationPeriodStartEpoch, 
+            randomWalkSimulationId, randomWalkRunId, isCompleted, observationPeriodStartEpoch, 
             testParticleSimulationIds );
     }
 
@@ -78,8 +78,8 @@ BOOST_AUTO_TEST_CASE( testRandomWalkInputStructContruction )
     RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
 
     // Check that the random walk input created contains all the data as required.
-    BOOST_CHECK_EQUAL( randomWalkInput->monteCarloRunId, monteCarloRunId );    
-    BOOST_CHECK_EQUAL( randomWalkInput->randomWalkCaseId, randomWalkCaseId );      
+    BOOST_CHECK_EQUAL( randomWalkInput->randomWalkSimulationId, randomWalkSimulationId );    
+    BOOST_CHECK_EQUAL( randomWalkInput->randomWalkRunId, randomWalkRunId );      
     BOOST_CHECK_EQUAL( randomWalkInput->isCompleted, isCompleted );      
     BOOST_CHECK_EQUAL( randomWalkInput->observationPeriodStartEpoch, 
                        observationPeriodStartEpoch ); 
@@ -91,14 +91,14 @@ BOOST_AUTO_TEST_CASE( testRandomWalkInputStructContruction )
     }     
 }
 
-//! Test initialization of random walk input Monte Carlo run ID with non-positive number.
-BOOST_AUTO_TEST_CASE( testRandomWalkInputMonteCarloRunIdNonPositiveNumberError )
+//! Test initialization of random walk input with non-positive number random walk simulation ID.
+BOOST_AUTO_TEST_CASE( testRandomWalkInputRandomWalkRunIdNonPositiveNumberError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set Monte Carlo run ID to invalid (non-positive) number.
-    monteCarloRunId = -1;
+    // Set random walk simulation ID to invalid (non-positive) number.
+    randomWalkSimulationId = -1;
 
     // Try to create random walk input.
     try { database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( ); }
@@ -110,14 +110,14 @@ BOOST_AUTO_TEST_CASE( testRandomWalkInputMonteCarloRunIdNonPositiveNumberError )
     BOOST_CHECK( isError );
 }
 
-//! Test initialization of random walk input case ID with non-positive number.
+//! Test initialization of random walk input with non-positive number random walk run ID.
 BOOST_AUTO_TEST_CASE( testRandomWalkInputCaseIdNonPositiveNumberError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set case ID to invalid (non-positive) number.
-    randomWalkCaseId = -1;
+    // Set random walk run ID to invalid (non-positive) number.
+    randomWalkRunId = -1;
 
     // Try to create random walk input.
     try { database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( ); }
@@ -186,7 +186,7 @@ BOOST_AUTO_TEST_CASE( testRandomWalkInputNonEqualComparison )
     // Create RandomWalkInput pointers.
     database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
 
-    monteCarloRunId = 2;
+    randomWalkSimulationId = 2;
     database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
 
     // Check that operator is overloaded correctly.
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE( testRandomWalkInputLessThanComparison )
     // Create RandomWalkInput pointers.
     database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
 
-    monteCarloRunId = 2;
+    randomWalkSimulationId = 2;
     database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
 
     // Check that operator is overloaded correctly.
@@ -214,7 +214,7 @@ BOOST_AUTO_TEST_CASE( testRandomWalkInputGreaterThanComparison )
     // Create RandomWalkInput pointers.
     database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
 
-    monteCarloRunId = 2;
+    randomWalkSimulationId = 2;
     database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
 
     // Check that operator is overloaded correctly.
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE( testRandomWalkInputLessThanOrEqualComparison )
     // Create RandomWalkInput pointers.
     database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
 
-    monteCarloRunId = 2;
+    randomWalkSimulationId = 2;
     database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
 
     // Check that operator is overloaded correctly.
@@ -244,7 +244,7 @@ BOOST_AUTO_TEST_CASE( testRandomWalkInputGreaterThanOrEqualComparison )
     // Create RandomWalkInput pointers.
     database::RandomWalkInputPointer randomWalkInput = getRandomWalkInput( );
 
-    monteCarloRunId = 2;
+    randomWalkSimulationId = 2;
     database::RandomWalkInputPointer randomWalkInput2 = getRandomWalkInput( );
 
     // Check that operator is overloaded correctly.

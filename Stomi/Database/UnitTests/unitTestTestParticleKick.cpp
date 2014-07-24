@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <stdexcept>
@@ -38,7 +38,7 @@ public:
 
     //! Constructor initializing valid parameters.
     TestParticleKickFixture( )
-        : kickId( 1 ),
+        : testParticleKickId( 1 ),
           testParticleSimulationId( 1 ),
           conjunctionEpoch( 1.23e4 ),
           conjunctionDistance( 2.0e7 ),
@@ -54,8 +54,8 @@ public:
 
     //! Declare parameters of test particle kick.
 
-    //! Unique id for kick in database.
-    int kickId;
+    //! Unique ID for test particle kick in database.
+    int testParticleKickId;
 
     //! Test particle simulation ID.
     int testParticleSimulationId;
@@ -89,7 +89,8 @@ public:
     {
         return boost::make_shared< database::TestParticleKick >(
                     database::TestParticleKick(
-                        kickId, testParticleSimulationId, conjunctionEpoch, conjunctionDistance,
+                        testParticleKickId, testParticleSimulationId, 
+                        conjunctionEpoch, conjunctionDistance,
                         preConjunctionEpoch, preConjunctionDistance, 
                         preConjunctionStateInKeplerianElements,
                         postConjunctionEpoch, postConjunctionDistance,
@@ -117,7 +118,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickStructContruction )
     database::TestParticleKickPointer testParticleKick = getTestParticleKick( );
 
     // Check that the test particle kick created contains all the data as required.
-    BOOST_CHECK_EQUAL( testParticleKick->kickId, kickId );    
+    BOOST_CHECK_EQUAL( testParticleKick->testParticleKickId, testParticleKickId );    
     BOOST_CHECK_EQUAL( testParticleKick->testParticleSimulationId, testParticleSimulationId );
     BOOST_CHECK_EQUAL( testParticleKick->conjunctionEpoch, conjunctionEpoch );
     BOOST_CHECK_EQUAL( testParticleKick->conjunctionDistance, conjunctionDistance );
@@ -141,14 +142,14 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickStructContruction )
     }                       
 }
 
-//! Test initialization of test particle kick with non-positive kick ID.
-BOOST_AUTO_TEST_CASE( testTestParticleKickNonPositiveKickIdError )
+//! Test initialization of test particle kick with non-positive test particle kick ID.
+BOOST_AUTO_TEST_CASE( testTestParticleKickNonPositiveTestParticleKickIdError )
 {
     // Set flag to indicate if error is thrown to false.
     bool isError = false;
 
-    // Set kick ID to invalid (non-positive) number.
-    kickId = -1;
+    // Set test particle kick ID to invalid (non-positive) number.
+    testParticleKickId = -1;
 
     // Try to create test particle kick.
     try { database::TestParticleKickPointer testParticleKick = getTestParticleKick( ); }
@@ -575,31 +576,31 @@ BOOST_AUTO_TEST_CASE( testTestParticleKickTableSorting )
     // Add TestParticleKick objects to table.
     database::TestParticleKickTable kickTable;
 
-    // Insert kick with conjunction epoch = 1.23e4. Set kick ID.
-    kickId = 2;
+    // Insert kick with conjunction epoch = 1.23e4. Set test particle kick ID.
+    testParticleKickId = 2;
     kickTable.insert( new database::TestParticleKick( *getTestParticleKick( ) ) );
 
-    // Insert kick with later conjunction epoch. Set kickId.
-    kickId = 3;
+    // Insert kick with later conjunction epoch. Set test particle kick ID.
+    testParticleKickId = 3;
     conjunctionEpoch = 1.24e4;
     kickTable.insert( new database::TestParticleKick( *getTestParticleKick( ) ) );
 
-    // Insert kick with earlier conjunction epoch. Set kickId.
-    kickId = 1;
+    // Insert kick with earlier conjunction epoch. Set test particle kick ID.
+    testParticleKickId = 1;
     conjunctionEpoch = 1.2e3;
     kickTable.insert( new database::TestParticleKick( *getTestParticleKick( ) ) );
 
     // Check that the table is sorted according to conjunction epoch.
     database::TestParticleKickTable::iterator iteratorKickTable = kickTable.begin( );
-    BOOST_CHECK_EQUAL( iteratorKickTable->kickId, 1 );
+    BOOST_CHECK_EQUAL( iteratorKickTable->testParticleKickId, 1 );
     BOOST_CHECK_EQUAL( iteratorKickTable->conjunctionEpoch, 1.2e3 );
 
     iteratorKickTable++;
-    BOOST_CHECK_EQUAL( iteratorKickTable->kickId, 2 );
+    BOOST_CHECK_EQUAL( iteratorKickTable->testParticleKickId, 2 );
     BOOST_CHECK_EQUAL( iteratorKickTable->conjunctionEpoch, 1.23e4 );
 
     iteratorKickTable++;
-    BOOST_CHECK_EQUAL( iteratorKickTable->kickId, 3 );    
+    BOOST_CHECK_EQUAL( iteratorKickTable->testParticleKickId, 3 );    
     BOOST_CHECK_EQUAL( iteratorKickTable->conjunctionEpoch, 1.24e4 );
 }
 

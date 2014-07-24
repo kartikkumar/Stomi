@@ -1,40 +1,40 @@
- #    Copyright (c) 2010-2014, Delft University of Technology
- #    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- #    All rights reserved.
- #    See http://bit.ly/12SHPLR for license details.
+# Copyright (c) 2010-2014, Delft University of Technology
+# Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+# All rights reserved.
+# See http://bit.ly/12SHPLR for license details.
 
 # Set source files.
 set(DATABASE_SOURCES
-  "${SRCROOT}${DATABASEDIR}/databaseReadFunctions.cpp"
-  "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.cpp"
-  "${SRCROOT}${DATABASEDIR}/randomWalkCase.cpp"
-  "${SRCROOT}${DATABASEDIR}/randomWalkInput.cpp"
-  "${SRCROOT}${DATABASEDIR}/testParticleCase.cpp"
-  "${SRCROOT}${DATABASEDIR}/testParticleInput.cpp"
-  "${SRCROOT}${DATABASEDIR}/testParticleKick.cpp"
+  "${SOURCE_ROOT}${DATABASE_DIR}/databaseReadFunctions.cpp"
+  "${SOURCE_ROOT}${DATABASE_DIR}/databaseWriteFunctions.cpp"
+  "${SOURCE_ROOT}${DATABASE_DIR}/randomWalkInput.cpp"
+  "${SOURCE_ROOT}${DATABASE_DIR}/randomWalkRun.cpp"  
+  "${SOURCE_ROOT}${DATABASE_DIR}/testParticleCase.cpp"
+  "${SOURCE_ROOT}${DATABASE_DIR}/testParticleInput.cpp"
+  "${SOURCE_ROOT}${DATABASE_DIR}/testParticleKick.cpp"
 )
 
 # Set header files.
 set(DATABASE_HEADERS
-  "${SRCROOT}${DATABASEDIR}/databaseReadFunctions.h"
-  "${SRCROOT}${DATABASEDIR}/databaseWriteFunctions.h"
-  "${SRCROOT}${DATABASEDIR}/randomWalkCase.h"
-  "${SRCROOT}${DATABASEDIR}/randomWalkInput.h"
-  "${SRCROOT}${DATABASEDIR}/testParticleCase.h"
-  "${SRCROOT}${DATABASEDIR}/testParticleInput.h"
-  "${SRCROOT}${DATABASEDIR}/testParticleKick.h"
+  "${SOURCE_ROOT}${DATABASE_DIR}/databaseReadFunctions.h"
+  "${SOURCE_ROOT}${DATABASE_DIR}/databaseWriteFunctions.h"
+  "${SOURCE_ROOT}${DATABASE_DIR}/randomWalkInput.h"
+  "${SOURCE_ROOT}${DATABASE_DIR}/randomWalkRun.h"  
+  "${SOURCE_ROOT}${DATABASE_DIR}/testParticleCase.h"
+  "${SOURCE_ROOT}${DATABASE_DIR}/testParticleInput.h"
+  "${SOURCE_ROOT}${DATABASE_DIR}/testParticleKick.h"
 )
 
 # Set unit test files.
 set(DATABASE_UNIT_TESTS
-  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabase.cpp"  
-  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseReadFunctions.cpp"
-  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestDatabaseWriteFunctions.cpp"  
-  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestRandomWalkCase.cpp"    
-  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestRandomWalkInput.cpp"    
-  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleCase.cpp"    
-  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleInput.cpp"    
-  "${SRCROOT}${DATABASEDIR}/UnitTests/unitTestTestParticleKick.cpp"    
+  "${SOURCE_ROOT}${DATABASE_DIR}/UnitTests/unitTestDatabase.cpp"  
+  "${SOURCE_ROOT}${DATABASE_DIR}/UnitTests/unitTestDatabaseReadFunctions.cpp"
+  "${SOURCE_ROOT}${DATABASE_DIR}/UnitTests/unitTestDatabaseWriteFunctions.cpp"  
+  "${SOURCE_ROOT}${DATABASE_DIR}/UnitTests/unitTestRandomWalkInput.cpp"  
+  "${SOURCE_ROOT}${DATABASE_DIR}/UnitTests/unitTestRandomWalkRun.cpp"        
+  "${SOURCE_ROOT}${DATABASE_DIR}/UnitTests/unitTestTestParticleCase.cpp"    
+  "${SOURCE_ROOT}${DATABASE_DIR}/UnitTests/unitTestTestParticleInput.cpp"    
+  "${SOURCE_ROOT}${DATABASE_DIR}/UnitTests/unitTestTestParticleKick.cpp"    
 )
 
 # Add static library.

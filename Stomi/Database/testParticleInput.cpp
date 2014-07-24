@@ -1,8 +1,8 @@
 /*    
- *    Copyright (c) 2010-2014, Delft University of Technology
- *    Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
- *    All rights reserved.
- *    See http://bit.ly/12SHPLR for license details.
+ * Copyright (c) 2010-2014, Delft University of Technology
+ * Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)
+ * All rights reserved.
+ * See http://bit.ly/12SHPLR for license details.
  */
 
 #include <TudatCore/Astrodynamics/BasicAstrodynamics/orbitalElementConversions.h>
@@ -22,11 +22,12 @@ using namespace tudat::basic_astrodynamics::orbital_element_conversions;
 
 //! Default constructor, initializing class members.
 TestParticleInput::TestParticleInput(
-        const int aSimulationId,
+        const int aTestParticleSimulationId,
         const int aTestParticleCaseId,
         const bool aCompletedFlag,
         const tudat::basic_mathematics::Vector6d& anInitialStateInKeplerianElements )
-    : simulationId( checkPositive( aSimulationId, "Simulation ID" ) ),
+    : testParticleSimulationId( 
+        checkPositive( aTestParticleSimulationId, "Test particle simulation ID" ) ),
       testParticleCaseId( checkPositive( aTestParticleCaseId, "Test particle case ID" ) ),
       isCompleted( aCompletedFlag ),
       initialStateInKeplerianElements( 
@@ -44,7 +45,8 @@ TestParticleInput::TestParticleInput(
 bool operator==( const TestParticleInput& testParticleInput1,
                  const TestParticleInput& testParticleInput2 )
 {
-    return ( testParticleInput1.simulationId == testParticleInput2.simulationId
+    return ( testParticleInput1.testParticleSimulationId 
+             == testParticleInput2.testParticleSimulationId
              && testParticleInput1.testParticleCaseId == testParticleInput2.testParticleCaseId
              && testParticleInput1.isCompleted == testParticleInput2.isCompleted
              && testParticleInput1.initialStateInKeplerianElements
@@ -55,7 +57,8 @@ bool operator==( const TestParticleInput& testParticleInput1,
 bool operator<( const TestParticleInput& testParticleInput1,
                 const TestParticleInput& testParticleInput2 )
 {
-    return testParticleInput1.simulationId < testParticleInput2.simulationId;
+    return testParticleInput1.testParticleSimulationId 
+            < testParticleInput2.testParticleSimulationId;
 }
 
 //! Overload << operator.
@@ -78,7 +81,7 @@ std::ostream& operator<<( std::ostream& outputStream, const TestParticleInput& t
 
     // Write contents of TestParticleInput object to output stream.
     outputStream << "Test particle simulation ID: "
-                 << testParticleInput.simulationId << std::endl;
+                 << testParticleInput.testParticleSimulationId << std::endl;
     outputStream << "Test particle case ID: " << testParticleInput.testParticleCaseId << std::endl;
     outputStream << "Test particle simulation completed?: " << completedStatus << std::endl;
     outputStream << "Test particle's initial semi-major axis [m]: "
