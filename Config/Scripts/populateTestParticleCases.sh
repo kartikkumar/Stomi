@@ -8,7 +8,6 @@ declare -a testParticleDatabaseGeneratorCases=("case1_large_sma" "case1" "case2"
 
 # Set template command to populate database with test particle cases.
 declare -r testParticleTemplateCommand="$stomi ../TestParticleDatabaseGenerator/CASE_testParticleDatabaseGeneratorSettings.cfg"
-# declare -r testParticleTemplateCommand="echo $PATH"
 
 # Loop through test particle cases and populate database.
 for case in "${testParticleDatabaseGeneratorCases[@]}" 
