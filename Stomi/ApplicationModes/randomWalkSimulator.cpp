@@ -92,7 +92,7 @@ void executeRandomWalkSimulator(
     // Extract input parameters.
 
     // Get dictionary.
-    const DictionaryPointer dictionary = getTestParticleSimulatorDictionary( );
+    const DictionaryPointer dictionary = getRandomWalkSimulatorDictionary( );
 
     // Print database path to console.
     cout << "Database                                                  " 
