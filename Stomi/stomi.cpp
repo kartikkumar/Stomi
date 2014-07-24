@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 
 #include <boost/algorithm/string/predicate.hpp>
@@ -32,6 +33,7 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     // Declare using-statements.
     using std::cout;
     using std::endl;
+    using std::runtime_error;
     using std::string;
 
     using boost::iequals;
@@ -83,6 +85,17 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Call selected application mode.
     cout << endl;
+    cout << "----------------------------------------------------------" << endl;
+    cout << endl;
+    cout << "                          STOMI                           " << endl;
+    cout << "                          2.0.0                           " << endl;
+    cout << endl;
+    cout << " Copyright (c) 2010-2014, Delft University of Technology  " << endl;
+    cout << " Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)   " << endl;
+    cout << endl;
+    cout << "----------------------------------------------------------" << endl;
+
+    cout << endl;
     cout << "Application mode                                          ";
 
     if ( iequals( applicationMode, "TPDB" ) )
@@ -108,6 +121,11 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
         cout << "RANDOM WALK SIMULATOR" << endl;
         executeRandomWalkSimulator( databasePath, parsedData );             
     }    
+
+    else
+    {
+        throw runtime_error( "ERROR: Application mode not recognized!" );
+    }
 
     cout << endl;
 
