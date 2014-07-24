@@ -17,18 +17,3 @@ do
     # Wait for previous process to end before proceeding.
     wait
 done
-
-# Set template command to populate database with random walk runs.
-declare -r randomWalkTemplateCommand="stomi ../RandomWalkDatabaseGenerator/runID_randomWalkDatabaseGeneratorSettings.cfg"
-# declare -r randomWalkTemplateCommand="echo $PATH"
-
-# Loop through random walk runs and populate database.
-for run in {1..15}  
-do
-    # Execute command to populate database.
-    command="${randomWalkTemplateCommand/ID/$run}"
-    $command
-
-    # Wait for previous process to end before proceeding.
-    wait
-done
