@@ -60,13 +60,13 @@ endif()
 
 # Set lib and bin directories where static libraries, executable, unit tests are built.
 if(NOT LIB_ROOT)
-  set(LIB_ROOT "${PROJECT_ROOT}/lib")
+  set(LIB_ROOT "${PROJECT_BINARY_DIR}/../lib")
 endif()
 if(NOT BIN_ROOT)
-  set(BIN_ROOT "${PROJECT_ROOT}/bin")
+  set(BIN_ROOT "${PROJECT_BINARY_DIR}/../bin")
 endif()
 if(NOT TEST_ROOT)
-  set(TEST_ROOT "${PROJECT_ROOT}/tests")
+  set(TEST_ROOT "${PROJECT_BINARY_DIR}/../tests")
 endif()
 
 # Set the global macros for setting up targets.
