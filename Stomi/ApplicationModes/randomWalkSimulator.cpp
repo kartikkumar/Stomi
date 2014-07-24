@@ -132,7 +132,7 @@ void executeRandomWalkSimulator(
 
     const string randomWalkRunTableName = extractParameterValue< string >(
                 parsedData->begin( ), parsedData->end( ),
-                findEntry( dictionary, "randomWalkRunTABLENAME" ), "random_walk_run" );
+                findEntry( dictionary, "RANDOMWALKRUNTABLENAME" ), "random_walk_run" );
     cout << "Random walk run table                                     " 
          << randomWalkRunTableName << endl;
 
@@ -179,7 +179,8 @@ void executeRandomWalkSimulator(
 
         const double perturberRingNumberDensity = extractParameterValue< double >(
                     parsedData->begin( ), parsedData->end( ),
-                    findEntry( dictionary, "PERTURBERRINGNUMBERDENSITY" ) );    
+                    findEntry( dictionary, "PERTURBERRINGNUMBERDENSITY" ),
+                    retrievedRandomWalkRun->perturberRingNumberDensity );    
         cout << "Perturber ring number density                             " 
              << perturberRingNumberDensity << " perturbers per R_Hill" << endl;
 

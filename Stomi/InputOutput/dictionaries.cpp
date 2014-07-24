@@ -201,9 +201,9 @@ DictionaryPointer getRandomWalkSimulatorDictionary( )
     addEntry( dictionary, "FILEOUTPUTDIRECTORY",                   0, 0, 
                 list_of( "FILEOUTPUTDIR" ) ); 
     addEntry( dictionary, "RANDOMWALKSIMULATIONS",                 0, 0, list_of( "RWSIMS" ) );   
-    addEntry( dictionary, "PERTURBERRINGNUMBERDENSITY",            1, 0, 
+    addEntry( dictionary, "PERTURBERRINGNUMBERDENSITY",            0, 0, 
                 list_of( "NRHOPERTURBERRING" ) );    
-    addEntry( dictionary, "PERTURBERRINGMASS",                     1, 0, 
+    addEntry( dictionary, "PERTURBERRINGMASS",                     0, 0, 
                 list_of( "MPERTURBERRING" ) );
     addEntry( dictionary, "OBSERVATIONPERIOD",                     0, 0, list_of( "POBS" ) );
     addEntry( dictionary, "EPOCHWINDOWSIZE",                       0, 0, list_of( "EPOCHSIZE" ) );
