@@ -93,15 +93,22 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
 
     // Call selected application mode.
     cout << endl;
-    cout << "----------------------------------------------------------" << endl;
+    cout << "----------------------------------------------------------------------------" << endl;
     cout << endl;
-    cout << "                          STOMI                           " << endl;
-    cout << "                          2.0.0                           " << endl;
+    cout << "                                    STOMI                                   " << endl;
+    cout << "                                    2.0.0                                   " << endl;
     cout << endl;
-    cout << " Copyright (c) 2010-2014, Delft University of Technology  " << endl;
-    cout << " Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)   " << endl;
+    cout << "          Copyright (c) 2010-2014, Delft University of Technology           " << endl;
+    cout << "           Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)           " << endl;
+    cout << "         Copyright (c) 2013-2014, S. Hirsh (sethhirsh@berkeley.edu)         " << endl;
     cout << endl;
-    cout << "----------------------------------------------------------" << endl;
+    cout << "----------------------------------------------------------------------------" << endl;
+
+    cout << endl;
+    cout << "****************************************************************************" << endl;
+    cout << "Input parameters" << endl;
+    cout << "****************************************************************************" << endl;
+    cout << endl;
 
     cout << endl;
     cout << "Application mode                                          ";
