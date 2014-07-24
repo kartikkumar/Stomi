@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Set environment variables.
+stomi="/home/kartik/app/stomi/bin/stomi"
+
 # Declare array of strings with cases for test particle database generator configuration files.
 declare -a testParticleDatabaseGeneratorCases=("case1_large_sma" "case1" "case2" "case3")
 
