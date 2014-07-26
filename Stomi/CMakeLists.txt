@@ -252,5 +252,5 @@ target_link_libraries(stomi
 # This is required for Boost::chrono usage to work on Unix systems.
 # http://stackoverflow.com/questions/7695638/conditional-cmake-link-to-rt-library
 if(UNIX AND NOT APPLE)
-    target_link_libraries(target_name rt)
+    target_link_libraries(stomi rt)
 endif()
