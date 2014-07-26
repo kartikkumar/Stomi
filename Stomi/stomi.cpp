@@ -100,7 +100,6 @@ int main( const int numberOfInputs, const char* inputArguments[ ] )
     cout << endl;
     cout << "          Copyright (c) 2010-2014, Delft University of Technology           " << endl;
     cout << "           Copyright (c) 2010-2014, K. Kumar (me@kartikkumar.com)           " << endl;
-    cout << "         Copyright (c) 2013-2014, S. Hirsh (sethhirsh@berkeley.edu)         " << endl;
     cout << endl;
     cout << "----------------------------------------------------------------------------" << endl;
 
