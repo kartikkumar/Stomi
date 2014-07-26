@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE( testTestParticleInputLessThanComparisonPointers )
     const database::TestParticleInputPointer testParticleInput2 = getTestParticleInput( );
 
     // Check that operator is overloaded correctly.
-    BOOST_CHECK( testParticleInput < testParticleInput2 );
+    BOOST_CHECK( *testParticleInput < *testParticleInput2 );
 }
 
 //! Test comparison of TestParticleInput pointers using overloaded > operator.
