@@ -247,3 +247,10 @@ target_link_libraries(stomi
                       ${SQLITECPP_LIBRARY}
                       ${SQLITE3_LIBRARY} 
                       ${Boost_LIBRARIES})
+
+# Conditionally link rt-library to Stomi application if on Unix system.
+# This is required for Boost::chrono usage to work on Unix systems.
+# http://stackoverflow.com/questions/7695638/conditional-cmake-link-to-rt-library
+if(UNIX AND NOT APPLE)
+    target_link_libraries(target_name rt)
+endif()
