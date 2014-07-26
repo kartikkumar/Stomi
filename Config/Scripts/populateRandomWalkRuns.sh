@@ -11,7 +11,7 @@ for runId in {1..15}
 do
     # Execute command to populate database.
     command="${randomWalkTemplateCommand/ID/$runId}"
-    echo  $command
+    $command
 
     # Wait for previous process to end before proceeding.
     wait
