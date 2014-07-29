@@ -373,7 +373,7 @@ void executeRandomWalkSimulator(
         // Fetch test particle kick table based on test particle simulation IDs for random walk 
         // simulation.
         TestParticleKickTable testParticleKickTable;
-#pragma omp critical( accessKickTable )
+#pragma omp critical( databaseOperations )
         {        
             testParticleKickTable = getTestParticleKickTable( 
                 databasePath, testParticleCaseData->randomWalkSimulationPeriod,
@@ -875,7 +875,7 @@ void executeRandomWalkSimulator(
         // Check if output mode is set to "DATABASE".
         if ( iequals( outputMode, "DATABASE" ) )
         {
-    #pragma omp critical( writeToDatabase )
+    #pragma omp critical( databaseOperations )
             {
                 // Populate output table in database.
                 populateRandomWalkOutputTable( 
